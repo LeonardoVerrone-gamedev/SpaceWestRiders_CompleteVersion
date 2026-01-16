@@ -467,7 +467,9 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     private void Turn()
     {
         float TurnPowerMultiplier = isGrounded ? 1 : 0.5f;
-        float steerPower = steerStrenght * TurnPowerMultiplier;
+
+        float newSteerStrenght = (carType == CarType.classic && !_isDrifting) ? steerStrenght / 50f : steerStrenght;
+        float steerPower = newSteerStrenght * TurnPowerMultiplier;
         float steerInput = _currentSteerInput;
 
         // --- LÓGICA DE SELF-STEERING (DENTRO DO DRIFT) ---
@@ -479,7 +481,9 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
                 // Calcula um torque suave oposto ao ângulo do drift para alinhar o nariz com a velocidade
                 // Se o drift angle é positivo (cauda para a esquerda), precisamos de torque negativo para alinhar
                 float selfSteerFactor = -(_currentDriftAngle / maxDriftAngle);
-                steerInput = selfSteerFactor * driftSelfSteerStrength * Time.fixedDeltaTime;
+
+                float TimeMultiplier = carType == CarType.classic ? 1f : Time.fixedDeltaTime;
+                steerInput = selfSteerFactor * driftSelfSteerStrength * TimeMultiplier;
                 
                 // Limitamos para não ser mais forte que um input manual
                 steerInput = Mathf.Clamp(steerInput, -driftCounterSteerLimit, driftCounterSteerLimit);
@@ -506,9 +510,17 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             rb.angularVelocity = transform.TransformDirection(localAngularVel);
         }
         
-        // Aplica o torque final (usando o steerInput processado pelo self-steering se necessário)
-        rb.AddTorque(steerPower * steerInput * speedFactor * accelerationSteerBoost 
-            * transform.up, ForceMode.Acceleration);
+        if(carType == CarType.classic && !_isDrifting)
+        {
+            // Aplica o torque final (usando o steerInput processado pelo self-steering se necessário)
+            rb.AddTorque(steerPower * steerInput * speedFactor * accelerationSteerBoost 
+                * transform.up, ForceMode.VelocityChange);
+        }
+        else
+        {
+            rb.AddTorque(steerPower * steerInput * speedFactor * accelerationSteerBoost 
+                * transform.up, ForceMode.Acceleration);
+        }
     }
 
     private void SidewaysDrag()
