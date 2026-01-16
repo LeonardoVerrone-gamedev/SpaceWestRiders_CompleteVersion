@@ -16,6 +16,8 @@ public class RaceManager : MonoBehaviour
     // Dicionário para rastrear o progresso de cada corredor sem poluir o RacerStatus
     private Dictionary<RacerStatus, int> racerCheckpointProgress = new Dictionary<RacerStatus, int>();
 
+    private Dictionary<RacerStatus, bool> hasStartedFirstLap = new Dictionary<RacerStatus, bool>(); //dicionario para primeira volta
+
     void Awake() => Instance = this;
 
     void OnEnable()
@@ -35,6 +37,7 @@ public class RaceManager : MonoBehaviour
         foreach (var racer in allRacers)
         {
             racerCheckpointProgress.Add(racer, 0);
+            hasStartedFirstLap.Add(racer, false);
         }
 
         AssignAIGroups();
@@ -47,20 +50,37 @@ public class RaceManager : MonoBehaviour
         int checkpointIndex = officialCheckpoints.IndexOf(checkpointHit);
         if (checkpointIndex == -1) return;
 
-        int nextExpected = racerCheckpointProgress[racer];
+        int currentExpected = racerCheckpointProgress[racer];
 
-        if (checkpointIndex == nextExpected)
+        if (checkpointIndex == currentExpected)
         {
-            // Se bateu no último checkpoint da lista
-            if (nextExpected == officialCheckpoints.Count - 1)
+            if (checkpointIndex == 0)
             {
-                racer.CountLap(); // Chama o método no RacerStatus para somar volta
-                racerCheckpointProgress[racer] = 0; // Reseta para o primeiro
+                // SÓ conta volta se já tiver passado pelo checkpoint 0 pelo menos uma vez antes
+                if (hasStartedFirstLap[racer])
+                {
+                    racer.CountLap();
+                }
+                else
+                {
+                    // É a largada! Marcamos que ele começou a corrida
+                    hasStartedFirstLap[racer] = true;
+                    Debug.Log($"{racer.name} largou!");
+                }
+
+                racerCheckpointProgress[racer] = 1;
             }
             else
             {
                 racerCheckpointProgress[racer]++;
+
+                if (racerCheckpointProgress[racer] >= officialCheckpoints.Count)
+                {
+                    racerCheckpointProgress[racer] = 0;
+                }
             }
+            
+            Debug.Log($"{racer.name} no CP {checkpointIndex}. Próximo: {racerCheckpointProgress[racer]}");
         }
     }
 

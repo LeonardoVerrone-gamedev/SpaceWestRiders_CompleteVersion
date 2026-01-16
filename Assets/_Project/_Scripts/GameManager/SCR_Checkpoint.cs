@@ -8,7 +8,7 @@ public class SCR_CheckpointTrigger : MonoBehaviour
 
     void Start() => myCollider = GetComponent<BoxCollider>();
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerExit(Collider other)
     {
         // Tenta pegar o RacerStatus de quem entrou no trigger
         RacerStatus racer = other.GetComponentInParent<RacerStatus>();

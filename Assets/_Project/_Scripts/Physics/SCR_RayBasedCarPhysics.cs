@@ -77,7 +77,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     [HideInInspector][SerializeField] private AnimationCurve classicAccelCurve; // Linear e constante
     [HideInInspector][SerializeField] private AnimationCurve hoverAccelCurve;   // Lenta no início, forte no meio
     [HideInInspector][SerializeField] private AnimationCurve hoverCarTurningCurve; // Perde muito esterço em alta velocidade
-    [HideInInspector][SerializeField] private AnimationCurve classicCarTurningCurve;
+    [SerializeField] private AnimationCurve classicCarTurningCurve;
     [HideInInspector][SerializeField] AnimationCurve turningCurve;
 
     #region Drift System
@@ -497,6 +497,14 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         // Usa velocidade absoluta para a curva
         turningCurve = carType == CarType.classic ? classicCarTurningCurve : hoverCarTurningCurve;
         float speedFactor = turningCurve.Evaluate(Mathf.Abs(carVelocityRatio));
+
+        if (Mathf.Abs(steerInput) < 0.1f && isGrounded && !_isDrifting)
+        {
+            // Reduz drasticamente a rotação quando solta o volante (efeito de centralização)
+            Vector3 localAngularVel = transform.InverseTransformDirection(rb.angularVelocity);
+            localAngularVel.y *= 0.9f; // Amortece o giro no eixo Y
+            rb.angularVelocity = transform.TransformDirection(localAngularVel);
+        }
         
         // Aplica o torque final (usando o steerInput processado pelo self-steering se necessário)
         rb.AddTorque(steerPower * steerInput * speedFactor * accelerationSteerBoost 
