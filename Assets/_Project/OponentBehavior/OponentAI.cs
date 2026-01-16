@@ -66,6 +66,8 @@ public class AIRacingController : MonoBehaviour
     float recoveryGraceTimer;
     private float targetTracingNoise = 0f;
 
+    private float smoothedSteerInput = 0f;
+
     SCR_RayBasedCarPhysics rayBasedPhysics;
 
     void OnEnable()//switch to onEnable later
@@ -184,7 +186,7 @@ public class AIRacingController : MonoBehaviour
 
         // Opcional: Cancelar Invokes anteriores para garantir que o tempo de parada seja respeitado
         CancelInvoke("StopRecovery");
-        Invoke("StopRecovery", 2.0f); // Tempo que ele ficará parado/congelado
+        Invoke("StopRecovery", Random.Range(0.25f, 1.5f)); // Tempo que ele ficará parado/congelado
     }
 
     void DetermineAIState()
@@ -287,61 +289,75 @@ public class AIRacingController : MonoBehaviour
 
     float CalculateSteering()
     {
+        // --- 1. RUÍDO DE ERRO (Skill do Piloto) ---
         noiseChangeTimer -= Time.fixedDeltaTime;
         if (noiseChangeTimer <= 0)
         {
             float effectiveSkill = Mathf.Clamp01(profile.skillLevel * currentSkillModifier);
             float errorRange = (1f - effectiveSkill) * maxTracingError;
-            
-            // Em vez de mudar instantaneamente, definimos um novo alvo
             targetTracingNoise = Random.Range(-errorRange, errorRange);
-            noiseChangeTimer = Random.Range(2f, 4f); // Intervalos um pouco maiores
+            noiseChangeTimer = Random.Range(3f, 6f);
         }
+        currentTracingNoise = Mathf.Lerp(currentTracingNoise, targetTracingNoise, Time.fixedDeltaTime * 0.5f);
 
-        // Interpola suavemente para o novo erro
-        currentTracingNoise = Mathf.Lerp(currentTracingNoise, targetTracingNoise, Time.fixedDeltaTime * 2f);
+        // --- 2. LOOK-AHEAD DINÂMICO ---
+        // Em baixa velocidade olha perto (curvas fechadas), em alta olha longe (estabilidade).
+        float speedMS = rb.linearVelocity.magnitude;
+        float dynamicLookDistance = lookAheadDistance + (speedMS * lookAheadSpeedFactor);
+        Vector3 targetPos = GetLookAheadPointCustom(dynamicLookDistance); 
 
-        float combatLookAheadBonus = (currentState == AIState.Overtaking || currentState == AIState.Defending) ? 1.2f : 1.0f;
-        Vector3 targetPos = GetLookAheadPoint();
-        
-        // APLICAR OFFSET DE COMBATE SUAVEMENTE
-        // Em vez de somar lateralOffset direto, use um Lerp no valor final do offset
-        // Dentro de CalculateSteering()
+        // --- 3. OFFSET DE COMBATE E SEGURANÇA ---
         float avoidance = GetDifferentialAvoidance();
-        float wallDanger = Mathf.Abs(avoidance);
-        float safetyFilter = Mathf.Clamp01(1.0f - (wallDanger * 1.5f));
-
-        // NOVO: Se estiver defendendo, o offset deve ser mais reativo à posição do oponente
+        float safetyFilter = Mathf.Clamp01(1.0f - (Mathf.Abs(avoidance) * 1.5f));
+        
         float targetLateralOffset = lateralOffset;
-        if (currentState == AIState.Defending) {
-            // Aumenta o offset se o oponente tentar passar, mas reduz se houver parede
-            targetLateralOffset *= 1.2f; 
-        }
+        if (currentState == AIState.Defending) targetLateralOffset *= 1.2f;
 
         float effectiveOffset = (targetLateralOffset + currentTracingNoise) * safetyFilter;
+        targetPos += transform.right * effectiveOffset;
 
-        // Melhoria na projeção lateral: 
-        // Usamos o forward da IA para garantir que o desvio seja perpendicular ao movimento atual
-        Vector3 lateralDir = transform.right; 
-        targetPos += lateralDir * effectiveOffset;
-
+        // --- 4. CÁLCULO DE ÂNGULO E DEADZONE DINÂMICA ---
         Vector3 localTarget = transform.InverseTransformPoint(targetPos);
-        
-        // --- NOVO: DEADZONE E SENSIBILIDADE ---
         float angleToTarget = Mathf.Atan2(localTarget.x, localTarget.z) * Mathf.Rad2Deg;
+
+        // Se estiver lento, a zona morta é grande (8°). Se rápido, é pequena (1°).
+        float dynamicDeadzone = Mathf.Lerp(8.0f, 6.0f, speedMS / 20f);
         
-        // Se o ângulo for muito pequeno (ex: < 1 grau), ignore a correção para parar o jitter
-        if (Mathf.Abs(angleToTarget) < 1.0f) return 0f;
+        float rawSteerInput = 0f;
+        if (Mathf.Abs(angleToTarget) > dynamicDeadzone)
+        {
+            rawSteerInput = angleToTarget / maxSteerAngle;
+            // Curva de potência para suavizar o centro (mais controle)
+            rawSteerInput = Mathf.Sign(rawSteerInput) * Mathf.Pow(Mathf.Abs(rawSteerInput), 1.2f);
+        }
 
-        // Normaliza o erro entre -1 e 1 baseado no seu maxSteerAngle
-        float steerInput = angleToTarget / maxSteerAngle;
+        // --- 5. FILTRO LOW-PASS (O fim do tremor) ---
+        // Impede que o valor do input mude instantaneamente de um frame para o outro.
+        float steerSmoothSpeed = Mathf.Lerp(2f, 5f, speedMS / 60f); 
+        smoothedSteerInput = Mathf.MoveTowards(smoothedSteerInput, rawSteerInput, Time.fixedDeltaTime * steerSmoothSpeed);
 
-        // Aplica uma curva de potência: correções pequenas ficam mais suaves, 
-        // correções grandes continuam fortes.
-        steerInput = Mathf.Sign(steerInput) * Mathf.Pow(Mathf.Abs(steerInput), 1.2f);
+        return Mathf.Clamp(smoothedSteerInput + avoidance, -1f, 1f);
+    }
 
-        // Soma o avoidance (parede) com peso maior para emergências
-        return Mathf.Clamp(steerInput + avoidance, -1f, 1f);
+    // Método auxiliar para suportar a distância dinâmica
+    Vector3 GetLookAheadPointCustom(float distance)
+    {
+        Vector3 currentWp = waypoints[currentTargetIndex].position;
+        int nextIndex = (currentTargetIndex + 1) % waypoints.Count;
+        Vector3 nextWp = waypoints[nextIndex].position;
+
+        Vector3 segmentDir = (nextWp - currentWp).normalized;
+        float segmentLength = Vector3.Distance(currentWp, nextWp);
+        float dot = Vector3.Dot(transform.position - currentWp, segmentDir);
+        float targetProgress = Mathf.Clamp(dot, 0, segmentLength) + distance;
+
+        if (targetProgress > segmentLength)
+        {
+            int afterNextIndex = (nextIndex + 1) % waypoints.Count;
+            Vector3 secondDir = (waypoints[afterNextIndex].position - nextWp).normalized;
+            return nextWp + secondDir * (targetProgress - segmentLength);
+        }
+        return currentWp + (segmentDir * targetProgress);
     }
 
     Vector3 GetLookAheadPoint()
