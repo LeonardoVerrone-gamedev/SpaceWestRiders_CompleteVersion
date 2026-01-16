@@ -295,7 +295,7 @@ public class AIRacingController : MonoBehaviour
             
             // Em vez de mudar instantaneamente, definimos um novo alvo
             targetTracingNoise = Random.Range(-errorRange, errorRange);
-            noiseChangeTimer = Random.Range(2f, 4f); // Intervalos um pouco maiores
+            noiseChangeTimer = Random.Range(3f, 6f); // Intervalos um pouco maiores
         }
 
         // Interpola suavemente para o novo erro
@@ -507,7 +507,7 @@ public class AIRacingController : MonoBehaviour
             {
                 isRecovering = true;
                 wrongWayTimer = 0f; // Reseta o timer
-                if(!IsInvoking("StopRecovery")) Invoke("StopRecovery", 2.5f);
+                if(!IsInvoking("StopRecovery")) Invoke("StopRecovery", Random.Range(0.25f, 1.5f));
             }
         }
         else 
