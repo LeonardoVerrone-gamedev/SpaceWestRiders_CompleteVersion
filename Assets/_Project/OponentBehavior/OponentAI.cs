@@ -329,19 +329,28 @@ public class AIRacingController : MonoBehaviour
         
         // --- NOVO: DEADZONE E SENSIBILIDADE ---
         float angleToTarget = Mathf.Atan2(localTarget.x, localTarget.z) * Mathf.Rad2Deg;
+
+        float speedMS = rb.linearVelocity.z;
+
+        float dynamicDeadzone = Mathf.Lerp(8.0f, 6.0f, speedMS / 20f);
         
-        // Se o ângulo for muito pequeno (ex: < 1 grau), ignore a correção para parar o jitter
-        if (Mathf.Abs(angleToTarget) < 1.0f) return 0f;
+        float rawSteerInput = 0f;
+        if (Mathf.Abs(angleToTarget) > dynamicDeadzone)
+        {
+            rawSteerInput = angleToTarget / maxSteerAngle;
+            // Curva de potência para suavizar o centro (mais controle)
+            rawSteerInput = Mathf.Sign(rawSteerInput) * Mathf.Pow(Mathf.Abs(rawSteerInput), 1.2f);
+        }
 
         // Normaliza o erro entre -1 e 1 baseado no seu maxSteerAngle
-        float steerInput = angleToTarget / maxSteerAngle;
+        //float steerInput = angleToTarget / maxSteerAngle;
 
         // Aplica uma curva de potência: correções pequenas ficam mais suaves, 
         // correções grandes continuam fortes.
-        steerInput = Mathf.Sign(steerInput) * Mathf.Pow(Mathf.Abs(steerInput), 1.2f);
+        //steerInput = Mathf.Sign(steerInput) * Mathf.Pow(Mathf.Abs(steerInput), 1.2f);
 
         // Soma o avoidance (parede) com peso maior para emergências
-        return Mathf.Clamp(steerInput + avoidance, -1f, 1f);
+        return Mathf.Clamp(rawSteerInput + avoidance, -1f, 1f);
     }
 
     Vector3 GetLookAheadPoint()
