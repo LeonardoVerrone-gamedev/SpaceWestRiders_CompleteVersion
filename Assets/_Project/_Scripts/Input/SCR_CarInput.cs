@@ -263,8 +263,12 @@ public class SCR_CarInput : MonoBehaviour
         if (_handbrakeAction != null)
             _currentHandbrake = _handbrakeAction.ReadValue<float>() > 0.5f;
 
-        if (_turboAction != null)
-        _currentTurboPressed = _turboAction.ReadValue<float>() > 0.5f;
+        if (_turboAction != null){
+            if (_turboAction.WasPressedThisFrame())
+            {
+                OnTurboPressed?.Invoke(true);
+            }
+        }
 
         if (_toggleModeAction != null)
         {

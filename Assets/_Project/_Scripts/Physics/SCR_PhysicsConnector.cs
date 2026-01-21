@@ -118,10 +118,6 @@ public class SCR_PhysicsConnector : MonoBehaviour
         {
             if (_rayPhysics && _rayPhysics.enabled) _rayPhysics.ActivateTurbo();
         }
-        else
-        {
-            if (_rayPhysics && _rayPhysics.enabled) _rayPhysics.DeactivateTurbo();
-        }
     }
 
     private void OnSwitchMode(bool value)

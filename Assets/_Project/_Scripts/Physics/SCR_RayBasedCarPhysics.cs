@@ -153,10 +153,15 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     private Vector3 currentCarLocalVelocity = Vector3.zero;
     private float carVelocityRatio = 0;
 
+    [Header("Aerodynamics (Air Drag)")]
+    [SerializeField] float hoverAirDrag = 0.25f;   // Maior resistência para o Hover
+    [SerializeField] float classicAirDrag = 0.08f; // Classic "fura" o ar melhor
+    [SerializeField] float dragThreshold = 50f;
+
     #region Visual variables
 
     [HideInInspector][SerializeField] private float tireRorationSpeed = 3000f;
-    [HideInInspector][SerializeField] private float maxSteerAngle = 30f;
+    [SerializeField] private float maxSteerAngle = 30f;
 
     [Header("Hover Visual Transformation")]
     [HideInInspector][SerializeField] float transitionSpeed = 5f;
@@ -171,10 +176,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     [HideInInspector][SerializeField] private float respawnBoostIntensity = 1.5f; // Multiplicador de força no respawn
     
     [Header("Turbo & Stamina Settings")]
-    [SerializeField] private float maxStamina = 100f;
-    [SerializeField] private float currentStamina = 100f;
-    [SerializeField] private float staminaConsumptionRate = 30f; // Quanto gasta por segundo
-    [SerializeField] private float staminaRegenRate = 10f;       // Quanto recupera por segundo
+    [SerializeField] private int NOS_amount = 3;
     [SerializeField] private float turboInitialImpulse = 15f;    // O "X" do impulso inicial
     [SerializeField] private float turboMaxSpeedMultiplier = 2.0f;
     [SerializeField] private float turboAccelMultiplier = 2.0f;
@@ -182,6 +184,11 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     [Header("Turbo Cooldown Settings")]
     [SerializeField] private float _turboCooldownTime = 3; // Tempo de espera entre usos
     private float _nextTurboTime = 0f; // Marca quando o turbo poderá ser usado novamente
+    [SerializeField] float turboDuration = 4f;
+
+    [SerializeField] float turboBurstForce = 2.0f; // Impulso nos primeiros 0.5s
+    [SerializeField] float turboBodyTiltBase = -5f; // Inclinação da carroçaria para trás
+    private float turboTimer = 0f;
 
     [SerializeField]private bool _isTurboRequestActive = false; // Se o jogador está segurando o botão
     private Vector3 _lastSafePosition;
@@ -190,7 +197,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     private float _airTimer;
     private bool _isRespawning = false;
 
-    public float rubberBandingAccelerationMultiplier = 1f;
+    public float rubberBandingFactor = 1f;
 
     #endregion
 
@@ -279,8 +286,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             carBody = transform;
         }
 
-        currentStamina = maxStamina;
-
         rb.useGravity = false;
 
         SwitchToMode(carType);
@@ -302,7 +307,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     void Update()
     {
-        HandleStamina();
         UpdateDriftState();
         UpdateDriftBoost();
         CalculateDriftAngle();
@@ -335,6 +339,11 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         {
             ApplyDriftForces();
             LimitDriftAngle();
+        }
+
+        if (_isTurboActive)
+        {
+            ApplyTurboPhysics();
         }
 
         HandleRespawnSystem();
@@ -421,9 +430,15 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     {
 
         float effectiveMaxSpeed = maxSpeed;
+
+        if (AIControlled)
+        {
+            effectiveMaxSpeed *= rubberBandingFactor;
+        }
+        
         if (_isTurboActive) effectiveMaxSpeed *= turboMaxSpeedMultiplier;
 
-        if (currentCarLocalVelocity.z >= effectiveMaxSpeed) return;
+        if (Mathf.Abs(currentCarLocalVelocity.z) >= effectiveMaxSpeed) return;
 
         float currentAcceleration = acceleration;
     
@@ -453,7 +468,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         if (AIControlled)
         {
-            currentAcceleration *= rubberBandingAccelerationMultiplier;
+            currentAcceleration *= rubberBandingFactor;
         }
         
         rb.AddForceAtPosition(currentAcceleration * _currentThrottleInput * transform.forward, accelerationPoint.position, ForceMode.Acceleration);
@@ -461,7 +476,16 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     private void Deaceleration()
     {
-        rb.AddForceAtPosition(deceleration * _currentThrottleInput * transform.forward, accelerationPoint.position, ForceMode.Acceleration);
+        if (Mathf.Abs(currentCarLocalVelocity.z) >= maxSpeed / 3) return;
+
+        float currentDeceleration = deceleration;
+
+        if (AIControlled)
+        {
+            currentDeceleration *= rubberBandingFactor;
+        }
+
+        rb.AddForceAtPosition(currentDeceleration * _currentThrottleInput * transform.forward, accelerationPoint.position, ForceMode.Acceleration);
     }
 
     private void Turn()
@@ -691,49 +715,62 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     private void UpdateBodyTilt()
     {
         if (carBody == null) return;
-        
-        // Calcular velocidade atual em magnitude
+
+            // Calcular velocidade atual em magnitude
         float currentSpeed = rb.linearVelocity.magnitude;
         float speedFactor = speedTiltCurve.Evaluate(Mathf.Clamp01(currentSpeed / maxSpeed));
 
-        float driftRollMultiplier = _isDrifting ? 2f : 1f;
-        
-        // Calcular tilt para frente/trás (pitch) baseado na aceleração/freio
-        if (_currentThrottleInput > 0.1f)
+        if (_isTurboActive)
         {
-            // Acelerando - tilt para trás
-            _targetPitch = -maxPitchAngle * _currentThrottleInput * speedFactor;
-        }
-        else if (_currentBrakeInput > 0.1f)
-        {
-            // Freando - tilt para frente (mais pronunciado)
-            _targetPitch = maxPitchAngle * _currentBrakeInput * brakeTiltMultiplier * speedFactor;
+            float turboIntensity = 1.5f; // Multiplicador de agressividade do tilt no turbo
+            _targetPitch = -maxPitchAngle * turboIntensity;
+
+            // No Turbo, o Roll (inclinação lateral) é reduzido para passar sensação de estabilidade em alta velocidade
+            _targetRoll = (-maxRollAngle * _currentSteerInput * speedFactor) * 0.3f;
+
+            _targetPitch += Random.Range(-0.5f, 0.5f);
         }
         else
         {
-            // Sem input - retornar ao normal
-            _targetPitch = 0f;
+
+            float driftRollMultiplier = _isDrifting ? 2f : 1f;
+            
+            // Calcular tilt para frente/trás (pitch) baseado na aceleração/freio
+            if (_currentThrottleInput > 0.1f)
+            {
+                // Acelerando - tilt para trás
+                _targetPitch = -maxPitchAngle * _currentThrottleInput * speedFactor;
+            }
+            else if (_currentBrakeInput > 0.1f)
+            {
+                // Freando - tilt para frente (mais pronunciado)
+                _targetPitch = maxPitchAngle * _currentBrakeInput * brakeTiltMultiplier * speedFactor;
+            }
+            else
+            {
+                // Sem input - retornar ao normal
+                _targetPitch = 0f;
+            }
+            
+            // Calcular tilt para os lados (roll) baseado na direção
+            if (Mathf.Abs(_currentSteerInput) > 0.1f && currentSpeed > 1f)
+            {
+                // Virando - tilt para o lado oposto da curva (contra-steer visual)
+                _targetRoll = -maxRollAngle * _currentSteerInput * speedFactor * driftRollMultiplier;
+            }
+            else
+            {
+                // Sem direção ou velocidade baixa - retornar ao normal
+                _targetRoll = 0f;
+            }
         }
-        
-        // Calcular tilt para os lados (roll) baseado na direção
-        if (Mathf.Abs(_currentSteerInput) > 0.1f && currentSpeed > 1f)
-        {
-            // Virando - tilt para o lado oposto da curva (contra-steer visual)
-            _targetRoll = -maxRollAngle * _currentSteerInput * speedFactor * driftRollMultiplier;
-        }
-        else
-        {
-            // Sem direção ou velocidade baixa - retornar ao normal
-            _targetRoll = 0f;
-        }
-        
         // Aplicar suavização (lerp) para transições suaves
         float currentResponseSpeed = (Mathf.Abs(_targetPitch) > Mathf.Abs(_currentBodyPitch) || 
                                      Mathf.Abs(_targetRoll) > Mathf.Abs(_currentBodyRoll)) ? 
                                      tiltResponseSpeed : tiltReturnSpeed;
         
-        _currentBodyPitch = Mathf.Lerp(_currentBodyPitch, _targetPitch, Time.deltaTime * currentResponseSpeed);
-        _currentBodyRoll = Mathf.Lerp(_currentBodyRoll, _targetRoll, Time.deltaTime * currentResponseSpeed);
+        _currentBodyPitch = Mathf.Lerp(_currentBodyPitch, _targetPitch, Time.fixedDeltaTime * currentResponseSpeed);
+        _currentBodyRoll = Mathf.Lerp(_currentBodyRoll, _targetRoll, Time.fixedDeltaTime * currentResponseSpeed);
         
         // Aplicar a rotação ao corpo do carro
         // Preservar a rotação Y (direção) original do corpo
@@ -790,6 +827,24 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
                     rb.AddForce(downforce, ForceMode.Force);
                 }
             }
+        }
+    }
+
+    private void ApplyAirDrag()
+    {
+        // Calculamos a velocidade apenas no eixo Z (frente/trás) local
+        float forwardSpeed = currentCarLocalVelocity.z;
+
+        // Só aplicamos se estivermos acima do threshold para não impedir o carro de começar a andar
+        if (forwardSpeed > (dragThreshold / 3.6f)) 
+        {
+            float currentDragCoeff = (carType == CarType.hover) ? hoverAirDrag : classicAirDrag;
+
+            // Equação de Drag: F = -0.5 * rho * v^2 * Cd * A
+            // Simplificamos para: força = velocidade * velocidade * coeficiente
+            Vector3 dragForce = -transform.forward * (forwardSpeed * forwardSpeed * currentDragCoeff);
+
+            rb.AddForce(dragForce, ForceMode.Acceleration);
         }
     }
 
@@ -1068,25 +1123,49 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         }
     }
 
-    private void ApplyDriftForces()
+   private void ApplyDriftForces()
     {
-        if (!isGrounded) return;
-        
-        // Calcular intensidade do drift (0 a 1)
+        if (!isGrounded || !_isDrifting) return;
+
+        // 1. Calcular intensidade do drift (0 a 1)
         float driftIntensity = Mathf.Clamp01(Mathf.Abs(_currentDriftAngle) / maxDriftAngle);
         
-        // Força centrífuga durante drift (proporcional ao ângulo)
-        float centrifugalForce = rb.linearVelocity.magnitude * driftIntensity * 0.5f;
+        // 2. FORÇA DE EMPUXO FRONTAL (O segredo da V1 "gostosa")
+        // Em vez de apenas manter a velocidade, vamos dar um pequeno boost constante
+        // para que o carro sinta que está "tracionando" mesmo de lado.
+        float forwardSpeed = currentCarLocalVelocity.z;
+        if (forwardSpeed > 5f) // Só aplica se o carro já estiver em movimento
+        {
+            // Multiplicamos por 1.2f para compensar o arrasto lateral natural da V1
+            float speedMaintainForce = driftIntensity * acceleration * speedMaintainForceMultiplier * 1.2f;
+            rb.AddForce(transform.forward * speedMaintainForce, ForceMode.Acceleration);
+        }
+
+        // 3. ESTABILIDADE DE ÂNGULO (Drift Lock-in)
+        // Se o jogador não está dando input, nós "congelamos" a rotação.
+        // Isso evita que o carro rode sozinho (spin out) e deixa o drift "no trilho".
+        if (Mathf.Abs(_currentSteerInput) < 0.1f)
+        {
+            Vector3 localAV = transform.InverseTransformDirection(rb.angularVelocity);
+            
+            // Suavizamos a velocidade angular para zero. 10f é o "rigidez" do travamento.
+            localAV.y = Mathf.Lerp(localAV.y, 0f, Time.fixedDeltaTime * 10f);
+            
+            rb.angularVelocity = transform.TransformDirection(localAV);
+        }
+
+        // 4. FORÇA CENTRÍFUGA (Ajustada para não "expulsar" o carro da pista)
+        // Na V1, se essa força for muito alta, você perde o controle. Vamos suavizá-la.
+        float centrifugalForce = rb.linearVelocity.magnitude * driftIntensity * 0.4f;
         Vector3 forceDirection = -transform.right * Mathf.Sign(_currentDriftAngle);
         rb.AddForce(forceDirection * centrifugalForce, ForceMode.Acceleration);
         
-        // Reduzir arrasto frontal durante drift para manter velocidade
-        float forwardSpeed = currentCarLocalVelocity.z;
-        if (forwardSpeed > 0 && driftIntensity > 0.3f)
-        {
-            float speedMaintainForce = driftIntensity * acceleration * speedMaintainForceMultiplier;
-            rb.AddForce(transform.forward * speedMaintainForce, ForceMode.Acceleration);
-        }
+        // 5. LIMITADOR DE VELOCIDADE ANGULAR (Segurança Arcade)
+        // Garante que o carro nunca gire mais rápido do que o jogador consegue reagir.
+        Vector3 av = transform.InverseTransformDirection(rb.angularVelocity);
+        float maxRotation = 2.5f; // Ajuste este valor para mais ou menos agilidade
+        av.y = Mathf.Clamp(av.y, -maxRotation, maxRotation);
+        rb.angularVelocity = transform.TransformDirection(av);
     }
 
     private void EndDrift(bool giveBoost)
@@ -1245,22 +1324,47 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     public void ActivateTurbo() 
     {
-        if (Time.time >= _nextTurboTime && currentStamina > 5f && !_isTurboActive) 
+        // Só ativa se: tiver carga, não estiver ativo e o cooldown passou
+        if (NOS_amount > 0 && !_isTurboActive && Time.time >= _nextTurboTime) 
         {
-            _isTurboRequestActive = true;
-            
-            // Aplica o impulso inicial "X"
+            NOS_amount--; // Consome a carga imediatamente
+            _isTurboActive = true;
+            turboTimer = 0f; // Reseta o cronômetro do burst inicial
+
+            // O "Soco" inicial de velocidade
             rb.AddForce(transform.forward * turboInitialImpulse, ForceMode.VelocityChange);
+
+            // Agenda o desligamento automático
+            Invoke(nameof(StopTurbo), turboDuration);
+            
+            Debug.Log("NOS Ativado! Cargas restantes: " + NOS_amount);
         }
     }
 
-    public void DeactivateTurbo() 
+    private void StopTurbo() 
     {
-        if (_isTurboRequestActive) // Se estava ativo e ele soltou agora
+        _isTurboActive = false;
+        _nextTurboTime = Time.time + _turboCooldownTime;
+    }
+
+    private void ApplyTurboPhysics()
+    {
+        if (_isTurboActive)
         {
-            _nextTurboTime = Time.time + _turboCooldownTime;
+            turboTimer += Time.deltaTime;
+
+            // Multiplicador de Burst (primeiros 0.8s mais fortes)
+            float burst = (turboTimer < 0.8f) ? turboBurstForce : 1.0f;
+
+            // Força constante de aceleração durante o turbo
+            Vector3 nosForce = transform.forward * (acceleration * burst * rubberBandingFactor);
+            rb.AddForce(nosForce, ForceMode.Acceleration);
         }
-        _isTurboRequestActive = false;
+    }
+
+    public void GainNOS(int qnt)
+    {
+        NOS_amount += qnt;
     }
 
     #endregion
@@ -1285,36 +1389,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         carVelocityRatio = currentCarLocalVelocity.z / maxSpeed;
 
         speedKMH = currentCarLocalVelocity.z * 3.6f;
-    }
-
-    private void HandleStamina()
-    {
-        if (_isTurboRequestActive && currentStamina > 0)
-        {
-            _isTurboActive = true;
-            currentStamina -= staminaConsumptionRate * Time.deltaTime;
-            
-            // Se acabar a stamina, desliga automaticamente
-            if (currentStamina <= 0)
-            {
-                currentStamina = 0;
-                _isTurboActive = false;
-            }
-        }
-        else
-        {
-            _isTurboActive = false;
-        }
-
-        if (!_isTurboActive)
-        {
-            // Regenera se não estiver usando
-            if (currentStamina < maxStamina)
-            {
-                currentStamina += staminaRegenRate * Time.deltaTime;
-                currentStamina = Mathf.Min(currentStamina, maxStamina);
-            }
-        }
     }
     
     #endregion

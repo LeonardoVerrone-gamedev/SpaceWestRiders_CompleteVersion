@@ -40,23 +40,24 @@ public class AIRacingController : MonoBehaviour
     [SerializeField] private float maxSteerAngle = 15f; 
     [SerializeField] private float steeringSmoothness = 15f;
 
-    [Header("Recuperação")]
-    [SerializeField] private float stuckThreshold = 2f;
-
     [Header("Configurações de Erro")]
     [SerializeField] private float maxTracingError = 5.0f; // Metros máximos de desvio do traçado
     private float currentTracingNoise = 0f;
     private float noiseChangeTimer = 0f;
-    private float currentSkillModifier = 1f; // Usado para o Rubber Banding depois
-    [SerializeField] float hardSkillModifier = 2f;
-    [SerializeField] float easySkillModifier = 0.3f;
+
+    [Header("Dificuldade")]
+    [SerializeField] private AIDifficulty currentDifficulty = AIDifficulty.Hard;
+
+    [Header("Turbo e drift")]
+    [SerializeField] private float driftThresholdAngle = 25f; // Ângulo mínimo para decidir driftar
+    [SerializeField] private float turboStraightReach = 150f; // Distância de reta livre para soltar turbo
+    [SerializeField] private float minStaminaForTurbo = 20f;
 
     // Estado Interno
     private AIState currentState = AIState.Racing;
     private Rigidbody rb;
     private SCR_CarInput carInputs;
     private SCR_RayBasedCarPhysics car;
-    private float currentSteerVelocity;
     private float stuckTimer = 0f;
     private bool isRecovering = false;
     private float lateralOffset = 0f; // Usado para ultrapassagem/defesa
@@ -65,6 +66,9 @@ public class AIRacingController : MonoBehaviour
     private float chosenSide = 0; // -1 (esquerda), 1 (direita)
     float recoveryGraceTimer;
     private float targetTracingNoise = 0f;
+
+    private bool _isCurrentlyDrifting = false;
+    float _lastSteerOutput;
 
     SCR_RayBasedCarPhysics rayBasedPhysics;
 
@@ -77,15 +81,7 @@ public class AIRacingController : MonoBehaviour
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         if (sensorPivot == null) sensorPivot = transform;
 
-        if(rayBasedPhysics != null)
-        {
-            float accMult = 7f;
-            float speedMult = 9f;
-            float decelDivisor = 10.0f;
-
-            rayBasedPhysics.SetAI(true, accMult, speedMult, decelDivisor, this);
-            Debug.LogWarning($"Set AI parameters to {gameObject}");
-        }
+        SetDifficulty(currentDifficulty);
 
         waypoints.Clear();
         SCR_WaypointHolder holder = FindFirstObjectByType<SCR_WaypointHolder>();
@@ -97,6 +93,52 @@ public class AIRacingController : MonoBehaviour
             
             // Retorna a lista exata
             waypoints = holder.waypoints;
+        }
+    }
+
+    public void SetDifficulty(AIDifficulty difficulty)
+    {
+        currentDifficulty = difficulty;
+        
+        float accMult = 7f;
+        float speedMult = 9f;
+        float decelDivisor = 10f;
+
+        switch (difficulty)
+        {
+            case AIDifficulty.Easy:
+                // IA lenta, demora a acelerar e freia muito antes
+                accMult = 3f;
+                speedMult = 4f;
+                decelDivisor = 1f;
+                break;
+
+            case AIDifficulty.Medium:
+                // IA competitiva, mas comete erros de frenagem
+                accMult = 5f;
+                speedMult = 6.5f;
+                decelDivisor = 1f;
+                break;
+
+            case AIDifficulty.Hard:
+                // Seu padrão atual: trilhos e velocidade alta
+                accMult = 7f;
+                speedMult = 9f;
+                decelDivisor = 1f;
+                break;
+
+            case AIDifficulty.UltraHard:
+                // IA "F-Zero": aceleração insana e frenagem instantânea
+                accMult = 10f;
+                speedMult = 12f;
+                decelDivisor = 1f;
+                break;
+        }
+
+        if (rayBasedPhysics != null)
+        {
+            //rayBasedPhysics.SetAI(true, accMult, speedMult, decelDivisor, this);
+            rayBasedPhysics.SetAI(true, 1f, 1f, 1f, this);
         }
     }
 
@@ -119,6 +161,9 @@ public class AIRacingController : MonoBehaviour
         CheckIfStuck();
         CheckDirection();
         UpdateTargetIndex();
+
+        HandleAdvancedDriving();
+
         DetermineAIState();
 
         float steeringInput = (currentState == AIState.Recovering) ? CalculateRecoverySteer() : CalculateSteering();
@@ -126,19 +171,9 @@ public class AIRacingController : MonoBehaviour
 
         if (carInputs != null)
         {
-            // Interpolação do volante
-            float currentInput = carInputs.GetCurrentInputState().steering;
-            float dynamicSmoothness = Mathf.Lerp(steeringSmoothness, steeringSmoothness * 2f, Mathf.Abs(steeringInput));
-            float finalSteer = Mathf.MoveTowards(currentInput, steeringInput, Time.fixedDeltaTime * dynamicSmoothness);
-            
-            carInputs.SetSteeringInput(finalSteer);
+            carInputs.SetSteeringInput(steeringInput);
             carInputs.SetThrottleInput(throttleInput);
 
-            // --- LÓGICA F-ZERO DRIFT ASSISTIDO ---
-            // Se a curva for muito fechada (steering alto) e a velocidade for alta
-            bool shouldDrift = Mathf.Abs(finalSteer) > 0.7f && rb.linearVelocity.magnitude > 40f;
-            
-            // Chamamos o método do seu script de física via SCR_CarInput ou direto se preferir
             //carInputs.SetHandbrakeInput(shouldDrift); 
 
             if (currentState == AIState.Racing && car.IsGrounded)
@@ -155,7 +190,7 @@ public class AIRacingController : MonoBehaviour
                 float gripCorrection = Mathf.Lerp(2.0f, 0.5f, Mathf.Abs(carInputs.GetCurrentInputState().steering));
                 
                 // Aplicamos a força ignorando variações de inclinação bruscas
-                rb.AddForce(-sideVelocity * rb.mass * gripCorrection, ForceMode.Force);
+                //rb.AddForce(-sideVelocity * rb.mass * gripCorrection, ForceMode.Force);
             }
 
             // --- MELHORIA DE COMBATIVIDADE: FORÇA DE ARRANCADA ---
@@ -182,9 +217,11 @@ public class AIRacingController : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
         }
 
+        float recoveryTime = Random.Range(0.2f, 1f);
+
         // Opcional: Cancelar Invokes anteriores para garantir que o tempo de parada seja respeitado
         CancelInvoke("StopRecovery");
-        Invoke("StopRecovery", 2.0f); // Tempo que ele ficará parado/congelado
+        Invoke("StopRecovery", recoveryTime); // Tempo que ele ficará parado/congelado
     }
 
     void DetermineAIState()
@@ -290,7 +327,7 @@ public class AIRacingController : MonoBehaviour
         noiseChangeTimer -= Time.fixedDeltaTime;
         if (noiseChangeTimer <= 0)
         {
-            float effectiveSkill = Mathf.Clamp01(profile.skillLevel * currentSkillModifier);
+            float effectiveSkill = Mathf.Clamp01(profile.skillLevel);
             float errorRange = (1f - effectiveSkill) * maxTracingError;
             
             // Em vez de mudar instantaneamente, definimos um novo alvo
@@ -301,34 +338,41 @@ public class AIRacingController : MonoBehaviour
         // Interpola suavemente para o novo erro
         currentTracingNoise = Mathf.Lerp(currentTracingNoise, targetTracingNoise, Time.fixedDeltaTime * 2f);
 
-        float combatLookAheadBonus = (currentState == AIState.Overtaking || currentState == AIState.Defending) ? 1.2f : 1.0f;
+        //float combatLookAheadBonus = (currentState == AIState.Overtaking || currentState == AIState.Defending) ? 1.2f : 1.0f;
         Vector3 targetPos = GetLookAheadPoint();
+
+        // Se estiver em drift, aumentamos a sensibilidade do volante para corrigir a trajetória
+        float driftMultiplier = _isCurrentlyDrifting ? 1.5f : 1.0f;
         
-        // APLICAR OFFSET DE COMBATE SUAVEMENTE
-        // Em vez de somar lateralOffset direto, use um Lerp no valor final do offset
-        // Dentro de CalculateSteering()
         float avoidance = GetDifferentialAvoidance();
         float wallDanger = Mathf.Abs(avoidance);
         float safetyFilter = Mathf.Clamp01(1.0f - (wallDanger * 1.5f));
 
-        // NOVO: Se estiver defendendo, o offset deve ser mais reativo à posição do oponente
         float targetLateralOffset = lateralOffset;
         if (currentState == AIState.Defending) {
             // Aumenta o offset se o oponente tentar passar, mas reduz se houver parede
             targetLateralOffset *= 1.2f; 
         }
 
+        // --- CORREÇÃO: Erro relativo à PISTA, não ao CARRO ---
+        int nextIndex = (currentTargetIndex + 1) % waypoints.Count;
+        Vector3 trackDir = (waypoints[nextIndex].position - waypoints[currentTargetIndex].position).normalized;
+        Vector3 trackRight = Vector3.Cross(Vector3.up, trackDir).normalized; // Direita real da pista
+
         float effectiveOffset = (targetLateralOffset + currentTracingNoise) * safetyFilter;
 
-        // Melhoria na projeção lateral: 
-        // Usamos o forward da IA para garantir que o desvio seja perpendicular ao movimento atual
-        Vector3 lateralDir = transform.right; 
-        targetPos += lateralDir * effectiveOffset;
+        // Agora o alvo fica parado em relação à pista, mesmo que o carro balance
+        targetPos += trackRight * effectiveOffset;
 
-        Vector3 localTarget = transform.InverseTransformPoint(targetPos);
+        Vector3 directionToTarget = targetPos - transform.position;
+
+        // Projeta o vetor no plano local do carro (ignorando a altura relativa ao loop)
+        Vector3 localDir = transform.InverseTransformDirection(directionToTarget);
+        localDir.y = 0; // "Achata" o alvo no horizonte do carro
+        float angleToTarget = Vector3.SignedAngle(Vector3.forward, localDir.normalized, Vector3.up);
         
         // --- NOVO: DEADZONE E SENSIBILIDADE ---
-        float angleToTarget = Mathf.Atan2(localTarget.x, localTarget.z) * Mathf.Rad2Deg;
+        //float angleToTarget = Mathf.Atan2(localTarget.x, localTarget.z) * Mathf.Rad2Deg;
 
         float speedMS = rb.linearVelocity.z;
 
@@ -339,25 +383,26 @@ public class AIRacingController : MonoBehaviour
         {
             rawSteerInput = angleToTarget / maxSteerAngle;
             // Curva de potência para suavizar o centro (mais controle)
-            rawSteerInput = Mathf.Sign(rawSteerInput) * Mathf.Pow(Mathf.Abs(rawSteerInput), 1.2f);
+            rawSteerInput = Mathf.Sign(rawSteerInput) * Mathf.Pow(Mathf.Abs(rawSteerInput), 1.5f) * driftMultiplier;
         }
 
-        // Normaliza o erro entre -1 e 1 baseado no seu maxSteerAngle
-        //float steerInput = angleToTarget / maxSteerAngle;
+        float finalTarget = Mathf.Clamp(rawSteerInput + avoidance, -1f, 1f);
 
-        // Aplica uma curva de potência: correções pequenas ficam mais suaves, 
-        // correções grandes continuam fortes.
-        //steerInput = Mathf.Sign(steerInput) * Mathf.Pow(Mathf.Abs(steerInput), 1.2f);
+        // --- CORREÇÃO 4: Damping Interno Dinâmico ---
+        // Se estiver em linha reta, o volante volta pro centro muito rápido.
+        // Se estiver virando, ele é mais suave.
+        float steerLerpSpeed = (Mathf.Abs(finalTarget) < 0.1f) ? 15f : 8f;
+        
+        _lastSteerOutput = Mathf.MoveTowards(_lastSteerOutput, finalTarget, Time.fixedDeltaTime * steerLerpSpeed);
 
-        // Soma o avoidance (parede) com peso maior para emergências
-        return Mathf.Clamp(rawSteerInput + avoidance, -1f, 1f);
+        return _lastSteerOutput;
     }
 
     Vector3 GetLookAheadPoint()
     {
-        // O lookAhead base (ex: 20) somado à velocidade (m/s) multiplicada pelo fator.
-        // Se o carro está a 50m/s (180km/h), ele olhará 20 + (50 * 1.5) = 95 metros à frente.
-        float dynamicLookAhead = lookAheadDistance + (rb.linearVelocity.magnitude * lookAheadSpeedFactor);
+        // Use a velocidade local Z para o cálculo, evita oscilações de inclinação
+        float forwardSpeed = rb.linearVelocity.z;
+        float dynamicLookAhead = lookAheadDistance + (Mathf.Max(0, forwardSpeed) * lookAheadSpeedFactor);
         
         Vector3 currentWp = waypoints[currentTargetIndex].position;
         int nextIndex = (currentTargetIndex + 1) % waypoints.Count;
@@ -366,11 +411,15 @@ public class AIRacingController : MonoBehaviour
         Vector3 segmentDir = (nextWp - currentWp).normalized;
         float segmentLength = Vector3.Distance(currentWp, nextWp);
         
-        // Calcula o progresso atual do carro no segmento entre os waypoints
+        // Projetamos a posição do carro no segmento para saber onde ele está na linha
         float dot = Vector3.Dot(transform.position - currentWp, segmentDir);
+        
+        // O LookAhead deve ser calculado a partir da nossa PROJEÇÃO na pista, 
+        // não da nossa posição física atual (evita o zigue-zague se o carro sair da linha)
+        Vector3 carProjectedOnTrack = currentWp + segmentDir * Mathf.Clamp(dot, 0, segmentLength);
+        
         float targetProgress = Mathf.Clamp(dot, 0, segmentLength) + dynamicLookAhead;
 
-        // Se o ponto dinâmico ultrapassar o waypoint atual, ele projeta para o próximo segmento
         if (targetProgress > segmentLength)
         {
             int afterNextIndex = (nextIndex + 1) % waypoints.Count;
@@ -413,8 +462,14 @@ public class AIRacingController : MonoBehaviour
             return dot < 0 ? -0.4f : 1f; 
         }
 
+        float pitch = transform.eulerAngles.x;
+        if (pitch > 45f && pitch < 315f) // Detecta que o carro está inclinado/em loop
+        {
+            return 1.0f; // Força aceleração máxima para não cair
+        }
+
         float currentSpeedMS = rb.linearVelocity.magnitude;
-        float targetSpeedMS = (profile.baseTargetSpeedKmh / 3.6f);
+        float targetSpeedMS = (profile.baseTargetSpeedKmh / 3.6f) + Random.Range(-10f, 30f);
 
         // Frenagem por Curvatura
         Vector3 localTarget = transform.InverseTransformPoint(waypoints[currentTargetIndex].position);
@@ -489,6 +544,7 @@ public class AIRacingController : MonoBehaviour
 
         if (rb.linearVelocity.magnitude < 2f) // Aumentei para 2f para ser mais sensível
         {
+            float stuckThreshold = Random.Range(0.15f, 1f);
             stuckTimer += Time.fixedDeltaTime;
             if (stuckTimer > stuckThreshold) 
             { 
@@ -501,6 +557,8 @@ public class AIRacingController : MonoBehaviour
     void CheckDirection()
     {
         if (isRecovering) return; // Não checa se já estiver recuperando
+
+        if (Mathf.Abs(transform.up.y) < 0.5f) return;
 
         Vector3 wpPos = waypoints[currentTargetIndex].position;
         int prevIndex = currentTargetIndex == 0 ? waypoints.Count - 1 : currentTargetIndex - 1;
@@ -555,58 +613,70 @@ public class AIRacingController : MonoBehaviour
 
     private float ApplyRubberBanding(float baseThrottle)
     {
+        // 1. Definição do Alvo
         RacerStatus myTarget = huntsLeader ? RaceManager.Instance.HumanLeader : RaceManager.Instance.HumanTrailer;
         if (myTarget == null) return baseThrottle;
 
-        // --- LÓGICA DE DETECÇÃO DE HOVER NO ALVO ---
-        float hoverSpeedBoost = 1.0f;
-        car.rubberBandingAccelerationMultiplier = 1f;
-
         SCR_RayBasedCarPhysics targetPhysics = myTarget.GetComponent<SCR_RayBasedCarPhysics>();
-        
-        // Se o alvo for um Hover, aumentamos a agressividade da perseguição em 20%
-        bool isTargetHover = targetPhysics != null && targetPhysics.carType == CarType.hover;
-        if (isTargetHover)
-        {
-            hoverSpeedBoost = 1.5f; 
-        }
-
         RacerStatus myStatus = GetComponent<RacerStatus>();
+        
         float dist = Vector3.Distance(transform.position, myTarget.transform.position);
         bool isAheadOfTarget = myStatus.position < myTarget.position;
+        bool isTargetHover = targetPhysics != null && targetPhysics.carType == CarType.hover;
 
-        float speedMod = 1.0f;
-        currentSkillModifier = 1.0f; 
+        // Distâncias de controle (Sintonize aqui)
+        float minCatchUpDist = 20f;
+        float maxCatchUpDist = 150f; // A partir daqui, a IA usa o boost máximo
+        float minWaitDist = 40f;
+        float maxWaitDist = 180f;  // A partir daqui, a IA usa o debuff máximo
+
+        // Valor padrão (IA em performance normal)
+        float factor = 1.0f;
 
         // --- CATCH UP (IA ATRÁS) ---
-        if (!isAheadOfTarget && dist > 20f) 
+        if (!isAheadOfTarget && dist > minCatchUpDist)
         {
-            float intensity = Mathf.Pow(dist / 50f, 2f); 
+            // Interpolação linear de 0 a 1 baseada na distância
+            float t = Mathf.InverseLerp(minCatchUpDist, maxCatchUpDist, dist);
             
-            // Aplicamos o hoverSpeedBoost aqui no multiplicador de velocidade
-            speedMod = Mathf.Clamp(1.0f + intensity, 1.0f, maxCatchUpBoost * hoverSpeedBoost);
+            // Curva suave para não dar trancos (S-Curve)
+            t = t * t * (3f - 2f * t);
 
-            float accelBoost = isTargetHover ? hoverTargetAccelerationBoost : classicTargetAccelerationBoost; // Contra Hover a IA precisa de mais torque
-            car.rubberBandingAccelerationMultiplier = Mathf.Lerp(1f, accelBoost, intensity);
+            // O fator vai de 1.0 até maxCatchUpBoost
+            float targetBoost = maxCatchUpBoost;
 
-            currentSkillModifier = hardSkillModifier; 
+            // Bônus estratégico contra Hovers (eles são mais rápidos nas retas)
+            //if (isTargetHover) targetBoost *= 1.15f; 
+
+            factor = Mathf.Lerp(1.0f, targetBoost, t);
+            //currentSkillModifier = hardSkillModifier;
         }
-        // --- WAIT (IA MUITO À FRENTE) ---
-        else if (isAheadOfTarget && dist > 40f)
+        // --- WAIT (IA À FRENTE) ---
+        else if (isAheadOfTarget && dist > minWaitDist)
         {
-            float slowIntensity = Mathf.Clamp01((dist - 40f) / 100f);
-            
-            // Se o player estiver em hover, a IA "espera menos" (fica mais rápida mesmo no modo wait)
-            float waitLimit = targetPhysics.carType == CarType.hover ? maxWaitSlowdown * 1.1f : maxWaitSlowdown;
-            speedMod = Mathf.Lerp(1.0f, waitLimit, slowIntensity);
+            float t = Mathf.InverseLerp(minWaitDist, maxWaitDist, dist);
+            t = t * t * (3f - 2f * t);
 
-            car.rubberBandingAccelerationMultiplier = Mathf.Lerp(1.0f, waitAccelerationDecrease, slowIntensity);
+            // O fator vai de 1.0 até maxWaitSlowdown (ex: 0.75)
+            float targetWait = maxWaitSlowdown;
 
-            currentSkillModifier = Mathf.Lerp(1.0f, easySkillModifier, slowIntensity);
+            // Se o player for hover, a IA espera menos (fica mais rápida) pois o player recupera rápido
+            if (isTargetHover) targetWait = Mathf.Min(1.0f, targetWait * 1.2f);
+
+            factor = Mathf.Lerp(1.0f, targetWait, t);
+            //currentSkillModifier = easySkillModifier;
+        }
+        else
+        {
+            // Zona de conforto (IA perto do player)
+            factor = 1.0f;
+            //currentSkillModifier = 1.0f;
         }
 
-        float baseTargetSpeed = (profile.baseTargetSpeedKmh / 3.6f);
-        rayBasedPhysics.SetMaxSpeed(baseTargetSpeed * speedMod);
+        // --- APLICAÇÃO FINAL ---
+        
+        // 1. Atualiza a variável no script de física (afeta aceleração e freio)
+        car.rubberBandingFactor = factor;
 
         return baseThrottle;
     }
@@ -622,4 +692,92 @@ public class AIRacingController : MonoBehaviour
         Gizmos.color = Color.yellow;
         //Gizmos.DrawSphere(GetLookAheadPoint(), 2f);
     }
+
+    #region Turbo e drift
+
+    private void AnalyzeTrackAhead(out float averageCurvature, out float straightDistance, out Vector3 targetDirection)
+    {
+        averageCurvature = 0f;
+        straightDistance = 0f;
+        int lookAheadSteps = 5; 
+        
+        // O targetDirection padrão agora também é calculado no espaço local
+        targetDirection = transform.forward; 
+
+        for (int i = 0; i < lookAheadSteps; i++)
+        {
+            int index = (currentTargetIndex + i) % waypoints.Count;
+            int nextIndex = (index + 1) % waypoints.Count;
+            
+            Vector3 worldDirToWp = (waypoints[nextIndex].position - waypoints[index].position).normalized;
+
+            Vector3 localDirToWp = transform.InverseTransformDirection(worldDirToWp);
+            
+            // Ignoramos a inclinação (Y local), focando apenas se a pista vira para os lados
+            localDirToWp.y = 0;
+            localDirToWp.Normalize();
+
+            // Calculamos o ângulo em relação ao "Forward" local do carro
+            // Se localDirToWp.z for 1, a pista está reta na frente do para-brisa
+            float angle = Vector3.Angle(Vector3.forward, localDirToWp);
+            if (angle > 5f) averageCurvature += angle;
+
+            if (i == 1) targetDirection = worldDirToWp; 
+
+            // Se o ângulo local for pequeno, contamos como reta
+            if (angle < 10f) straightDistance += Vector3.Distance(waypoints[index].position, waypoints[nextIndex].position);
+        }
+        averageCurvature /= lookAheadSteps;
+    }
+
+    void HandleAdvancedDriving()
+    {
+        AnalyzeTrackAhead(out float curvature, out float straightLen, out Vector3 targetTrackDir);
+
+        // --- THRESHOLDS MAIS ALTOS E DINÂMICOS ---
+        // Aumentamos a base: IA Cautelosa só drifta em 50°, IA Agressiva em 30°
+        float minDriftAngle = Mathf.Lerp(50f, 30f, profile.aggressiveness);
+        
+        // Velocidade mínima também baseada na agressividade (IAs agressivas tentam driftar mais devagar)
+        float minSpeedForDrift = Mathf.Lerp(50f, 35f, profile.aggressiveness);
+
+        Vector3 localDirToNextPoint = transform.InverseTransformPoint(waypoints[currentTargetIndex].position);
+        localDirToNextPoint.y = 0;
+        float angleToNextPointLocal = Vector3.Angle(Vector3.forward, localDirToNextPoint.normalized);
+
+        // Pegamos a velocidade local (usando o seu script de física)
+        // Se não tiver acesso ao currentCarLocalVelocity, use rb.transform.InverseTransformDirection(rb.linearVelocity)
+        float forwardSpeed = rb.linearVelocity.z;
+
+        if (!_isCurrentlyDrifting)
+        {
+            // CONDIÇÃO DE ENTRADA MUITO MAIS RIGOROSA
+            if (curvature > minDriftAngle && 
+                forwardSpeed > minSpeedForDrift && 
+                angleToNextPointLocal > 15f) // Aumentado de 10 para 15 para evitar gatilhos bobos
+            {
+                _isCurrentlyDrifting = true;
+            }
+        }
+        else 
+        {
+            // SAÍDA DE DRIFT
+            // IAs agressivas seguram o drift por mais tempo
+            float exitAngleThreshold = Mathf.Lerp(15f, 5f, profile.aggressiveness);
+            
+            Vector3 localTargetTrackDir = transform.InverseTransformDirection(targetTrackDir);
+            localTargetTrackDir.y = 0;
+            float angleToTargetDirLocal = Vector3.Angle(Vector3.forward, localTargetTrackDir.normalized);
+
+            // Se o carro já alinhou ou ficou devagar demais, solta o freio de mão
+            if (angleToTargetDirLocal < exitAngleThreshold || forwardSpeed < 25f || curvature < 10f)
+            {
+                _isCurrentlyDrifting = false;
+            }
+        }
+    }
+
+    #endregion
 }
+
+public enum AIDifficulty { Easy, Medium, Hard, UltraHard }
