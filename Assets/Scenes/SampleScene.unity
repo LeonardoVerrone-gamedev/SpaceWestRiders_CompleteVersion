@@ -41356,6 +41356,26 @@ PrefabInstance:
       propertyPath: _carInput
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 4352947267041092291, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4352947267041092291, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.atime2
+      value: 48959
+      objectReference: {fileID: 0}
+    - target: {fileID: 4352947267041092291, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key0.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4352947267041092291, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key2.a
+      value: 0.5568628
+      objectReference: {fileID: 0}
+    - target: {fileID: 4352947267041092291, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key3.a
+      value: 0.5019608
+      objectReference: {fileID: 0}
     - target: {fileID: 5786627570265934399, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_Enabled
       value: 0
