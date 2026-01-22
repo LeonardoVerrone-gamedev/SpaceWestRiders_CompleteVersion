@@ -8,7 +8,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 {
     public CarType carType;
     public bool canSwitchType = false;
-    [SerializeField] float speedKMH;
+    public float speedKMH;
     #region basic components
     [Header("Basic Components References")]
     [SerializeField] Rigidbody rb;
@@ -82,7 +82,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     #region Drift System
     [Header("Drift System Settings")]
-    [HideInInspector][SerializeField] private float maxDriftAngle = 45f; // Ângulo máximo de drift (graus)
+    [SerializeField] private float maxDriftAngle = 45f; // Ângulo máximo de drift (graus)
     [HideInInspector][SerializeField] private float driftEnterThreshold = 0.3f; // Velocidade mínima para entrar em drift (0-1)
     [SerializeField] private float driftBoostForce = 50f; // Força do boost ao sair do drift
     [SerializeField] private float driftBoostDuration = 1f; // Duração do boost
@@ -129,6 +129,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     [HideInInspector]public float GetBrakeInput() => _currentBrakeInput;
     [HideInInspector]public float GetSteerInput() => _currentSteerInput;
     [HideInInspector]public float GetCurrentSpeed() => speedKMH;
+    public bool IsTurboActive() => _isTurboActive;
 
     [HideInInspector]public bool IsGrounded => isGrounded;
 
@@ -1156,7 +1157,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         // 4. FORÇA CENTRÍFUGA (Ajustada para não "expulsar" o carro da pista)
         // Na V1, se essa força for muito alta, você perde o controle. Vamos suavizá-la.
-        float centrifugalForce = rb.linearVelocity.magnitude * driftIntensity * 0.4f;
+        float centrifugalForce = rb.linearVelocity.magnitude * driftIntensity * 0.3f;
         Vector3 forceDirection = -transform.right * Mathf.Sign(_currentDriftAngle);
         rb.AddForce(forceDirection * centrifugalForce, ForceMode.Acceleration);
         

@@ -8,16 +8,17 @@ public class CameraController : MonoBehaviour
 {
     [SerializeField] bool useCinemachine = true;
     [SerializeField] CinemachineCamera vCam;
-    [SerializeField] CinemachineCamera brake_VCam;
     [SerializeField] CinemachineCamera turbo_VCam;
 
     [SerializeField] Camera cam;
 
     private Transform player;
     private Rigidbody playerRB;
+
+    public Transform cameraTarget => player;
     
     //  SISTEMA RADICAL: Estado único e transições imediatas com blending nativo
-    public enum CameraType { Default, Brake, Turbo }
+    public enum CameraType { Default, Turbo }
     [SerializeField] private CameraType currentCameraType = CameraType.Default;
     
     [Header("Configurações de Blending - Sistema Simplificado")]
@@ -159,6 +160,9 @@ public class CameraController : MonoBehaviour
     private float currentMotionBlurIntensity = 0f;
     private float currentLensDistortionIntensity = 0f;
 
+    [Header("Física Cache")]
+    private SCR_RayBasedCarPhysics carPhysics; // Cache da referência de física
+
     void Start()
     {
         //  CONFIGURAÇÃO DOS VOLUMES
@@ -180,6 +184,72 @@ public class CameraController : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        // 1. Checagem de segurança e atualização de efeitos baseados em física
+        HandlePhysicsBasedEffects();
+    }
+
+    private void HandlePhysicsBasedEffects()
+    {
+        if (player == null || carPhysics == null) return;
+
+        // 2. Atualiza FOV e Efeitos de Volume baseados na velocidade km/h da física
+        float speedKmh = playerRB != null ? playerRB.linearVelocity.magnitude * 3.6f : 0f;
+        UpdateCameraBasedOnSpeed(speedKmh);
+
+        // 3. Gerenciamento automático de Estados de Câmera
+        ManageCameraStates();
+    }
+
+    private void ManageCameraStates()
+    {
+        // Prioridade 1: Turbo
+        if (carPhysics.IsTurboActive())
+        {
+            if (currentCameraType != CameraType.Turbo)
+            {
+                SetCam(CameraType.Turbo);
+            }
+        }
+        else
+        {
+            if (currentCameraType != CameraType.Default)
+            {
+                SetCam(CameraType.Default);
+            }
+        }
+    }
+
+    public void SetTarget(Transform newTarget)
+    {
+        player = newTarget;
+        playerRB = player?.GetComponent<Rigidbody>();
+
+        // ATUALIZAÇÃO DO CACHE DE FÍSICA SEMPRE QUE O PLAYER MUDA
+        if (player != null)
+        {
+            carPhysics = player.GetComponent<SCR_RayBasedCarPhysics>();
+            // Se o script de física estiver no pai ou filho, ajuste:
+            if (carPhysics == null) carPhysics = player.GetComponentInParent<SCR_RayBasedCarPhysics>();
+        }
+        else
+        {
+            carPhysics = null;
+        }
+
+        if (useCinemachine && vCam != null)
+        {
+            vCam.Follow = player;
+            if (turbo_VCam != null) turbo_VCam.Follow = player;
+            
+            ResetAllCameras();
+            vCam.Priority = 10;
+            currentCameraType = CameraType.Default;
+            UpdateVolumes(currentCameraType);
+        }
+    }
+
     public void SetChannel(int playerIndex)
     {
         // Converte o index (0, 1) para uma Layer Mask de canais (1, 2, 4...)
@@ -195,7 +265,6 @@ public class CameraController : MonoBehaviour
 
         // 2. Configura todas as Virtual Cameras do Prefab para esse canal
         vCam.OutputChannel = channelMask;
-        if (brake_VCam != null) brake_VCam.OutputChannel = channelMask;
         if (turbo_VCam != null) turbo_VCam.OutputChannel = channelMask;
 
         int layerP1 = LayerMask.NameToLayer("VolumeP1");
@@ -281,25 +350,6 @@ public class CameraController : MonoBehaviour
             {
                 currentLensDistortionIntensity = lensDistortion.intensity.value;
             }
-        }
-    }
-
-    public void SetTarget(Transform newTarget)
-    {
-        player = newTarget;
-        playerRB = player?.GetComponent<Rigidbody>();
-
-        if (useCinemachine && vCam != null)
-        {
-            vCam.Follow = player;
-            if (brake_VCam != null) brake_VCam.Follow = player;
-            if (turbo_VCam != null) turbo_VCam.Follow = player;
-            
-            //  CONFIGURAÇÃO INICIAL: Apenas a câmera default ativa
-            ResetAllCameras();
-            vCam.Priority = 10;
-            currentCameraType = CameraType.Default;
-            UpdateVolumes(currentCameraType);
         }
     }
 
@@ -411,15 +461,11 @@ public class CameraController : MonoBehaviour
         switch (type)
         {
             case CameraType.Turbo:
-                SwitchToCamera(turbo_VCam, vCam, brake_VCam, turboBlendTime);
-                break;
-                
-            case CameraType.Brake:
-                SwitchToCamera(brake_VCam, vCam, turbo_VCam, brakeBlendTime);
+                SwitchToCamera(turbo_VCam, vCam, turboBlendTime);
                 break;
                 
             case CameraType.Default:
-                SwitchToCamera(vCam, brake_VCam, turbo_VCam, normalBlendTime);
+                SwitchToCamera(vCam, turbo_VCam, normalBlendTime);
                 break;
         }
         
@@ -433,7 +479,7 @@ public class CameraController : MonoBehaviour
     }
 
     //  MÉTODO SIMPLIFICADO: Ativa uma câmera e desativa as outras
-    private void SwitchToCamera(CinemachineCamera activeCam, CinemachineCamera deactiveCam1, CinemachineCamera deactiveCam2, float blendTime)
+    private void SwitchToCamera(CinemachineCamera activeCam, CinemachineCamera deactiveCam1, float blendTime)
     {
         if (activeCam == null) return;
 
@@ -452,11 +498,6 @@ public class CameraController : MonoBehaviour
         if (deactiveCam1 != null)
         {
             deactiveCam1.Priority = 0;
-        }
-        
-        if (deactiveCam2 != null)
-        {
-            deactiveCam2.Priority = 0;
         }
     }
 
@@ -478,7 +519,6 @@ public class CameraController : MonoBehaviour
                 }
                 break;
                 
-            case CameraType.Brake:
             case CameraType.Default:
                 //  DEFAULT e BRAKE: Ativa apenas o volume default
                 defaultVolume.gameObject.SetActive(true);
@@ -511,12 +551,12 @@ public class CameraController : MonoBehaviour
         //  TURBO tem prioridade absoluta e transição imediata
         if (targetType == CameraType.Turbo)
         {
-            ForceSwitchToCamera(turbo_VCam, vCam, brake_VCam);
+            ForceSwitchToCamera(turbo_VCam, vCam);
             currentCameraType = CameraType.Turbo;
         }
         else if (currentCameraType == CameraType.Turbo) // Só volta se estava no turbo
         {
-            ForceSwitchToCamera(vCam, turbo_VCam, brake_VCam);
+            ForceSwitchToCamera(vCam, turbo_VCam);
             currentCameraType = CameraType.Default;
         }
         
@@ -524,7 +564,7 @@ public class CameraController : MonoBehaviour
     }
 
     //  MÉTODO FORÇADO para turbo (sem bloqueios)
-    private void ForceSwitchToCamera(CinemachineCamera activeCam, CinemachineCamera deactiveCam1, CinemachineCamera deactiveCam2)
+    private void ForceSwitchToCamera(CinemachineCamera activeCam, CinemachineCamera deactiveCam1)
     {
         if (activeCam == null) return;
 
@@ -537,11 +577,6 @@ public class CameraController : MonoBehaviour
         {
             deactiveCam1.Priority = 0;
         }
-        
-        if (deactiveCam2 != null)
-        {
-            deactiveCam2.Priority = 0;
-        }
     }
 
     private void ResetAllCameras()
@@ -549,10 +584,6 @@ public class CameraController : MonoBehaviour
         if (vCam != null)
         {
             vCam.Priority = 10;
-        }
-        if (brake_VCam != null)
-        {
-            brake_VCam.Priority = 0;
         }
         if (turbo_VCam != null)
         {
@@ -567,7 +598,6 @@ public class CameraController : MonoBehaviour
         switch (type)
         {
             case CameraType.Default: return vCam;
-            case CameraType.Brake: return brake_VCam;
             case CameraType.Turbo: return turbo_VCam;
             default: return vCam;
         }

@@ -6,15 +6,22 @@ public class SCR_CarEffects : MonoBehaviour
     [SerializeField] private SCR_RayBasedCarPhysics carPhysics;
     
     [Header("Drift VFX")]
-    [SerializeField] private ParticleSystem[] driftParticles; // Lista para suportar fumaça em vários pneus
+    [SerializeField] private ParticleSystem[] driftParticles; 
     [SerializeField] private float minEmissionRate = 10f;
     [SerializeField] private float maxEmissionRate = 100f;
+    [SerializeField] private float minStartSize = 5f; // Novo: Tamanho mínimo
+    [SerializeField] private float maxStartSize = 30f; // Novo: Tamanho máximo
     
     [Header("Drift Boost VFX")]
     [SerializeField] private ParticleSystem boostParticles;
     
-    private ParticleSystem.EmissionModule[] emissionModules;
+    [Header("Turbo VFX")]
+    [SerializeField] private ParticleSystem turboParticles; // Novo: Sistema de Turbo
+
+    private ParticleSystem.EmissionModule[] driftEmissionModules;
+    private ParticleSystem.MainModule[] driftMainModules; // Cache para o tamanho
     private bool _lastBoostState = false;
+    private bool _lastTurboState = false;
 
     Rigidbody rb;
 
@@ -22,88 +29,100 @@ public class SCR_CarEffects : MonoBehaviour
     {
         if (carPhysics == null) carPhysics = GetComponentInParent<SCR_RayBasedCarPhysics>();
 
-        // Inicializa os módulos de emissão para evitar chamadas de cache no Update
-        emissionModules = new ParticleSystem.EmissionModule[driftParticles.Length];
+        // Inicializa caches do Drift
+        driftEmissionModules = new ParticleSystem.EmissionModule[driftParticles.Length];
+        driftMainModules = new ParticleSystem.MainModule[driftParticles.Length];
+
         for (int i = 0; i < driftParticles.Length; i++)
         {
-            emissionModules[i] = driftParticles[i].emission;
-            emissionModules[i].enabled = true; // Começa desligado
-
-            // Começa com zero para não emitir ao dar Play
-            var rate = emissionModules[i].rateOverTime;
-            rate.constant = 0;
-            emissionModules[i].rateOverTime = rate;
+            driftEmissionModules[i] = driftParticles[i].emission;
+            driftMainModules[i] = driftParticles[i].main;
+            
+            // Garante que comece zerado
+            driftEmissionModules[i].rateOverTime = 0;
         }
 
-        if (boostParticles != null)
-        {
-            var boostEmission = boostParticles.emission;
-            boostEmission.enabled = false;
-        }
+        // Inicializa Boost e Turbo
+        SetupToggleableParticles(boostParticles);
+        SetupToggleableParticles(turboParticles);
 
         rb = carPhysics.GetComponent<Rigidbody>();
+    }
+
+    private void SetupToggleableParticles(ParticleSystem ps)
+    {
+        if (ps != null)
+        {
+            var em = ps.emission;
+            em.enabled = false;
+        }
     }
 
     void Update()
     {
         HandleDriftVFX();
         HandleBoostVFX();
+        HandleTurboVFX(); // Nova chamada
     }
 
     private void HandleDriftVFX()
     {
-        // Calcula a velocidade lateral (quanto o carro está escorregando para os lados)
-        // TransformVector transforma a velocidade global em local. O eixo X é o lado.
         Vector3 localVelocity = transform.InverseTransformDirection(rb.linearVelocity);
         float sideSlip = Mathf.Abs(localVelocity.x);
-        
         float speedRatio = rb.linearVelocity.magnitude / carPhysics.OriginalMaxSpeed();
 
-        // --- LÓGICA UNIVERSAL ---
-        // Ativamos se: 
-        // 1. O carro estiver escorregando lateralmente acima de um limite (ex: 5m/s)
-        // 2. OU se o sistema de drift estiver explicitamente ativo
         bool isSlipping = sideSlip > 5f && speedRatio > 0.15f; 
         bool isIntentionallyDrifting = carPhysics.IsDrifting();
-
         bool showEffects = isSlipping || isIntentionallyDrifting;
 
         for (int i = 0; i < driftParticles.Length; i++)
         {
-            var em = emissionModules[i];
             if (showEffects)
             {
-                // A intensidade aumenta conforme o escorregão lateral aumenta
+                // Calcula intensidade (0 a 1)
                 float intensity = isIntentionallyDrifting ? 1.0f : Mathf.Clamp01(sideSlip / 15f);
-                em.rateOverTime = Mathf.Lerp(minEmissionRate, maxEmissionRate, intensity);
+                
+                // Aplica emissão
+                driftEmissionModules[i].rateOverTime = Mathf.Lerp(minEmissionRate, maxEmissionRate, intensity);
+                
+                // Aplica variação de tamanho (Start Size)
+                driftMainModules[i].startSize = Mathf.Lerp(minStartSize, maxStartSize, intensity);
             }
             else
             {
-                em.rateOverTime = 0;
+                driftEmissionModules[i].rateOverTime = 0;
             }
         }
     }
 
     private void HandleBoostVFX()
     {
-        if (boostParticles == null) return;
+        UpdateParticleState(boostParticles, carPhysics.IsDriftBoostActive(), ref _lastBoostState);
+    }
 
-        bool isBoosting = carPhysics.IsDriftBoostActive();
+    private void HandleTurboVFX()
+    {
+        // Utiliza a bool IsTurboActive() conforme solicitado
+        UpdateParticleState(turboParticles, carPhysics.IsTurboActive(), ref _lastTurboState);
+    }
 
-        // Dispara o boost apenas quando o estado muda para verdadeiro
-        if (isBoosting && !_lastBoostState)
+    // Método auxiliar para evitar repetição de código entre Boost e Turbo
+    private void UpdateParticleState(ParticleSystem ps, bool currentState, ref bool lastState)
+    {
+        if (ps == null) return;
+
+        if (currentState && !lastState)
         {
-            boostParticles.Play();
-            var em = boostParticles.emission;
+            ps.Play();
+            var em = ps.emission;
             em.enabled = true;
         }
-        else if (!isBoosting && _lastBoostState)
+        else if (!currentState && lastState)
         {
-            var em = boostParticles.emission;
+            var em = ps.emission;
             em.enabled = false;
-            boostParticles.Stop();
+            ps.Stop();
         }
-
-        _lastBoostState = isBoosting;
+        lastState = currentState;
     }
 }

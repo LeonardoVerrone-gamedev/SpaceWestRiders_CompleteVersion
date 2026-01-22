@@ -161,167 +161,6 @@ MonoBehaviour:
     NearLimit: 5
     FarLimit: 30
     MaxQualityBoost: 0.2
---- !u!1 &768007799717633208
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 298472278271687048}
-  - component: {fileID: 7480882536218147990}
-  - component: {fileID: 2783309880450159603}
-  - component: {fileID: 1753179359602070726}
-  - component: {fileID: 1749914785697948744}
-  m_Layer: 0
-  m_Name: Car_Vcam (Brake)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &298472278271687048
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 768007799717633208}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0.000048901064, y: 0.00007161855, z: -0.0000000035016874, w: 1}
-  m_LocalPosition: {x: -5.9841604, y: 1.77598, z: -9.534547}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2294449104073155307}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7480882536218147990
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 768007799717633208}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Priority:
-    Enabled: 0
-    m_Value: 0
-  OutputChannel: 1
-  StandbyUpdate: 2
-  m_StreamingVersion: 20241001
-  m_LegacyPriority: 0
-  Target:
-    TrackingTarget: {fileID: 0}
-    LookAtTarget: {fileID: 0}
-    CustomLookAtTarget: 0
-  Lens:
-    FieldOfView: 40
-    OrthographicSize: 5
-    NearClipPlane: 0.1
-    FarClipPlane: 5000
-    Dutch: 0
-    ModeOverride: 2
-    PhysicalProperties:
-      GateFit: 2
-      SensorSize: {x: 21.946, y: 16.002}
-      LensShift: {x: 0, y: 0}
-      FocusDistance: 10
-      Iso: 200
-      ShutterSpeed: 0.005
-      Aperture: 16
-      BladeCount: 5
-      Curvature: {x: 2, y: 11}
-      BarrelClipping: 0.25
-      Anamorphism: 0
-  BlendHint: 0
---- !u!114 &2783309880450159603
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 768007799717633208}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 886251e9a18ece04ea8e61686c173e1b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CameraDistance: 11
-  DeadZoneDepth: 0
-  Composition:
-    ScreenPosition: {x: 0, y: 0.1}
-    DeadZone:
-      Enabled: 0
-      Size: {x: 0.3507246, y: 0.7439793}
-    HardLimits:
-      Enabled: 1
-      Size: {x: 0.36, y: 0.8}
-      Offset: {x: 0, y: -0.32}
-  CenterOnActivate: 1
-  TargetOffset: {x: 0, y: 2, z: 0}
-  Damping: {x: 0.2, y: 0.2, z: 0.6}
-  Lookahead:
-    Enabled: 0
-    Time: 0
-    Smoothing: 0
-    IgnoreY: 0
---- !u!114 &1753179359602070726
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 768007799717633208}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4afa82ae3200b82408d605c3dbdd1e38, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Damping: 3
---- !u!114 &1749914785697948744
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 768007799717633208}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbe43d662878a7c43bcd44d43c9e2094, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CollideAgainst:
-    serializedVersion: 2
-    m_Bits: 0
-  IgnoreTag: 
-  TransparentLayers:
-    serializedVersion: 2
-    m_Bits: 311
-  MinimumDistanceFromTarget: 0.3
-  AvoidObstacles:
-    Enabled: 1
-    DistanceLimit: 15
-    MinimumOcclusionTime: 0
-    CameraRadius: 0.4
-    UseFollowTarget:
-      Enabled: 0
-      YOffset: 0
-    Strategy: 0
-    MaximumEffort: 4
-    SmoothingTime: 0
-    Damping: 0.4
-    DampingWhenOccluded: 0.2
-  ShotQualityEvaluation:
-    Enabled: 0
-    OptimalDistance: 10
-    NearLimit: 5
-    FarLimit: 30
-    MaxQualityBoost: 0.2
 --- !u!1 &3305247206701220772
 GameObject:
   m_ObjectHideFlags: 0
@@ -337,7 +176,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1962932720998239726
 Transform:
   m_ObjectHideFlags: 0
@@ -384,8 +223,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3648613549037306568}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.000098234625, y: -0.0000023056393, z: 2.2649939e-10, w: 1}
-  m_LocalPosition: {x: -5.9841604, y: 2.704007, z: -9.034547}
+  m_LocalRotation: {x: 0.004017779, y: 0.9576682, z: -0.0058099693, w: 0.28778777}
+  m_LocalPosition: {x: 1.3345604, y: 3.8461494, z: 6.3211403}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -415,7 +254,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 80
+    FieldOfView: 50
     OrthographicSize: 5
     NearClipPlane: 0.1
     FarClipPlane: 5000
@@ -446,7 +285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 886251e9a18ece04ea8e61686c173e1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CameraDistance: 10
+  CameraDistance: 7
   DeadZoneDepth: 0
   Composition:
     ScreenPosition: {x: 0, y: 0.1}
@@ -492,11 +331,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CollideAgainst:
     serializedVersion: 2
-    m_Bits: 8192
+    m_Bits: 0
   IgnoreTag: 
   TransparentLayers:
     serializedVersion: 2
-    m_Bits: 7991
+    m_Bits: 1847
   MinimumDistanceFromTarget: 0.3
   AvoidObstacles:
     Enabled: 1
@@ -533,7 +372,7 @@ MonoBehaviour:
   PivotOffset: {x: 0, y: 0, z: 1}
   AmplitudeGain: 0.25
   FrequencyGain: 0.25
-  m_NoiseOffsets: {x: 0, y: 0, z: 0}
+  m_NoiseOffsets: {x: 993.8457, y: 96.510284, z: -998.83435}
 --- !u!1 &4338522458828739741
 GameObject:
   m_ObjectHideFlags: 0
@@ -614,7 +453,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 32980223622444843}
-  - {fileID: 298472278271687048}
   - {fileID: 6954011998002705085}
   - {fileID: 1962932720998239726}
   - {fileID: 6934674650695557347}
@@ -634,7 +472,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   useCinemachine: 1
   vCam: {fileID: 6006575281523438177}
-  brake_VCam: {fileID: 7480882536218147990}
   turbo_VCam: {fileID: 6455902257967099038}
   cam: {fileID: 3676092299003932873}
   currentCameraType: 0
@@ -645,29 +482,29 @@ MonoBehaviour:
   volumes:
   - {fileID: 267018412328677699}
   - {fileID: 5397743836950780649}
-  minSpeedForEffects: 100
-  maxSpeedForEffects: 220
-  minFOV: 50
-  maxFOV: 75
-  minCameraDistance: 9.5
-  maxCameraDistance: 12
+  minSpeedForEffects: 150
+  maxSpeedForEffects: 400
+  minFOV: 30
+  maxFOV: 60
+  minCameraDistance: 4
+  maxCameraDistance: 10
   minVignetteIntensity: 0.2
   maxVignetteIntensity: 0.5
   minVignetteSmoothness: 0.6
   maxVignetteSmoothness: 1
-  minChromaticIntensity: 0.3
-  maxChromaticIntensity: 0.5
-  minPostExposure: 2.5
-  maxPostExposure: 3
-  minSaturation: 20
-  maxSaturation: 60
-  minMotionBlurIntensity: 0.35
-  maxMotionBlurIntensity: 0.55
+  minChromaticIntensity: 0.1
+  maxChromaticIntensity: 0.2
+  minPostExposure: 0.5
+  maxPostExposure: 2
+  minSaturation: 10
+  maxSaturation: 30
+  minMotionBlurIntensity: 0.1
+  maxMotionBlurIntensity: 0.3
   minLensDistortionntensity: 0
-  maxLensDistortionntensity: 0.5
-  fovSmoothTime: 0.5
-  distanceSmoothTime: 0.5
-  volumeSmoothTime: 0.3
+  maxLensDistortionntensity: 0.2
+  fovSmoothTime: 0
+  distanceSmoothTime: 0
+  volumeSmoothTime: 0.5
   accelerationResponse: 2
   decelerationResponse: 1
 --- !u!1 &6697843603822005756
@@ -856,7 +693,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2309663550283876476
 Transform:
   m_ObjectHideFlags: 0
