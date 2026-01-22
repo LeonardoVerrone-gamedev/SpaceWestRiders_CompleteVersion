@@ -73,7 +73,7 @@ public class SCR_CarEffects : MonoBehaviour
 
         bool isSlipping = sideSlip > 5f && speedRatio > 0.15f; 
         bool isIntentionallyDrifting = carPhysics.IsDrifting();
-        bool showEffects = isSlipping || isIntentionallyDrifting;
+        bool showEffects = (isSlipping || isIntentionallyDrifting) && carPhysics.IsGrounded;
 
         for (int i = 0; i < driftParticles.Length; i++)
         {
