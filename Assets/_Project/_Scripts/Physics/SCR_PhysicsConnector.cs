@@ -69,7 +69,6 @@ public class SCR_PhysicsConnector : MonoBehaviour
         if (!_carInput) return;
         _carInput.OnSteeringChanged += OnSteer;
         _carInput.OnThrottleChanged += OnThrottle;
-        _carInput.OnBrakeChanged += OnBrake;
         _carInput.OnHandbrakeChanged += OnHandbrake;
         _carInput.OnTurboPressed += OnTurbo;
         _carInput.OnSwitchMode += OnSwitchMode;
@@ -80,7 +79,6 @@ public class SCR_PhysicsConnector : MonoBehaviour
         if (!_carInput) return;
         _carInput.OnSteeringChanged -= OnSteer;
         _carInput.OnThrottleChanged -= OnThrottle;
-        _carInput.OnBrakeChanged -= OnBrake;
         _carInput.OnHandbrakeChanged -= OnHandbrake;
         _carInput.OnTurboPressed -= OnTurbo;
         _carInput.OnSwitchMode -= OnSwitchMode;
@@ -102,10 +100,6 @@ public class SCR_PhysicsConnector : MonoBehaviour
         if (_rayPhysics && _rayPhysics.enabled) _rayPhysics.SetThrottle(value);
     }
 
-    private void OnBrake(float value)
-    {
-        if (_rayPhysics && _rayPhysics.enabled) _rayPhysics.SetBrake(value);
-    }
 
     private void OnHandbrake(bool value)
     {
@@ -130,7 +124,6 @@ public class SCR_PhysicsConnector : MonoBehaviour
     {
         OnSteer(0);
         OnThrottle(0);
-        OnBrake(0);
         OnHandbrake(false);
     }
 }

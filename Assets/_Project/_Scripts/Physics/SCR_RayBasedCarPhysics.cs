@@ -66,6 +66,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     [SerializeField] float hoverCarMaxSpeed = 120f;
     [SerializeField] float maxSpeed = 100f;
     [SerializeField] float deceleration = 10f;
+    [SerializeField] float brakeTime;
     [SerializeField] float steerStrenght = 15f;
     [HideInInspector][SerializeField] float dragCoefficient = 1f;
     [SerializeField] float classicCarDragCoefficient = 10f;
@@ -126,7 +127,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     // Na região de Input Handling, adicione:
     [HideInInspector]public float GetThrottleInput() => _currentThrottleInput;
-    [HideInInspector]public float GetBrakeInput() => _currentBrakeInput;
     [HideInInspector]public float GetSteerInput() => _currentSteerInput;
     [HideInInspector]public float GetCurrentSpeed() => speedKMH;
     public bool IsTurboActive() => _isTurboActive;
@@ -207,7 +207,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     private float _currentSteerInput; // Input de esterço (-1 a 1)
     private float _currentThrottleInput; // Input de aceleração (0 a 1)
-    private float _currentBrakeInput; // Input de freio (0 a 1)
     private bool _currentHandbrakeInput; // Input de freio de mão (true/false)
     private float _driftExitTime = 0f;
     private bool _isTurboActive = false;
@@ -248,7 +247,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     public void SetSteering(float input) => _currentSteerInput = input;
     public void SetThrottle(float input) => _currentThrottleInput = input;
-    public void SetBrake(float input) => _currentBrakeInput = input;
+
     public void SetHandbrake(bool input) 
     {
         // Se apertou agora e está no chão, tenta começar
@@ -477,6 +476,13 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     private void Deaceleration()
     {
+        float brakeMultiplier = 1f;
+
+        if(currentCarLocalVelocity.z > 1f && !AIControlled)
+        {
+            brakeMultiplier = deceleration * 3f;
+        }
+
         if (Mathf.Abs(currentCarLocalVelocity.z) >= maxSpeed / 3) return;
 
         float currentDeceleration = deceleration;
@@ -486,7 +492,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             currentDeceleration *= rubberBandingFactor;
         }
 
-        rb.AddForceAtPosition(currentDeceleration * _currentThrottleInput * transform.forward, accelerationPoint.position, ForceMode.Acceleration);
+        rb.AddForceAtPosition(currentDeceleration * brakeMultiplier * _currentThrottleInput * transform.forward, accelerationPoint.position, ForceMode.Acceleration);
     }
 
     private void Turn()
@@ -742,10 +748,10 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
                 // Acelerando - tilt para trás
                 _targetPitch = -maxPitchAngle * _currentThrottleInput * speedFactor;
             }
-            else if (_currentBrakeInput > 0.1f)
+            else if (_currentThrottleInput < -0.1f && rb.linearVelocity.z > 1f)
             {
                 // Freando - tilt para frente (mais pronunciado)
-                _targetPitch = maxPitchAngle * _currentBrakeInput * brakeTiltMultiplier * speedFactor;
+                _targetPitch = maxPitchAngle * _currentThrottleInput * brakeTiltMultiplier * speedFactor;
             }
             else
             {
@@ -885,7 +891,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         // O input de aceleração/freio (Pitch) e o input de direção (Roll)
         
         // Torque X (Pitch): Controle de nariz para cima/baixo
-        float pitchInput = _currentThrottleInput - _currentBrakeInput; 
+        float pitchInput = _currentThrottleInput; 
         
         // Torque Z (Roll): Controle de inclinação lateral
         float rollInput = _currentSteerInput; 
@@ -912,7 +918,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     {
         // Apenas nivelar se não houver input de controle aéreo substancial
         if (Mathf.Abs(_currentThrottleInput) > 0.1f || 
-            Mathf.Abs(_currentBrakeInput) > 0.1f || 
             Mathf.Abs(_currentSteerInput) > 0.1f) 
             return;
 
