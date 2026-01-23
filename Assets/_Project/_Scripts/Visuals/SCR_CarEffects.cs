@@ -28,6 +28,9 @@ public class SCR_CarEffects : MonoBehaviour
     [SerializeField] private float maxSparkEmission = 30f;
     [SerializeField] private float relativeSpeedThreshold = 10f;
 
+    [Header("Collision Impact")]
+    [SerializeField] SCR_ImpactEffect[] impactEffects;
+
     // Módulos Classic
     private ParticleSystem.EmissionModule[] classicEmissionModules;
     private ParticleSystem.MainModule[] classicMainModules;
@@ -223,5 +226,50 @@ public class SCR_CarEffects : MonoBehaviour
         }
         isCollidingLeft = false;
         isCollidingRight = false;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        // Verifica se a colisão é relevante (parede ou carro)
+        int layer = collision.gameObject.layer;
+        if (layer != LayerMask.NameToLayer("Walls") && layer != LayerMask.NameToLayer("Car")) return;
+
+        // Só toca o impacto se a força for considerável
+        if (collision.relativeVelocity.magnitude < relativeSpeedThreshold) return;
+
+        // Pega o ponto de contato para posicionar o efeito
+        ContactPoint contact = collision.contacts[0];
+        SpawnImpactEffect(contact.point, Quaternion.LookRotation(contact.normal));
+    }
+
+    private void SpawnImpactEffect(Vector3 position, Quaternion rotation)
+    {
+        if (impactEffects == null || impactEffects.Length == 0) return;
+
+        SCR_ImpactEffect bestEffect = null;
+        float shortestTimeRemaining = float.MaxValue;
+
+        // 1. Procura por um efeito desativado
+        foreach (var effect in impactEffects)
+        {
+            if (!effect.IsActive)
+            {
+                bestEffect = effect;
+                break; 
+            }
+
+            // 2. Se todos estiverem ativos, rastreia o que está mais perto de acabar
+            if (effect.TimeRemaining < shortestTimeRemaining)
+            {
+                shortestTimeRemaining = effect.TimeRemaining;
+                bestEffect = effect;
+            }
+        }
+
+        // Toca o efeito encontrado (ou o que estava prestes a acabar)
+        if (bestEffect != null)
+        {
+            bestEffect.Play(position, rotation, this.gameObject);
+        }
     }
 }
