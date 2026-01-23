@@ -540,15 +540,6 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Brake",
-                    "type": "Button",
-                    "id": "5a5ffff3-69ae-47b1-8cfe-24505d954cf1",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Handbrake",
                     "type": "Button",
                     "id": "ff1e5498-e438-4911-8e05-4768a1e0ad14",
@@ -708,39 +699,6 @@
                     "action": "Throttle",
                     "isComposite": false,
                     "isPartOfComposite": true
-                },
-                {
-                    "name": "",
-                    "id": "385ded9e-467d-4ba0-9dc1-904be3d2166d",
-                    "path": "<Keyboard>/z",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "Brake",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "df0fe7dc-268b-4834-ba3c-e1b5b3a4b8e5",
-                    "path": "<Gamepad>/leftTrigger",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad;Joystick",
-                    "action": "Brake",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "baa0054d-d8e5-4a5b-9999-e6a22602796f",
-                    "path": "<Gamepad>/rightTrigger",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "Brake",
-                    "isComposite": false,
-                    "isPartOfComposite": false
                 },
                 {
                     "name": "",

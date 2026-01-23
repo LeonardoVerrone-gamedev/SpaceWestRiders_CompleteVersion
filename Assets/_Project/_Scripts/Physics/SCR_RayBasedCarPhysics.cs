@@ -66,7 +66,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     [SerializeField] float hoverCarMaxSpeed = 120f;
     [SerializeField] float maxSpeed = 100f;
     [SerializeField] float deceleration = 10f;
-    [SerializeField] float brakeTime;
     [SerializeField] float steerStrenght = 15f;
     [HideInInspector][SerializeField] float dragCoefficient = 1f;
     [SerializeField] float classicCarDragCoefficient = 10f;
@@ -480,7 +479,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         if(currentCarLocalVelocity.z > 1f && !AIControlled)
         {
-            brakeMultiplier = deceleration * 3f;
+            brakeMultiplier = 2f;
         }
 
         if (Mathf.Abs(currentCarLocalVelocity.z) >= maxSpeed / 3) return;

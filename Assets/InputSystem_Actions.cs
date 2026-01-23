@@ -626,15 +626,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""Brake"",
-                    ""type"": ""Button"",
-                    ""id"": ""5a5ffff3-69ae-47b1-8cfe-24505d954cf1"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Handbrake"",
                     ""type"": ""Button"",
                     ""id"": ""ff1e5498-e438-4911-8e05-4768a1e0ad14"",
@@ -794,39 +785,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""action"": ""Throttle"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""385ded9e-467d-4ba0-9dc1-904be3d2166d"",
-                    ""path"": ""<Keyboard>/z"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Keyboard&Mouse"",
-                    ""action"": ""Brake"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""df0fe7dc-268b-4834-ba3c-e1b5b3a4b8e5"",
-                    ""path"": ""<Gamepad>/leftTrigger"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Gamepad;Joystick"",
-                    ""action"": ""Brake"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""baa0054d-d8e5-4a5b-9999-e6a22602796f"",
-                    ""path"": ""<Gamepad>/rightTrigger"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Gamepad"",
-                    ""action"": ""Brake"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
@@ -1009,7 +967,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Driving = asset.FindActionMap("Driving", throwIfNotFound: true);
         m_Driving_Steer = m_Driving.FindAction("Steer", throwIfNotFound: true);
         m_Driving_Throttle = m_Driving.FindAction("Throttle", throwIfNotFound: true);
-        m_Driving_Brake = m_Driving.FindAction("Brake", throwIfNotFound: true);
         m_Driving_Handbrake = m_Driving.FindAction("Handbrake", throwIfNotFound: true);
         m_Driving_Turbo = m_Driving.FindAction("Turbo", throwIfNotFound: true);
         m_Driving_SwitchMode = m_Driving.FindAction("SwitchMode", throwIfNotFound: true);
@@ -1291,7 +1248,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private List<IDrivingActions> m_DrivingActionsCallbackInterfaces = new List<IDrivingActions>();
     private readonly InputAction m_Driving_Steer;
     private readonly InputAction m_Driving_Throttle;
-    private readonly InputAction m_Driving_Brake;
     private readonly InputAction m_Driving_Handbrake;
     private readonly InputAction m_Driving_Turbo;
     private readonly InputAction m_Driving_SwitchMode;
@@ -1314,10 +1270,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Driving/Throttle".
         /// </summary>
         public InputAction @Throttle => m_Wrapper.m_Driving_Throttle;
-        /// <summary>
-        /// Provides access to the underlying input action "Driving/Brake".
-        /// </summary>
-        public InputAction @Brake => m_Wrapper.m_Driving_Brake;
         /// <summary>
         /// Provides access to the underlying input action "Driving/Handbrake".
         /// </summary>
@@ -1362,9 +1314,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Throttle.started += instance.OnThrottle;
             @Throttle.performed += instance.OnThrottle;
             @Throttle.canceled += instance.OnThrottle;
-            @Brake.started += instance.OnBrake;
-            @Brake.performed += instance.OnBrake;
-            @Brake.canceled += instance.OnBrake;
             @Handbrake.started += instance.OnHandbrake;
             @Handbrake.performed += instance.OnHandbrake;
             @Handbrake.canceled += instance.OnHandbrake;
@@ -1391,9 +1340,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Throttle.started -= instance.OnThrottle;
             @Throttle.performed -= instance.OnThrottle;
             @Throttle.canceled -= instance.OnThrottle;
-            @Brake.started -= instance.OnBrake;
-            @Brake.performed -= instance.OnBrake;
-            @Brake.canceled -= instance.OnBrake;
             @Handbrake.started -= instance.OnHandbrake;
             @Handbrake.performed -= instance.OnHandbrake;
             @Handbrake.canceled -= instance.OnHandbrake;
@@ -1613,13 +1559,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnThrottle(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "Brake" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnBrake(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Handbrake" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
