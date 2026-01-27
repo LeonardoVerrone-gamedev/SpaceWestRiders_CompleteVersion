@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
+using System.Collections;
 
 // Requer que o GameObject tenha um Rigidbody
 [RequireComponent(typeof(Rigidbody))]
@@ -157,6 +158,13 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     [SerializeField] float hoverAirDrag = 0.25f;   // Maior resistência para o Hover
     [SerializeField] float classicAirDrag = 0.08f; // Classic "fura" o ar melhor
     [SerializeField] float dragThreshold = 50f;
+
+    [Header("Arcade Transmission")]
+    [SerializeField] private int totalGears = 8;
+    [SerializeField] private float gearChangeSuavity = 0.2f; // Tempo visual da troca
+    public int _currentGear = 1;
+    private float _gearTorqueMultiplier = 1f; // Suavizador para o "soco" da marcha
+    public bool _isChangingGear;
 
     #region Visual variables
 
@@ -346,6 +354,11 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         }
 
         HandleRespawnSystem();
+
+        if(carType == CarType.classic)
+        {
+            HandleArcadeTransmission();
+        }
     }
 
     #endregion
@@ -427,49 +440,30 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     private void Acceleration()
     {
-
         float effectiveMaxSpeed = maxSpeed;
-
-        if (AIControlled)
-        {
-            effectiveMaxSpeed *= rubberBandingFactor;
-        }
-        
+        if (AIControlled) effectiveMaxSpeed *= rubberBandingFactor;
         if (_isTurboActive) effectiveMaxSpeed *= turboMaxSpeedMultiplier;
 
+        // Early exit se estiver acima do limite
         if (Mathf.Abs(currentCarLocalVelocity.z) >= effectiveMaxSpeed) return;
 
         float currentAcceleration = acceleration;
-    
-        // Calcula o percentual da velocidade atual (0 a 1)
-        float speedPercentage = Mathf.Clamp01(currentCarLocalVelocity.z / maxSpeed);
+        float speedPercentage = Mathf.Clamp01(Mathf.Abs(currentCarLocalVelocity.z) / maxSpeed);
 
-        accelCurve = carType == CarType.hover ? hoverAccelCurve : classicAccelCurve;
+        // Seleção de curva
+        AnimationCurve currentCurve = carType == CarType.hover ? hoverAccelCurve : classicAccelCurve;
+        currentAcceleration *= currentCurve.Evaluate(speedPercentage);
 
-        currentAcceleration *= accelCurve.Evaluate(speedPercentage);
-        
-        // Multiplicador de aceleração durante drift
-        if (_isDrifting)
-        {
-            currentAcceleration *= driftAccelerationMultiplier;
-        }
+        //Se for Classic, aplica o multiplicador de marcha (0.85 ou 1.0)
+        // Se for Hover, _gearTorqueMultiplier será sempre 1.0 (definido no HandleArcadeTransmission)
+        currentAcceleration *= _gearTorqueMultiplier;
 
-        if (_isTurboActive)
-        {
-            currentAcceleration *= turboAccelMultiplier;
-        }
-        
-        // Multiplicador de aceleração durante boost
-        if (_isDriftBoostActive)
-        {
-            currentAcceleration *= 2f; // Dobra a aceleração durante o boost
-        }
+        // Multiplicadores de Estado
+        if (_isDrifting) currentAcceleration *= driftAccelerationMultiplier;
+        if (_isTurboActive) currentAcceleration *= turboAccelMultiplier;
+        if (_isDriftBoostActive) currentAcceleration *= 2f;
+        if (AIControlled) currentAcceleration *= rubberBandingFactor;
 
-        if (AIControlled)
-        {
-            currentAcceleration *= rubberBandingFactor;
-        }
-        
         rb.AddForceAtPosition(currentAcceleration * _currentThrottleInput * transform.forward, accelerationPoint.position, ForceMode.Acceleration);
     }
 
@@ -479,10 +473,13 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         if(currentCarLocalVelocity.z > 1f && !AIControlled)
         {
-            brakeMultiplier = 2f;
+            brakeMultiplier = 1.25f;
         }
 
-        if (Mathf.Abs(currentCarLocalVelocity.z) >= maxSpeed / 3) return;
+        if(currentCarLocalVelocity.z < 0.1f)
+        {
+            if (Mathf.Abs(currentCarLocalVelocity.z) >= maxSpeed / 3) return;
+        }
 
         float currentDeceleration = deceleration;
 
@@ -573,6 +570,43 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         Vector3 dragForce = dragMagnitude * transform.right;
         rb.AddForceAtPosition(dragForce, rb.worldCenterOfMass, ForceMode.Acceleration);
+    }
+
+    private void HandleArcadeTransmission()
+    {
+        if (carType != CarType.classic || !isGrounded) 
+        {
+            _currentGear = 1;
+            _gearTorqueMultiplier = 1f;
+            return;
+        }
+
+        float speedRatio = Mathf.Clamp01(Mathf.Abs(currentCarLocalVelocity.z) / maxSpeed);
+        
+        // Calcula a marcha ideal: simples e direto. 
+        // Ex: Se speedRatio é 0.5 e temos 8 marchas, a marcha é 4.
+        int idealGear = Mathf.CeilToInt(speedRatio * totalGears);
+        idealGear = Mathf.Clamp(idealGear, 1, totalGears);
+
+        if (idealGear != _currentGear && !_isChangingGear)
+        {
+            StartCoroutine(ArcadeGearShift(idealGear));
+        }
+    }
+
+    private IEnumerator ArcadeGearShift(int nextGear)
+    {
+        _isChangingGear = true;
+        
+        // EFEITO ESTÉTICO: O torque cai levemente durante a troca para dar "peso"
+        // Mas não o suficiente para a IA ou o Player perderem a corrida
+        _gearTorqueMultiplier = 0.85f; 
+        
+        yield return new WaitForSeconds(0.15f); // Troca rápida estilo Dual-Clutch
+        
+        _currentGear = nextGear;
+        _gearTorqueMultiplier = 1.0f;
+        _isChangingGear = false;
     }
 
     #endregion
