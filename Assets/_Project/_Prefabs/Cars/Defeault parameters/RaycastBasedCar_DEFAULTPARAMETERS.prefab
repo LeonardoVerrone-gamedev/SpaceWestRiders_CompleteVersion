@@ -9952,8 +9952,8 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 2.5
-      minScalar: 1
+      scalar: 0.75
+      minScalar: 0.3
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -49656,8 +49656,8 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 2.5
-      minScalar: 1
+      scalar: 0.75
+      minScalar: 0.3
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -91551,6 +91551,7 @@ MonoBehaviour:
   waypointPassRadius: 30
   lookAheadDistance: 20
   lookAheadSpeedFactor: 1.5
+  useRubberBanding: 0
   hoverTargetAccelerationBoost: 1.8
   classicTargetAccelerationBoost: 1.5
   waitAccelerationDecrease: 0.75

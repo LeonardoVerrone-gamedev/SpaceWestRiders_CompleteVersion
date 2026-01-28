@@ -346,6 +346,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         }
 
         HandleRespawnSystem();
+
+        LimitVelocity();
     }
 
     #endregion
@@ -425,6 +427,22 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     }
 
+    private void LimitVelocity()
+    {
+        // Pegamos a velocidade no espaço local
+        Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
+
+        // Definimos o limite máximo (considerando o turbo se ele estiver ativo)
+        float maxLimit = _isTurboActive ? maxSpeed * turboMaxSpeedMultiplier : maxSpeed;
+        float minLimit = -(maxSpeed / 3f);
+
+        // Aplica o Clamp apenas no eixo Z (frente/trás)
+        localVel.z = Mathf.Clamp(localVel.z, minLimit, maxLimit);
+
+        // Devolve a velocidade para o Rigidbody mantendo os eixos X e Y (pulo e drift)
+        rb.linearVelocity = transform.TransformDirection(localVel);
+    }
+
     private void Acceleration()
     {
 
@@ -479,10 +497,13 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         if(currentCarLocalVelocity.z > 1f && !AIControlled)
         {
-            brakeMultiplier = 2f;
+            brakeMultiplier = 1.1f;
         }
 
-        if (Mathf.Abs(currentCarLocalVelocity.z) >= maxSpeed / 3) return;
+        if(currentCarLocalVelocity.z < 0.1f)
+        {
+            if (Mathf.Abs(currentCarLocalVelocity.z) >= maxSpeed / 3) return;
+        }
 
         float currentDeceleration = deceleration;
 

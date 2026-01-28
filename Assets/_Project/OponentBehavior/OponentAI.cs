@@ -16,6 +16,7 @@ public class AIRacingController : MonoBehaviour
     [SerializeField] private float lookAheadSpeedFactor = 1.5f; // Quanto maior, mais longe ela olha ao acelerar
 
     [Header("Rubber banding")]
+    public bool useRubberBanding = false;
     private bool huntsLeader = true;
     [SerializeField] float hoverTargetAccelerationBoost = 1.8f;
     [SerializeField] float classicTargetAccelerationBoost = 1.5f;
@@ -391,7 +392,10 @@ public class AIRacingController : MonoBehaviour
         // --- CORREÇÃO 4: Damping Interno Dinâmico ---
         // Se estiver em linha reta, o volante volta pro centro muito rápido.
         // Se estiver virando, ele é mais suave.
-        float steerLerpSpeed = (Mathf.Abs(finalTarget) < 0.1f) ? 15f : 8f;
+        float steerLerpSpeed_nyContext = (Mathf.Abs(finalTarget) < 0.1f) ? 15f : 8f;
+        float steerLerpSpeed_byType = (car.carType == CarType.classic) ? 25f : 15f;
+
+        float steerLerpSpeed = (steerLerpSpeed_nyContext + steerLerpSpeed_byType) / 2;
         
         _lastSteerOutput = Mathf.MoveTowards(_lastSteerOutput, finalTarget, Time.fixedDeltaTime * steerLerpSpeed);
 
@@ -453,51 +457,51 @@ public class AIRacingController : MonoBehaviour
 
     float CalculateThrottle()
     {
-
         if (isRecovering)
         {
-            // Se estivermos apontando quase para o lado oposto, damos um pouco de ré 
-            // e depois aceleramos tudo enquanto viramos o volante
             float dot = Vector3.Dot(transform.forward, (waypoints[currentTargetIndex].position - transform.position).normalized);
             return dot < 0 ? -0.4f : 1f; 
         }
 
+        // Mantém a lógica de segurança para loops/inclinações
         float pitch = transform.eulerAngles.x;
-        if (pitch > 45f && pitch < 315f) // Detecta que o carro está inclinado/em loop
+        if (pitch > 45f && pitch < 315f) 
         {
-            return 1.0f; // Força aceleração máxima para não cair
+            return 1.0f; 
         }
 
-        float currentSpeedMS = rb.linearVelocity.magnitude;
-        float targetSpeedMS = (profile.baseTargetSpeedKmh / 3.6f) + Random.Range(-10f, 30f);
+        // --- NOVA LÓGICA SEM VELOCIDADE FIXA ---
+        
+        // 1. Base é aceleração total
+        float finalThrottle = 1.0f;
 
-        // Frenagem por Curvatura
+        // 2. Frenagem Preditiva (Curvatura)
+        // Em vez de comparar com uma velocidade alvo, reduzimos o throttle se o ângulo for muito fechado
         Vector3 localTarget = transform.InverseTransformPoint(waypoints[currentTargetIndex].position);
         float angle = Mathf.Abs(Mathf.Atan2(localTarget.x, localTarget.z) * Mathf.Rad2Deg);
-        targetSpeedMS *= Mathf.Clamp01(1.0f - (angle / 80f));
 
-        // Cautela: Reduz velocidade se houver carros muito próximos
-        if (currentState == AIState.Overtaking) targetSpeedMS *= (1.1f); // "Drafting/Pushing"
-        
-        
-        float baseThrottle = currentSpeedMS < targetSpeedMS ? 1f : -0.3f;
-        float rubberFactor = ApplyRubberBanding(baseThrottle);
+        // Se o ângulo for maior que 20 graus, começa a aliviar o pé ou frear
+        if (angle > 20f)
+        {
+            // Mapeia o ângulo para um valor de throttle (ex: 80 graus = -0.5 de freio)
+            // Quanto maior a 'skillLevel', mais tarde ela freia
+            float brakingSensitivity = Mathf.Lerp(0.8f, 0.4f, profile.skillLevel);
+            finalThrottle = Mathf.Lerp(1.0f, -0.5f, (angle / 90f) * brakingSensitivity);
+        }
 
+        // 3. Aplica o Rubber Banding
+        // O ApplyRubberBanding agora é o responsável principal por ditar a "vontade" do carro
+        ApplyRubberBanding();
+
+        // Ajustes de estado (Overtaking quer sempre potência máxima)
         if (currentState == AIState.Overtaking) 
         {
-            // Se estiver muito perto do oponente (vácuo/drafting), não freia tanto na curva
-            targetSpeedMS *= 1.15f; 
-            // Garante aceleração máxima
-            baseThrottle = 1.0f; 
+            finalThrottle = Mathf.Max(finalThrottle, 0.8f); 
         }
 
-        if (currentState == AIState.Defending)
-        {
-            // Na defesa, a IA "ocupa mais espaço" se for levemente mais lenta no meio da curva
-            targetSpeedMS *= 0.95f; 
-        }
-
-        return rubberFactor;
+        // Retornamos o throttle processado pelo fator de rubber banding
+        // Se o fator for 1.5, a IA terá um "boost" físico via script de física
+        return finalThrottle; 
     }
 
     float GetDifferentialAvoidance()
@@ -611,18 +615,17 @@ public class AIRacingController : MonoBehaviour
     #region rubber banding
     public void SetHuntingGroup(bool focusOnLeader) => huntsLeader = focusOnLeader;
 
-    private float ApplyRubberBanding(float baseThrottle)
+    private void ApplyRubberBanding()
     {
         // 1. Definição do Alvo
         RacerStatus myTarget = huntsLeader ? RaceManager.Instance.HumanLeader : RaceManager.Instance.HumanTrailer;
-        if (myTarget == null) return baseThrottle;
+        if (myTarget == null || !useRubberBanding) return;
 
         SCR_RayBasedCarPhysics targetPhysics = myTarget.GetComponent<SCR_RayBasedCarPhysics>();
         RacerStatus myStatus = GetComponent<RacerStatus>();
         
         float dist = Vector3.Distance(transform.position, myTarget.transform.position);
         bool isAheadOfTarget = myStatus.position < myTarget.position;
-        bool isTargetHover = targetPhysics != null && targetPhysics.carType == CarType.hover;
 
         // Distâncias de controle (Sintonize aqui)
         float minCatchUpDist = 20f;
@@ -645,9 +648,6 @@ public class AIRacingController : MonoBehaviour
             // O fator vai de 1.0 até maxCatchUpBoost
             float targetBoost = maxCatchUpBoost;
 
-            // Bônus estratégico contra Hovers (eles são mais rápidos nas retas)
-            //if (isTargetHover) targetBoost *= 1.15f; 
-
             factor = Mathf.Lerp(1.0f, targetBoost, t);
             //currentSkillModifier = hardSkillModifier;
         }
@@ -659,9 +659,6 @@ public class AIRacingController : MonoBehaviour
 
             // O fator vai de 1.0 até maxWaitSlowdown (ex: 0.75)
             float targetWait = maxWaitSlowdown;
-
-            // Se o player for hover, a IA espera menos (fica mais rápida) pois o player recupera rápido
-            if (isTargetHover) targetWait = Mathf.Min(1.0f, targetWait * 1.2f);
 
             factor = Mathf.Lerp(1.0f, targetWait, t);
             //currentSkillModifier = easySkillModifier;
@@ -677,8 +674,6 @@ public class AIRacingController : MonoBehaviour
         
         // 1. Atualiza a variável no script de física (afeta aceleração e freio)
         car.rubberBandingFactor = factor;
-
-        return baseThrottle;
     }
     #endregion
 
