@@ -71,6 +71,8 @@ public class AIRacingController : MonoBehaviour
     private bool _isCurrentlyDrifting = false;
     float _lastSteerOutput;
 
+    private float myUniqueLaneOffset;
+
     SCR_RayBasedCarPhysics rayBasedPhysics;
 
     void OnEnable()//switch to onEnable later
@@ -95,6 +97,15 @@ public class AIRacingController : MonoBehaviour
             // Retorna a lista exata
             waypoints = holder.waypoints;
         }
+    }
+
+    void Start()
+    {
+        myUniqueLaneOffset = Random.Range(-5f, 5f);
+    
+        //Se for um piloto agressivo, ele tende a querer o centro (0) 
+        // para fechar a passagem dos outros.
+        //if(profile.aggressiveness > 0.8f) myUniqueLaneOffset *= 0.2f;
     }
 
     public void SetDifficulty(AIDifficulty difficulty)
@@ -292,7 +303,13 @@ public class AIRacingController : MonoBehaviour
         // --- 3. RACING ---
         currentState = AIState.Racing;
         chosenSide = 0;
-        lateralOffset = Mathf.MoveTowards(lateralOffset, 0, Time.fixedDeltaTime * (transitionSpeed * 0.5f));
+
+        // Adiciona a repulsão de fluxo ao offset lateral
+        float flowPush = CalculateFlowAvoidance();
+        // O 5f é a força com que ele tenta manter a distância
+        float targetFlowOffset = flowPush * 5f; 
+
+        lateralOffset = Mathf.MoveTowards(lateralOffset, targetFlowOffset, Time.fixedDeltaTime * transitionSpeed);
     }
 
     // Método auxiliar para evitar repetição de código e checar paredes
@@ -360,7 +377,10 @@ public class AIRacingController : MonoBehaviour
         Vector3 trackDir = (waypoints[nextIndex].position - waypoints[currentTargetIndex].position).normalized;
         Vector3 trackRight = Vector3.Cross(Vector3.up, trackDir).normalized; // Direita real da pista
 
-        float effectiveOffset = (targetLateralOffset + currentTracingNoise) * safetyFilter;
+        float lanePreference = myUniqueLaneOffset;
+
+        // 2. O seu cálculo original de offset lateral (ultrapassagem/erro)
+        float effectiveOffset = (targetLateralOffset + currentTracingNoise + lanePreference) * safetyFilter;
 
         // Agora o alvo fica parado em relação à pista, mesmo que o carro balance
         targetPos += trackRight * effectiveOffset;
@@ -610,6 +630,36 @@ public class AIRacingController : MonoBehaviour
         }
 
         return localTarget.x > 0 ? 1f : -1f;
+    }
+
+    private float CalculateFlowAvoidance()
+    {
+        float flowRepulsion = 0f;
+        float personalBubbleRadius = 12f; // Raio da bolha de conforto
+
+        // Encontra todos os competidores próximos
+        Collider[] nearbyOpponents = Physics.OverlapSphere(transform.position, personalBubbleRadius, opponentLayer);
+
+        foreach (var col in nearbyOpponents)
+        {
+            if (col.transform == transform) continue;
+
+            // Calcula a direção local do oponente
+            Vector3 localOpponentPos = transform.InverseTransformPoint(col.transform.position);
+
+            // Só nos importamos com carros que estão ao nosso lado (X) e não muito longe à frente/atrás (Z)
+            if (Mathf.Abs(localOpponentPos.z) < 10f) 
+            {
+                // Quanto mais perto, maior a força de repulsão (1.0 colado, 0.0 no limite da bolha)
+                float proximityFactor = 1f - (Mathf.Abs(localOpponentPos.x) / personalBubbleRadius);
+                
+                // Se o oponente está na direita (x positivo), empurra para a esquerda (negativo)
+                float side = Mathf.Sign(localOpponentPos.x);
+                flowRepulsion -= side * proximityFactor;
+            }
+        }
+
+        return flowRepulsion;
     }
 
     #region rubber banding

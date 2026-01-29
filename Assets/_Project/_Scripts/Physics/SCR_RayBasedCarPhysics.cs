@@ -417,6 +417,11 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             }
 
             SidewaysDrag();
+
+            if(carType == CarType.hover)
+            {
+                ApplyAirDrag();
+            }
         }
         else
         {
@@ -859,21 +864,24 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     private void ApplyAirDrag()
     {
-        // Calculamos a velocidade apenas no eixo Z (frente/trás) local
         float forwardSpeed = currentCarLocalVelocity.z;
 
-        // Só aplicamos se estivermos acima do threshold para não impedir o carro de começar a andar
-        if (forwardSpeed > (dragThreshold / 3.6f)) 
-        {
-            float currentDragCoeff = (carType == CarType.hover) ? hoverAirDrag : classicAirDrag;
+        float speedRatio = Mathf.Clamp01(forwardSpeed / maxSpeed);
 
-            // Equação de Drag: F = -0.5 * rho * v^2 * Cd * A
-            // Simplificamos para: força = velocidade * velocidade * coeficiente
-            Vector3 dragForce = -transform.forward * (forwardSpeed * forwardSpeed * currentDragCoeff);
+        // Só começa a agir depois de 70% da velocidade máxima
+        if (speedRatio < 0.7f) return;
 
-            rb.AddForce(dragForce, ForceMode.Acceleration);
-        }
+        float currentDragCoeff = (carType == CarType.hover) 
+            ? hoverAirDrag 
+            : classicAirDrag;
+
+        float dragStrength = Mathf.Lerp(0f, currentDragCoeff, (speedRatio - 0.7f) / 0.3f);
+
+        Vector3 dragForce = -transform.forward * forwardSpeed * forwardSpeed * dragStrength;
+
+        rb.AddForce(dragForce, ForceMode.Acceleration);
     }
+
 
     private void ApplyAngularDamping()
     {
