@@ -6,97 +6,161 @@ using UnityEditor.Experimental.GraphView;
 [RequireComponent(typeof(Rigidbody))]
 public class SCR_RayBasedCarPhysics : MonoBehaviour
 {
+    // ======================================================
+    // CORE IDENTIFICATION
+    // ======================================================
+
     public CarType carType;
     public bool canSwitchType = false;
-    public float speedKMH;
-    #region basic components
+    [HideInInspector] public bool AIControlled = false;
+
+    // ======================================================
+    // BASIC COMPONENT REFERENCES
+    // ======================================================
+
+    #region Basic Components
+
     [Header("Basic Components References")]
     [SerializeField] Rigidbody rb;
     [SerializeField] LayerMask drivable;
     [SerializeField] Transform accelerationPoint;
+    [SerializeField] Transform carBody;
     [SerializeField] GameObject[] tires = new GameObject[4];
     [SerializeField] GameObject[] frontTiresParent = new GameObject[2];
-    [SerializeField] Transform carBody; // Referência ao corpo do carro para aplicar o tilt
+
     AIRacingController aiDriver;
 
     #endregion
 
-    [Header("Classic Grip Settings")]
-    [HideInInspector] [SerializeField] float classicCornerGrip = 5.0f; // Força de "cola" no asfalto
+    // ======================================================
+    // BASIC SETUP / CONSTANTS
+    // ======================================================
 
-    #region basic Setup
+    #region Basic Setup
 
-    [HideInInspector] [SerializeField] private static int MIN_WHEELS_TO_CONSIDERE_GROUNDED = 2;
+    [HideInInspector][SerializeField] private static int MIN_WHEELS_TO_CONSIDERE_GROUNDED = 2;
 
     #endregion
 
-    #region suspension variables
-    [Header("Suspension system")]
+    // ======================================================
+    // SUSPENSION & GROUNDING SYSTEM
+    // ======================================================
+
+    #region Suspension System
+
+    [Header("Suspension System")]
     [SerializeField] Transform[] rayPoints;
+    [HideInInspector][SerializeField] float restLenght;
+    [HideInInspector][SerializeField] float hoverDistance = 1.5f;
+    [HideInInspector][SerializeField] float springTravel;
+
     [HideInInspector][SerializeField] float springStiffness;
-    [SerializeField] float restLenght;
-    [SerializeField] float hoverDistance = 1.5f;
-    [SerializeField] float springTravel;
     [HideInInspector][SerializeField] float wheelRadius;
     [HideInInspector][SerializeField] float hoverDamper = 8000f;
     [HideInInspector][SerializeField] float classicDamper = 3500f;
 
-    [HideInInspector]private int[] wheelsGrounded = new int[4];
-    [HideInInspector]private bool isGrounded = false;
-
-    public bool AIControlled = false;
+    [HideInInspector] private int[] wheelsGrounded = new int[4];
+    [HideInInspector] private bool isGrounded = false;
 
     #endregion
 
-    #region downforce
+    // ======================================================
+    // DOWNFORCE / AERO (HOVER)
+    // ======================================================
+
+    #region Hover Downforce
 
     [Header("Hover Downforce (Aero)")]
-    [SerializeField] private float hoverDownforceAmount = 2500f; // Força base
-    [SerializeField] private float minHeightThreshold = 0.4f; // % da restLenght (ex: 40%)
-    [SerializeField] private bool useDynamicDownforce = true;
+    [HideInInspector] [SerializeField] private float hoverDownforceAmount = 2500f;
+    [HideInInspector] [SerializeField] private float minHeightThreshold = 0.4f;
+    [HideInInspector] [SerializeField] private bool useDynamicDownforce = true;
 
     #endregion
 
+    // ======================================================
+    // AERODYNAMICS (AIR DRAG)
+    // ======================================================
+
+    #region Aerodynamics
+
+    [Header("Aerodynamics (Air Drag)")]
+    [HideInInspector] [SerializeField] float hoverAirDrag = 0.25f;
+    [HideInInspector] [SerializeField] float classicAirDrag = 0.08f;
+    [HideInInspector] [SerializeField] float dragThreshold = 50f;
+
+    [SerializeField] private float downforceAmount = 500f;
+
+    #endregion
+
+    // ======================================================
+    // CAR PHYSICS SETTINGS
+    // ======================================================
+
     #region Car Settings
+
     [Header("Car Settings")]
     [SerializeField] float classicCarAcceleration = 25f;
-    [SerializeField]float hoverCarAcceleration = 15f;
+    [SerializeField] float hoverCarAcceleration = 15f;
     [SerializeField] float acceleration = 25f;
+
     [SerializeField] float classicCarMaxSpeed = 100f;
     [SerializeField] float hoverCarMaxSpeed = 120f;
     [SerializeField] float maxSpeed = 100f;
+
     [SerializeField] float deceleration = 10f;
     [SerializeField] float steerStrenght = 15f;
-    [HideInInspector][SerializeField] float dragCoefficient = 1f;
+
     [SerializeField] float classicCarDragCoefficient = 10f;
     [SerializeField] float hoverCarDragCoefficient = 2f;
-    [SerializeField] float airControlStrength;
+
+    [HideInInspector][SerializeField] float dragCoefficient = 1f;
+
+    [HideInInspector] [SerializeField] float airControlStrength;
+    [HideInInspector][SerializeField] float classicCornerGrip;
+
+    #endregion
+
+    // ======================================================
+    // BALANCING CURVES
+    // ======================================================
+
+    #region Balancing Curves
 
     [Header("Custom Curves for Balancing")]
     [HideInInspector][SerializeField] private AnimationCurve accelCurve;
-    [HideInInspector][SerializeField] private AnimationCurve classicAccelCurve; // Linear e constante
-    [HideInInspector][SerializeField] private AnimationCurve hoverAccelCurve;   // Lenta no início, forte no meio
-    [HideInInspector][SerializeField] private AnimationCurve hoverCarTurningCurve; // Perde muito esterço em alta velocidade
-    [SerializeField] private AnimationCurve classicCarTurningCurve;
+    [HideInInspector][SerializeField] private AnimationCurve classicAccelCurve;
+    [HideInInspector][SerializeField] private AnimationCurve hoverAccelCurve;
+
+    [HideInInspector][SerializeField] private AnimationCurve hoverCarTurningCurve;
+    [HideInInspector] [SerializeField] private AnimationCurve classicCarTurningCurve;
     [HideInInspector][SerializeField] AnimationCurve turningCurve;
 
+    #endregion
+
+    // ======================================================
+    // DRIFT SYSTEM
+    // ======================================================
+
     #region Drift System
+
     [Header("Drift System Settings")]
-    [SerializeField] private float maxDriftAngle = 45f; // Ângulo máximo de drift (graus)
-    [HideInInspector][SerializeField] private float driftEnterThreshold = 0.3f; // Velocidade mínima para entrar em drift (0-1)
-    [SerializeField] private float driftBoostForce = 50f; // Força do boost ao sair do drift
-    [SerializeField] private float driftBoostDuration = 1f; // Duração do boost
-    [HideInInspector][SerializeField] private float driftStability = 0.8f; // Estabilidade durante drift (0-1, mais baixo = mais escorregadio)
-    [HideInInspector][SerializeField] private float driftAccelerationMultiplier = 1.2f; // Multiplicador de aceleração durante drift
-    [HideInInspector][SerializeField] private float maxDriftBoostSpeed = 150f; // Velocidade máxima durante boost de drift
-    [HideInInspector][SerializeField] float speedMaintainForceMultiplier = .75f; //o quanto mantem a velocidade frontal
-    [HideInInspector][SerializeField] private float driftSelfSteerStrength = 5f; // Força do auto-alinhamento
-    [HideInInspector][SerializeField] private float driftCounterSteerLimit = 0.5f; // O quanto o carro pode "ajudar" sem tirar o controle do player
-    [HideInInspector][SerializeField] private float dragRestoreDuration = 0.5f; // Tempo para recuperar o grip total
+    [HideInInspector] [SerializeField] private float maxDriftAngle = 45f;
+    [HideInInspector] [SerializeField] private float driftBoostForce = 50f;
+    [HideInInspector] [SerializeField] private float driftBoostDuration = 1f;
+
+    [HideInInspector][SerializeField] private float driftEnterThreshold = 0.3f;
+    [HideInInspector][SerializeField] private float driftStability = 0.8f;
+    [HideInInspector][SerializeField] private float driftAccelerationMultiplier = 1.2f;
+    [HideInInspector][SerializeField] private float maxDriftBoostSpeed = 150f;
+    [HideInInspector][SerializeField] float speedMaintainForceMultiplier = .75f;
+    [HideInInspector][SerializeField] private float driftSelfSteerStrength = 5f;
+    [HideInInspector][SerializeField] private float driftCounterSteerLimit = 0.5f;
+    [HideInInspector][SerializeField] private float dragRestoreDuration = 0.5f;
+
     private float _dragRestoreTimer = 0f;
     private bool _isRestoringDrag = false;
 
-    // Estado do drift
+    // Drift State
     private bool _isDrifting = false;
     private float _currentDriftAngle = 0f;
     private float _driftBoostTimer = 0f;
@@ -106,120 +170,153 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     #endregion
 
-    #region Public Getters - Drift State
+    // ======================================================
+    // PUBLIC GETTERS (STATE ACCESS)
+    // ======================================================
 
-    [HideInInspector]public bool IsDrifting() => _isDrifting;
-    [HideInInspector]public float OriginalMaxSpeed() => classicCarMaxSpeed;
-    [HideInInspector]public float GetDriftAngle() => _currentDriftAngle;
-    [HideInInspector]public float GetNormalizedDriftAngle() => Mathf.Clamp01(Mathf.Abs(_currentDriftAngle) / maxDriftAngle);
-    [HideInInspector]public bool IsDriftBoostActive() => _isDriftBoostActive;
-    [HideInInspector]public float GetDriftBoostRemainingTime() => _driftBoostTimer;
+    #region Public Getters - Drift & State
 
-    // Para VFX/SFX saberem se deve mostrar efeitos de drift
-    [HideInInspector]public bool ShouldShowDriftEffects() => _isDrifting && Mathf.Abs(_currentDriftAngle) > 10f;
+    [HideInInspector] public bool IsDrifting() => _isDrifting;
+    [HideInInspector] public float OriginalMaxSpeed() => classicCarMaxSpeed;
+    [HideInInspector] public float GetDriftAngle() => _currentDriftAngle;
+    [HideInInspector] public float GetNormalizedDriftAngle() => Mathf.Clamp01(Mathf.Abs(_currentDriftAngle) / maxDriftAngle);
+    [HideInInspector] public bool IsDriftBoostActive() => _isDriftBoostActive;
+    [HideInInspector] public float GetDriftBoostRemainingTime() => _driftBoostTimer;
 
-    // Para VFX/SFX saberem a intensidade do drift (0-1)
-    [HideInInspector]public float GetDriftIntensity() => Mathf.Clamp01(Mathf.Abs(_currentDriftAngle) / maxDriftAngle);
+    [HideInInspector] public bool ShouldShowDriftEffects() => _isDrifting && Mathf.Abs(_currentDriftAngle) > 10f;
+    [HideInInspector] public float GetDriftIntensity() => Mathf.Clamp01(Mathf.Abs(_currentDriftAngle) / maxDriftAngle);
+    [HideInInspector] public float GetDriftDirection() => Mathf.Sign(_currentDriftAngle);
 
-    // Para VFX/SFX saberem a direção do drift (-1 = esquerda, 1 = direita)
-    [HideInInspector]public float GetDriftDirection() => Mathf.Sign(_currentDriftAngle);
+    [HideInInspector] public float GetThrottleInput() => _currentThrottleInput;
+    [HideInInspector] public float GetSteerInput() => _currentSteerInput;
+    [HideInInspector] public float GetCurrentSpeed() => speedKMH;
+    [HideInInspector] public bool IsTurboActive() => _isTurboActive;
 
-    // Na região de Input Handling, adicione:
-    [HideInInspector]public float GetThrottleInput() => _currentThrottleInput;
-    [HideInInspector]public float GetSteerInput() => _currentSteerInput;
-    [HideInInspector]public float GetCurrentSpeed() => speedKMH;
-    public bool IsTurboActive() => _isTurboActive;
-
-    [HideInInspector]public bool IsGrounded => isGrounded;
+    [HideInInspector] public bool IsGrounded => isGrounded;
 
     #endregion
 
-    [Header("Body Tilt Settings")]
-    [HideInInspector][SerializeField] float maxPitchAngle = 5f; // Tilt para frente/trás (aceleração/freio)
-    [HideInInspector][SerializeField] float maxRollAngle = 10f; // Tilt para os lados (direção)
-    [HideInInspector][SerializeField] float tiltResponseSpeed = 5f; // Velocidade de resposta do tilt
-    [HideInInspector][SerializeField] float tiltReturnSpeed = 3f; // Velocidade de retorno ao normal
-    [HideInInspector][SerializeField] float brakeTiltMultiplier = 1.5f; // Multiplicador do tilt ao frear
-    [HideInInspector][SerializeField] AnimationCurve speedTiltCurve; // Curva para ajustar o tilt baseado na velocidade
-    
-    [Header("Gravity/Ground Hugging")]
-    [HideInInspector][SerializeField] float gravityStrength = 9.81f; // Força de gravidade que puxa o carro
-    [HideInInspector][SerializeField] float surfaceAlignmentSpeed = 10f; // Velocidade de rotação para alinhar à nova superfície
-    [HideInInspector][SerializeField] float groundHugDistance = 1.5f; // Distância do raycast de busca de superfície
-    [SerializeField] private float downforceAmount = 500f;
-    public float extraGripModifier = 1.0f;
-    private Vector3 _currentCarUp = Vector3.up; // O "Up" atual do carro (normal da superfície)
+    // ======================================================
+    // BODY TILT & VISUAL PHYSICS
+    // ======================================================
 
+    #region Body Tilt
+
+    [Header("Body Tilt Settings")]
+    [HideInInspector][SerializeField] float maxPitchAngle = 5f;
+    [HideInInspector][SerializeField] float maxRollAngle = 10f;
+    [HideInInspector][SerializeField] float tiltResponseSpeed = 5f;
+    [HideInInspector][SerializeField] float tiltReturnSpeed = 3f;
+    [HideInInspector][SerializeField] float brakeTiltMultiplier = 1.5f;
+    [HideInInspector][SerializeField] AnimationCurve speedTiltCurve;
+
+    #endregion
+
+    // ======================================================
+    // GRAVITY / GROUND HUGGING
+    // ======================================================
+
+    #region Gravity & Ground Hugging
+
+    [Header("Gravity/Ground Hugging")]
+    [HideInInspector][SerializeField] float gravityStrength = 9.81f;
+    [HideInInspector][SerializeField] float surfaceAlignmentSpeed = 10f;
+    [HideInInspector][SerializeField] float groundHugDistance = 1.5f;
+
+    [HideInInspector] public float extraGripModifier = 1.0f;
+
+    private Vector3 _currentCarUp = Vector3.up;
     private Vector3 currentCarLocalVelocity = Vector3.zero;
     private float carVelocityRatio = 0;
 
-    [Header("Aerodynamics (Air Drag)")]
-    [SerializeField] float hoverAirDrag = 0.25f;   // Maior resistência para o Hover
-    [SerializeField] float classicAirDrag = 0.08f; // Classic "fura" o ar melhor
-    [SerializeField] float dragThreshold = 50f;
+    #endregion
 
-    #region Visual variables
+    // ======================================================
+    // VISUAL SYSTEM
+    // ======================================================
+
+    #region Visual Variables
 
     [HideInInspector][SerializeField] private float tireRorationSpeed = 3000f;
-    [SerializeField] private float maxSteerAngle = 30f;
+    [HideInInspector] [SerializeField] private float maxSteerAngle = 30f;
 
     [Header("Hover Visual Transformation")]
     [HideInInspector][SerializeField] float transitionSpeed = 5f;
-    // Alterado para a rotação desejada (0, 180, 90)
-    [HideInInspector][SerializeField] Vector3 wheelHoverRotation = new Vector3(0, 180, 90); 
-    [HideInInspector][SerializeField] Vector3 wheelClassicRotation = new Vector3(0, 180, 0); // Padrão clássico
-    private float _hoverTransitionAlpha = 0f; // 0 = Classic, 1 = Hover
+    [HideInInspector][SerializeField] Vector3 wheelHoverRotation = new Vector3(0, 180, 90);
+    [HideInInspector][SerializeField] Vector3 wheelClassicRotation = new Vector3(0, 180, 0);
+
+    private float _hoverTransitionAlpha = 0f;
+
+    #endregion
+
+    // ======================================================
+    // RESPAWN SYSTEM
+    // ======================================================
+
+    #region Respawn System
 
     [Header("Respawn System")]
     [HideInInspector][SerializeField] private float savePositionInterval = 2f;
     [HideInInspector][SerializeField] private float airTimeThreshold = 5f;
-    [HideInInspector][SerializeField] private float respawnBoostIntensity = 1.5f; // Multiplicador de força no respawn
-    
-    [Header("Turbo & Stamina Settings")]
-    [SerializeField] private int NOS_amount = 3;
-    [SerializeField] private float turboInitialImpulse = 15f;    // O "X" do impulso inicial
-    [SerializeField] private float turboMaxSpeedMultiplier = 2.0f;
-    [SerializeField] private float turboAccelMultiplier = 2.0f;
+    [HideInInspector][SerializeField] private float respawnBoostIntensity = 1.5f;
 
-    [Header("Turbo Cooldown Settings")]
-    [SerializeField] private float _turboCooldownTime = 3; // Tempo de espera entre usos
-    private float _nextTurboTime = 0f; // Marca quando o turbo poderá ser usado novamente
-    [SerializeField] float turboDuration = 4f;
-
-    [SerializeField] float turboBurstForce = 2.0f; // Impulso nos primeiros 0.5s
-    [SerializeField] float turboBodyTiltBase = -5f; // Inclinação da carroçaria para trás
-    private float turboTimer = 0f;
-
-    [SerializeField]private bool _isTurboRequestActive = false; // Se o jogador está segurando o botão
     private Vector3 _lastSafePosition;
     private Quaternion _lastSafeRotation;
     private float _saveTimer;
     private float _airTimer;
     private bool _isRespawning = false;
 
-    public float rubberBandingFactor = 1f;
+    #endregion
+
+    // ======================================================
+    // TURBO SYSTEM
+    // ======================================================
+
+    #region Turbo System
+
+    [Header("Turbo & Stamina Settings")]
+    [SerializeField] private int NOS_amount = 3;
+    [SerializeField] private float turboInitialImpulse = 15f;
+    [SerializeField] private float turboMaxSpeedMultiplier = 2.0f;
+    [SerializeField] private float turboAccelMultiplier = 2.0f;
+
+    [Header("Turbo Cooldown Settings")]
+    [SerializeField] private float _turboCooldownTime = 3f;
+    [SerializeField] float turboDuration = 4f;
+    [SerializeField] float turboBurstForce = 2.0f;
+    [HideInInspector] [SerializeField] float turboBodyTiltBase = -5f;
+
+    private float _nextTurboTime = 0f;
+    private float turboTimer = 0f;
+    private bool _isTurboRequestActive = false;
+
+    [HideInInspector] public float rubberBandingFactor = 1f;
 
     #endregion
 
-    #endregion
+    // ======================================================
+    // INTERNAL RUNTIME STATE
+    // ======================================================
+
     #region Internal State
+    private float _currentSteerInput;
+    private float _currentThrottleInput;
+    private bool _currentHandbrakeInput;
 
-    private float _currentSteerInput; // Input de esterço (-1 a 1)
-    private float _currentThrottleInput; // Input de aceleração (0 a 1)
-    private bool _currentHandbrakeInput; // Input de freio de mão (true/false)
     private float _driftExitTime = 0f;
+
     private bool _isTurboActive = false;
     private float _turboEndTime = 0f;
-    private float _currentSteerAngle; // Ângulo de esterço atual interpolado
-    private float _speedKPH; // Velocidade atual em Km/h
-    private float _speedRatio; // Velocidade atual como razão de 0 a 1 (em relação a topSpeed)
 
-    // Valores para o visual do carro
+    private float _currentSteerAngle;
+    public float speedKMH;
+    private float _speedRatio;
+
+    // Visual runtime
     private Vector3 _meshLocalEulerAngles;
     private float _currentRoll;
     private float _currentPitch;
-    
-    // Variáveis de tilt
+
     private float _targetPitch = 0f;
     private float _targetRoll = 0f;
     private float _currentBodyPitch = 0f;
@@ -227,40 +324,34 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     #endregion
 
-    // --- Métodos Unity ---
-
-    #region IA multipliers
-    private float accelerationMultiplier;
-    private float maxSpeedMultiplier;
-    private float decelerationDecreaser;
-    #endregion
-
-    #region Unity Events
-    
-    
-    #endregion
-
-    // --- Gerenciamento de Inputs (Getters) ---
+    // ======================================================
+    // Input Handling
+    // ======================================================
 
     #region Input Handling
 
-    public void SetSteering(float input) => _currentSteerInput = input;
-    public void SetThrottle(float input) => _currentThrottleInput = input;
-
-    public void SetHandbrake(bool input) 
+    public void SetSteering(float value)
     {
-        // Se apertou agora e está no chão, tenta começar
-        if (input && !_currentHandbrakeInput && isGrounded)
+        _currentSteerInput = Mathf.Clamp(value, -1f, 1f);
+    }
+
+    public void SetThrottle(float value)
+    {
+        _currentThrottleInput = Mathf.Clamp(value, -1f, 1f);
+    }
+
+    public void SetHandbrake(bool value)
+    {
+        if (value && !_currentHandbrakeInput && isGrounded)
         {
             TryStartDrift();
         }
-        // Se soltou o botão e estava em drift, encerra
-        else if (!input && _isDrifting)
+        else if (!value && _currentHandbrakeInput && _isDrifting)
         {
-            EndDrift(true); // Finaliza com boost
+            EndDrift(true);
         }
-        
-        _currentHandbrakeInput = input;
+
+        _currentHandbrakeInput = value;
     }
 
     #endregion
@@ -290,13 +381,10 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         SwitchToMode(carType);
     }
 
-    public void SetAI(bool isAI, float accMult, float speedMult, float decelDivisor, AIRacingController driver)
+    public void SetAI(bool isAI, AIRacingController driver)
     {
         AIControlled = isAI;
         if(isAI){
-            accelerationMultiplier = accMult;
-            maxSpeedMultiplier = speedMult;
-            decelerationDecreaser = decelDivisor;
             aiDriver = driver;
         }
 

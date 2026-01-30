@@ -150,7 +150,7 @@ public class AIRacingController : MonoBehaviour
         if (rayBasedPhysics != null)
         {
             //rayBasedPhysics.SetAI(true, accMult, speedMult, decelDivisor, this);
-            rayBasedPhysics.SetAI(true, 1f, 1f, 1f, this);
+            rayBasedPhysics.SetAI(true, this);
         }
     }
 
