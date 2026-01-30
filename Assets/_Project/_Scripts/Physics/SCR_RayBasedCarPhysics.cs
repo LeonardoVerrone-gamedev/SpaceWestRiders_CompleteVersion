@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
+using System.Collections;
 
 // Requer que o GameObject tenha um Rigidbody
 [RequireComponent(typeof(Rigidbody))]
@@ -247,6 +248,11 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     private float _hoverTransitionAlpha = 0f;
 
+    private float _rearWheelRotationAccumulator = 0f;
+    private float _frontWheelRotationAccumulator = 0f;
+    private Coroutine _transitionCoroutine;
+    private Quaternion _currentBaseWheelRot; // Armazena o progresso da transição
+
     #endregion
 
     // ======================================================
@@ -447,16 +453,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     public void ToggleVehicleMode()
     {
-        if(!canSwitchType){return;}
-        // Lógica de alternância (Grounded <-> Hover)
-        if (carType == CarType.classic)
-        {
-            SwitchToMode(CarType.hover);
-        }
-        else if (carType == CarType.hover)
-        {
-            SwitchToMode(CarType.classic);
-        }
+        if (!canSwitchType) return;
+        SwitchToMode(carType == CarType.classic ? CarType.hover : CarType.classic);
     }
 
     public void SwitchToMode(CarType newMode)
@@ -465,8 +463,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         if (carType == CarType.hover)
         {
-            // Ao entrar no modo hover, damos um pequeno "pulo" para cima
-            // para o carro não tentar flutuar colado no chão
             dragCoefficient = hoverCarDragCoefficient;
             acceleration = hoverCarAcceleration;
             maxSpeed = hoverCarMaxSpeed;
@@ -478,8 +474,10 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             maxSpeed = classicCarMaxSpeed;
             dragCoefficient = classicCarDragCoefficient;
         }
-        
-        Debug.Log("Modo de condução alterado para: " + carType);
+
+        // Inicia a Coroutine de transição visual
+        if (_transitionCoroutine != null) StopCoroutine(_transitionCoroutine);
+        _transitionCoroutine = StartCoroutine(AnimateWheelTransition());
     }
 
     #endregion
@@ -762,53 +760,81 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     private void TireVisuals()
     {
-        UpdateWheelTransformation();
-
-        // Se estiver no modo Hover, ignoramos o resto do processamento visual (esterço e rolagem)
+        // Se estiver no modo Hover, as rodas ficam estáticas na posição da transição
         if (carType == CarType.hover) return;
 
         float steeringAngle = maxSteerAngle * _currentSteerInput;
+        
+        // Acumuladores de rotação (X local)
+        // Traseira: PURA tração (só com acelerador)
+        _rearWheelRotationAccumulator += tireRorationSpeed * _currentThrottleInput * Time.deltaTime;
+        // Dianteira: Pura velocidade (rolagem baseada no movimento)
+        _frontWheelRotationAccumulator += tireRorationSpeed * carVelocityRatio * Time.deltaTime;
 
         for (int i = 0; i < tires.Length; i++)
         {
             if (tires[i] == null) continue;
 
-            float rotationMultiplier = (i < 2 ? carVelocityRatio : _currentThrottleInput);
-
-            // Rotação de rolagem (apenas no modo clássico)
-            tires[i].transform.Rotate(Vector3.right, tireRorationSpeed * rotationMultiplier * Time.deltaTime, Space.Self);
-
-            // Esterço (apenas no modo clássico)
-            if (i < 2 && frontTiresParent[i] != null)
+            if (i >= 2) // RODAS TRASEIRAS
             {
-                // Nota: Como o UpdateWheelTransformation agora controla o frontTiresParent, 
-                // precisamos garantir que o esterço não sobrescreva o X e Z da transição.
-                Vector3 currentRot = frontTiresParent[i].transform.localEulerAngles;
-                frontTiresParent[i].transform.localEulerAngles = new Vector3(currentRot.x, steeringAngle, currentRot.z);
+                // Combinamos a inclinação da transição com o giro do acumulador
+                tires[i].transform.localRotation = _currentBaseWheelRot * Quaternion.Euler(_rearWheelRotationAccumulator, 0, 0);
+            }
+            else // RODAS DIANTEIRAS
+            {
+                // Rotação do pneu (X)
+                tires[i].transform.localRotation = _currentBaseWheelRot * Quaternion.Euler(_frontWheelRotationAccumulator, 0, 0);
+
+                // Esterço no Parent (Y)
+                if (frontTiresParent[i] != null)
+                {
+                    // Multiplicamos a rotação base da transição pelo ângulo de esterço
+                    // Isso permite que a roda esterce mesmo se estiver "meio inclinada" durante a transição
+                    frontTiresParent[i].transform.localRotation = _currentBaseWheelRot * Quaternion.Euler(0, steeringAngle, 0);
+                }
             }
         }
     }
 
-    private void UpdateWheelTransformation() //TODO: mudar isso para uma Coroutine depois
+    private IEnumerator AnimateWheelTransition()
     {
         float targetAlpha = (carType == CarType.hover) ? 1f : 0f;
-        _hoverTransitionAlpha = Mathf.MoveTowards(_hoverTransitionAlpha, targetAlpha, Time.deltaTime * transitionSpeed);
+        
+        // Definimos os Quaternions fixos de início e fim para o Slerp não se perder
+        Quaternion startRot = Quaternion.Euler(wheelClassicRotation);
+        Quaternion endRot = Quaternion.Euler(wheelHoverRotation);
 
-        // Calculamos a rotação baseada no progresso da transição
-        Quaternion targetRot = Quaternion.Euler(Vector3.Lerp(wheelClassicRotation, wheelHoverRotation, _hoverTransitionAlpha));
+        _currentBaseWheelRot = startRot;
 
+        while (!Mathf.Approximately(_hoverTransitionAlpha, targetAlpha))
+        {
+            _hoverTransitionAlpha = Mathf.MoveTowards(_hoverTransitionAlpha, targetAlpha, Time.deltaTime * transitionSpeed);
+            
+            // Slerp é muito mais suave para rotações mecânicas
+            _currentBaseWheelRot = Quaternion.Slerp(startRot, endRot, _hoverTransitionAlpha);
+            
+            ApplyBaseTransformations();
+            
+            yield return null;
+        }
+        
+        // Garante que o valor final seja exato ao terminar
+        _currentBaseWheelRot = (carType == CarType.hover) ? endRot : startRot;
+        ApplyBaseTransformations();
+        
+        _transitionCoroutine = null;
+    }
+
+    private void ApplyBaseTransformations()
+    {
         for (int i = 0; i < tires.Length; i++)
         {
             if (tires[i] == null) continue;
-
+            
             if (i < 2 && frontTiresParent[i] != null)
-            {
-                frontTiresParent[i].transform.localRotation = targetRot;
-            }
+                tires[i].transform.localRotation = _currentBaseWheelRot;
             else
-            {
-                tires[i].transform.localRotation = targetRot; //FIX: isso impede as rodas de tras de rodarem
-            }
+                tires[i].transform.localRotation = _currentBaseWheelRot;
         }
     }
     

@@ -59899,7 +59899,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 10
+    maxNumParticles: 5
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -60164,9 +60164,9 @@ ParticleSystem:
     serializedVersion: 4
     rateOverTime:
       serializedVersion: 2
-      minMaxState: 0
-      scalar: 10
-      minScalar: 10
+      minMaxState: 3
+      scalar: 5
+      minScalar: 2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -88936,12 +88936,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carType: 1
   canSwitchType: 1
-  speedKMH: 0
+  AIControlled: 0
   rb: {fileID: 1123509100967675288}
   drivable:
     serializedVersion: 2
     m_Bits: 64
   accelerationPoint: {fileID: 5531629963118893633}
+  carBody: {fileID: 4563655748157315882}
   tires:
   - {fileID: 1340805833272294623}
   - {fileID: 4555805623045754417}
@@ -88950,24 +88951,28 @@ MonoBehaviour:
   frontTiresParent:
   - {fileID: 4130010168300589954}
   - {fileID: 3453761932049308526}
-  carBody: {fileID: 4563655748157315882}
-  classicCornerGrip: 5
+  backTiresParent:
+  - {fileID: 4899584820013775574}
+  - {fileID: 3135178111466275925}
   rayPoints:
   - {fileID: 6989147163659483163}
   - {fileID: 6214412643428591459}
   - {fileID: 5016458087924012834}
   - {fileID: 1321299034593973911}
-  springStiffness: 8000
   restLenght: 1
   hoverDistance: 2
   springTravel: 0.5
+  springStiffness: 8000
   wheelRadius: 0.33
   hoverDamper: 8000
   classicDamper: 3500
-  AIControlled: 0
   hoverDownforceAmount: 2500
   minHeightThreshold: 0.4
   useDynamicDownforce: 1
+  hoverAirDrag: 0.09
+  classicAirDrag: 0.08
+  dragThreshold: 50
+  downforceAmount: 500
   classicCarAcceleration: 40
   hoverCarAcceleration: 32
   acceleration: 28
@@ -88976,10 +88981,11 @@ MonoBehaviour:
   maxSpeed: 100
   deceleration: 40
   steerStrenght: 20
-  dragCoefficient: 5
   classicCarDragCoefficient: 5
   hoverCarDragCoefficient: 3
+  dragCoefficient: 5
   airControlStrength: 2
+  classicCornerGrip: 5
   accelCurve:
     serializedVersion: 2
     m_Curve:
@@ -89215,9 +89221,9 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   maxDriftAngle: 35
-  driftEnterThreshold: 0.3
   driftBoostForce: 15
   driftBoostDuration: 0.5
+  driftEnterThreshold: 0.3
   driftStability: 0.15
   driftAccelerationMultiplier: 1.1
   maxDriftBoostSpeed: 150
@@ -89275,11 +89281,7 @@ MonoBehaviour:
   gravityStrength: 9.81
   surfaceAlignmentSpeed: 25
   groundHugDistance: 1.5
-  downforceAmount: 500
   extraGripModifier: 1
-  hoverAirDrag: 0.09
-  classicAirDrag: 0.08
-  dragThreshold: 50
   tireRorationSpeed: 3000
   maxSteerAngle: 20
   transitionSpeed: 5
@@ -89296,8 +89298,8 @@ MonoBehaviour:
   turboDuration: 4
   turboBurstForce: 1.15
   turboBodyTiltBase: -5
-  _isTurboRequestActive: 0
   rubberBandingFactor: 1
+  speedKMH: 0
 --- !u!114 &2824079843674075053
 MonoBehaviour:
   m_ObjectHideFlags: 0

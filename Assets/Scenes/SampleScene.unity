@@ -306,6 +306,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4815044283672903012, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
   m_PrefabInstance: {fileID: 980648513}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &47466556 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3135178111466275925, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+  m_PrefabInstance: {fileID: 446331383}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &50764720 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 317934794169527889, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
@@ -21343,6 +21348,26 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: backTiresParent.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: 'backTiresParent.Array.data[0]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: 'backTiresParent.Array.data[1]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: 'backTiresParent.Array.data[2]'
+      value: 
+      objectReference: {fileID: 599252055}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: 'backTiresParent.Array.data[3]'
+      value: 
+      objectReference: {fileID: 47466556}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.size
       value: 4
       objectReference: {fileID: 0}
@@ -35722,6 +35747,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 8309460868310471761, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
   m_PrefabInstance: {fileID: 980648513}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &599252055 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4899584820013775574, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+  m_PrefabInstance: {fileID: 446331383}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &602076439 stripped
 Transform:
@@ -66842,6 +66872,10 @@ PrefabInstance:
     - target: {fileID: 2824079843674075053, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: _carInput
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2999346283510352909, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4188370516142532924, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: racerData
