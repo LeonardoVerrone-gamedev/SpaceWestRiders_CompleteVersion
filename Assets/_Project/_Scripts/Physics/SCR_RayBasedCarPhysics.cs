@@ -380,18 +380,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         SwitchToMode(carType);
     }
-
-    public void SetAI(bool isAI, AIRacingController driver)
-    {
-        AIControlled = isAI;
-        if(isAI){
-            aiDriver = driver;
-        }
-
-        SwitchToMode(carType);
-    }
     
-
     void Update()
     {
         UpdateDriftState();
@@ -440,6 +429,20 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     #endregion
 
+    #region setup
+
+    public void SetAI(bool isAI, AIRacingController driver)
+    {
+        AIControlled = isAI;
+        if(isAI){
+            aiDriver = driver;
+        }
+
+        SwitchToMode(carType);
+    }
+
+    #endregion
+
     #region transition between car modes
 
     public void ToggleVehicleMode()
@@ -476,14 +479,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             dragCoefficient = classicCarDragCoefficient;
         }
         
-
-       // if (AIControlled)
-        //{
-            // Aplicando as proporções
-           // acceleration *= 5f;
-           // maxSpeed *= 7.0f;
-           // deceleration /= 8f;
-       // }
         Debug.Log("Modo de condução alterado para: " + carType);
     }
 
