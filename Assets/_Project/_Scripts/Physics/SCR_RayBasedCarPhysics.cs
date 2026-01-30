@@ -536,10 +536,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         float effectiveMaxSpeed = maxSpeed;
 
-        if (AIControlled)
-        {
-            effectiveMaxSpeed *= rubberBandingFactor;
-        }
+        if (AIControlled) effectiveMaxSpeed *= rubberBandingFactor;
         
         if (_isTurboActive) effectiveMaxSpeed *= turboMaxSpeedMultiplier;
 
@@ -555,26 +552,14 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         currentAcceleration *= accelCurve.Evaluate(speedPercentage);
         
         // Multiplicador de aceleração durante drift
-        if (_isDrifting)
-        {
-            currentAcceleration *= driftAccelerationMultiplier;
-        }
+        if (_isDrifting) currentAcceleration *= driftAccelerationMultiplier;
 
-        if (_isTurboActive)
-        {
-            currentAcceleration *= turboAccelMultiplier;
-        }
+        if (_isTurboActive) currentAcceleration *= turboAccelMultiplier;
         
         // Multiplicador de aceleração durante boost
-        if (_isDriftBoostActive)
-        {
-            currentAcceleration *= 2f; // Dobra a aceleração durante o boost
-        }
+        if (_isDriftBoostActive) currentAcceleration *= 2f; // Dobra a aceleração durante o boost
 
-        if (AIControlled)
-        {
-            currentAcceleration *= rubberBandingFactor;
-        }
+        if (AIControlled)  currentAcceleration *= rubberBandingFactor;
         
         rb.AddForceAtPosition(currentAcceleration * _currentThrottleInput * transform.forward, accelerationPoint.position, ForceMode.Acceleration);
     }
@@ -583,10 +568,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     {
         float brakeMultiplier = 1f;
 
-        if(currentCarLocalVelocity.z > 1f && !AIControlled)
-        {
-            brakeMultiplier = 1.1f;
-        }
+        if(currentCarLocalVelocity.z > 1f && !AIControlled) brakeMultiplier = 1.1f;
 
         if(currentCarLocalVelocity.z < 0.1f)
         {
@@ -595,10 +577,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         float currentDeceleration = deceleration;
 
-        if (AIControlled)
-        {
-            currentDeceleration *= rubberBandingFactor;
-        }
+        if (AIControlled)   currentDeceleration *= rubberBandingFactor;
 
         rb.AddForceAtPosition(currentDeceleration * brakeMultiplier * _currentThrottleInput * transform.forward, accelerationPoint.position, ForceMode.Acceleration);
     }
@@ -695,10 +674,13 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         bool isHover = carType == CarType.hover;
 
         // Define valores baseados no tipo
-        if (carType == CarType.classic) { 
+        if (carType == CarType.classic) 
+        { 
             _distance = restLenght; 
             _damperStiffness = classicDamper; 
-        } else { 
+        } 
+        else 
+        { 
             _distance = hoverDistance; 
             _damperStiffness = hoverDamper; 
         }
@@ -743,10 +725,13 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
                 rb.AddForceAtPosition(netForce * transform.up, rayPoints[i].position);
 
                 // --- LÓGICA VISUAL ---
-                if (carType == CarType.hover) {
+                if (carType == CarType.hover)
+                {
                     // No Hover, a roda fica travada na posição do RayPoint (sem seguir o terreno)
                     SetTirePosition(tires[i], rayPoints[i].position);
-                } else {
+                }
+                else 
+                {
                     // No Classic, a roda segue o chão
                     float visualSpringDistance = Mathf.Min(currentSpringLenght, maxVisualLenght);
                     Vector3 visualPos = rayPoints[i].position - transform.up * visualSpringDistance;
@@ -831,7 +816,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     {
         if (carBody == null) return;
 
-            // Calcular velocidade atual em magnitude
+        // Calcular velocidade atual em magnitude
         float currentSpeed = rb.linearVelocity.magnitude;
         float speedFactor = speedTiltCurve.Evaluate(Mathf.Clamp01(currentSpeed / maxSpeed));
 
@@ -1247,7 +1232,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         // 1. Calcular intensidade do drift (0 a 1)
         float driftIntensity = Mathf.Clamp01(Mathf.Abs(_currentDriftAngle) / maxDriftAngle);
         
-        // 2. FORÇA DE EMPUXO FRONTAL (O segredo da V1 "gostosa")
+        // 2. FORÇA DE EMPUXO FRONTAL
         // Em vez de apenas manter a velocidade, vamos dar um pequeno boost constante
         // para que o carro sinta que está "tracionando" mesmo de lado.
         float forwardSpeed = currentCarLocalVelocity.z;
@@ -1271,14 +1256,12 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             rb.angularVelocity = transform.TransformDirection(localAV);
         }
 
-        // 4. FORÇA CENTRÍFUGA (Ajustada para não "expulsar" o carro da pista)
-        // Na V1, se essa força for muito alta, você perde o controle. Vamos suavizá-la.
+        // 4. FORÇA CENTRÍFUGA
         float centrifugalForce = rb.linearVelocity.magnitude * driftIntensity * 0.3f;
         Vector3 forceDirection = -transform.right * Mathf.Sign(_currentDriftAngle);
         rb.AddForce(forceDirection * centrifugalForce, ForceMode.Acceleration);
         
-        // 5. LIMITADOR DE VELOCIDADE ANGULAR (Segurança Arcade)
-        // Garante que o carro nunca gire mais rápido do que o jogador consegue reagir.
+        // 5. LIMITADOR DE VELOCIDADE ANGULAR
         Vector3 av = transform.InverseTransformDirection(rb.angularVelocity);
         float maxRotation = 2.5f; // Ajuste este valor para mais ou menos agilidade
         av.y = Mathf.Clamp(av.y, -maxRotation, maxRotation);
@@ -1306,7 +1289,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         _dragRestoreTimer += Time.deltaTime;
         float lerpPercent = _dragRestoreTimer / dragRestoreDuration;
 
-        // Interpola entre o drag de drift (estabilidade reduzida) e o original
+        // Interpola entre o drag de drift e o original
         float driftDrag = _originalDragCoefficient * driftStability;
         dragCoefficient = Mathf.Lerp(driftDrag, _originalDragCoefficient, lerpPercent);
 
@@ -1346,10 +1329,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         
         _driftBoostTimer -= Time.deltaTime;
         
-        if (_driftBoostTimer <= 0)
-        {
-            EndDriftBoost();
-        }
+        if (_driftBoostTimer <= 0) EndDriftBoost();
     }
 
     private void EndDriftBoost()
@@ -1385,10 +1365,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             _airTimer += Time.fixedDeltaTime;
 
             // Se passar do tempo limite no ar, executa o respawn
-            if (_airTimer >= airTimeThreshold && !_isRespawning)
-            {
-                ExecuteRespawn();
-            }
+            if (_airTimer >= airTimeThreshold && !_isRespawning) ExecuteRespawn();
         }
     }
 
@@ -1418,7 +1395,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         transform.rotation = _lastSafeRotation;
 
         // Aplica um boost de aceleração imediato para retomar a corrida
-        if(!AIControlled){
+        if(!AIControlled)
+        {
             rb.AddForce(transform.forward * acceleration * respawnBoostIntensity, ForceMode.VelocityChange);
         }
         else
