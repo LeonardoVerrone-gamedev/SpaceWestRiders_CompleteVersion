@@ -789,7 +789,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         }
     }
 
-    private void UpdateWheelTransformation()
+    private void UpdateWheelTransformation() //TODO: mudar isso para uma Coroutine depois
     {
         float targetAlpha = (carType == CarType.hover) ? 1f : 0f;
         _hoverTransitionAlpha = Mathf.MoveTowards(_hoverTransitionAlpha, targetAlpha, Time.deltaTime * transitionSpeed);
@@ -807,7 +807,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             }
             else
             {
-                tires[i].transform.localRotation = targetRot;
+                tires[i].transform.localRotation = targetRot; //FIX: isso impede as rodas de tras de rodarem
             }
         }
     }
