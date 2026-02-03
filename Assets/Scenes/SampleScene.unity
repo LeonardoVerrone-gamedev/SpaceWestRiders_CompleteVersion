@@ -1671,7 +1671,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1891508622973969240, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
   m_PrefabInstance: {fileID: 446331383}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2123643960}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9d5e87c61f9b48a4c82203569a24a8d9, type: 3}
@@ -2185,11 +2185,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSpeed
-      value: 115
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: acceleration
       value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAirDrag
+      value: 0.002
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSteerAngle
@@ -2213,7 +2217,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
-      value: 115
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: airRotationTorque
@@ -2221,7 +2225,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarMaxSpeed
-      value: 115
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboInitialImpulse
@@ -2661,7 +2665,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_Mass
-      value: 1980
+      value: 2000
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_UseGravity
@@ -11775,15 +11779,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSpeed
-      value: 119
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: acceleration
-      value: 41
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverAirDrag
-      value: 0.0025
+      value: 0.002
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSteerAngle
@@ -11807,7 +11811,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
-      value: 119
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: airRotationTorque
@@ -11815,7 +11819,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarMaxSpeed
-      value: 119
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboInitialImpulse
@@ -11823,7 +11827,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarAcceleration
-      value: 41
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboAccelMultiplier
@@ -11835,7 +11839,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarAcceleration
-      value: 41
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.maxSpeed
@@ -12259,7 +12263,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_Mass
-      value: 2100
+      value: 2000
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_UseGravity
@@ -17253,15 +17257,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSpeed
-      value: 120
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: acceleration
-      value: 50
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverAirDrag
-      value: 0.0025
+      value: 0.002
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSteerAngle
@@ -17285,7 +17289,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
-      value: 120
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: airRotationTorque
@@ -17293,7 +17297,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarMaxSpeed
-      value: 120
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboInitialImpulse
@@ -17301,7 +17305,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarAcceleration
-      value: 50
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboAccelMultiplier
@@ -17313,7 +17317,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarAcceleration
-      value: 50
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.maxSpeed
@@ -17737,7 +17741,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_Mass
-      value: 1900
+      value: 2000
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_UseGravity
@@ -22313,11 +22317,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSpeed
-      value: 112
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: acceleration
-      value: 48
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAirDrag
+      value: 0.002
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSteerAngle
@@ -22341,7 +22349,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
-      value: 112
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: airRotationTorque
@@ -22349,7 +22357,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarMaxSpeed
-      value: 112
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboInitialImpulse
@@ -22357,7 +22365,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarAcceleration
-      value: 48
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboAccelMultiplier
@@ -22369,7 +22377,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarAcceleration
-      value: 48
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.maxSpeed
@@ -22833,7 +22841,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_Mass
-      value: 2600
+      value: 2000
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_UseGravity
@@ -27303,10 +27311,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5980821553096664176, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 617625233}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8410641648346012813, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2123643970}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
 --- !u!4 &446350920 stripped
 Transform:
@@ -27829,7 +27834,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6294504414630336068, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
   m_PrefabInstance: {fileID: 446331383}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2123643960}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d49d25b83dec8ed4fb049d7082c77ddc, type: 3}
@@ -27854,11 +27859,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSpeed
-      value: 114
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: acceleration
-      value: 44
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAirDrag
+      value: 0.002
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSteerAngle
@@ -27882,7 +27891,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
-      value: 114
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: airRotationTorque
@@ -27890,7 +27899,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarMaxSpeed
-      value: 114
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboInitialImpulse
@@ -27898,7 +27907,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarAcceleration
-      value: 44
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboAccelMultiplier
@@ -27910,7 +27919,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarAcceleration
-      value: 44
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicSettings.airDrag
@@ -32854,7 +32863,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSpeed
-      value: 114
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: acceleration
@@ -32862,7 +32871,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverAirDrag
-      value: 0.0025
+      value: 0.002
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSteerAngle
@@ -32886,7 +32895,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
-      value: 114
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: airRotationTorque
@@ -32894,7 +32903,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarMaxSpeed
-      value: 114
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboInitialImpulse
@@ -33338,7 +33347,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_Mass
-      value: 1950
+      value: 2000
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_UseGravity
@@ -44043,15 +44052,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSpeed
-      value: 120
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: acceleration
-      value: 50
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverAirDrag
-      value: 0.0025
+      value: 0.002
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSteerAngle
@@ -44075,7 +44084,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
-      value: 120
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: airRotationTorque
@@ -44083,7 +44092,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarMaxSpeed
-      value: 120
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboInitialImpulse
@@ -44091,7 +44100,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarAcceleration
-      value: 50
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboAccelMultiplier
@@ -44103,7 +44112,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarAcceleration
-      value: 50
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.maxSpeed
@@ -58159,15 +58168,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSpeed
-      value: 120
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: acceleration
-      value: 50
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverAirDrag
-      value: 0.75
+      value: 0.002
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSteerAngle
@@ -58191,7 +58200,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
-      value: 120
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: airRotationTorque
@@ -58199,7 +58208,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarMaxSpeed
-      value: 120
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboInitialImpulse
@@ -58207,7 +58216,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarAcceleration
-      value: 50
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboAccelMultiplier
@@ -58219,7 +58228,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarAcceleration
-      value: 50
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicSettings.airDrag
@@ -58639,7 +58648,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_Mass
-      value: 2050
+      value: 2000
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_UseGravity
@@ -63653,15 +63662,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSpeed
-      value: 120
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: acceleration
-      value: 38
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverAirDrag
-      value: 0.0025
+      value: 0.002
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSteerAngle
@@ -63685,7 +63694,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
-      value: 120
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: airRotationTorque
@@ -63693,7 +63702,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarMaxSpeed
-      value: 120
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboInitialImpulse
@@ -63701,7 +63710,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarAcceleration
-      value: 38
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboAccelMultiplier
@@ -63713,7 +63722,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarAcceleration
-      value: 38
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.maxSpeed
@@ -64137,7 +64146,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_Mass
-      value: 1850
+      value: 2000
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_UseGravity
@@ -69905,15 +69914,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSpeed
-      value: 120
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: acceleration
-      value: 50
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverAirDrag
-      value: 0.75
+      value: 0.002
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSteerAngle
@@ -69937,7 +69946,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
-      value: 120
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: airRotationTorque
@@ -69945,7 +69954,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarMaxSpeed
-      value: 120
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboInitialImpulse
@@ -69953,7 +69962,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarAcceleration
-      value: 50
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboAccelMultiplier
@@ -69965,7 +69974,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarAcceleration
-      value: 50
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicSettings.airDrag
@@ -70385,7 +70394,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_Mass
-      value: 1950
+      value: 2000
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_UseGravity
@@ -75024,11 +75033,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSpeed
-      value: 112
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: acceleration
-      value: 48
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAirDrag
+      value: 0.002
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSteerAngle
@@ -75052,7 +75065,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
-      value: 112
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: airRotationTorque
@@ -75060,7 +75073,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarMaxSpeed
-      value: 112
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboInitialImpulse
@@ -75068,7 +75081,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarAcceleration
-      value: 48
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboAccelMultiplier
@@ -75080,7 +75093,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarAcceleration
-      value: 48
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicSettings.airDrag
@@ -75500,7 +75513,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_Mass
-      value: 2200
+      value: 2000
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_UseGravity
@@ -80965,15 +80978,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSpeed
-      value: 116
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: acceleration
-      value: 44
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverAirDrag
-      value: 0.0025
+      value: 0.002
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSteerAngle
@@ -80997,7 +81010,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
-      value: 116
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: airRotationTorque
@@ -81005,7 +81018,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarMaxSpeed
-      value: 116
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboInitialImpulse
@@ -81013,7 +81026,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarAcceleration
-      value: 44
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboAccelMultiplier
@@ -81025,7 +81038,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarAcceleration
-      value: 44
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.maxSpeed
@@ -81449,7 +81462,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_Mass
-      value: 1950
+      value: 2000
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_UseGravity
@@ -86182,11 +86195,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSpeed
-      value: 118
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: acceleration
-      value: 47
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAirDrag
+      value: 0.002
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: maxSteerAngle
@@ -86210,7 +86227,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
-      value: 118
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: airRotationTorque
@@ -86218,7 +86235,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarMaxSpeed
-      value: 118
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboInitialImpulse
@@ -86226,7 +86243,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarAcceleration
-      value: 47
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboAccelMultiplier
@@ -86238,7 +86255,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarAcceleration
-      value: 47
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicSettings.airDrag
@@ -86658,7 +86675,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_Mass
-      value: 2100
+      value: 2000
       objectReference: {fileID: 0}
     - target: {fileID: 1123509100967675288, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_UseGravity
@@ -91135,25 +91152,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5556418857905926886, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
   m_PrefabInstance: {fileID: 980648513}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &2123643960 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8410641648346012813, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
-  m_PrefabInstance: {fileID: 446331383}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2123643970
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2123643960}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b24f5972a2ee7e542b3da79ad1b8804b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  carPhysics: {fileID: 0}
-  viewportMargin: 0.15
 --- !u!4 &2124065133 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 675651802807465537, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}

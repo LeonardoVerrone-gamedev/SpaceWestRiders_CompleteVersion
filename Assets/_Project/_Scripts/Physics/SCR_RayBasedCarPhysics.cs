@@ -111,8 +111,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     #region Aerodynamics
 
     [Header("Aerodynamics (Air Drag)")]
-    [HideInInspector] [SerializeField] float hoverAirDrag = 0.25f;
-    [HideInInspector] [SerializeField] float classicAirDrag = 0.08f;
+    [SerializeField] float hoverAirDrag = 0.25f;
+    [SerializeField] float classicAirDrag = 0.08f;
     [HideInInspector] [SerializeField] float dragThreshold = 50f;
     private float currentAirDrag;
 

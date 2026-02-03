@@ -88837,6 +88837,7 @@ GameObject:
   - component: {fileID: 6294504414630336068}
   - component: {fileID: 7291292022362802018}
   - component: {fileID: 4188370516142532924}
+  - component: {fileID: 5267084700608821396}
   m_Layer: 8
   m_Name: RaycastBasedCar_DEFAULTPARAMETERS
   m_TagString: Player
@@ -91591,6 +91592,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   racerData: {fileID: 11400000, guid: 021b387a8b03add49ae25c7f6ecbdce5, type: 2}
+--- !u!114 &5267084700608821396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8410641648346012813}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b24f5972a2ee7e542b3da79ad1b8804b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  carPhysics: {fileID: 0}
+  viewportMargin: 0.15
 --- !u!1 &8568694381742411748
 GameObject:
   m_ObjectHideFlags: 0
