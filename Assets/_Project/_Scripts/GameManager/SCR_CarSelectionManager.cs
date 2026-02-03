@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using UnityEngine.SceneManagement;
+using Unity.Cinemachine;
 
 public class SCR_TrackSelectionManager : MonoBehaviour
 {
@@ -36,6 +37,7 @@ public class SCR_TrackSelectionManager : MonoBehaviour
     [Header("Camera Management")]
     [SerializeField] private GameObject cameraPrefab;
     private List<CameraController> _activeCameras = new List<CameraController>();
+    private List<SCR_CarVisualCulling> carCullings = new List<SCR_CarVisualCulling>();
 
     public static event Action OnRaceSetupCompleted;
 
@@ -60,6 +62,7 @@ public class SCR_TrackSelectionManager : MonoBehaviour
             _allCharactersSO = _allCharactersSO.OrderBy(so => so.characterID).ToList();
 
             _carsInScene = UnityEngine.Object.FindObjectsByType<SCR_CarIdentity>(FindObjectsSortMode.None).ToList();
+            carCullings = UnityEngine.Object.FindObjectsByType<SCR_CarVisualCulling>(FindObjectsSortMode.None).ToList();
             PrepareCarsForSelection();
 
             SCR_PersistentData.Instance.isSequenceRace = true;
@@ -148,6 +151,11 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
         GameObject camObj = Instantiate(cameraPrefab);
         CameraController newCamController = camObj.GetComponent<CameraController>();
+
+        foreach(SCR_CarVisualCulling carCulling in carCullings)
+        {
+            carCulling.AddCamera(camObj.GetComponentInChildren<Camera>().GetComponent<CinemachineBrain>());
+        }
         
         newCamController.SetChannel(newIndex);
         _activeCameras.Add(newCamController);

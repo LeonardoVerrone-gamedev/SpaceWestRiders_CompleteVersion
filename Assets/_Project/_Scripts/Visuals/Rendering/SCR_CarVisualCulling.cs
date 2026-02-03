@@ -1,12 +1,13 @@
 using UnityEngine;
 using Unity.Cinemachine;
+using System.Collections.Generic;
 
 public class SCR_CarVisualCulling : MonoBehaviour
 {
     [SerializeField] private SCR_RayBasedCarPhysics carPhysics;
     [SerializeField] private float viewportMargin = 0.3f;
 
-    private CinemachineBrain[] brains;
+    [SerializeField] private List<CinemachineBrain> brains = new List<CinemachineBrain>();
 
     void Awake()
     {
@@ -16,12 +17,13 @@ public class SCR_CarVisualCulling : MonoBehaviour
 
     void LateUpdate()
     {
-        // Atualiza dinamicamente (spawn/despawn seguro)
-        if (brains == null || brains.Length == 0)
-            brains = FindObjectsOfType<CinemachineBrain>(false);
-
         bool visible = IsVisibleByAnyBrain();
         carPhysics.SetVisualState(visible);
+    }
+
+    public void AddCamera(CinemachineBrain brain)
+    {
+        brains.Add(brain);
     }
 
     private bool IsVisibleByAnyBrain()
