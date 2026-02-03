@@ -1,9 +1,25 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SCR_CarEffects : MonoBehaviour
 {
+    [System.Serializable]
+    private struct ParticleSnapshot
+    {
+        public bool emissionEnabled;
+        public float rateOverTime;
+
+        public float startLifetime;
+        public float startSpeed;
+        public float startSize;
+    }
+
+
     [Header("References")]
     [SerializeField] private SCR_RayBasedCarPhysics carPhysics;
+
+    private List<ParticleSystem> allParticles = new();
+    private bool visualsWereDisabled = false;
     
     [Header("Classic Drift VFX")]
     [SerializeField] private ParticleSystem[] classicDriftParticles; 
@@ -31,6 +47,12 @@ public class SCR_CarEffects : MonoBehaviour
     [Header("Collision Impact")]
     [SerializeField] SCR_ImpactEffect[] impactEffects;
 
+    [Header("Heat distortion particles")]
+    [SerializeField] private ParticleSystem HeatDistortionParticles;
+    private ParticleSnapshot heatSnapshot;
+    private bool heatSnapshotCached = false;
+
+
     // Módulos Classic
     private ParticleSystem.EmissionModule[] classicEmissionModules;
     private ParticleSystem.MainModule[] classicMainModules;
@@ -48,6 +70,25 @@ public class SCR_CarEffects : MonoBehaviour
 
     void Start()
     {
+        CacheAllParticles();
+        if (HeatDistortionParticles != null)
+        {
+            var em = HeatDistortionParticles.emission;
+            var main = HeatDistortionParticles.main;
+
+            heatSnapshot = new ParticleSnapshot
+            {
+                emissionEnabled = em.enabled,
+                rateOverTime = em.rateOverTime.constant,
+
+                startLifetime = main.startLifetime.constant,
+                startSpeed = main.startSpeed.constant,
+                startSize = main.startSize.constant
+            };
+
+            heatSnapshotCached = true;
+        }
+
         if (carPhysics == null) carPhysics = GetComponentInParent<SCR_RayBasedCarPhysics>();
 
         // Cache Classic
@@ -67,6 +108,7 @@ public class SCR_CarEffects : MonoBehaviour
             hoverEmissionModules[i] = hoverDriftParticles[i].emission;
             hoverEmissionModules[i].rateOverTime = 0;
         }
+        
 
         SetupToggleableParticles(boostParticles);
         SetupToggleableParticles(turboParticles);
@@ -79,11 +121,108 @@ public class SCR_CarEffects : MonoBehaviour
 
     void Update()
     {
+       if (!carPhysics.CanUpdateVisuals)
+        {
+            DisableAllParticles();
+            return;
+        }
+
+        RestoreAllParticles();
+
         HandleDriftVFX();
         HandleBoostVFX();
         HandleTurboVFX();
         ResetSparkStates();
     }
+
+    private void CacheAllParticles()
+    {
+        void Add(ParticleSystem ps)
+        {
+            if (ps != null && !allParticles.Contains(ps))
+                allParticles.Add(ps);
+        }
+
+        // Classic
+        foreach (var ps in classicDriftParticles)
+            Add(ps);
+
+        // Hover
+        foreach (var ps in hoverDriftParticles)
+            Add(ps);
+
+        // Toggleables
+        Add(boostParticles);
+        Add(turboParticles);
+
+        // Sparks
+        Add(sparksLeft);
+        Add(sparksRight);
+
+        // Heat distortion
+        Add(HeatDistortionParticles);
+    }
+
+    private void DisableAllParticles()
+    {
+        if (visualsWereDisabled) return;
+
+        foreach (var ps in allParticles)
+        {
+            if (ps == null) continue;
+
+            var em = ps.emission;
+            em.rateOverTime = 0;          // reversível
+            em.enabled = true;            // nunca desligar
+
+            if (ps.isPlaying)
+                ps.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        }
+
+        visualsWereDisabled = true;
+
+        _lastBoostState = false;
+        _lastTurboState = false;
+
+        isCollidingLeft = false;
+        isCollidingRight = false;
+    }
+
+    private void RestoreAllParticles()
+    {
+        if (!visualsWereDisabled) return;
+
+        foreach (var ps in allParticles)
+        {
+            if (ps == null) continue;
+
+            var em = ps.emission;
+            em.enabled = true;   // garante estado válido
+
+            if (!ps.isPlaying)
+                ps.Play();
+        }
+
+        if (HeatDistortionParticles != null && heatSnapshotCached)
+        {
+            var em = HeatDistortionParticles.emission;
+            var main = HeatDistortionParticles.main;
+
+            em.enabled = heatSnapshot.emissionEnabled;
+            em.rateOverTime = heatSnapshot.rateOverTime;
+
+            main.startLifetime = heatSnapshot.startLifetime;
+            main.startSpeed = heatSnapshot.startSpeed;
+            main.startSize = heatSnapshot.startSize;
+
+            if (!HeatDistortionParticles.isPlaying)
+                HeatDistortionParticles.Play();
+        }
+
+        visualsWereDisabled = false;
+    }
+
+
 
     private void HandleDriftVFX()
     {

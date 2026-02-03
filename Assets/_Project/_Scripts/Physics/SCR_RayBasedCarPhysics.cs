@@ -12,6 +12,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     // ======================================================
 
     public CarType carType;
+    private bool isHover;
     public bool canSwitchType = false;
     [HideInInspector] public bool AIControlled = false;
 
@@ -60,8 +61,33 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     [HideInInspector][SerializeField] float hoverDamper = 8000f;
     [HideInInspector][SerializeField] float classicDamper = 3500f;
 
+    private float currentTargetSuspensionLength;
+    private float currentDamper;
+
     [HideInInspector] private int[] wheelsGrounded = new int[4];
     [HideInInspector] private bool isGrounded = false;
+
+    #endregion
+
+    #region Raycast system
+
+    struct GroundSensor
+    {
+        public bool hit;
+        public RaycastHit hitInfo;
+    }
+
+    private GroundSensor[] groundSensors;
+    private Vector3 cachedSurfaceNormal = Vector3.up;
+    private float cachedAverageHeight;
+    private int cachedGroundedCount;
+
+    private int sensorFrameCounter = 0;
+    [SerializeField] int aiSensorFrequency = 3;
+
+    private RaycastHit[] _raycastBuffer = new RaycastHit[1];
+
+
 
     #endregion
 
@@ -88,6 +114,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     [HideInInspector] [SerializeField] float hoverAirDrag = 0.25f;
     [HideInInspector] [SerializeField] float classicAirDrag = 0.08f;
     [HideInInspector] [SerializeField] float dragThreshold = 50f;
+    private float currentAirDrag;
 
     [SerializeField] private float downforceAmount = 500f;
 
@@ -211,6 +238,11 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     [HideInInspector][SerializeField] float brakeTiltMultiplier = 1.5f;
     [HideInInspector][SerializeField] AnimationCurve speedTiltCurve;
 
+    #endregion
+
+    #region visual update state
+    [Header("Visual Culling")]
+    public bool CanUpdateVisuals { get; private set; } = true;
     #endregion
 
     // ======================================================
@@ -384,6 +416,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         rb.useGravity = false;
 
+        groundSensors = new GroundSensor[rayPoints.Length];
+
         SwitchToMode(carType);
     }
     
@@ -397,6 +431,13 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     void FixedUpdate()
     {
+        sensorFrameCounter = (sensorFrameCounter + 1) % aiSensorFrequency;
+        if (!AIControlled || sensorFrameCounter == 0)
+        {
+            UpdateGroundSensors();
+        }
+
+
         if (isGrounded)
         {
             UpdateGravityDirection();
@@ -460,25 +501,28 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     public void SwitchToMode(CarType newMode)
     {
         carType = newMode;
+        isHover = (carType == CarType.hover);
 
-        if (carType == CarType.hover)
-        {
-            dragCoefficient = hoverCarDragCoefficient;
-            acceleration = hoverCarAcceleration;
-            maxSpeed = hoverCarMaxSpeed;
+        dragCoefficient = isHover ? hoverCarDragCoefficient : classicCarDragCoefficient;
+        acceleration    = isHover ? hoverCarAcceleration    : classicCarAcceleration;
+        maxSpeed        = isHover ? hoverCarMaxSpeed         : classicCarMaxSpeed;
+
+        accelCurve   = isHover ? hoverAccelCurve : classicAccelCurve;
+        turningCurve = isHover ? hoverCarTurningCurve : classicCarTurningCurve;
+
+        currentAirDrag = isHover ? hoverAirDrag : classicAirDrag;
+
+        currentTargetSuspensionLength = isHover ? hoverDistance : restLenght;
+        currentDamper = isHover ? hoverDamper : classicDamper;
+
+
+        if (isHover)
             rb.AddForce(transform.up * 5f, ForceMode.VelocityChange);
-        }
-        else
-        {
-            acceleration = classicCarAcceleration;
-            maxSpeed = classicCarMaxSpeed;
-            dragCoefficient = classicCarDragCoefficient;
-        }
 
-        // Inicia a Coroutine de transição visual
         if (_transitionCoroutine != null) StopCoroutine(_transitionCoroutine);
         _transitionCoroutine = StartCoroutine(AnimateWheelTransition());
     }
+
 
     #endregion
 
@@ -544,8 +588,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     
         // Calcula o percentual da velocidade atual (0 a 1)
         float speedPercentage = Mathf.Clamp01(currentCarLocalVelocity.z / maxSpeed);
-
-        accelCurve = carType == CarType.hover ? hoverAccelCurve : classicAccelCurve;
 
         currentAcceleration *= accelCurve.Evaluate(speedPercentage);
         
@@ -615,7 +657,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         float accelerationSteerBoost = 1f + (_currentThrottleInput * 0.3f);
         
         // Usa velocidade absoluta para a curva
-        turningCurve = carType == CarType.classic ? classicCarTurningCurve : hoverCarTurningCurve;
         float speedFactor = turningCurve.Evaluate(Mathf.Abs(carVelocityRatio));
 
         if (Mathf.Abs(steerInput) < 0.1f && isGrounded && !_isDrifting)
@@ -667,101 +708,99 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     void ApplySuspension()
     {
-        float _distance;
-        float _damperStiffness;
-        bool isHover = carType == CarType.hover;
+        float targetDistance = currentTargetSuspensionLength;
+        float damperStiffness = currentDamper;
 
-        // Define valores baseados no tipo
-        if (carType == CarType.classic) 
-        { 
-            _distance = restLenght; 
-            _damperStiffness = classicDamper; 
-        } 
-        else 
-        { 
-            _distance = hoverDistance; 
-            _damperStiffness = hoverDamper; 
-        }
+
+        float maxVisualLenght = .125f + .15f;
 
         for (int i = 0; i < rayPoints.Length; i++)
         {
-            RaycastHit hit;
-            float maxLenght = _distance + springTravel;
-            float maxVisualLenght = .125f + .15f;
-
-            if (Physics.Raycast(rayPoints[i].position, -transform.up, out hit, maxLenght + wheelRadius, drivable))
+            if (!groundSensors[i].hit)
             {
-                wheelsGrounded[i] = 1;
-                float currentSpringLenght = hit.distance - wheelRadius;
-                float springCompressionRatio = (_distance - currentSpringLenght) / springTravel;
-                float springVelocity = Vector3.Dot(rb.GetPointVelocity(rayPoints[i].position), transform.up);
-                
-                float dampForce = _damperStiffness * springVelocity;
-                float springForce = springStiffness * springCompressionRatio;
-                float netForce = springForce - dampForce;
+                wheelsGrounded[i] = 0;
 
-                if (carType == CarType.classic)
-                {
-                    // Se estiver flutuando acima do limite visual
-                    if (currentSpringLenght > maxVisualLenght)
-                    {
-                        // Força de "ímã" aumenta exponencialmente com a distância
-                        // Multiplicamos por um valor alto (ex: 50) para garantir que o peso vença a mola
-                        float distanceGap = currentSpringLenght - maxVisualLenght;
-                        float suctionMultiplier = 50f; 
-                        
-                        netForce -= distanceGap * suctionMultiplier * rb.mass;
-                    }
-                    else if (currentSpringLenght < _distance * 0.5f) 
-                    {
-                        // Se o carro for "esmagado" contra o chão no loop por causa da força G, 
-                        // aumentamos a resistência da mola para ele não atravessar o asfalto
-                        netForce *= 1.5f; 
-                    }
-                }
+                Vector3 airPos = isHover
+                    ? rayPoints[i].position
+                    : rayPoints[i].position - transform.up * maxVisualLenght;
 
-                rb.AddForceAtPosition(netForce * transform.up, rayPoints[i].position);
+                SetTirePosition(tires[i], airPos);
+                continue;
+            }
 
-                // --- LÓGICA VISUAL ---
-                if (carType == CarType.hover)
+            wheelsGrounded[i] = 1;
+            RaycastHit hit = groundSensors[i].hitInfo;
+
+            float currentSpringLength = hit.distance - wheelRadius;
+            float springCompressionRatio = (targetDistance - currentSpringLength) / springTravel;
+
+            float springVelocity = Vector3.Dot(
+                rb.GetPointVelocity(rayPoints[i].position),
+                transform.up
+            );
+
+            float springForce = springStiffness * springCompressionRatio;
+            float dampForce = damperStiffness * springVelocity;
+            float netForce = springForce - dampForce;
+
+            if (!isHover)
+            {
+                if (currentSpringLength > maxVisualLenght)
                 {
-                    // No Hover, a roda fica travada na posição do RayPoint (sem seguir o terreno)
-                    SetTirePosition(tires[i], rayPoints[i].position);
+                    float distanceGap = currentSpringLength - maxVisualLenght;
+                    float suctionMultiplier = 50f;
+
+                    netForce -= distanceGap * suctionMultiplier * rb.mass;
                 }
-                else 
+                else if (currentSpringLength < targetDistance * 0.5f)
                 {
-                    // No Classic, a roda segue o chão
-                    float visualSpringDistance = Mathf.Min(currentSpringLenght, maxVisualLenght);
-                    Vector3 visualPos = rayPoints[i].position - transform.up * visualSpringDistance;
-                    
-                    SetTirePosition(tires[i], visualPos);
+                    netForce *= 1.5f;
                 }
+            }
+
+            rb.AddForceAtPosition(netForce * transform.up, rayPoints[i].position);
+
+            // -----------------------------
+            // VISUAL
+            // -----------------------------
+            if (isHover)
+            {
+                SetTirePosition(tires[i], rayPoints[i].position);
             }
             else
             {
-                wheelsGrounded[i] = 0;
-                // No ar: se for hover, mantém no ponto; se for classic, desce tudo
-                Vector3 airPos = (carType == CarType.hover) ? rayPoints[i].position : rayPoints[i].position - transform.up * maxVisualLenght;
-                SetTirePosition(tires[i], airPos);
+                float visualSpringDistance = Mathf.Min(currentSpringLength, maxVisualLenght);
+                Vector3 visualPos = rayPoints[i].position - transform.up * visualSpringDistance;
+                SetTirePosition(tires[i], visualPos);
             }
         }
-        
+
+        // Gravidade baseada na normal cacheada
         rb.AddForce(-_currentCarUp * rb.mass * gravityStrength);
     }
+
 
     #endregion
 
     #region Visuals
 
+    public void SetVisualState(bool canUpdate)
+    {
+        if (CanUpdateVisuals == canUpdate) return;
+        CanUpdateVisuals = canUpdate;
+    }
+
+
     private void Visuals()
     {
+        if(!CanUpdateVisuals)return;
         TireVisuals();
     }
 
     private void TireVisuals()
     {
         // Se estiver no modo Hover, as rodas ficam estáticas na posição da transição
-        if (carType == CarType.hover) return;
+        if (isHover) return;
 
         float steeringAngle = maxSteerAngle * _currentSteerInput;
         
@@ -840,7 +879,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     
     private void UpdateBodyTilt()
     {
-        if (carBody == null) return;
+        if (carBody == null || !CanUpdateVisuals) return;
 
         // Calcular velocidade atual em magnitude
         float currentSpeed = rb.linearVelocity.magnitude;
@@ -906,6 +945,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     private void SetTirePosition(GameObject tire, Vector3 targetPosition)
     {
+        if(!CanUpdateVisuals) return;
         tire.transform.position = targetPosition;
     }
     #endregion
@@ -914,47 +954,25 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     public void ApplyDownforce()
     {
-        if(carType == CarType.classic)
+        if (!isHover)
         {
-            float finalDownforce = rb.linearVelocity.magnitude * downforceAmount * extraGripModifier;
-            rb.AddForce(-transform.up * finalDownforce, ForceMode.Force);
+            float df = rb.linearVelocity.magnitude * downforceAmount * extraGripModifier;
+            rb.AddForce(-transform.up * df);
+            return;
         }
 
-        if (carType == CarType.hover)
-        {
-            // Calculamos a altura média atual baseada nos sensores que atingiram o chão
-            float currentHeightSum = 0;
-            int groundedCount = 0;
+        if (cachedGroundedCount == 0) return;
 
-            // Reutilizamos a lógica que você já tem para os raios
-            for (int i = 0; i < rayPoints.Length; i++)
-            {
-                RaycastHit hit;
-                if (Physics.Raycast(rayPoints[i].position, -rayPoints[i].up, out hit, restLenght + hoverDistance, drivable))
-                {
-                    currentHeightSum += hit.distance;
-                    groundedCount++;
-                }
-            }
+        float heightRatio = cachedAverageHeight / restLenght;
+        if (heightRatio < minHeightThreshold) return;
 
-            if (groundedCount > 0)
-            {
-                float averageHeight = currentHeightSum / groundedCount;
-                float heightRatio = averageHeight / restLenght;
+        float speedFactor = useDynamicDownforce
+            ? rb.linearVelocity.magnitude / (maxSpeed / 3.6f)
+            : 1f;
 
-                // MARGEM DE SEGURANÇA: Só aplica se não estiver "raspando" no chão
-                if (heightRatio > minHeightThreshold)
-                {
-                    float forceMultiplier = useDynamicDownforce ? (rb.linearVelocity.magnitude / (maxSpeed / 3.6f)) : 1.0f;
-                    
-                    // Força aplicada no "Down" local para manter estabilidade em inclinações
-                    Vector3 downforce = -transform.up * (hoverDownforceAmount * forceMultiplier);
-                    
-                    rb.AddForce(downforce, ForceMode.Force);
-                }
-            }
-        }
+        rb.AddForce(-_currentCarUp * hoverDownforceAmount * speedFactor);
     }
+
 
     private void ApplyAirDrag()
     {
@@ -965,11 +983,11 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         // Só começa a agir depois de 70% da velocidade máxima
         if (speedRatio < 0.7f) return;
 
-        float currentDragCoeff = (carType == CarType.hover) 
-            ? hoverAirDrag 
-            : classicAirDrag;
-
-        float dragStrength = Mathf.Lerp(0f, currentDragCoeff, (speedRatio - 0.7f) / 0.3f);
+        float dragStrength = Mathf.Lerp(
+            0f,
+            currentAirDrag,
+            (speedRatio - 0.7f) / 0.3f
+        );
 
         Vector3 dragForce = -transform.forward * forwardSpeed * forwardSpeed * dragStrength;
 
@@ -1078,85 +1096,24 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     private void UpdateGravityDirection()
     {
-        RaycastHit hit;
-        
-        // 1. Raycast central para detectar a superfície abaixo.
-        // Usamos rb.worldCenterOfMass como origem para garantir que estamos capturando a superfície onde o centro do carro está.
-        if (Physics.Raycast(rb.worldCenterOfMass, -transform.up, out hit, groundHugDistance, drivable))
-        {
-            // Encontramos uma superfície (chão, parede ou teto)
-            Vector3 targetUp = hit.normal;
-
-            // Se a normal da superfície for muito diferente da direção atual do carro, 
-            // rotacionamos para alinhar.
-
-            // 2. Interpolação da Rotação do Carro
-            Quaternion targetRotation = Quaternion.FromToRotation(transform.up, targetUp) * transform.rotation;
-            
-            // Usamos Slerp para rotação suave e LookRotation para manter a frente do carro (transform.forward)
-            // e alinhar o up (targetUp).
-            Quaternion smoothRotation = Quaternion.Slerp(rb.rotation, targetRotation, Time.fixedDeltaTime * surfaceAlignmentSpeed);
-
-            rb.MoveRotation(smoothRotation);
-
-            // 3. Atualiza a direção "UP" para a física de suspensão e gravidade
-            _currentCarUp = targetUp;
-        }
-        else
-        {
-            // Se não detectarmos nada (pulo/ar), o Up volta a ser o Up do mundo (gravidade normal)
-            _currentCarUp = Vector3.up;
-            
-            // O carro deve tentar se nivelar ao mundo (o que já fazemos em ForceLeveling/AirControl)
-            // A rotação de Body (transform.rotation) não é mais forçada pelo raycast aqui.
-        }
-        
-        // NOTA: É importante que o Rigidbody do carro não tenha a gravidade padrão do Unity marcada (Use Gravity = false)
-        // para que apenas a AddForce(-_currentCarUp...) em ApplySuspension aplique a gravidade.
+        _currentCarUp = cachedSurfaceNormal;
     }
+
 
     void AlignToTrack()
     {
-        Vector3 targetNormal = GetSurfaceNormal();
-        
-        // Calcula a rotação alvo baseada na normal da pista
-        Quaternion targetRotation = Quaternion.FromToRotation(transform.up, targetNormal) * transform.rotation;
+        Quaternion targetRotation =
+            Quaternion.FromToRotation(transform.up, cachedSurfaceNormal) * transform.rotation;
 
-        // Para a IA, usamos um Slerp mais agressivo
-        float alignmentForce = 12f;
-        
-        rb.MoveRotation(Quaternion.Slerp(transform.rotation, targetRotation, Time.fixedDeltaTime * alignmentForce));
+        rb.MoveRotation(
+            Quaternion.Slerp(
+                rb.rotation,
+                targetRotation,
+                Time.fixedDeltaTime * surfaceAlignmentSpeed
+            )
+        );
     }
 
-    private Vector3 GetSurfaceNormal()
-    {
-        Vector3 averageNormal = transform.up; // Fallback
-        int hits = 0;
-        Vector3 combinedNormal = Vector3.zero;
-
-        // Definição de 3 raios extras: um bem à frente, um na esquerda e um na direita
-        // Eles devem ser ligeiramente inclinados para fora (como um guarda-chuva)
-        Vector3[] sensorOffsets = {
-            transform.forward * 2.5f,           // Sensor frontal longo
-            -transform.right * 1.5f,            // Sensor lateral esquerdo
-            transform.right * 1.5f,             // Sensor lateral direito
-            (transform.forward + transform.right) * 2f, // Diagonal
-            (transform.forward - transform.right) * 2f  // Diagonal
-        };
-
-        foreach (Vector3 offset in sensorOffsets)
-        {
-            RaycastHit hit;
-            // Atiramos o raio um pouco mais longo que a suspensão para "prever" o chão
-            if (Physics.Raycast(transform.position + transform.up * 0.5f + offset, -transform.up * 2.5f, out hit, 5f, drivable))
-            {
-                combinedNormal += hit.normal;
-                hits++;
-            }
-        }
-
-        return hits > 0 ? combinedNormal.normalized : transform.up;
-    }
 
     #endregion
 
@@ -1380,7 +1337,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             {
                 _lastSafePosition = transform.position;
                 // No modo Hover, garantimos que ele respawne um pouco acima do chão
-                if (carType == CarType.hover) _lastSafePosition += Vector3.up * 1f;
+                if (isHover) _lastSafePosition += Vector3.up * 1f;
                 
                 _lastSafeRotation = transform.rotation;
                 _saveTimer = 0;
@@ -1395,17 +1352,16 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         }
     }
 
-    bool IsAreaSafe() 
+    bool IsAreaSafe()
     {
-        // Atira raios para as diagonais frontais para ver se há chão à frente
-        Vector3 rightCheck = transform.position + (transform.right * 2f);
-        Vector3 leftCheck = transform.position - (transform.right * 2f);
-        
-        bool hasGroundAhead = Physics.Raycast(transform.position + transform.forward * 3f, -transform.up, 5f, drivable);
-        bool hasGroundRight = Physics.Raycast(rightCheck, -transform.up, 5f, drivable);
-        bool hasGroundLeft = Physics.Raycast(leftCheck, -transform.up, 5f, drivable);
+        // Precisa ter chão suficiente
+        if (cachedGroundedCount < MIN_WHEELS_TO_CONSIDERE_GROUNDED)
+            return false;
 
-        return hasGroundAhead && hasGroundRight && hasGroundLeft;
+        // Evita salvar em paredes / loopings extremos
+        float upDot = Vector3.Dot(cachedSurfaceNormal, Vector3.up);
+
+        return upDot > 0.4f;
     }
 
     private void ExecuteRespawn()
@@ -1520,6 +1476,59 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     {
         maxSpeed = value;
     }
+
+
+    #endregion
+
+    #region raycast system
+
+    private void UpdateGroundSensors()
+    {
+        cachedSurfaceNormal = Vector3.zero;
+        cachedAverageHeight = 0f;
+        cachedGroundedCount = 0;
+
+        float rayLength = restLenght + springTravel + wheelRadius;
+        Vector3 rayDir = -transform.up;
+
+        for (int i = 0; i < rayPoints.Length; i++)
+        {
+            int hits = Physics.RaycastNonAlloc(
+                rayPoints[i].position,
+                rayDir,
+                _raycastBuffer,
+                rayLength,
+                drivable
+            );
+
+            if (hits > 0)
+            {
+                RaycastHit hit = _raycastBuffer[0];
+
+                groundSensors[i].hit = true;
+                groundSensors[i].hitInfo = hit;
+
+                cachedSurfaceNormal += hit.normal;
+                cachedAverageHeight += hit.distance;
+                cachedGroundedCount++;
+            }
+            else
+            {
+                groundSensors[i].hit = false;
+            }
+        }
+
+        if (cachedGroundedCount > 0)
+        {
+            cachedSurfaceNormal.Normalize();
+            cachedAverageHeight /= cachedGroundedCount;
+        }
+        else
+        {
+            cachedSurfaceNormal = transform.up;
+        }
+    }
+
 
 
     #endregion

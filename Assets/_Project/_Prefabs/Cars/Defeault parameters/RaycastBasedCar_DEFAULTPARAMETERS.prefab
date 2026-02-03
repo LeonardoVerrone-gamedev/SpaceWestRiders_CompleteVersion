@@ -88951,9 +88951,6 @@ MonoBehaviour:
   frontTiresParent:
   - {fileID: 4130010168300589954}
   - {fileID: 3453761932049308526}
-  backTiresParent:
-  - {fileID: 4899584820013775574}
-  - {fileID: 3135178111466275925}
   rayPoints:
   - {fileID: 6989147163659483163}
   - {fileID: 6214412643428591459}
@@ -88966,6 +88963,7 @@ MonoBehaviour:
   wheelRadius: 0.33
   hoverDamper: 8000
   classicDamper: 3500
+  aiSensorFrequency: 3
   hoverDownforceAmount: 2500
   minHeightThreshold: 0.4
   useDynamicDownforce: 1
@@ -89410,6 +89408,7 @@ MonoBehaviour:
   - {fileID: 2427559747648566349}
   - {fileID: 6158234873358760818}
   - {fileID: 5926048920997298012}
+  HeatDistortionParticles: {fileID: 2999346283510352909}
 --- !u!114 &6294504414630336068
 MonoBehaviour:
   m_ObjectHideFlags: 0
