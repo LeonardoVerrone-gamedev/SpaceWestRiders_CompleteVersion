@@ -22344,6 +22344,10 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: maxFrontalAngle
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboBurstForce
       value: 1.15
       objectReference: {fileID: 0}
@@ -43041,6 +43045,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carPhysics: {fileID: 0}
   viewportMargin: 0.15
+  brains: []
 --- !u!4 &847900194 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5485576032934816458, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
@@ -43917,6 +43922,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carPhysics: {fileID: 0}
   viewportMargin: 0.15
+  brains: []
 --- !u!4 &1033343458 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5651621715402990493, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
@@ -69190,6 +69196,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carPhysics: {fileID: 0}
   viewportMargin: 0.15
+  brains: []
 --- !u!4 &1461537381 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6490648276860027159, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
@@ -69462,6 +69469,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carPhysics: {fileID: 0}
   viewportMargin: 0.15
+  brains: []
 --- !u!4 &1531905007 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2826424036715169507, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
@@ -69609,6 +69617,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carPhysics: {fileID: 0}
   viewportMargin: 0.15
+  brains: []
 --- !u!114 &1563623831 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6294504414630336068, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
@@ -69634,6 +69643,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carPhysics: {fileID: 0}
   viewportMargin: 0.15
+  brains: []
 --- !u!4 &1567915459 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7863679313814493553, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
@@ -79964,6 +79974,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carPhysics: {fileID: 0}
   viewportMargin: 0.15
+  brains: []
 --- !u!4 &1727113473 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1845952108567652220, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
@@ -80215,6 +80226,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carPhysics: {fileID: 0}
   viewportMargin: 0.15
+  brains: []
 --- !u!4 &1803703887 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8327385461344439755, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
@@ -80548,6 +80560,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carPhysics: {fileID: 0}
   viewportMargin: 0.15
+  brains: []
 --- !u!4 &1889466843 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5078372973282801, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
@@ -80589,6 +80602,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carPhysics: {fileID: 0}
   viewportMargin: 0.15
+  brains: []
 --- !u!4 &1898796196 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7924726408018035811, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
@@ -80919,6 +80933,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carPhysics: {fileID: 0}
   viewportMargin: 0.15
+  brains: []
 --- !u!4 &1972220139 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2025733781219239827, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
@@ -86166,6 +86181,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carPhysics: {fileID: 0}
   viewportMargin: 0.15
+  brains: []
 --- !u!4 &2092788716 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3514084687367162494, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
