@@ -3,6 +3,9 @@ using Unity.Cinemachine;
 using System.Collections;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Rendering;
+using UnityEngine.Events;
+using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 public class CameraController : MonoBehaviour
 {
@@ -14,6 +17,8 @@ public class CameraController : MonoBehaviour
 
     private Transform player;
     private Rigidbody playerRB;
+
+    private SCR_CarInput carInput;
 
     public Transform cameraTarget => player;
     
@@ -163,6 +168,93 @@ public class CameraController : MonoBehaviour
     [Header("Física Cache")]
     private SCR_RayBasedCarPhysics carPhysics; // Cache da referência de física
 
+    [Header("Sistema de Tremor de Câmera")]
+    [SerializeField] private CinemachineImpulseSource impulseSource;
+    [SerializeField] private bool enableImpulseShake = true;
+
+    [Header("Shake por Situação")]
+    [Tooltip("Shake ao acelerar")]
+    public ShakeProfile accelerationShake;
+    [Tooltip("Shake ao frear")]
+    public ShakeProfile brakingShake;
+    [Tooltip("Shake em curvas")]
+    public ShakeProfile turningShake;
+    [Tooltip("Shake no turbo")]
+    public ShakeProfile turboShake;
+    [Tooltip("Shake em saltos")]
+    public ShakeProfile jumpShake;
+    [Tooltip("Shake em colisões")]
+    public ShakeProfile collisionShake;
+    [Tooltip("Vibrar controles quando disponível")]
+    public bool vibrateController = true;
+
+    [System.Serializable]
+    public class ShakeProfile
+    {
+        public float amplitude = 0.5f;
+        public float frequency = 1f;
+        public float duration = 0.3f;
+        public Vector3 direction = Vector3.one;
+    }
+
+    private ShakePriority currentShakePriority = ShakePriority.Low;
+    private float shakeLockUntil = 0f;
+
+    private float lastShakeTime = 0f;
+    private bool wasGrounded = true;
+    private float airTime = 0f;
+    private Vector3 lastVelocity;
+    private float velocityChange;
+    private CarType currentCarType;
+
+    [Header("Sistema de Noise Contínuo")]
+    [SerializeField] private CinemachineBasicMultiChannelPerlin defaultNoise;
+    [SerializeField] private CinemachineBasicMultiChannelPerlin turboNoise;
+    
+    [Header("Configurações de Noise por Tipo de Carro")]
+    [Tooltip("Amplitude máxima do noise para carro clássico")]
+    public float classicMaxAmplitude = 0.3f;
+    
+    [Tooltip("Frequência máxima do noise para carro clássico")]
+    public float classicMaxFrequency = 1.2f;
+    
+    [Tooltip("Amplitude máxima do noise para hover")]
+    public float hoverMaxAmplitude = 0.15f;
+    
+    [Tooltip("Frequência máxima do noise para hover")]
+    public float hoverMaxFrequency = 0.8f;
+    
+    [Tooltip("Velocidade mínima para iniciar noise (km/h)")]
+    public float minSpeedForNoise = 30f;
+    
+    [Tooltip("Velocidade para noise máximo (km/h)")]
+    public float maxSpeedForNoise = 200f;
+    
+    [Tooltip("Curva de intensidade do noise baseado na velocidade")]
+    public AnimationCurve speedNoiseCurve;
+    
+    [Tooltip("Curva de intensidade do noise baseado na aceleração")]
+    public AnimationCurve accelerationNoiseCurve;
+    
+    [Tooltip("Multiplicador de noise durante turbo")]
+    public float turboNoiseMultiplier = 0.5f; // Menos noise durante turbo (mais estável)
+    
+    [Tooltip("Multiplicador de noise durante drift")]
+    public float driftNoiseMultiplier = 1.5f; // Mais noise durante drift
+    
+    [Tooltip("Tempo de suavização do noise")]
+    public float noiseSmoothTime = 0.3f;
+    
+    // Variáveis para controle do noise
+    private float currentNoiseAmplitude = 0f;
+    private float currentNoiseFrequency = 0f;
+    private float noiseAmplitudeVelocity = 0f;
+    private float noiseFrequencyVelocity = 0f;
+    private float lastSpeed = 0f;
+    private float currentAcceleration = 0f;
+    private float accelerationNoiseIntensity = 0f;
+
+
     void Start()
     {
         //  CONFIGURAÇÃO DOS VOLUMES
@@ -182,12 +274,41 @@ public class CameraController : MonoBehaviour
             currentFOV = vCam.Lens.FieldOfView;
             thirdPersonFollow = vCam.GetComponent<CinemachinePositionComposer>();
         }
+
+        if (impulseSource == null)
+        {
+            impulseSource = GetComponent<CinemachineImpulseSource>();
+            if (impulseSource == null)
+            {
+                impulseSource = gameObject.AddComponent<CinemachineImpulseSource>();
+            }
+        }
+    
+       if (impulseSource != null)
+        {
+            impulseSource.ImpulseDefinition.ImpulseShape =
+            CinemachineImpulseDefinition.ImpulseShapes.Bump;
+
+            impulseSource.ImpulseDefinition.DissipationDistance = 100f;
+
+            // Envelope
+            impulseSource.ImpulseDefinition.TimeEnvelope.DecayTime = 0.3f;
+            impulseSource.ImpulseDefinition.TimeEnvelope.SustainTime = 0.1f;
+        }
+
+        lastVelocity = Vector3.zero;
     }
 
     void Update()
     {
-        // 1. Checagem de segurança e atualização de efeitos baseados em física
         HandlePhysicsBasedEffects();
+        UpdateContinuousNoise();
+    
+        //Atualizar sistema de shake
+        if (enableImpulseShake && player != null && carPhysics != null)
+        {
+            CheckForSpecialShakes();
+        }
     }
 
     private void HandlePhysicsBasedEffects()
@@ -232,11 +353,15 @@ public class CameraController : MonoBehaviour
             carPhysics = player.GetComponent<SCR_RayBasedCarPhysics>();
             // Se o script de física estiver no pai ou filho, ajuste:
             if (carPhysics == null) carPhysics = player.GetComponentInParent<SCR_RayBasedCarPhysics>();
+
+            carInput = carPhysics.gameObject.GetComponent<SCR_CarInput>();
         }
         else
         {
             carPhysics = null;
         }
+
+        SetupCarEventListeners();
 
         if (useCinemachine && vCam != null)
         {
@@ -252,6 +377,8 @@ public class CameraController : MonoBehaviour
 
     public void SetChannel(int playerIndex)
     {
+        int impulseChannel = playerIndex+1;
+        int impulseMask = playerIndex+1;
         // Converte o index (0, 1) para uma Layer Mask de canais (1, 2, 4...)
         // Canal 0 = 1, Canal 1 = 2, Canal 2 = 4
         OutputChannels channelMask = (OutputChannels)(1 << playerIndex);
@@ -261,6 +388,16 @@ public class CameraController : MonoBehaviour
         if (brain != null)
         {
             brain.ChannelMask = channelMask;
+            impulseSource.ImpulseDefinition.ImpulseChannel = impulseChannel;
+
+            if (vCam.TryGetComponent<CinemachineImpulseListener>(out var listener))
+            listener.ChannelMask = impulseChannel;
+
+            if (turbo_VCam != null)
+            {
+                if (turbo_VCam.TryGetComponent<CinemachineImpulseListener>(out var tListener))
+                    tListener.ChannelMask = impulseChannel;
+            }
         }
 
         // 2. Configura todas as Virtual Cameras do Prefab para esse canal
@@ -603,12 +740,320 @@ public class CameraController : MonoBehaviour
         }
     }
 
+    #region shake
+
+
+    // Verificar shakes especiais (eventos)
+    private void CheckForSpecialShakes()
+    {
+        if (playerRB == null || carPhysics == null) return;
+
+        // Aterrissagem
+        bool isGrounded = carPhysics.IsGrounded;
+        if (isGrounded && !wasGrounded && airTime > 0.5f)
+        {
+            TryGenerateShake(
+                jumpShake.amplitude * Mathf.Clamp(airTime, 0.5f, 2f),
+                jumpShake.duration,
+                jumpShake.frequency,
+                Vector3.up,
+                ShakePriority.High
+            );
+            airTime = 0f;
+        }
+        else if (!isGrounded)
+        {
+            airTime += Time.deltaTime;
+        }
+        wasGrounded = isGrounded;
+
+        // Aceleração/Freio forte
+        float throttle = carPhysics.GetThrottleInput();
+        if (Mathf.Abs(throttle) > 0.8f && currentSpeedKmh > 20f)
+        {
+            if (throttle > 0 && velocityChange > 5f)
+            {
+                TryGenerateShake(
+                    accelerationShake.amplitude * (velocityChange / 10f),
+                    accelerationShake.duration,
+                    accelerationShake.frequency,
+                    accelerationShake.direction,
+                    ShakePriority.Medium
+                );
+            }
+            else if (throttle < 0 && velocityChange < -5f)
+            {
+                TryGenerateShake(
+                    brakingShake.amplitude * (Mathf.Abs(velocityChange) / 10f),
+                    brakingShake.duration,
+                    brakingShake.frequency,
+                    brakingShake.direction,
+                    ShakePriority.Medium
+                );
+            }
+        }
+    }
+
+    // MÉTODO PRINCIPAL: Gerar shake com prioridade
+    public void TryGenerateShake(float amplitude, float duration, float frequency, Vector3 direction, ShakePriority priority)
+    {
+        if (!CanPlayShake(priority, duration)) return;
+
+        GenerateShake(amplitude, duration, frequency, direction);
+    }
+
+    // Método base para gerar shake
+    public void GenerateShake(float amplitude, float duration, float frequency, Vector3 direction)
+    {
+        if (!enableImpulseShake || impulseSource == null) return;
+
+        var def = impulseSource.ImpulseDefinition;
+
+        def.AmplitudeGain = amplitude;
+        def.FrequencyGain = frequency;
+        
+        // Ajuste dinâmico do envelope baseado no perfil
+        // Para ser sutil, o Sustain (pico) deve ser curto
+        def.TimeEnvelope.SustainTime = duration * 0.1f;
+        def.TimeEnvelope.DecayTime = duration * 0.9f;
+
+        // Isso faz com que a direção configurada no perfil (Ex: 0,1,0) 
+        // seja respeitada fielmente
+        impulseSource.GenerateImpulse(direction);
+    }
+
+    // Método para colisões
+    public void GenerateCollisionShake(float impactForce, Vector3 direction)
+    {
+        if (!enableImpulseShake) return;
+
+        float intensity = Mathf.Clamp(impactForce / 30f, 0.05f, 0.8f);
+
+        TryGenerateShake(
+            collisionShake.amplitude * intensity,
+            collisionShake.duration * Mathf.Min(intensity, 2f),
+            collisionShake.frequency,
+            direction.normalized,
+            ShakePriority.Critical
+        );
+    }
+
+    // Prioridade centralizada de shake
+    private bool CanPlayShake(ShakePriority priority, float duration)
+    {
+        // Bloqueia se shake atual é maior ou igual
+        if (Time.time < shakeLockUntil && priority <= currentShakePriority)
+            return false;
+
+        currentShakePriority = priority;
+        shakeLockUntil = Time.time + duration * 0.8f;
+
+        return true;
+    }
+
+    #endregion
+
+
     public CameraType GetCurrentCameraType() => currentCameraType;
     public bool IsTransitioning() => transitionLocked;
 
+    #region shake events
+
+    private void SetupCarEventListeners()
+    {
+        if (carPhysics == null) return;
+
+        carPhysics.OnTurboStart += HandleTurboStart;
+        carPhysics.OnTurboEnd   += HandleTurboEnd;
+
+        carPhysics.OnCollision  += HandleCollision;
+        carPhysics.OnLand       += HandleLanding;
+    }
+
+    private void HandleTurboStart()
+    {
+        GenerateShake(
+            turboShake.amplitude * 2f,
+            turboShake.duration,
+            turboShake.frequency,
+            Vector3.forward
+        );
+    }
+
+    private void HandleTurboEnd()
+    {
+        // opcional: shake de “queda de potência”
+    }
+
+    private void HandleCollision(float force, Vector3 direction)
+    {
+        GenerateCollisionShake(force, direction);
+    }
+
+    private void HandleLanding(float airtime)
+    {
+        if (carPhysics.carType == CarType.hover)
+        {
+            return; // Nenhum shake para hover
+        }
+
+        GenerateShake(
+            jumpShake.amplitude * Mathf.Clamp(airtime, 0.5f, 2f),
+            jumpShake.duration,
+            jumpShake.frequency,
+            Vector3.up
+        );
+    }
+
+    #endregion
+
+    private void OnDisable()
+    {
+        if (carPhysics == null) return;
+
+        carPhysics.OnTurboStart -= HandleTurboStart;
+        carPhysics.OnTurboEnd   -= HandleTurboEnd;
+
+        carPhysics.OnCollision  -= HandleCollision;
+        carPhysics.OnLand       -= HandleLanding;
+    }
+
+    private void UpdateContinuousNoise()
+    {
+        if (playerRB == null || carPhysics == null) return;
+        
+        // Calcular velocidade atual
+        Vector3 localVelocity = playerRB.transform.InverseTransformDirection(playerRB.linearVelocity);
+        float currentSpeed = Mathf.Abs(localVelocity.z * 3.6f);
+        
+        // Calcular aceleração (m/s²)
+        currentAcceleration = (currentSpeed - lastSpeed) / Time.deltaTime;
+        lastSpeed = currentSpeed;
+        
+        // Determinar qual noise está ativo
+        CinemachineBasicMultiChannelPerlin activeNoise = 
+            (currentCameraType == CameraType.Turbo && turboNoise != null) ? 
+            turboNoise : defaultNoise;
+            
+        if (activeNoise == null) return;
+        
+        // Calcular intensidade baseada na velocidade
+        float speedNoiseIntensity = CalculateSpeedNoiseIntensity(currentSpeed);
+        
+        // Calcular intensidade baseada na aceleração
+        accelerationNoiseIntensity = CalculateAccelerationNoiseIntensity(currentAcceleration);
+        
+        // Combinar intensidades (velocidade + aceleração)
+        float totalNoiseIntensity = Mathf.Max(speedNoiseIntensity, accelerationNoiseIntensity);
+        
+        // Aplicar modificadores baseados no estado do carro
+        float finalIntensity = ApplyStateModifiers(totalNoiseIntensity);
+        
+        // Calcular valores alvo de amplitude e frequência
+        float targetAmplitude, targetFrequency;
+        CalculateTargetNoiseValues(currentCarType, finalIntensity, out targetAmplitude, out targetFrequency);
+        
+        // Suavizar transições
+        currentNoiseAmplitude = Mathf.SmoothDamp(
+            currentNoiseAmplitude, 
+            targetAmplitude, 
+            ref noiseAmplitudeVelocity, 
+            noiseSmoothTime
+        );
+        
+        currentNoiseFrequency = Mathf.SmoothDamp(
+            currentNoiseFrequency, 
+            targetFrequency, 
+            ref noiseFrequencyVelocity, 
+            noiseSmoothTime
+        );
+        
+        // Aplicar ao noise ativo
+        activeNoise.AmplitudeGain = currentNoiseAmplitude;
+        activeNoise.FrequencyGain = currentNoiseFrequency;
+        
+        // Zerar o noise da câmera inativa
+        if (activeNoise == defaultNoise && turboNoise != null)
+        {
+            turboNoise.AmplitudeGain = 0f;
+            turboNoise.FrequencyGain = 0f;
+        }
+        else if (activeNoise == turboNoise && defaultNoise != null)
+        {
+            defaultNoise.AmplitudeGain = 0f;
+            defaultNoise.FrequencyGain = 0f;
+        }
+    }
+    
+    private float CalculateSpeedNoiseIntensity(float speedKmh)
+    {
+        if (speedKmh < minSpeedForNoise) return 0f;
+        
+        float normalizedSpeed = Mathf.Clamp01((speedKmh - minSpeedForNoise) / (maxSpeedForNoise - minSpeedForNoise));
+        return speedNoiseCurve.Evaluate(normalizedSpeed);
+    }
+    
+    private float CalculateAccelerationNoiseIntensity(float acceleration)
+    {
+        // Converter aceleração para valor positivo normalizado
+        float absAcceleration = Mathf.Abs(acceleration);
+        float normalizedAcceleration = Mathf.Clamp01(absAcceleration / 20f); // 20 m/s² como máximo
+        
+        return accelerationNoiseCurve.Evaluate(normalizedAcceleration);
+    }
+    
+    private float ApplyStateModifiers(float baseIntensity)
+    {
+        float modifiedIntensity = baseIntensity;
+        
+        // Modificar baseado no estado do carro
+        if (carPhysics.IsTurboActive())
+        {
+            modifiedIntensity *= turboNoiseMultiplier; // Reduz noise durante turbo
+        }
+        
+        if (carPhysics.IsDrifting())
+        {
+            modifiedIntensity *= driftNoiseMultiplier; // Aumenta noise durante drift
+        }
+        
+        // Aumentar noise quando estiver no ar (efeito de instabilidade)
+        if (!carPhysics.IsGrounded)
+        {
+            modifiedIntensity *= 1.3f;
+        }
+        
+        return Mathf.Clamp01(modifiedIntensity);
+    }
+    
+    private void CalculateTargetNoiseValues(CarType carType, float intensity, out float amplitude, out float frequency)
+    {
+        // Valores base por tipo de carro
+        float maxAmplitude = (carType == CarType.classic) ? classicMaxAmplitude : hoverMaxAmplitude;
+        float maxFrequency = (carType == CarType.classic) ? classicMaxFrequency : hoverMaxFrequency;
+        
+        // Aplicar intensidade
+        amplitude = maxAmplitude * intensity;
+        frequency = maxFrequency * intensity;
+        
+        // Adicionar variação baseada na aceleração (para sentir a estrada)
+        if (accelerationNoiseIntensity > 0.1f)
+        {
+            amplitude += accelerationNoiseIntensity * 0.1f;
+            frequency += accelerationNoiseIntensity * 0.2f;
+        }
+    }
 
     void OnDestroy()
     {
         StopAllCoroutines();
     }
+}
+
+public enum ShakePriority
+{
+    Low = 0,        // velocidade, estrada
+    Medium = 1,     // drift, curvas
+    High = 2,       // turbo, salto
+    Critical = 3    // colisão, impacto forte
 }

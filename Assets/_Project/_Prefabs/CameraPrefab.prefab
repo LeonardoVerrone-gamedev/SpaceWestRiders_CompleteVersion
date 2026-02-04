@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 6511669426896610584}
   - component: {fileID: 7099718546023426541}
   - component: {fileID: 3337176076577964149}
+  - component: {fileID: 1962416285394638996}
+  - component: {fileID: 2951974762300501046}
   m_Layer: 0
   m_Name: Car_Vcam
   m_TagString: Untagged
@@ -161,6 +163,47 @@ MonoBehaviour:
     NearLimit: 5
     FarLimit: 30
     MaxQualityBoost: 0.2
+--- !u!114 &1962416285394638996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 413456675171575745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00b2d199b96b516448144ab30fb26aed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ApplyAfter: 2
+  ChannelMask: 1
+  Gain: 1
+  Use2DDistance: 0
+  UseCameraSpace: 1
+  SignalCombinationMode: 0
+  ReactionSettings:
+    m_SecondaryNoise: {fileID: 0}
+    AmplitudeGain: 1
+    FrequencyGain: 1
+    Duration: 1
+    m_NoiseOffsets: {x: 989.43164, y: 171.91614, z: 628.1488}
+--- !u!114 &2951974762300501046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 413456675171575745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NoiseProfile: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
+  PivotOffset: {x: 0.1, y: 0.005, z: 0}
+  AmplitudeGain: 0.2
+  FrequencyGain: 0.3
+  m_NoiseOffsets: {x: 757.4596, y: -100.766754, z: -2.1785278}
 --- !u!1 &3305247206701220772
 GameObject:
   m_ObjectHideFlags: 0
@@ -208,6 +251,7 @@ GameObject:
   - component: {fileID: 8057302775447255767}
   - component: {fileID: 2910909610039468116}
   - component: {fileID: 8847833551608715248}
+  - component: {fileID: 7399868083544364847}
   m_Layer: 0
   m_Name: Car_Vcam (Turbo)
   m_TagString: Untagged
@@ -369,10 +413,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NoiseProfile: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
-  PivotOffset: {x: 0, y: 0, z: 1}
-  AmplitudeGain: 0.25
-  FrequencyGain: 0.25
+  PivotOffset: {x: 0.1, y: 0.005, z: 1}
+  AmplitudeGain: 0.2
+  FrequencyGain: 0.3
   m_NoiseOffsets: {x: 993.8457, y: 96.510284, z: -998.83435}
+--- !u!114 &7399868083544364847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3648613549037306568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00b2d199b96b516448144ab30fb26aed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ApplyAfter: 2
+  ChannelMask: 1
+  Gain: 1
+  Use2DDistance: 0
+  UseCameraSpace: 1
+  SignalCombinationMode: 0
+  ReactionSettings:
+    m_SecondaryNoise: {fileID: 0}
+    AmplitudeGain: 1
+    FrequencyGain: 1
+    Duration: 1
+    m_NoiseOffsets: {x: -374.27295, y: -203.7107, z: -835.84644}
 --- !u!1 &4338522458828739741
 GameObject:
   m_ObjectHideFlags: 0
@@ -432,6 +500,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2294449104073155307}
   - component: {fileID: 5017309690500145355}
+  - component: {fileID: 8852203778450995052}
   m_Layer: 0
   m_Name: CameraPrefab
   m_TagString: Untagged
@@ -507,6 +576,151 @@ MonoBehaviour:
   volumeSmoothTime: 0.5
   accelerationResponse: 2
   decelerationResponse: 1
+  impulseSource: {fileID: 8852203778450995052}
+  enableImpulseShake: 1
+  accelerationShake:
+    amplitude: 0.1
+    frequency: 0.5
+    duration: 0.2
+    direction: {x: 0, y: 0, z: -1}
+  brakingShake:
+    amplitude: 0.25
+    frequency: 1.2
+    duration: 0.3
+    direction: {x: 0, y: 0, z: 1}
+  turningShake:
+    amplitude: 1
+    frequency: 0.8
+    duration: 0.2
+    direction: {x: 1, y: 0, z: 0}
+  turboShake:
+    amplitude: 0.4
+    frequency: 5
+    duration: 0.05
+    direction: {x: 0, y: 0, z: 1}
+  jumpShake:
+    amplitude: 0.6
+    frequency: 1
+    duration: 0.4
+    direction: {x: 0, y: -1, z: 0}
+  collisionShake:
+    amplitude: 0.8
+    frequency: 3
+    duration: 0.2
+    direction: {x: -0.5, y: 0, z: -0.5}
+  vibrateController: 1
+  defaultNoise: {fileID: 2951974762300501046}
+  turboNoise: {fileID: 8847833551608715248}
+  classicMaxAmplitude: 0.3
+  classicMaxFrequency: 0.4
+  hoverMaxAmplitude: 0.15
+  hoverMaxFrequency: 0.2
+  minSpeedForNoise: 80
+  maxSpeedForNoise: 400
+  speedNoiseCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  accelerationNoiseCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 3.1102746
+      outSlope: 3.1102746
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.036666665
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  turboNoiseMultiplier: 0.5
+  driftNoiseMultiplier: 1.2
+  noiseSmoothTime: 0.3
+--- !u!114 &8852203778450995052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5010083973395992739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 180ecf9b41d478f468eb3e9083753217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ImpulseDefinition:
+    ImpulseChannel: 1
+    ImpulseShape: 2
+    CustomImpulseShape:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    ImpulseDuration: 0.2
+    ImpulseType: 0
+    DissipationRate: 0.25
+    RawSignal: {fileID: 0}
+    AmplitudeGain: 1
+    FrequencyGain: 1
+    RepeatMode: 0
+    Randomize: 1
+    TimeEnvelope:
+      AttackShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      DecayShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      AttackTime: 0
+      SustainTime: 0.2
+      DecayTime: 0.7
+      ScaleWithImpact: 1
+      HoldForever: 0
+    ImpactRadius: 100
+    DirectionMode: 0
+    DissipationMode: 2
+    DissipationDistance: 100
+    PropagationSpeed: 343
+  DefaultVelocity: {x: 0, y: -1, z: 0}
 --- !u!1 &6697843603822005756
 GameObject:
   m_ObjectHideFlags: 0

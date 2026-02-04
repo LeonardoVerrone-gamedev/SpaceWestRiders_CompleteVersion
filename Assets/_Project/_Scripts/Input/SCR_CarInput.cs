@@ -488,6 +488,24 @@ public class SCR_CarInput : MonoBehaviour
     }
     #endregion
 
+    #region gamepad management
+
+    public Gamepad GetAssignedGamepad()
+    {
+        if (_playerInput == null)
+            return null;
+
+        foreach (var device in _playerInput.devices)
+        {
+            if (device is Gamepad gamepad)
+                return gamepad;
+        }
+
+        return null;
+    }
+
+    #endregion
+
     #region Input Refreshing
     /// <summary>
     /// Re-vincula as referências das InputActions do PlayerInput.

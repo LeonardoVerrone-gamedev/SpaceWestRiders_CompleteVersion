@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using System.Collections;
+using Unity.VisualScripting;
+using System;
 
 // Requer que o GameObject tenha um Rigidbody
 [RequireComponent(typeof(Rigidbody))]
@@ -66,6 +68,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     [HideInInspector] private int[] wheelsGrounded = new int[4];
     [HideInInspector] private bool isGrounded = false;
+    bool wasGrounded;
+    float airTime = 0f;
 
     #endregion
 
@@ -320,9 +324,9 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     [Header("Turbo Cooldown Settings")]
     [SerializeField] private float _turboCooldownTime = 3f;
-    [SerializeField] float turboDuration = 4f;
+    [SerializeField] public float turboDuration = 4f;
     [SerializeField] float turboBurstForce = 2.0f;
-    [HideInInspector] [SerializeField] float turboBodyTiltBase = -5f;
+    [HideInInspector][SerializeField] float turboBodyTiltBase = -5f;
 
     private float _nextTurboTime = 0f;
     private float turboTimer = 0f;
@@ -362,6 +366,26 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     #endregion
 
+    #region collision setup 
+    [Header("Controle de Shake de Colisão")]
+    private bool enableCollisionShake = true;
+    private float shakeIntensity = 0.3f;
+    private float minForceToShake = 0.4f;
+    private float shakeCooldown = 0.4f;
+
+    private float lastCollisionShakeTime = 0f;
+    [Header("Filtro de Direção de Colisão")]
+    [Tooltip("Ângulo máximo para considerar colisão frontal/traseira (graus)")]
+    [Range(0, 90)]
+    float maxFrontalAngle = 60f; // ±45° da frente ou trás
+
+    [Tooltip("Considerar colisões traseiras")]
+    bool includeRearCollisions = true;
+
+    [Tooltip("Considerar colisões frontais")]
+    bool includeFrontCollisions = true;
+    #endregion
+
     // ======================================================
     // Input Handling
     // ======================================================
@@ -391,6 +415,29 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         _currentHandbrakeInput = value;
     }
+
+    #endregion
+
+    float hardAccelCooldown = 0.25f;
+    float _nextHardAccelTime;
+
+    float hardBrakeCooldown = 0.25f;
+    float _nextHardBrakeTime;
+
+    #region Camera Events
+
+    public event Action OnTurboStart;
+    public event Action OnTurboEnd;
+
+    public event Action<float> OnHardAcceleration; // intensidade
+    public event Action<float> OnHardBrake;         // intensidade
+
+    public event Action<float> OnDriftStart; // ângulo
+    public event Action OnDriftEnd;
+
+    public event Action<float, Vector3> OnCollision; // força, direção
+    public event Action<float> OnJump;                // airtime
+    public event Action<float> OnLand;                // airtime
 
     #endregion
 
@@ -602,6 +649,14 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         if (AIControlled)  currentAcceleration *= rubberBandingFactor;
         
         rb.AddForceAtPosition(currentAcceleration * _currentThrottleInput * transform.forward, accelerationPoint.position, ForceMode.Acceleration);
+
+        if (Time.time > _nextHardAccelTime &&
+                _currentThrottleInput > 0.9f &&
+                currentCarLocalVelocity.z < maxSpeed * 0.5f)
+        {
+            OnHardAcceleration?.Invoke(currentCarLocalVelocity.z / maxSpeed);
+            _nextHardAccelTime = Time.time + hardAccelCooldown;
+        }
     }
 
     private void Deaceleration()
@@ -620,6 +675,14 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         if (AIControlled)   currentDeceleration *= rubberBandingFactor;
 
         rb.AddForceAtPosition(currentDeceleration * brakeMultiplier * _currentThrottleInput * transform.forward, accelerationPoint.position, ForceMode.Acceleration);
+   
+        if (Time.time > _nextHardBrakeTime &&
+            _currentThrottleInput < -0.9f &&
+            currentCarLocalVelocity.z > 10f)
+        {
+            OnHardBrake?.Invoke(currentCarLocalVelocity.z / maxSpeed);
+            _nextHardBrakeTime = Time.time + hardBrakeCooldown;
+        }
     }
 
     private void Turn()
@@ -893,7 +956,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             // No Turbo, o Roll (inclinação lateral) é reduzido para passar sensação de estabilidade em alta velocidade
             _targetRoll = (-maxRollAngle * _currentSteerInput * speedFactor) * 0.3f;
 
-            _targetPitch += Random.Range(-0.5f, 0.5f);
+            _targetPitch += UnityEngine.Random.Range(-0.5f, 0.5f);
         }
         else
         {
@@ -1144,6 +1207,10 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         
         // Ajustar configurações para drift
         dragCoefficient = _originalDragCoefficient * driftStability;
+
+        //CalculateDriftAngle();
+
+        OnDriftStart?.Invoke(Mathf.Abs(15f));
     }
 
     private void UpdateDriftState()
@@ -1160,8 +1227,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         {
             EndDrift(false); // Sai sem boost pois perdeu o controle/velocidade
         }
-        
-        // Note que removemos o "if (!hasThrottleInput)" daqui.
     }
 
     private void CalculateDriftAngle()
@@ -1254,6 +1319,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     private void EndDrift(bool giveBoost)
     {
         _isDrifting = false;
+
+        OnDriftEnd?.Invoke();
         
         _isRestoringDrag = true;
         _dragRestoreTimer = 0f;
@@ -1319,6 +1386,59 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     {
         _isDriftBoostActive = false;
         maxSpeed = _originalMaxSpeed;
+    }
+
+    #endregion
+
+    #region collision
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (((1 << collision.gameObject.layer) & drivable) != 0) return;
+
+        float force = collision.impulse.magnitude / Time.fixedDeltaTime;
+        force = Mathf.Clamp(force, .1f, 1);
+        
+        // VERIFICAÇÕES PARA SHAKE
+        if (enableCollisionShake && 
+            force >= minForceToShake &&
+            Time.time >= lastCollisionShakeTime + shakeCooldown)
+        {
+            Vector3 dir = Vector3.zero;
+            foreach (var contact in collision.contacts)
+            {
+                dir += contact.normal;
+            }
+            dir.Normalize();
+            dir = -dir;
+            
+            // VERIFICAR SE É COLISÃO FRONTAL OU TRASEIRA
+            if (IsFrontalOrRearCollision(dir))
+            {
+                // Shake reduzido e controlado
+                float finalForce = force * shakeIntensity;
+                OnCollision?.Invoke(finalForce, dir);
+                
+                lastCollisionShakeTime = Time.time;
+            }
+        }
+    }
+
+    private bool IsFrontalOrRearCollision(Vector3 collisionDirection)
+    {
+        // Normalizar direções
+        Vector3 normalizedCollisionDir = collisionDirection.normalized;
+        Vector3 carForward = transform.forward.normalized;
+        Vector3 carBackward = -carForward;
+        
+        // Calcular ângulo com a frente do carro
+        float angleToFront = Vector3.Angle(normalizedCollisionDir, carForward);
+        float angleToRear = Vector3.Angle(normalizedCollisionDir, carBackward);
+        
+        bool isFrontal = includeFrontCollisions && angleToFront <= maxFrontalAngle;
+        bool isRear = includeRearCollisions && angleToRear <= maxFrontalAngle;
+        
+        return isFrontal || isRear;
     }
 
     #endregion
@@ -1414,7 +1534,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             // Agenda o desligamento automático
             Invoke(nameof(StopTurbo), turboDuration);
             
-            Debug.Log("NOS Ativado! Cargas restantes: " + NOS_amount);
+            OnTurboStart?.Invoke();
         }
     }
 
@@ -1422,6 +1542,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     {
         _isTurboActive = false;
         _nextTurboTime = Time.time + _turboCooldownTime;
+        OnTurboEnd?.Invoke();
     }
 
     private void ApplyTurboPhysics()
@@ -1458,6 +1579,23 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         }
 
         isGrounded = (tempGroundedWheels >= MIN_WHEELS_TO_CONSIDERE_GROUNDED) ? true : false;
+
+        if (!wasGrounded && isGrounded)
+        {
+            OnLand?.Invoke(airTime);
+            airTime = 0f;
+        }
+        else if (!isGrounded)
+        {
+            airTime += Time.deltaTime;
+        }
+
+        if (wasGrounded && !isGrounded)
+        {
+            OnJump?.Invoke(0f);
+        }
+
+        wasGrounded = isGrounded;
     }
 
     private void CalculateCarVelocity()
