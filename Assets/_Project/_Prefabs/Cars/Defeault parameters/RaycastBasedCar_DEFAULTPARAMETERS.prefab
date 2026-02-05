@@ -89361,6 +89361,37 @@ MonoBehaviour:
   _currentThrottle: 0
   _currentBrake: 0
   _currentHandbrake: 0
+  _enableVibration: 1
+  _collisionVibrationIntensity: 0.7
+  _landingVibrationIntensity: 0.4
+  _turboVibrationIntensity: 0.8
+  _minSpeedForVibration: 80
+  _maxSpeedForVibration: 420
+  _speedVibrationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.1
+      inSlope: 0
+      outSlope: 0.20000002
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0.3
+      inSlope: 0.20000002
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  carPhysics: {fileID: 534998406666359623}
 --- !u!114 &522883597121258846
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91606,6 +91637,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carPhysics: {fileID: 0}
   viewportMargin: 0.15
+  brains: []
 --- !u!1 &8568694381742411748
 GameObject:
   m_ObjectHideFlags: 0

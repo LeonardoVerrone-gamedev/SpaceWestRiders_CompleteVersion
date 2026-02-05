@@ -123,7 +123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4afa82ae3200b82408d605c3dbdd1e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Damping: 3
+  Damping: 1
 --- !u!114 &3337176076577964149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -360,7 +360,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4afa82ae3200b82408d605c3dbdd1e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Damping: 3
+  Damping: 1
 --- !u!114 &2910909610039468116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -611,6 +611,8 @@ MonoBehaviour:
   vibrateController: 1
   defaultNoise: {fileID: 2951974762300501046}
   turboNoise: {fileID: 8847833551608715248}
+  defaultRotate: {fileID: 7099718546023426541}
+  turboRotate: {fileID: 8057302775447255767}
   classicMaxAmplitude: 0.3
   classicMaxFrequency: 0.4
   hoverMaxAmplitude: 0.15

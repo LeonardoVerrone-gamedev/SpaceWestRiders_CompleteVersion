@@ -50,7 +50,7 @@ public class SCR_TrackSelectionManager : MonoBehaviour
     {
         camManager = UnityEngine.Object.FindFirstObjectByType<CameraController>();
 
-        if (SCR_PersistentData.Instance != null && SCR_PersistentData.Instance.isSequenceRace)
+        if (SCR_PersistentData.Instance != null && SCR_PersistentData.Instance.isSequenceRace && !_isStoryMode)
         {
             StartRaceImmediate();
         }
@@ -65,7 +65,7 @@ public class SCR_TrackSelectionManager : MonoBehaviour
             carCullings = UnityEngine.Object.FindObjectsByType<SCR_CarVisualCulling>(FindObjectsSortMode.None).ToList();
             PrepareCarsForSelection();
 
-            SCR_PersistentData.Instance.isSequenceRace = true;
+            SCR_PersistentData.Instance.isSequenceRace = true; //adicionar if(!isStoryMode) se isso quebrar algo
         }
     }
 

@@ -210,6 +210,8 @@ public class CameraController : MonoBehaviour
     [Header("Sistema de Noise Contínuo")]
     [SerializeField] private CinemachineBasicMultiChannelPerlin defaultNoise;
     [SerializeField] private CinemachineBasicMultiChannelPerlin turboNoise;
+    [SerializeField] CinemachineRotateWithFollowTarget defaultRotate;
+    [SerializeField] CinemachineRotateWithFollowTarget turboRotate;
     
     [Header("Configurações de Noise por Tipo de Carro")]
     [Tooltip("Amplitude máxima do noise para carro clássico")]
@@ -253,6 +255,9 @@ public class CameraController : MonoBehaviour
     private float lastSpeed = 0f;
     private float currentAcceleration = 0f;
     private float accelerationNoiseIntensity = 0f;
+
+    private float impactImpulseCoolDown = 1.5f;
+    private float lastImpactPulseTime;
 
 
     void Start()
@@ -303,12 +308,19 @@ public class CameraController : MonoBehaviour
     {
         HandlePhysicsBasedEffects();
         UpdateContinuousNoise();
+        HandleRotateDamping();
     
         //Atualizar sistema de shake
         if (enableImpulseShake && player != null && carPhysics != null)
         {
             CheckForSpecialShakes();
         }
+    }
+
+    void HandleRotateDamping()
+    {
+        float rotateDamping = carPhysics.IsDrifting() ? 3f : 1f;
+        defaultRotate.Damping = rotateDamping; turboRotate.Damping = rotateDamping;
     }
 
     private void HandlePhysicsBasedEffects()
@@ -825,7 +837,7 @@ public class CameraController : MonoBehaviour
     // Método para colisões
     public void GenerateCollisionShake(float impactForce, Vector3 direction)
     {
-        if (!enableImpulseShake) return;
+        if (!enableImpulseShake || !CanGenerateImpactShake()) return;
 
         float intensity = Mathf.Clamp(impactForce / 30f, 0.05f, 0.8f);
 
@@ -836,6 +848,14 @@ public class CameraController : MonoBehaviour
             direction.normalized,
             ShakePriority.Critical
         );
+
+        lastImpactPulseTime = Time.time;
+    }
+
+    private bool CanGenerateImpactShake()
+    {
+        // Verifica se passou tempo suficiente desde o último impacto
+        return Time.time >= lastImpactPulseTime + impactImpulseCoolDown;
     }
 
     // Prioridade centralizada de shake

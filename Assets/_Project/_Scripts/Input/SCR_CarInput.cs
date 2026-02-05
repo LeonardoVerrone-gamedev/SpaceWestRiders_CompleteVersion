@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 using System;
+using System.Collections;
 
 public enum InputMode
 {
@@ -81,12 +82,32 @@ public class SCR_CarInput : MonoBehaviour
     private bool _currentTurboPressed = false;
     private bool _lastTurboPressed = false;
     private bool _switchModeRequested = false;
+
+    [Header("Vibration Settings")]
+    [SerializeField] private bool _enableVibration = true;
     
+    // Configurações de vibração
+    [SerializeField] private float _collisionVibrationIntensity = 0.7f;
+    [SerializeField] private float _landingVibrationIntensity = 0.4f;
+    [SerializeField] private float _turboVibrationIntensity = 0.8f;
+    
+    // Vibração contínua de velocidade
+    [SerializeField] private float _minSpeedForVibration = 80;
+    [SerializeField] private float _maxSpeedForVibration = 420;
+    [SerializeField] private AnimationCurve _speedVibrationCurve = AnimationCurve.Linear(0, 0.1f, 1, 0.3f);
+    
+    // Estado da vibração
+    private Gamepad _gamepad;
+    private Coroutine _continuousVibrationCoroutine;
+    public bool _isVibratingContinuously = false;
+    [SerializeField] private SCR_RayBasedCarPhysics carPhysics;
     #region Unity Events
     
     private void Start()
     {
         InitializeInputSystem();
+
+        carPhysics = GetComponent<SCR_RayBasedCarPhysics>();
         
         // Enable Enhanced Touch for mobile
         if (_inputMode == InputMode.MobileGyro)
@@ -98,6 +119,14 @@ public class SCR_CarInput : MonoBehaviour
         
         if (_inputMode == InputMode.MobileGyro)
             InitializeMobileGyro();
+
+        SetupCarEventListeners();
+    }
+
+    private void OnDestroy()
+    {
+        StopAllVibration();
+        ClearAllEventSubscriptions();
     }
     
     private void Update()
@@ -107,16 +136,24 @@ public class SCR_CarInput : MonoBehaviour
         
         // Disparar eventos se houver mudanças
         CheckAndDispatchEvents();
+        UpdateSpeedVibration(carPhysics.GetCurrentSpeed());
     }
     
-    private void OnDestroy()
-    {
-        // Limpar todas as inscrições de eventos
-        ClearAllEventSubscriptions();
-    }
     #endregion
     
     #region Event System
+
+    private void SetupCarEventListeners()
+    {
+        if (carPhysics == null) return;
+
+        carPhysics.OnTurboStart += VibrateTurbo;
+        //carPhysics.OnTurboEnd   += HandleTurboEnd;
+
+        carPhysics.OnCollision  += VibrateCollision;
+        carPhysics.OnLand       += VibrateLanding;
+    }
+
     private void UpdateInputState()
     {
         switch (_inputMode)
@@ -488,24 +525,6 @@ public class SCR_CarInput : MonoBehaviour
     }
     #endregion
 
-    #region gamepad management
-
-    public Gamepad GetAssignedGamepad()
-    {
-        if (_playerInput == null)
-            return null;
-
-        foreach (var device in _playerInput.devices)
-        {
-            if (device is Gamepad gamepad)
-                return gamepad;
-        }
-
-        return null;
-    }
-
-    #endregion
-
     #region Input Refreshing
     /// <summary>
     /// Re-vincula as referências das InputActions do PlayerInput.
@@ -571,6 +590,167 @@ public class SCR_CarInput : MonoBehaviour
     
     [ContextMenu("Switch to AI")]
     private void SwitchToAI() => SetInputMode(InputMode.AI_Controlled);
+    #endregion
+
+    #region Gamepad Vibration System
+
+    private Gamepad GetGamepad()
+    {
+        if (_gamepad != null) return _gamepad;
+        
+        var playerInput = GetComponent<PlayerInput>();
+        if (playerInput != null)
+        {
+            foreach (var device in playerInput.devices)
+            {
+                if (device is Gamepad gamepad)
+                {
+                    _gamepad = gamepad;
+                    return _gamepad;
+                }
+            }
+        }
+        return null;
+    }
+
+    // Vibração simples
+    public void Vibrate(float intensity, float duration = 0.3f)
+    {
+        if (!_enableVibration) return;
+        
+        var gamepad = GetGamepad();
+        if (gamepad == null) return;
+        
+        StartCoroutine(VibrationRoutine(gamepad, intensity, duration));
+    }
+
+    // Métodos específicos
+    public void VibrateCollision(float forceIntensity = 1f, Vector3 vector = default)
+    {
+        float intensity = _collisionVibrationIntensity * Mathf.Clamp01(forceIntensity);
+        Vibrate(intensity, 0.4f);
+    }
+
+    public void VibrateLanding(float airTimeIntensity = 1f)
+    {
+        float intensity = _landingVibrationIntensity * Mathf.Clamp01(airTimeIntensity);
+        Vibrate(intensity, 0.3f);
+    }
+
+    public void VibrateTurbo()
+    {
+        Vibrate(_turboVibrationIntensity, 0.5f);
+    }
+
+    // Vibração contínua baseada na velocidade
+    private float _currentContinuousIntensity = 0f;
+
+    public void UpdateSpeedVibration(float currentSpeedKmh)
+    {
+        if (!_enableVibration) return;
+        
+        var gamepad = GetGamepad();
+        if (gamepad == null) return;
+        
+        if (currentSpeedKmh < _minSpeedForVibration)
+        {
+            if (_isVibratingContinuously)
+            {
+                gamepad.SetMotorSpeeds(0f, 0f);
+                _isVibratingContinuously = false;
+                _currentContinuousIntensity = 0f;
+            }
+            return;
+        }
+        
+        _isVibratingContinuously = true;
+        float normalizedSpeed = Mathf.Clamp01(
+            (currentSpeedKmh - _minSpeedForVibration) / 
+            (_maxSpeedForVibration - _minSpeedForVibration)
+        );
+        
+        // Calcula a intensidade baseada na curva
+        float targetIntensity = _speedVibrationCurve.Evaluate(normalizedSpeed);
+        
+        // Efeito pulsante opcional direto no Update
+        float pulse = Mathf.Sin(Time.time * 15f) * 0.1f + 0.9f;
+        float finalIntensity = targetIntensity * pulse;
+
+        // Aplica diretamente ao motor (motores: Low Frequency, High Frequency)
+        gamepad.SetMotorSpeeds(finalIntensity * 0.5f, finalIntensity * 0.2f);
+    }
+
+    // Corrotinas de vibração
+    private IEnumerator VibrationRoutine(Gamepad gamepad, float intensity, float duration)
+    {
+        // Low frequency (rumble) mais forte, high frequency (buzz) mais fraco
+        gamepad.SetMotorSpeeds(intensity * 0.8f, intensity * 0.4f);
+        yield return new WaitForSeconds(duration);
+        gamepad.SetMotorSpeeds(0f, 0f);
+    }
+
+    private void StartContinuousVibration(float intensity)
+    {
+        _isVibratingContinuously = true;
+        _continuousVibrationCoroutine = StartCoroutine(ContinuousVibrationRoutine(intensity));
+    }
+
+    private IEnumerator ContinuousVibrationRoutine(float baseIntensity)
+    {
+        var gamepad = GetGamepad();
+        if (gamepad == null) yield break;
+        
+        while (_isVibratingContinuously)
+        {
+            // Efeito pulsante para não ficar monótono
+            float pulse = Mathf.Sin(Time.time * 15f) * 0.3f + 0.7f;
+            float finalIntensity = baseIntensity * pulse;
+            
+            // Vibração mais suave para contínua
+            gamepad.SetMotorSpeeds(finalIntensity * 0.5f, finalIntensity * 0.2f);
+            yield return null;
+        }
+        
+        // Para a vibração ao sair do loop
+        gamepad.SetMotorSpeeds(0f, 0f);
+    }
+
+    private void UpdateContinuousVibrationIntensity(float newIntensity)
+    {
+        // Para atualizar a intensidade, precisamos parar e recomeçar
+        StopContinuousVibration();
+        StartContinuousVibration(newIntensity);
+    }
+
+    public void StopContinuousVibration()
+    {
+        _isVibratingContinuously = false;
+        
+        if (_continuousVibrationCoroutine != null)
+        {
+            StopCoroutine(_continuousVibrationCoroutine);
+            _continuousVibrationCoroutine = null;
+        }
+        
+        var gamepad = GetGamepad();
+        if (gamepad != null)
+        {
+            gamepad.SetMotorSpeeds(0f, 0f);
+        }
+    }
+
+    public void StopAllVibration()
+    {
+        StopContinuousVibration();
+        StopAllCoroutines(); // Para qualquer vibração pontual em andamento
+        
+        var gamepad = GetGamepad();
+        if (gamepad != null)
+        {
+            gamepad.SetMotorSpeeds(0f, 0f);
+        }
+    }
+
     #endregion
 }
 
