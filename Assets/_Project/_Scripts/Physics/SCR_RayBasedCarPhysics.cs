@@ -869,7 +869,13 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         
         // Acumuladores de rotação (X local)
         // Traseira: PURA tração (só com acelerador)
-        _rearWheelRotationAccumulator += tireRorationSpeed * _currentThrottleInput * Time.deltaTime;
+        if(Mathf.Abs(_currentThrottleInput ) > 0.1f){
+            _rearWheelRotationAccumulator += tireRorationSpeed * _currentThrottleInput * Time.deltaTime;
+        }
+        else
+        {
+            _rearWheelRotationAccumulator += tireRorationSpeed * carVelocityRatio * Time.deltaTime;
+        }
         // Dianteira: Pura velocidade (rolagem baseada no movimento)
         _frontWheelRotationAccumulator += tireRorationSpeed * carVelocityRatio * Time.deltaTime;
 
