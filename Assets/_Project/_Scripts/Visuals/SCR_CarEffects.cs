@@ -47,6 +47,11 @@ public class SCR_CarEffects : MonoBehaviour
     [Header("Collision Impact")]
     [SerializeField] SCR_ImpactEffect[] impactEffects;
 
+    [Header("Collision Cooldown")]
+    [SerializeField] private float collisionCooldown = 0.5f;
+    private float lastCollisionTime = -999f;
+
+
     [Header("Heat distortion particles")]
     [SerializeField] private ParticleSystem HeatDistortionParticles;
     private ParticleSnapshot heatSnapshot;
@@ -268,8 +273,6 @@ public class SCR_CarEffects : MonoBehaviour
         }
     }
 
-    // ... (Métodos HandleBoostVFX, HandleTurboVFX, UpdateParticleState, OnCollisionStay e ResetSparkStates permanecem iguais)
-    
     private void SetupToggleableParticles(ParticleSystem ps)
     {
         if (ps != null)
@@ -369,6 +372,9 @@ public class SCR_CarEffects : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (Time.time < lastCollisionTime + collisionCooldown)
+            return; //cool down
+
         // Verifica se a colisão é relevante (parede ou carro)
         int layer = collision.gameObject.layer;
         if (layer != LayerMask.NameToLayer("Walls") && layer != LayerMask.NameToLayer("Car")) return;
@@ -379,6 +385,8 @@ public class SCR_CarEffects : MonoBehaviour
         // Pega o ponto de contato para posicionar o efeito
         ContactPoint contact = collision.contacts[0];
         SpawnImpactEffect(contact.point, Quaternion.LookRotation(contact.normal));
+
+        lastCollisionTime = Time.time;
     }
 
     private void SpawnImpactEffect(Vector3 position, Quaternion rotation)

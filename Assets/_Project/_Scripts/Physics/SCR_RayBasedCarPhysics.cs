@@ -148,7 +148,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     [HideInInspector][SerializeField] float dragCoefficient = 1f;
 
     [HideInInspector] [SerializeField] float airControlStrength;
-    [HideInInspector][SerializeField] float classicCornerGrip;
+    [SerializeField] float classicCornerGrip;
 
     #endregion
 
@@ -441,6 +441,42 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     #endregion
 
+    #region gear variables
+
+    [Header("Arcade Gearbox")]
+    [SerializeField] private int totalGears = 5;
+    [SerializeField] private float gearShiftCooldown = 0.15f;
+    [SerializeField] private float gearAccelerationDrop = 0.85f;
+    bool isShifting = false;
+    [SerializeField] private float minTimeBetweenShifts = 0.5f; // Tempo mínimo entre trocas
+    private float lastShiftTime = -999f;
+
+    [SerializeField] private float[] shiftUpThresholds = {
+        0f,     // índice 0 (não usa)
+        50f,    // 1ª -> 2ª em 50km/h
+        100f,   // 2ª -> 3ª em 100km/h  
+        150f,   // 3ª -> 4ª em 150km/h
+        200f,   // 4ª -> 5ª em 200km/h
+        300f,   // 5ª -> 6ª em 300km/h
+        400f    // 6ª -> 7ª em 400km/h
+    };
+
+    [SerializeField] private float[] shiftDownThresholds = {
+        0f,     // índice 0
+        40f,    // 2ª -> 1ª abaixo de 40km/h
+        90f,    // 3ª -> 2ª abaixo de 90km/h
+        140f,   // 4ª -> 3ª abaixo de 140km/h
+        190f,   // 5ª -> 4ª abaixo de 190km/h
+        290f,   // 6ª -> 5ª abaixo de 290km/h
+        390f    // 7ª -> 6ª abaixo de 390km/h
+    };
+
+
+    [SerializeField] private int currentGear = 1;
+    private float lastGearShiftTime = -999f;
+
+    #endregion
+
     // --- Métodos de Física Central ---
 
     #region Unity Lifecycle
@@ -519,6 +555,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         HandleRespawnSystem();
 
         LimitVelocity();
+
+        UpdateAutomaticGears();
     }
 
     #endregion
@@ -533,6 +571,52 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         }
 
         SwitchToMode(carType);
+    }
+
+    #endregion
+
+    #region gear change
+
+    private void UpdateAutomaticGears()
+    {
+        if (!isGrounded || isShifting) return;
+
+        if (Time.time < lastShiftTime + minTimeBetweenShifts) return;
+
+        float speed = Mathf.Abs(speedKMH);
+        int targetGear = currentGear; // Mantém a marcha atual por padrão
+
+        // --- TROCA PARA CIMA 
+        if (currentGear < totalGears && speed >= shiftUpThresholds[currentGear])
+        {
+            targetGear = currentGear + 1;
+        }
+        // --- TROCA PARA BAIXO 
+        else if (currentGear > 1 && speed < shiftDownThresholds[currentGear - 1])
+        {
+            targetGear = currentGear - 1;
+        }
+
+        if (targetGear != currentGear)
+        {
+            StartCoroutine(GearShiftCoroutine(targetGear));
+        }
+    }
+
+    private IEnumerator GearShiftCoroutine(int newGear)
+    {
+        isShifting = true;
+
+        // micro corte de força
+        float originalDrop = gearAccelerationDrop;
+        gearAccelerationDrop = 0.4f; // quase sem força
+
+        yield return new WaitForSeconds(gearShiftCooldown);
+
+        currentGear = newGear;
+
+        gearAccelerationDrop = originalDrop;
+        isShifting = false;
     }
 
     #endregion
@@ -622,6 +706,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     private void Acceleration()
     {
+        if(isShifting)return;
 
         float effectiveMaxSpeed = maxSpeed;
 
@@ -637,6 +722,15 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         float speedPercentage = Mathf.Clamp01(currentCarLocalVelocity.z / maxSpeed);
 
         currentAcceleration *= accelCurve.Evaluate(speedPercentage);
+
+        float gearFactor = Mathf.Lerp(
+            1.25f,
+            0.8f,
+            (float)(currentGear - 1) / (totalGears - 1)
+        );
+
+        currentAcceleration *= gearFactor * gearAccelerationDrop;
+
         
         // Multiplicador de aceleração durante drift
         if (_isDrifting) currentAcceleration *= driftAccelerationMultiplier;
@@ -661,6 +755,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     private void Deaceleration()
     {
+        if(isShifting)return;
+
         float brakeMultiplier = 1f;
 
         if(currentCarLocalVelocity.z > 1f && !AIControlled) brakeMultiplier = 1.1f;

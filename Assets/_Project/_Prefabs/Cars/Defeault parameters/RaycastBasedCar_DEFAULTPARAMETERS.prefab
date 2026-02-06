@@ -88984,7 +88984,7 @@ MonoBehaviour:
   hoverCarDragCoefficient: 3
   dragCoefficient: 5
   airControlStrength: 2
-  classicCornerGrip: 5
+  classicCornerGrip: 2
   accelCurve:
     serializedVersion: 2
     m_Curve:
@@ -89391,6 +89391,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  _isVibratingContinuously: 0
   carPhysics: {fileID: 534998406666359623}
 --- !u!114 &522883597121258846
 MonoBehaviour:
