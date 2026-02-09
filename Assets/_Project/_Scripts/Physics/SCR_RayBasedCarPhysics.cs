@@ -160,8 +160,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     [Header("Custom Curves for Balancing")]
     [HideInInspector][SerializeField] private AnimationCurve accelCurve;
-    [HideInInspector][SerializeField] private AnimationCurve classicAccelCurve;
-    [HideInInspector][SerializeField] private AnimationCurve hoverAccelCurve;
+    [SerializeField] private AnimationCurve classicAccelCurve;
+    [SerializeField] private AnimationCurve hoverAccelCurve;
 
     [HideInInspector][SerializeField] private AnimationCurve hoverCarTurningCurve;
     [HideInInspector] [SerializeField] private AnimationCurve classicCarTurningCurve;

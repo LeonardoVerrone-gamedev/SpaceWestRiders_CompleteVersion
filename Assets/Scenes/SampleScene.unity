@@ -2288,20 +2288,104 @@ PrefabInstance:
       value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].value
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.size
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.turningCurve.m_Curve.Array.size
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicSettings.turningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].time
@@ -2314,6 +2398,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[2].time
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].value
@@ -2330,6 +2418,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[3].value
       value: 0.9000015
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.data[0].time
@@ -11886,20 +11978,104 @@ PrefabInstance:
       value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].value
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.size
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.turningCurve.m_Curve.Array.size
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicSettings.turningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].time
@@ -11912,6 +12088,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[2].time
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].value
@@ -11928,6 +12108,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[3].value
       value: 0.9000015
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.data[0].time
@@ -17364,20 +17548,104 @@ PrefabInstance:
       value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].value
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.size
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.turningCurve.m_Curve.Array.size
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicSettings.turningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].time
@@ -17390,6 +17658,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[2].time
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].value
@@ -17406,6 +17678,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[3].value
       value: 0.9000015
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.data[0].time
@@ -22452,20 +22728,104 @@ PrefabInstance:
       value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].value
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.size
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.turningCurve.m_Curve.Array.size
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicSettings.turningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].time
@@ -22478,6 +22838,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[2].time
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].value
@@ -22494,6 +22858,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[3].value
       value: 0.9000015
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.data[0].time
@@ -27966,20 +28334,104 @@ PrefabInstance:
       value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].value
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.size
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.turningCurve.m_Curve.Array.size
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicSettings.turningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].time
@@ -27992,6 +28444,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[2].time
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].value
@@ -28008,6 +28464,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[3].value
       value: 0.9000015
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.data[0].time
@@ -32974,20 +33434,104 @@ PrefabInstance:
       value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].value
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.size
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.turningCurve.m_Curve.Array.size
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicSettings.turningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].time
@@ -33000,6 +33544,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[2].time
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].value
@@ -33016,6 +33564,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[3].value
       value: 0.9000015
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.data[0].time
@@ -44165,20 +44717,104 @@ PrefabInstance:
       value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].value
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.size
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.turningCurve.m_Curve.Array.size
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicSettings.turningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].time
@@ -44191,6 +44827,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[2].time
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].value
@@ -44207,6 +44847,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[3].value
       value: 0.9000015
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.data[0].time
@@ -58277,20 +58921,104 @@ PrefabInstance:
       value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].value
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.size
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.turningCurve.m_Curve.Array.size
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicSettings.turningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].time
@@ -58303,6 +59031,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[2].time
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].value
@@ -58319,6 +59051,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[3].value
       value: 0.9000015
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.data[0].time
@@ -63775,20 +64511,104 @@ PrefabInstance:
       value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].value
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.size
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.turningCurve.m_Curve.Array.size
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicSettings.turningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].time
@@ -63801,6 +64621,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[2].time
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].value
@@ -63817,6 +64641,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[3].value
       value: 0.9000015
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.data[0].time
@@ -70027,20 +70855,104 @@ PrefabInstance:
       value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].value
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.size
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.turningCurve.m_Curve.Array.size
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicSettings.turningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].time
@@ -70053,6 +70965,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[2].time
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].value
@@ -70069,6 +70985,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[3].value
       value: 0.9000015
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.data[0].time
@@ -75146,20 +76066,104 @@ PrefabInstance:
       value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].value
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.size
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.turningCurve.m_Curve.Array.size
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicSettings.turningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].time
@@ -75172,6 +76176,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[2].time
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].value
@@ -75188,6 +76196,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[3].value
       value: 0.9000015
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.data[0].time
@@ -81100,20 +82112,104 @@ PrefabInstance:
       value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].value
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.size
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.turningCurve.m_Curve.Array.size
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicSettings.turningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].time
@@ -81126,6 +82222,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[2].time
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].value
@@ -81142,6 +82242,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[3].value
       value: 0.9000015
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.data[0].time
@@ -86314,20 +87418,104 @@ PrefabInstance:
       value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].value
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.size
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.turningCurve.m_Curve.Array.size
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicSettings.turningCurve.m_Curve.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].outWeight
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].time
@@ -86340,6 +87528,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[2].time
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: hoverAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[0].value
@@ -86356,6 +87548,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: classicCarTurningCurve.m_Curve.Array.data[3].value
       value: 0.9000015
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: classicAccelCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverSettings.accelCurve.m_Curve.Array.data[0].time
