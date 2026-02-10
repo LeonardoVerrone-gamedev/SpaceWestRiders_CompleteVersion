@@ -157,12 +157,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     // ======================================================
 
     #region Balancing Curves
-
-    [Header("Custom Curves for Balancing")]
-    [HideInInspector][SerializeField] private AnimationCurve accelCurve;
-    [SerializeField] private AnimationCurve classicAccelCurve;
-    [SerializeField] private AnimationCurve hoverAccelCurve;
-
     [HideInInspector][SerializeField] private AnimationCurve hoverCarTurningCurve;
     [HideInInspector] [SerializeField] private AnimationCurve classicCarTurningCurve;
     [HideInInspector][SerializeField] AnimationCurve turningCurve;
@@ -638,7 +632,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         acceleration    = isHover ? hoverCarAcceleration    : classicCarAcceleration;
         maxSpeed        = isHover ? hoverCarMaxSpeed         : classicCarMaxSpeed;
 
-        accelCurve   = isHover ? hoverAccelCurve : classicAccelCurve;
         turningCurve = isHover ? hoverCarTurningCurve : classicCarTurningCurve;
 
         currentAirDrag = isHover ? hoverAirDrag : classicAirDrag;
@@ -717,11 +710,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         if (Mathf.Abs(currentCarLocalVelocity.z) >= effectiveMaxSpeed) return;
 
         float currentAcceleration = acceleration;
-    
-        // Calcula o percentual da velocidade atual (0 a 1)
-        float speedPercentage = Mathf.Clamp01(currentCarLocalVelocity.z / maxSpeed);
-
-        currentAcceleration *= accelCurve.Evaluate(speedPercentage);
 
         float gearFactor = Mathf.Lerp(
             1.25f,

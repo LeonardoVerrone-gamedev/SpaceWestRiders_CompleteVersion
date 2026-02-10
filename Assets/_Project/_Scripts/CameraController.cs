@@ -1,4 +1,3 @@
-//TODO: se estiver em loop (calcular via pitch), offset Y = 0.12f; Se estiver inclinado na ista (roll), aplicar dutch
 using UnityEngine;
 using Unity.Cinemachine;
 using System.Collections;

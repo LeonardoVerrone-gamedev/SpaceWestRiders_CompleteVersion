@@ -88869,6 +88869,7 @@ GameObject:
   - component: {fileID: 7291292022362802018}
   - component: {fileID: 4188370516142532924}
   - component: {fileID: 5267084700608821396}
+  - component: {fileID: 6927304020381856219}
   m_Layer: 8
   m_Name: RaycastBasedCar_DEFAULTPARAMETERS
   m_TagString: Player
@@ -89017,114 +89018,6 @@ MonoBehaviour:
   dragCoefficient: 5
   airControlStrength: 2
   classicCornerGrip: 2
-  accelCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: -0.0038866997
-      outSlope: -0.0038866997
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.5
-      value: 0.99805665
-      inSlope: 0.0128167905
-      outSlope: 0.0128167905
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.849072
-    - serializedVersion: 3
-      time: 1
-      value: 0.79999924
-      inSlope: -0.39611483
-      outSlope: -0.39611483
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  classicAccelCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: -0.00000333786
-      outSlope: -0.00000333786
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.5
-      value: 0.99999833
-      inSlope: 0.0015671137
-      outSlope: 0.0015671137
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.40666664
-      outWeight: 0.849072
-    - serializedVersion: 3
-      time: 1
-      value: 0.79999924
-      inSlope: -0.3999982
-      outSlope: -0.3999982
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  hoverAccelCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0.8775669
-      inSlope: 0.34146208
-      outSlope: 0.34146208
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.3
-      value: 0.9800055
-      inSlope: 0.0128167905
-      outSlope: 0.0128167905
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.849072
-    - serializedVersion: 3
-      time: 0.5
-      value: 0.99924254
-      inSlope: 0.02690094
-      outSlope: 0.02690094
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 1.0000114
-      inSlope: 0.0015377998
-      outSlope: 0.0015377998
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
   hoverCarTurningCurve:
     serializedVersion: 2
     m_Curve:
@@ -91693,6 +91586,23 @@ MonoBehaviour:
   carPhysics: {fileID: 0}
   viewportMargin: 0.15
   brains: []
+  meshes: []
+--- !u!114 &6927304020381856219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8410641648346012813}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b24f5972a2ee7e542b3da79ad1b8804b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  carPhysics: {fileID: 0}
+  viewportMargin: 0.3
+  brains: []
+  meshes: []
 --- !u!1 &8568694381742411748
 GameObject:
   m_ObjectHideFlags: 0
