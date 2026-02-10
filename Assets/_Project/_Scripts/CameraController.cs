@@ -186,8 +186,6 @@ public class CameraController : MonoBehaviour
     public ShakeProfile jumpShake;
     [Tooltip("Shake em colisões")]
     public ShakeProfile collisionShake;
-    [Tooltip("Vibrar controles quando disponível")]
-    public bool vibrateController = true;
 
     [System.Serializable]
     public class ShakeProfile
@@ -316,12 +314,6 @@ public class CameraController : MonoBehaviour
         HandlePhysicsBasedEffects();
         UpdateContinuousNoise();
         HandleRotateDamping();
-    
-        //Atualizar sistema de shake
-        if (enableImpulseShake && player != null && carPhysics != null)
-        {
-            CheckForSpecialShakes();
-        }
     }
 
     void HandleRotateDamping()
@@ -771,58 +763,6 @@ public class CameraController : MonoBehaviour
     }
 
     #region shake
-
-
-    // Verificar shakes especiais (eventos)
-    private void CheckForSpecialShakes()
-    {
-        if (playerRB == null || carPhysics == null) return;
-
-        // Aterrissagem
-        bool isGrounded = carPhysics.IsGrounded;
-        if (isGrounded && !wasGrounded && airTime > 0.5f)
-        {
-            TryGenerateShake(
-                jumpShake.amplitude * Mathf.Clamp(airTime, 0.5f, 2f),
-                jumpShake.duration,
-                jumpShake.frequency,
-                Vector3.up,
-                ShakePriority.High
-            );
-            airTime = 0f;
-        }
-        else if (!isGrounded)
-        {
-            airTime += Time.deltaTime;
-        }
-        wasGrounded = isGrounded;
-
-        // Aceleração/Freio forte
-        float throttle = carPhysics.GetThrottleInput();
-        if (Mathf.Abs(throttle) > 0.8f && currentSpeedKmh > 20f)
-        {
-            if (throttle > 0 && velocityChange > 5f)
-            {
-                TryGenerateShake(
-                    accelerationShake.amplitude * (velocityChange / 10f),
-                    accelerationShake.duration,
-                    accelerationShake.frequency,
-                    accelerationShake.direction,
-                    ShakePriority.Medium
-                );
-            }
-            else if (throttle < 0 && velocityChange < -5f)
-            {
-                TryGenerateShake(
-                    brakingShake.amplitude * (Mathf.Abs(velocityChange) / 10f),
-                    brakingShake.duration,
-                    brakingShake.frequency,
-                    brakingShake.direction,
-                    ShakePriority.Medium
-                );
-            }
-        }
-    }
 
     // MÉTODO PRINCIPAL: Gerar shake com prioridade
     public void TryGenerateShake(float amplitude, float duration, float frequency, Vector3 direction, ShakePriority priority)

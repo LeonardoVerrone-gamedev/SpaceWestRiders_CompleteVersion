@@ -89224,26 +89224,22 @@ MonoBehaviour:
   turboBodyTiltBase: -5
   rubberBandingFactor: 1
   speedKMH: 0
-  totalGears: 5
+  totalGears: 4
   gearShiftCooldown: 0.15
   gearAccelerationDrop: 0.85
   minTimeBetweenShifts: 0.5
   shiftUpThresholds:
   - 0
-  - 50
-  - 100
-  - 150
-  - 200
-  - 300
-  - 400
+  - 60
+  - 120
+  - 240
+  - 310
   shiftDownThresholds:
   - 0
-  - 40
-  - 90
-  - 140
-  - 190
-  - 290
-  - 390
+  - 60
+  - 120
+  - 240
+  - 310
   currentGear: 1
 --- !u!114 &2824079843674075053
 MonoBehaviour:
@@ -91584,7 +91580,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   carPhysics: {fileID: 0}
-  viewportMargin: 0.15
+  viewportMargin: 0.2
   brains: []
   meshes: []
 --- !u!114 &6927304020381856219

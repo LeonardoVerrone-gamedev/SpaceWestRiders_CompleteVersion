@@ -56,6 +56,8 @@ public class SCR_CarVisualCulling : MonoBehaviour
             }
         }
 
+        if(!carPhysics.AIControlled) return true; //se eh player entao é sempre visivel
+
         return false;
     }
 }

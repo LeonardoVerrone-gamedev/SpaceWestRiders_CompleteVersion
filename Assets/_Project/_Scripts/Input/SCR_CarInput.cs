@@ -248,7 +248,7 @@ public class SCR_CarInput : MonoBehaviour
             _toggleModeAction = actions["SwitchMode"];
         }
 
-        BindActionsFromPlayerInput();
+        //BindActionsFromPlayerInput();
     }
 
     private void BindActionsFromPlayerInput()

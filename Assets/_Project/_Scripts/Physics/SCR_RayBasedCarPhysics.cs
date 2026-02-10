@@ -1670,7 +1670,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         isGrounded = (tempGroundedWheels >= MIN_WHEELS_TO_CONSIDERE_GROUNDED) ? true : false;
 
-        if (!wasGrounded && isGrounded)
+        if (!wasGrounded && isGrounded && !isHover)
         {
             OnLand?.Invoke(airTime);
             airTime = 0f;
