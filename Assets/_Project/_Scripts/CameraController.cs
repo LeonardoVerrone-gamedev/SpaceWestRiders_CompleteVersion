@@ -1,3 +1,4 @@
+//TODO: se estiver em loop (calcular via pitch), offset Y = 0.12f; Se estiver inclinado na ista (roll), aplicar dutch
 using UnityEngine;
 using Unity.Cinemachine;
 using System.Collections;
@@ -6,6 +7,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using System.Collections.Generic;
 
 public class CameraController : MonoBehaviour
 {
@@ -259,6 +261,9 @@ public class CameraController : MonoBehaviour
     private float impactImpulseCoolDown = 1.5f;
     private float lastImpactPulseTime;
 
+    [SerializeField] List<CinemachineRecomposer> cinemachineRecomposer;
+    [SerializeField] float dutchMultiplier = 10f;
+
 
     void Start()
     {
@@ -279,6 +284,9 @@ public class CameraController : MonoBehaviour
             currentFOV = vCam.Lens.FieldOfView;
             thirdPersonFollow = vCam.GetComponent<CinemachinePositionComposer>();
         }
+
+        //cinemachineRecomposer.Add(vCam.GetComponent<CinemachineRecomposer>());//index 1
+        //if(turbo_VCam != null) cinemachineRecomposer.Add(turbo_VCam.GetComponent<CinemachineRecomposer>()); //index 2
 
         if (impulseSource == null)
         {
@@ -522,6 +530,17 @@ public class CameraController : MonoBehaviour
 
         ApplyCameraInterpolation();
         ApplyVolumeEffects();
+        UpdateDutch();
+    }
+
+    private void UpdateDutch()
+    {
+        //float value = GetLateralRoll();
+        float dot = Vector3.Dot(player.right, Vector3.up);
+
+        float dutchOutput = dutchMultiplier * dot;
+
+        foreach(CinemachineRecomposer recom in cinemachineRecomposer) recom.Dutch = dutchOutput;
     }
 
     //  APLICAR INTERPOLAÇÃO SUAVE DA CÂMERA

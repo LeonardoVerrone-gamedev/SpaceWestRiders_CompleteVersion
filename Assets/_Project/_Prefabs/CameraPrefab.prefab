@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3337176076577964149}
   - component: {fileID: 1962416285394638996}
   - component: {fileID: 2951974762300501046}
+  - component: {fileID: 8907515961719490833}
   m_Layer: 0
   m_Name: Car_Vcam
   m_TagString: Untagged
@@ -204,6 +205,25 @@ MonoBehaviour:
   AmplitudeGain: 0.2
   FrequencyGain: 0.3
   m_NoiseOffsets: {x: 757.4596, y: -100.766754, z: -2.1785278}
+--- !u!114 &8907515961719490833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 413456675171575745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0544e7b14d134a1449e61175446cfb95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ApplyAfter: 0
+  Tilt: 0
+  Pan: 0
+  Dutch: 0
+  ZoomScale: 1
+  FollowAttachment: 1
+  LookAtAttachment: 1
 --- !u!1 &3305247206701220772
 GameObject:
   m_ObjectHideFlags: 0
@@ -252,6 +272,7 @@ GameObject:
   - component: {fileID: 2910909610039468116}
   - component: {fileID: 8847833551608715248}
   - component: {fileID: 7399868083544364847}
+  - component: {fileID: 6687654593161059874}
   m_Layer: 0
   m_Name: Car_Vcam (Turbo)
   m_TagString: Untagged
@@ -441,6 +462,25 @@ MonoBehaviour:
     FrequencyGain: 1
     Duration: 1
     m_NoiseOffsets: {x: -374.27295, y: -203.7107, z: -835.84644}
+--- !u!114 &6687654593161059874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3648613549037306568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0544e7b14d134a1449e61175446cfb95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ApplyAfter: 0
+  Tilt: 0
+  Pan: 0
+  Dutch: 0
+  ZoomScale: 1
+  FollowAttachment: 1
+  LookAtAttachment: 1
 --- !u!1 &4338522458828739741
 GameObject:
   m_ObjectHideFlags: 0
@@ -670,6 +710,9 @@ MonoBehaviour:
   turboNoiseMultiplier: 0.5
   driftNoiseMultiplier: 1.2
   noiseSmoothTime: 0.3
+  cinemachineRecomposer:
+  - {fileID: 8907515961719490833}
+  - {fileID: 6687654593161059874}
 --- !u!114 &8852203778450995052
 MonoBehaviour:
   m_ObjectHideFlags: 0
