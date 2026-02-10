@@ -377,8 +377,8 @@ public class CameraController : MonoBehaviour
 
         if (useCinemachine && vCam != null)
         {
-            vCam.Follow = player;
-            if (turbo_VCam != null) turbo_VCam.Follow = player;
+            vCam.Follow = player.transform.Find("CameraTarget");
+            if (turbo_VCam != null) turbo_VCam.Follow = player.transform.Find("CameraTarget");
             
             ResetAllCameras();
             vCam.Priority = 10;

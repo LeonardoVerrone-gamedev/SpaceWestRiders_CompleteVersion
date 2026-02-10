@@ -29404,6 +29404,37 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1 &1810988169851609776
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6511760592040370290}
+  m_Layer: 8
+  m_Name: CameraTarget
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6511760592040370290
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1810988169851609776}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7441913437842523348}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1970870601930780746
 GameObject:
   m_ObjectHideFlags: 0
@@ -88873,6 +88904,7 @@ Transform:
   - {fileID: 2397539132061354445}
   - {fileID: 6567535285608012573}
   - {fileID: 7825667434076700370}
+  - {fileID: 6511760592040370290}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 150, z: 0}
 --- !u!54 &1123509100967675288
@@ -89299,6 +89331,27 @@ MonoBehaviour:
   turboBodyTiltBase: -5
   rubberBandingFactor: 1
   speedKMH: 0
+  totalGears: 5
+  gearShiftCooldown: 0.15
+  gearAccelerationDrop: 0.85
+  minTimeBetweenShifts: 0.5
+  shiftUpThresholds:
+  - 0
+  - 50
+  - 100
+  - 150
+  - 200
+  - 300
+  - 400
+  shiftDownThresholds:
+  - 0
+  - 40
+  - 90
+  - 140
+  - 190
+  - 290
+  - 390
+  currentGear: 1
 --- !u!114 &2824079843674075053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89441,6 +89494,7 @@ MonoBehaviour:
   - {fileID: 2427559747648566349}
   - {fileID: 6158234873358760818}
   - {fileID: 5926048920997298012}
+  collisionCooldown: 0.5
   HeatDistortionParticles: {fileID: 2999346283510352909}
 --- !u!114 &6294504414630336068
 MonoBehaviour:

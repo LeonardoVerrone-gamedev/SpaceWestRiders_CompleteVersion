@@ -95,7 +95,7 @@ MonoBehaviour:
   CameraDistance: 6
   DeadZoneDepth: 0
   Composition:
-    ScreenPosition: {x: 0, y: -0.07}
+    ScreenPosition: {x: 0, y: 0.075}
     DeadZone:
       Enabled: 0
       Size: {x: 0.3507246, y: 0.7439793}
@@ -138,7 +138,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CollideAgainst:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 192
   IgnoreTag: 
   TransparentLayers:
     serializedVersion: 2
@@ -152,7 +152,7 @@ MonoBehaviour:
     UseFollowTarget:
       Enabled: 0
       YOffset: 0
-    Strategy: 0
+    Strategy: 1
     MaximumEffort: 4
     SmoothingTime: 0
     Damping: 0.4
@@ -332,7 +332,7 @@ MonoBehaviour:
   CameraDistance: 3
   DeadZoneDepth: 0
   Composition:
-    ScreenPosition: {x: 0, y: -0.07}
+    ScreenPosition: {x: 0, y: 0.075}
     DeadZone:
       Enabled: 0
       Size: {x: 0.3507246, y: 0.7439793}
@@ -375,7 +375,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CollideAgainst:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 192
   IgnoreTag: 
   TransparentLayers:
     serializedVersion: 2
@@ -389,7 +389,7 @@ MonoBehaviour:
     UseFollowTarget:
       Enabled: 0
       YOffset: 0
-    Strategy: 0
+    Strategy: 1
     MaximumEffort: 4
     SmoothingTime: 0
     Damping: 0.4
@@ -554,7 +554,7 @@ MonoBehaviour:
   minSpeedForEffects: 150
   maxSpeedForEffects: 400
   minFOV: 30
-  maxFOV: 60
+  maxFOV: 80
   minCameraDistance: 4
   maxCameraDistance: 10
   minVignetteIntensity: 0.2
