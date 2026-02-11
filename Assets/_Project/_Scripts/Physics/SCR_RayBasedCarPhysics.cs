@@ -688,6 +688,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         // Definimos o limite máximo (considerando o turbo se ele estiver ativo)
         float maxLimit = _isTurboActive ? maxSpeed * turboMaxSpeedMultiplier : maxSpeed;
+        maxLimit *= rubberBandingFactor;
         float minLimit = -(maxSpeed / 3f);
 
         // Aplica o Clamp apenas no eixo Z (frente/trás)
