@@ -18,9 +18,8 @@ public class AIRacingController : MonoBehaviour
     [Header("Rubber banding")]
     public bool useRubberBanding = false;
     private bool huntsLeader = true;
-    [SerializeField] float hoverTargetAccelerationBoost = 1.8f;
-    [SerializeField] float classicTargetAccelerationBoost = 1.5f;
-    [SerializeField] float waitAccelerationDecrease = 0.75f;
+
+    public bool forceHuntLeader;
 
     [Header("Rubber Banding Settings")]
     [SerializeField] float maxCatchUpBoost = 1.5f; // 50% mais rápido se estiver longe atrás
@@ -75,6 +74,27 @@ public class AIRacingController : MonoBehaviour
 
     SCR_RayBasedCarPhysics rayBasedPhysics;
 
+    [Header("Pursuit / Combat")]
+    [SerializeField] private float pursuitTriggerDistance = 60f;
+    [SerializeField] private float attackDistance = 25f;
+    [SerializeField] private float attackSteerMultiplier = 1.4f;
+    [SerializeField] private float attackThrottleBoost = 1.15f;
+    [SerializeField] private LayerMask pursuitBlockers; // paredes / cenário
+
+    private SCR_RayBasedCarPhysics pursuitTarget;
+    private bool isPursuing = false;
+
+    [SerializeField] float berserkDistance = 18f;
+    [SerializeField] float berserkDuration = 0.6f;
+    [SerializeField] float berserkSteerMultiplier = 2.2f;
+    [SerializeField] float berserkThrottleBoost = 1.35f;
+    [SerializeField] float berserkWallTolerance = 0.6f;
+
+    float berserkTimer = 0f;
+
+    [SerializeField] PursuitEvent pursuitEvent;
+
+
     void OnEnable()//switch to onEnable later
     {
         car = GetComponent<SCR_RayBasedCarPhysics>();
@@ -102,50 +122,17 @@ public class AIRacingController : MonoBehaviour
     void Start()
     {
         myUniqueLaneOffset = Random.Range(-5f, 5f);
-    
-        //Se for um piloto agressivo, ele tende a querer o centro (0) 
-        // para fechar a passagem dos outros.
-        //if(profile.aggressiveness > 0.8f) myUniqueLaneOffset *= 0.2f;
+
+        if (pursuitEvent != null && pursuitEvent.targetCar != null)
+        {
+            Invoke(nameof(InvokePursuitTarget), pursuitEvent.timeToInvoke);
+        }
     }
+
 
     public void SetDifficulty(AIDifficulty difficulty)
     {
         currentDifficulty = difficulty;
-        
-        float accMult = 7f;
-        float speedMult = 9f;
-        float decelDivisor = 10f;
-
-        switch (difficulty)
-        {
-            case AIDifficulty.Easy:
-                // IA lenta, demora a acelerar e freia muito antes
-                accMult = 3f;
-                speedMult = 4f;
-                decelDivisor = 1f;
-                break;
-
-            case AIDifficulty.Medium:
-                // IA competitiva, mas comete erros de frenagem
-                accMult = 5f;
-                speedMult = 6.5f;
-                decelDivisor = 1f;
-                break;
-
-            case AIDifficulty.Hard:
-                // Seu padrão atual: trilhos e velocidade alta
-                accMult = 7f;
-                speedMult = 9f;
-                decelDivisor = 1f;
-                break;
-
-            case AIDifficulty.UltraHard:
-                // IA "F-Zero": aceleração insana e frenagem instantânea
-                accMult = 10f;
-                speedMult = 12f;
-                decelDivisor = 1f;
-                break;
-        }
 
         if (rayBasedPhysics != null)
         {
@@ -181,6 +168,12 @@ public class AIRacingController : MonoBehaviour
         float steeringInput = (currentState == AIState.Recovering) ? CalculateRecoverySteer() : CalculateSteering();
         float throttleInput = (currentState == AIState.Recovering) ? -0.5f : CalculateThrottle();
 
+        if (TryPursuitAttack(out float pursueSteer, out float pursueThrottle))
+        {
+            steeringInput = Mathf.Lerp(steeringInput, pursueSteer, 0.65f);
+            throttleInput *= pursueThrottle;
+        }
+
         if (carInputs != null)
         {
             carInputs.SetSteeringInput(steeringInput);
@@ -200,20 +193,7 @@ public class AIRacingController : MonoBehaviour
                 Vector3 sideVelocity = side * sideVelMag;
                 
                 float gripCorrection = Mathf.Lerp(2.0f, 0.5f, Mathf.Abs(carInputs.GetCurrentInputState().steering));
-                
-                // Aplicamos a força ignorando variações de inclinação bruscas
-                //rb.AddForce(-sideVelocity * rb.mass * gripCorrection, ForceMode.Force);
             }
-
-            // --- MELHORIA DE COMBATIVIDADE: FORÇA DE ARRANCADA ---
-            // Se a IA está acelerando e no chão, damos um empurrão extra
-            // Isso compensa a falta de "reflexo" da IA na saída de curvas
-           // if (throttleInput > 0.1f)
-           // {
-               // float combatMultiplier = (currentState != AIState.Racing) ? 1.3f : 1.0f;
-                // Aplica uma força direta proporcional à agressividade do perfil
-               // rb.AddForce(transform.forward * (profile.aggressiveness * 4000f * combatMultiplier), ForceMode.Force);
-            //}
         }
     }
 
@@ -260,6 +240,13 @@ public class AIRacingController : MonoBehaviour
                 ApplyLateralMovement(transitionSpeed);
                 return;
             }
+
+            if (profile.aggressiveness > 0.75f && Random.value < 0.4f)
+            {
+                // Brake-check
+                carInputs.SetThrottleInput(-0.2f);
+            }
+
         }
 
         // --- 2. ULTRAPASSAGEM ---
@@ -363,6 +350,18 @@ public class AIRacingController : MonoBehaviour
         float driftMultiplier = _isCurrentlyDrifting ? 1.5f : 1.0f;
         
         float avoidance = GetDifferentialAvoidance();
+
+        if (isPursuing && berserkTimer > 0f && pursuitTarget != null)
+        {
+            Vector3 localTarget = transform.InverseTransformPoint(pursuitTarget.transform.position);
+
+            // Só ignora parede se estiver atacando NA DIREÇÃO do alvo
+            if (Mathf.Sign(localTarget.x) == Mathf.Sign(avoidance))
+            {
+                avoidance *= berserkWallTolerance;
+            }
+        }
+
         float wallDanger = Mathf.Abs(avoidance);
         float safetyFilter = Mathf.Clamp01(1.0f - (wallDanger * 1.5f));
 
@@ -667,6 +666,41 @@ public class AIRacingController : MonoBehaviour
 
     private void ApplyRubberBanding()
     {
+
+        // --- PURSUIT RUBBER BANDING ---
+        if (isPursuing && pursuitTarget != null)
+        {
+            Vector3 localTargetPos = transform.InverseTransformPoint(pursuitTarget.transform.position);
+            float pursuitDist = localTargetPos.magnitude;
+
+            bool targetIsAhead = localTargetPos.z > 0f;
+
+            float pursuit_factor = 1.0f;
+
+            if (targetIsAhead)
+            {
+                // --- CAÇANDO ALVO À FRENTE ---
+                float t = Mathf.InverseLerp(10f, 120f, pursuitDist);
+                t = t * t * (3f - 2f * t);
+
+                pursuit_factor = Mathf.Lerp(1.0f, maxCatchUpBoost, t);
+            }
+            else
+            {
+                // --- ALVO ATRÁS: ESPERA ATIVA ---
+                float t = Mathf.InverseLerp(5f, 80f, pursuitDist);
+                t = t * t * (3f - 2f * t);
+
+                // Não desacelera demais — só o suficiente para permitir aproximação
+                float waitFactor = Mathf.Lerp(1.0f, maxWaitSlowdown, t);
+
+                pursuit_factor = waitFactor;
+            }
+
+            car.rubberBandingFactor = pursuit_factor;
+            return;
+        }
+
         // 1. Definição do Alvo
         RacerStatus myTarget = huntsLeader ? RaceManager.Instance.HumanLeader : RaceManager.Instance.HumanTrailer;
         if (myTarget == null || !useRubberBanding) return;
@@ -677,7 +711,7 @@ public class AIRacingController : MonoBehaviour
         float dist = Vector3.Distance(transform.position, myTarget.transform.position);
         bool isAheadOfTarget = myStatus.position < myTarget.position;
 
-        // Distâncias de controle (Sintonize aqui)
+        // Distâncias de controle
         float minCatchUpDist = 20f;
         float maxCatchUpDist = 150f; // A partir daqui, a IA usa o boost máximo
         float minWaitDist = 40f;
@@ -823,6 +857,132 @@ public class AIRacingController : MonoBehaviour
     }
 
     #endregion
+
+    #region pursuit
+
+    private void InvokePursuitTarget()
+    {
+        if (pursuitEvent != null && pursuitEvent.targetCar != null)
+        {
+            SetPursuitTarget(pursuitEvent.targetCar);
+        }
+    }
+
+    public void SetPursuitTarget(SCR_RayBasedCarPhysics targetCar)
+    {
+        if (targetCar == null)
+        {
+            ClearPursuitTarget();
+            return;
+        }
+
+        pursuitTarget = targetCar;
+        isPursuing = true;
+
+        // Desativa caça ao player se o alvo NÃO for o player
+        RacerStatus targetStatus = targetCar.GetComponent<RacerStatus>();
+        RacerStatus myStatus = GetComponent<RacerStatus>();
+
+        if (targetStatus != null && RaceManager.Instance != null)
+        {
+            // Se antes caçava leader/trailer humano, desliga
+            huntsLeader = false;
+            useRubberBanding = true;
+        }
+
+        // Opcional: deixa IA mais agressiva enquanto persegue
+        currentState = AIState.Racing;
+    }
+
+    public void ClearPursuitTarget()
+    {
+        pursuitTarget = null;
+        isPursuing = false;
+
+        // Volta para lógica normal da corrida
+        huntsLeader = true;
+    }
+
+    private bool TryPursuitAttack(out float steerOverride, out float throttleOverride)
+    {
+        if (berserkTimer > 0f)
+        {
+            berserkTimer -= Time.fixedDeltaTime;
+        }
+
+        steerOverride = 0f;
+        throttleOverride = 0f;
+
+        if (!isPursuing || pursuitTarget == null) return false;
+
+        Vector3 toTarget = pursuitTarget.transform.position - transform.position;
+        float dist = toTarget.magnitude;
+
+        if (dist > pursuitTriggerDistance) return false;
+
+        // Linha de visão
+        Vector3 origin = sensorPivot.position;
+        Vector3 dir = toTarget.normalized;
+
+        if (Physics.Raycast(origin, dir, out RaycastHit hit, dist, pursuitBlockers))
+            return false; // caminho bloqueado
+
+        // Direção local
+        Vector3 localDir = transform.InverseTransformDirection(dir);
+        // --- SIDE RAM ---
+        if (Mathf.Abs(localDir.x) > 1.2f && Mathf.Abs(localDir.z) < 8f)
+        {
+            // Empurra sempre para o lado onde existe menos pista
+            steerOverride += Mathf.Sign(localDir.x) * 0.35f;
+        }
+
+        localDir.y = 0;
+
+        float angle = Mathf.Atan2(localDir.x, localDir.z) * Mathf.Rad2Deg;
+
+        float steerStrength = attackSteerMultiplier;
+
+        if (berserkTimer > 0f)
+            steerStrength = berserkSteerMultiplier;
+
+        steerOverride = Mathf.Clamp(
+            (angle / maxSteerAngle) * steerStrength,
+            -1.25f, 1.25f // SIM, maior que 1 de propósito
+        );
+
+
+        if (berserkTimer > 0f)
+        {
+            throttleOverride = berserkThrottleBoost;
+        }
+        else if (dist < attackDistance)
+        {
+            throttleOverride = attackThrottleBoost;
+        }
+        else
+        {
+            throttleOverride = 1.0f;
+        }
+
+
+        // --- BERSERK TRIGGER ---
+        if (dist < berserkDistance && berserkTimer <= 0f)
+        {
+            berserkTimer = berserkDuration;
+        }
+
+        if (profile.brutality < 0.6f) berserkTimer = 0f;
+
+        return true;
+    }
+    #endregion
 }
 
 public enum AIDifficulty { Easy, Medium, Hard, UltraHard }
+
+[System.Serializable]
+public class PursuitEvent
+{
+    public SCR_RayBasedCarPhysics targetCar;
+    public float timeToInvoke;
+}

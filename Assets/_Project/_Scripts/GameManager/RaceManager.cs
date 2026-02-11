@@ -91,9 +91,12 @@ public class RaceManager : MonoBehaviour
 
         for (int i = 0; i < allAIs.Count; i++)
         {
+            AIRacingController AI = allAIs[i].GetComponent<AIRacingController>();
             // Se for do primeiro grupo (75%), persegue o líder, senão o trailer
             bool huntLeader = i < focusLeaderCount;
-            allAIs[i].GetComponent<AIRacingController>().SetHuntingGroup(huntLeader);
+            if(AI.forceHuntLeader) huntLeader = true;
+            
+            AI.SetHuntingGroup(huntLeader);
         }
     }
 
