@@ -666,39 +666,48 @@ public class AIRacingController : MonoBehaviour
 
     private void ApplyRubberBanding()
     {
+        RacerStatus myStatus = GetComponent<RacerStatus>();
 
         // --- PURSUIT RUBBER BANDING ---
         if (isPursuing && pursuitTarget != null)
         {
-            Vector3 localTargetPos = transform.InverseTransformPoint(pursuitTarget.transform.position);
-            float pursuitDist = localTargetPos.magnitude;
+            RacerStatus targetStatus = pursuitTarget.GetComponent<RacerStatus>();
 
-            bool targetIsAhead = localTargetPos.z > 0f;
+            if (myStatus == null || targetStatus == null) return;
 
-            float pursuit_factor = 1.0f;
+            float totalWaypoints = waypoints.Count;
 
-            if (targetIsAhead)
+            float progressDiff = targetStatus.TrackProgress - myStatus.TrackProgress;
+
+            // Normalização circular da pista
+            if (progressDiff > totalWaypoints * 0.5f)
+                progressDiff -= totalWaypoints;
+            else if (progressDiff < -totalWaypoints * 0.5f)
+                progressDiff += totalWaypoints;
+
+            float catchDistance = 2.5f;  
+            float waitDistance  = 6f;
+
+            float pursuitFactor = 1.3f;
+
+            if (progressDiff > catchDistance)
             {
-                // --- CAÇANDO ALVO À FRENTE ---
-                float t = Mathf.InverseLerp(10f, 120f, pursuitDist);
+                // Estou atrás → boost
+                float t = Mathf.InverseLerp(catchDistance, waitDistance, progressDiff);
+                t = t * t * (3f - 2f * t); // smoothstep
+                pursuitFactor = Mathf.Lerp(1f, maxCatchUpBoost, t);
+            }
+            else if (progressDiff < -catchDistance)
+            {
+                // Estou muito à frente → FREIA
+                float t = Mathf.InverseLerp(catchDistance, waitDistance, -progressDiff);
                 t = t * t * (3f - 2f * t);
 
-                pursuit_factor = Mathf.Lerp(1.0f, maxCatchUpBoost, t);
-            }
-            else
-            {
-                // --- ALVO ATRÁS: ESPERA ATIVA ---
-                float t = Mathf.InverseLerp(5f, 80f, pursuitDist);
-                t = t * t * (3f - 2f * t);
-
-                // Não desacelera demais — só o suficiente para permitir aproximação
-                float waitFactor = Mathf.Lerp(1.0f, maxWaitSlowdown, t);
-
-                pursuit_factor = waitFactor;
+                pursuitFactor = Mathf.Lerp(1f, 0.6f, t); 
             }
 
-            car.rubberBandingFactor = pursuit_factor;
-            return;
+            car.rubberBandingFactor = pursuitFactor;
+            return; // ignora RB normal
         }
 
         // 1. Definição do Alvo
@@ -706,7 +715,6 @@ public class AIRacingController : MonoBehaviour
         if (myTarget == null || !useRubberBanding) return;
 
         SCR_RayBasedCarPhysics targetPhysics = myTarget.GetComponent<SCR_RayBasedCarPhysics>();
-        RacerStatus myStatus = GetComponent<RacerStatus>();
         
         float dist = Vector3.Distance(transform.position, myTarget.transform.position);
         bool isAheadOfTarget = myStatus.position < myTarget.position;

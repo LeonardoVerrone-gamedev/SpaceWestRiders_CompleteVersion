@@ -13,6 +13,8 @@ public class RacerStatus : MonoBehaviour
 
     [SerializeField] int gridPosition;
 
+    public float TrackProgress { get; private set; }
+
     void OnEnable()
     {
         SCR_TrackSelectionManager.OnRaceSetupCompleted += StartRace;
@@ -50,6 +52,15 @@ public class RacerStatus : MonoBehaviour
         // Calcula a distância para o próximo ponto (para desempate no Sort)
         int nextIndex = (currentWaypointIndex + 1) % waypoints.Count;
         distanceToNextWaypoint = Vector3.Distance(transform.position, waypoints[nextIndex].position);
+
+        float segmentLength = Vector3.Distance(
+        waypoints[currentWaypointIndex].position,
+        waypoints[nextIndex].position
+        );
+
+        float segmentProgress = 1f - Mathf.Clamp01(distanceToNextWaypoint / segmentLength);
+
+        TrackProgress = currentWaypointIndex + segmentProgress;
     }
 
     public void CountLap()
