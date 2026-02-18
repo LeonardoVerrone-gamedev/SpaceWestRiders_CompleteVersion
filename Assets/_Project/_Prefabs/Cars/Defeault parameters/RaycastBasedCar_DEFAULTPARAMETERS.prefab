@@ -14672,6 +14672,68 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1 &880997002895536528
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8782215994915090786}
+  m_Layer: 8
+  m_Name: CrashCamTarget(Side1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8782215994915090786
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 880997002895536528}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.5, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7441913437842523348}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!1 &1054009415469497999
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7129893481451463813}
+  m_Layer: 8
+  m_Name: CrashCamTarget(Front)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7129893481451463813
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1054009415469497999}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: -0, w: -1}
+  m_LocalPosition: {x: 0, y: 0.5, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7441913437842523348}
+  m_LocalEulerAnglesHint: {x: 0, y: 360, z: 0}
 --- !u!1 &1254230233816351254
 GameObject:
   m_ObjectHideFlags: 0
@@ -83872,6 +83934,37 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1 &7504289932305070863
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2777698045258531334}
+  m_Layer: 8
+  m_Name: CrashCamTarget(Side2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2777698045258531334
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7504289932305070863}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.5, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7441913437842523348}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!1 &7895081948653628006
 GameObject:
   m_ObjectHideFlags: 0
@@ -88818,6 +88911,37 @@ CapsuleCollider:
   m_Height: 2.12
   m_Direction: 0
   m_Center: {x: 0, y: 0.49, z: 1.8}
+--- !u!1 &8276757609722177123
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5963323307084808610}
+  m_Layer: 8
+  m_Name: CrashCamTarget(Back)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5963323307084808610
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8276757609722177123}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 0.5, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7441913437842523348}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &8385042145367659349
 GameObject:
   m_ObjectHideFlags: 0
@@ -88907,6 +89031,10 @@ Transform:
   - {fileID: 6567535285608012573}
   - {fileID: 7825667434076700370}
   - {fileID: 6511760592040370290}
+  - {fileID: 8782215994915090786}
+  - {fileID: 2777698045258531334}
+  - {fileID: 7129893481451463813}
+  - {fileID: 5963323307084808610}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 150, z: 0}
 --- !u!54 &1123509100967675288
@@ -91629,7 +91757,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171db711019ac8246816f1ec94a35e5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meshFilter: {fileID: 8803389466005722516}
+  carParts:
+  - filter: {fileID: 8803389466005722516}
+    mesh: {fileID: 0}
+    originalVertices: []
+    modifiedVertices: []
+  - filter: {fileID: 7400656825911214612}
+    mesh: {fileID: 0}
+    originalVertices: []
+    modifiedVertices: []
+  - filter: {fileID: 5051985482146500983}
+    mesh: {fileID: 0}
+    originalVertices: []
+    modifiedVertices: []
+  - filter: {fileID: 2504149426202089377}
+    mesh: {fileID: 0}
+    originalVertices: []
+    modifiedVertices: []
+  - filter: {fileID: 9114043152984154893}
+    mesh: {fileID: 0}
+    originalVertices: []
+    modifiedVertices: []
+  - filter: {fileID: 2125013690513817009}
+    mesh: {fileID: 0}
+    originalVertices: []
+    modifiedVertices: []
+  - filter: {fileID: 6828660195194410895}
+    mesh: {fileID: 0}
+    originalVertices: []
+    modifiedVertices: []
   radius: 1
   deformation: 0.75
 --- !u!1 &8568694381742411748
@@ -101456,9 +101612,19 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e9c6e3cd5444d7349af40e5c7cb7be3b, type: 3}
+--- !u!33 &5051985482146500983 stripped
+MeshFilter:
+  m_CorrespondingSourceObject: {fileID: 869983060837821613, guid: e9c6e3cd5444d7349af40e5c7cb7be3b, type: 3}
+  m_PrefabInstance: {fileID: 5336359819519311322}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5585650490582030897 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e9c6e3cd5444d7349af40e5c7cb7be3b, type: 3}
+  m_PrefabInstance: {fileID: 5336359819519311322}
+  m_PrefabAsset: {fileID: 0}
+--- !u!33 &7400656825911214612 stripped
+MeshFilter:
+  m_CorrespondingSourceObject: {fileID: 3223140098377760718, guid: e9c6e3cd5444d7349af40e5c7cb7be3b, type: 3}
   m_PrefabInstance: {fileID: 5336359819519311322}
   m_PrefabAsset: {fileID: 0}
 --- !u!33 &8803389466005722516 stripped

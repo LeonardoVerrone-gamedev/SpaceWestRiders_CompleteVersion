@@ -11,7 +11,7 @@ public class SCR_CarCrashPhysics : MonoBehaviour
     [Header("Crash Settings")]
     [SerializeField] float verticalJumpVelocity = 10f;
     [SerializeField] float rollAngularVelocity = 25f;
-    [SerializeField] float crashDuration = 3.5f;
+    [SerializeField] public float crashDuration = 3.5f;
     
     private Vector3 originalCenterOfMass;
     public bool isCrashing { get; private set; } = false;

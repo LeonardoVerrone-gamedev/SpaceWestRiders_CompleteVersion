@@ -10,6 +10,8 @@ public class SCR_CarVisualCulling : MonoBehaviour
     [SerializeField] private List<CinemachineBrain> brains = new List<CinemachineBrain>();
     [SerializeField] MeshRenderer[] meshes;
 
+    public bool visible => IsVisibleByAnyBrain();
+
     void Awake()
     {
         if (carPhysics == null)

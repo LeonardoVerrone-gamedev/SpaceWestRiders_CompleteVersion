@@ -14,6 +14,10 @@ public class CameraController : MonoBehaviour
     [SerializeField] CinemachineCamera vCam;
     [SerializeField] CinemachineCamera turbo_VCam;
 
+    [SerializeField] CinemachineCamera[] crashCams;
+    [Header("Sistema de Crash Cam")]
+    [SerializeField] private CinemachineCamera activeCrashCam;
+
     [SerializeField] Camera cam;
 
     private Transform player;
@@ -384,6 +388,23 @@ public class CameraController : MonoBehaviour
             currentCameraType = CameraType.Default;
             UpdateVolumes(currentCameraType);
         }
+
+        foreach(CinemachineCamera cam in crashCams){
+            cam.Follow = newTarget;
+            cam.LookAt = newTarget;
+        }
+
+        crashCams[0].Follow = player.transform.Find("CrashCamTarget(Side1)");
+        crashCams[0].LookAt = newTarget;
+
+        crashCams[1].Follow = player.transform.Find("CrashCamTarget(Side2)");
+        crashCams[1].LookAt = newTarget;
+
+        crashCams[2].Follow = player.transform.Find("CrashCamTarget(Front)");
+        crashCams[2].LookAt = newTarget;
+
+        crashCams[3].Follow = player.transform.Find("CrashCamTarget(Back)");
+        crashCams[3].LookAt = newTarget;
     }
 
     public void SetChannel(int playerIndex)
@@ -414,6 +435,8 @@ public class CameraController : MonoBehaviour
         // 2. Configura todas as Virtual Cameras do Prefab para esse canal
         vCam.OutputChannel = channelMask;
         if (turbo_VCam != null) turbo_VCam.OutputChannel = channelMask;
+
+        foreach(CinemachineCamera cam in crashCams) cam.OutputChannel = channelMask;
 
         int layerP1 = LayerMask.NameToLayer("VolumeP1");
         int layerP2 = LayerMask.NameToLayer("VolumeP2");
@@ -780,6 +803,73 @@ public class CameraController : MonoBehaviour
         }
     }
 
+    #region crash
+    public void SetCrashCam(bool value)
+    {
+        if (value)
+        {
+            transform.position = player.position;
+            transform.rotation = player.rotation;
+
+            // 1. Encontra a melhor câmera entre as 4 disponíveis
+            activeCrashCam = GetBestCrashCamera();
+
+            if (activeCrashCam != null)
+            {
+                // 2. Ativa a câmera escolhida com prioridade máxima
+                activeCrashCam.Priority = 100;
+            }
+        }
+        else
+        {
+            // Retorna ao normal
+            if (activeCrashCam != null) activeCrashCam.Priority = 0;
+            activeCrashCam = null;
+        }
+    }
+
+    private CinemachineCamera GetBestCrashCamera()
+    {
+        CinemachineCamera bestCam = null;
+        float highestScore = -1f;
+
+        foreach (var cCam in crashCams)
+        {
+            if (cCam == null) continue;
+
+            // RESET: Garante que as outras estão com prioridade baixa
+            cCam.Priority = 0;
+
+            // CRITÉRIO 1: Visibilidade (Raycast)
+            // Lançamos um raio da câmera para o carro para ver se há obstáculos
+            Vector3 directionToPlayer = (player.position - cCam.transform.position).normalized;
+            float distanceToPlayer = Vector3.Distance(cCam.transform.position, player.position);
+            
+            // Camada de colisão do cenário (ajuste o LayerMask conforme seu projeto)
+            bool hasLineOfSight = !Physics.Raycast(cCam.transform.position, directionToPlayer, distanceToPlayer, LayerMask.GetMask("Default", "Static Environment"));
+
+            if (!hasLineOfSight) continue; // Descarta câmeras obstruídas
+
+            // CRITÉRIO 2: Ângulo Cinematográfico (Dot Product)
+            // Câmeras que olham para a FRENTE ou LADO do carro pontuam mais que as que olham a traseira
+            float angleScore = Vector3.Dot(cCam.transform.forward, player.forward);
+            
+            // Invertemos o score: se o dot for negativo, a cam está de frente para o carro (Melhor!)
+            float finalScore = 1f - angleScore; 
+
+            if (finalScore > highestScore)
+            {
+                highestScore = finalScore;
+                bestCam = cCam;
+            }
+        }
+
+        // Se todas estiverem obstruídas, retorna a primeira da lista como fallback
+        return bestCam != null ? bestCam : crashCams[0];
+    }
+
+    #endregion
+
     #region shake
 
     // MÉTODO PRINCIPAL: Gerar shake com prioridade
@@ -863,6 +953,7 @@ public class CameraController : MonoBehaviour
         carPhysics.OnTurboEnd   += HandleTurboEnd;
 
         carPhysics.OnCollision  += HandleCollision;
+        carPhysics.OnCrash += SetCrashCam;
         carPhysics.OnLand       += HandleLanding;
     }
 
@@ -912,6 +1003,7 @@ public class CameraController : MonoBehaviour
 
         carPhysics.OnCollision  -= HandleCollision;
         carPhysics.OnLand       -= HandleLanding;
+        carPhysics.OnCrash -= SetCrashCam;
     }
 
     private void UpdateContinuousNoise()

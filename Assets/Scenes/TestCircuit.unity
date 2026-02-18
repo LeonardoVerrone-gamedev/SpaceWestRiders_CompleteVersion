@@ -13722,6 +13722,14 @@ PrefabInstance:
       propertyPath: _inputMode
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2777698045258531334, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2777698045258531334, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2824079843674075053, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: _carInput
       value: 
@@ -13881,6 +13889,10 @@ PrefabInstance:
     - target: {fileID: 5786627570265934399, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_ActionEvents.Array.data[15].m_ActionName
       value: 'Driving/SwitchMode[/Keyboard/t,/XInputControllerWindows/buttonNorth]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 5963323307084808610, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 6294504414630336068, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: gridPosition
@@ -18106,6 +18118,10 @@ PrefabInstance:
       propertyPath: 'waypoints.Array.data[1053]'
       value: 
       objectReference: {fileID: 1187017347}
+    - target: {fileID: 7129893481451463813, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: profile
       value: 
@@ -18161,6 +18177,14 @@ PrefabInstance:
     - target: {fileID: 8410641648346012813, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8782215994915090786, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8782215994915090786, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5786627570265934399, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}

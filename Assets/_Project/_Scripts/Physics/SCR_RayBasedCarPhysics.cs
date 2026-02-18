@@ -430,6 +430,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     public event Action OnDriftEnd;
 
     public event Action<float, Vector3> OnCollision; // força, direção
+    public event Action<bool> OnCrash;
     public event Action<float> OnJump;                // airtime
     public event Action<float> OnLand;                // airtime
 
@@ -1505,10 +1506,15 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         bool isCrashableObject = ((1 << collision.gameObject.layer) & crashable) != 0;
 
         if(isCrashableObject){
+
             float impactForce = collision.relativeVelocity.magnitude;
-            if (impactForce > crashImpactForce) { // Valor alto para crash cinematográfico
+            float impactAngle = Vector3.Angle(transform.forward, collision.relativeVelocity.normalized);
+
+            if (impactForce > crashImpactForce){// && impactAngle > 30f) { // Valor alto para crash cinematográfico
+                OnCrash?.Invoke(true);
                 deformer.Deform(collision.contacts[0].point, collision.relativeVelocity);
                 carCrash.TriggerCrash();
+                Invoke("ResetCrashCam", carCrash.crashDuration);
             }
         }
 
@@ -1557,6 +1563,11 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         bool isRear = includeRearCollisions && angleToRear <= maxFrontalAngle;
         
         return isFrontal || isRear;
+    }
+
+    void ResetCrashCam()
+    {
+        OnCrash?.Invoke(false);
     }
 
     #endregion
