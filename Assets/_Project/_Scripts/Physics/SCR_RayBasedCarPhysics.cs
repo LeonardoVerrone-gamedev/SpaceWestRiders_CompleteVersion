@@ -471,6 +471,16 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     #endregion
 
+    #region crash
+
+    private SCR_CarCrashPhysics carCrash;
+    public bool crashing = false;
+    [SerializeField] LayerMask crashable;
+    [SerializeField] float crashImpactForce = 35f;
+    SCR_MeshDeformer deformer;
+
+    #endregion
+
     // --- Métodos de Física Central ---
 
     #region Unity Lifecycle
@@ -478,6 +488,9 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     {
         _originalDragCoefficient = dragCoefficient;
         _originalMaxSpeed = maxSpeed;
+
+        carCrash = GetComponent<SCR_CarCrashPhysics>();
+        deformer = GetComponent<SCR_MeshDeformer>();
     }
 
     void Start()
@@ -500,6 +513,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     
     void Update()
     {
+        if(crashing) return;
+
         UpdateDriftState();
         UpdateDriftBoost();
         CalculateDriftAngle();
@@ -508,6 +523,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     void FixedUpdate()
     {
+        if(crashing) return;
+
         sensorFrameCounter = (sensorFrameCounter + 1) % aiSensorFrequency;
         if (!AIControlled || sensorFrameCounter == 0)
         {
@@ -1485,6 +1502,16 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        bool isCrashableObject = ((1 << collision.gameObject.layer) & crashable) != 0;
+
+        if(isCrashableObject){
+            float impactForce = collision.relativeVelocity.magnitude;
+            if (impactForce > crashImpactForce) { // Valor alto para crash cinematográfico
+                deformer.Deform(collision.contacts[0].point, collision.relativeVelocity);
+                carCrash.TriggerCrash();
+            }
+        }
+
         if (((1 << collision.gameObject.layer) & drivable) != 0) return;
 
         float force = collision.impulse.magnitude / Time.fixedDeltaTime;

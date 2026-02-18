@@ -524,14 +524,19 @@ public class CameraController : MonoBehaviour
         UpdateDutch();
     }
 
+    private float currentDutchVelocity = 0f;
+    private float currentDutch = 0f;
+
     private void UpdateDutch()
     {
-        //float value = GetLateralRoll();
         float dot = Vector3.Dot(player.right, Vector3.up);
-
-        float dutchOutput = dutchMultiplier * dot;
-
-        foreach(CinemachineRecomposer recom in cinemachineRecomposer) recom.Dutch = dutchOutput;
+        float targetDutch = dutchMultiplier * dot;
+        
+        // Suavizar o Dutch para evitar trancos
+        currentDutch = Mathf.SmoothDamp(currentDutch, targetDutch, ref currentDutchVelocity, 0.2f);
+        
+        foreach(CinemachineRecomposer recom in cinemachineRecomposer) 
+            recom.Dutch = currentDutch;
     }
 
     //  APLICAR INTERPOLAÇÃO SUAVE DA CÂMERA
@@ -550,7 +555,20 @@ public class CameraController : MonoBehaviour
         {
             float targetDistance = Mathf.Lerp(maxCameraDistance, minCameraDistance, smoothedSpeedFactor);
             float currentDistance = thirdPersonFollow.CameraDistance;
-            float newDistance = Mathf.SmoothDamp(currentDistance, targetDistance, ref currentDistanceVelocity, distanceSmoothTime);
+            
+            // 1. LIMITA A MUDANÇA MÁXIMA POR FRAME
+            float maxChangePerFrame = 0.1f; // Máx 10cm por frame
+            float rawNewDistance = Mathf.SmoothDamp(currentDistance, targetDistance, 
+                                                ref currentDistanceVelocity, distanceSmoothTime);
+            
+            // 2. CLAMPA PARA EVITAR PULOS
+            float newDistance = Mathf.Clamp(rawNewDistance, 
+                                        currentDistance - maxChangePerFrame, 
+                                        currentDistance + maxChangePerFrame);
+            
+            // 3. GARANTE QUE FICA DENTRO DOS LIMITES
+            newDistance = Mathf.Clamp(newDistance, minCameraDistance, maxCameraDistance);
+            
             thirdPersonFollow.CameraDistance = newDistance;
         }
     }

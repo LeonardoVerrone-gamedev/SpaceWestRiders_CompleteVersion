@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class SCR_PersistentData : MonoBehaviour {
     public static SCR_PersistentData Instance;
-    public List<PlayerSessionData> players = new List<PlayerSessionData>();
+    public List<PlayerSessionData> players;
     public bool isSequenceRace = false; // Se for torneio, isso fica true
 
     void Awake() {
@@ -19,5 +19,5 @@ public class PlayerSessionData {
     public InputDevice device;
     public int selectedCarGridIndex = -1; // -1 significa "ainda não escolheu"
     public bool hasConfirmed;
-    public SO_CharacterInfo selectedCarData;
+    public RacerProfileSO selectedCarData;
 }

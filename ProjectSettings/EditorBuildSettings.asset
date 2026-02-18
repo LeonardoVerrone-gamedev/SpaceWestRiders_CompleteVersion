@@ -6,11 +6,20 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+    path: Assets/Scenes/TestCircuit.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
     path: Assets/Scenes/Test2.unity
     guid: 3bb6f080d05390041a2bc1106008c5d3
+  - enabled: 1
+    path: Assets/Scenes/Menus/TitleScreen.unity
+    guid: 873b45f70ebf62748b617dbbdf3c7bf9
+  - enabled: 1
+    path: Assets/Scenes/Menus/QuickRaceSetupScene.unity
+    guid: 63a18626176007e439c1a4ec1a539e73
+  - enabled: 1
+    path: Assets/Scenes/Menus/Car Selection Menu.unity
+    guid: 62a34f246bffb0d479aaa9346d6b2cbe
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: f3b7e729ff09d8a43b3ff92fdc9491e2, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

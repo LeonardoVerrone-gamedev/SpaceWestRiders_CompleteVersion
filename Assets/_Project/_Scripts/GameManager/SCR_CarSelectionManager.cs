@@ -6,6 +6,7 @@ using System.Linq;
 using System;
 using UnityEngine.SceneManagement;
 using Unity.Cinemachine;
+using TMPro;
 
 public class SCR_TrackSelectionManager : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class SCR_TrackSelectionManager : MonoBehaviour
     [Header("Selection Restrictions")]
     [SerializeField] private List<int> _blockedCharacterIDs = new List<int>();
 
-    [SerializeField] private List<SO_CharacterInfo> _allCharactersSO; // A lista global de SOs
+    [SerializeField] private List<RacerProfileSO> _allCharactersSO; // A lista global de SOs
     private List<SCR_CarIdentity> _carsInScene;
 
     [Header("Input Actions")]
@@ -65,7 +66,7 @@ public class SCR_TrackSelectionManager : MonoBehaviour
             carCullings = UnityEngine.Object.FindObjectsByType<SCR_CarVisualCulling>(FindObjectsSortMode.None).ToList();
             PrepareCarsForSelection();
 
-            SCR_PersistentData.Instance.isSequenceRace = true; //adicionar if(!isStoryMode) se isso quebrar algo
+            if(!_isStoryMode) SCR_PersistentData.Instance.isSequenceRace = true; //adicionar if(!isStoryMode) se isso quebrar algo
         }
     }
 
@@ -118,11 +119,11 @@ public class SCR_TrackSelectionManager : MonoBehaviour
         {
             // Assinala o personagem da história baseado na ordem de entrada
             int targetID = (newIndex == 0) ? _storyPlayer1ID : _storyPlayer2ID;
-            newPlayer.selectedCarData = _allCharactersSO.FirstOrDefault(c => c.characterID == targetID);
+            newPlayer.selectedCarData = _allCharactersSO.FirstOrDefault(c => int.Parse(c.characterID) == targetID);
             
             // Sincroniza o index do grid para o FinalizeSetup encontrar o carro
             newPlayer.selectedCarGridIndex = _gridCars.FindIndex(car => 
-                car.GetComponent<SCR_CarIdentity>().racerData.characterID == targetID);
+                int.Parse(car.GetComponent<SCR_CarIdentity>().racerData.characterID) == targetID);
         }
         
         else
@@ -131,7 +132,7 @@ public class SCR_TrackSelectionManager : MonoBehaviour
             int firstValidIndex = 0;
             for (int i = 0; i < _allCharactersSO.Count; i++)
             {
-                int id = _allCharactersSO[i].characterID;
+                int id = int.Parse(_allCharactersSO[i].characterID);
                 bool isBlocked = _blockedCharacterIDs.Contains(id);
                 bool isTaken = SCR_PersistentData.Instance.players.Any(pl => pl.selectedCarGridIndex == i);
 
@@ -231,7 +232,7 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
         while (!isValid && safetyBreak < max)
         {
-            int targetID = _allCharactersSO[nextIndex].characterID;
+            int targetID = int.Parse(_allCharactersSO[nextIndex].characterID);
 
             // Critério 1: Está na lista de bloqueados?
             bool isBlocked = _blockedCharacterIDs.Contains(targetID);
@@ -259,8 +260,8 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
     private void UpdatePlayerCamera(PlayerSessionData p)
     {
-        int targetID = _allCharactersSO[p.selectedCarGridIndex].characterID;
-        var targetCar = _carsInScene.FirstOrDefault(c => c.racerData != null && c.racerData.characterID == targetID);
+        int targetID = int.Parse(_allCharactersSO[p.selectedCarGridIndex].characterID);
+        var targetCar = _carsInScene.FirstOrDefault(c => c.racerData != null && int.Parse(c.racerData.characterID) == targetID);
 
         if (targetCar != null)
         {
@@ -459,15 +460,5 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
         // 3. Agora que as câmeras existem e os índices foram mapeados para a nova cena, inicia
         FinalizeSetupAndStartRace();
-    }
-
-    private void SetupSplitScreen()
-    {
-        
-    }
-
-    public void GoToNextSceneTest()
-    {
-        SceneManager.LoadScene("Test2");
     }
 }

@@ -6,7 +6,7 @@ public enum AIState { Racing, Overtaking, Defending, Recovering }
 public class AIRacingController : MonoBehaviour
 {
     [Header("Perfil do Piloto")]
-    [SerializeField] private SO_RacerProfile profile;
+    [SerializeField] private SO_AIOponentProfile profile;
 
     [Header("Targeting")]
     [SerializeField] private List<Transform> waypoints = new List<Transform>();

@@ -2145,6 +2145,10 @@ PrefabInstance:
       value: 1.15
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: crashable.m_Bits
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
       value: 100
       objectReference: {fileID: 0}
@@ -7092,6 +7096,10 @@ PrefabInstance:
       propertyPath: profile
       value: 
       objectReference: {fileID: 11400000, guid: 19119a66708ab2b499f4d4df6cde5efa, type: 2}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: sideSensorDist
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 7441913437842523348, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_LocalPosition.x
       value: -37
@@ -7157,10 +7165,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5980821553096664176, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 853393085}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8410641648346012813, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1530804641}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
 --- !u!4 &246812166 stripped
 Transform:
@@ -7182,7 +7187,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1891508622973969240, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
   m_PrefabInstance: {fileID: 586012361}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1302376204}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9d5e87c61f9b48a4c82203569a24a8d9, type: 3}
@@ -7448,11 +7453,6 @@ Transform:
 Transform:
   m_CorrespondingSourceObject: {fileID: 431317604672076935, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
   m_PrefabInstance: {fileID: 980648513}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &302657404 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8410641648346012813, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
-  m_PrefabInstance: {fileID: 1703354688}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &304068707 stripped
 Transform:
@@ -8013,6 +8013,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboBurstForce
       value: 1.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: crashable.m_Bits
+      value: 256
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
@@ -12966,6 +12970,10 @@ PrefabInstance:
       propertyPath: profile
       value: 
       objectReference: {fileID: 11400000, guid: cb13537a0a80d4449b66680e539b414f, type: 2}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: sideSensorDist
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 7441913437842523348, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_LocalPosition.x
       value: -28.9
@@ -13031,10 +13039,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5980821553096664176, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1294787440}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8410641648346012813, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1460720743}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
 --- !u!4 &441480363 stripped
 Transform:
@@ -13108,6 +13113,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboBurstForce
       value: 1.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: crashable.m_Bits
+      value: 256
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
@@ -18101,6 +18110,10 @@ PrefabInstance:
       propertyPath: profile
       value: 
       objectReference: {fileID: 11400000, guid: 19119a66708ab2b499f4d4df6cde5efa, type: 2}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: sideSensorDist
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 7441913437842523348, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_LocalPosition.x
       value: -29.1
@@ -18247,11 +18260,6 @@ Transform:
 Transform:
   m_CorrespondingSourceObject: {fileID: 7728256113250524462, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
   m_PrefabInstance: {fileID: 980648513}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &474161893 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8410641648346012813, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
-  m_PrefabInstance: {fileID: 2096149766}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &475977412 stripped
 Transform:
@@ -18708,6 +18716,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboBurstForce
       value: 1.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: crashable.m_Bits
+      value: 256
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
@@ -23657,6 +23669,38 @@ PrefabInstance:
       propertyPath: profile
       value: 
       objectReference: {fileID: 11400000, guid: 480054b7a37aabe4b9aa9be036298cc9, type: 2}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: sideSensorDist
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: maxCatchUpBoost
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: maxWaitSlowdown
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: useRubberBanding
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: attackThrottleBoost
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: pursuitBlockers.m_Bits
+      value: 128
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: pursuitEvent.targetCar
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: pursuitEvent.timeToInvoke
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7441913437842523348, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_LocalPosition.x
       value: -14
@@ -23722,10 +23766,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5980821553096664176, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1491072029}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8410641648346012813, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1801228821}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
 --- !u!4 &587069353 stripped
 Transform:
@@ -24028,7 +24069,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1891508622973969240, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
   m_PrefabInstance: {fileID: 244246385}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1530804631}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9d5e87c61f9b48a4c82203569a24a8d9, type: 3}
@@ -25376,6 +25417,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboBurstForce
       value: 1.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: crashable.m_Bits
+      value: 256
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
@@ -30329,6 +30374,10 @@ PrefabInstance:
       propertyPath: profile
       value: 
       objectReference: {fileID: 11400000, guid: 480054b7a37aabe4b9aa9be036298cc9, type: 2}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: sideSensorDist
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 7441913437842523348, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_LocalPosition.x
       value: -20.5
@@ -30456,7 +30505,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6294504414630336068, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
   m_PrefabInstance: {fileID: 244246385}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1530804631}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d49d25b83dec8ed4fb049d7082c77ddc, type: 3}
@@ -31093,7 +31142,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1891508622973969240, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
   m_PrefabInstance: {fileID: 440593190}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1460720733}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9d5e87c61f9b48a4c82203569a24a8d9, type: 3}
@@ -31104,7 +31153,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6294504414630336068, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
   m_PrefabInstance: {fileID: 440593190}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1460720733}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d49d25b83dec8ed4fb049d7082c77ddc, type: 3}
@@ -31216,11 +31265,6 @@ Transform:
 Transform:
   m_CorrespondingSourceObject: {fileID: 4800305715922386201, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
   m_PrefabInstance: {fileID: 980648513}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1302376204 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8410641648346012813, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
-  m_PrefabInstance: {fileID: 586012361}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &1303455355 stripped
 Transform:
@@ -31336,6 +31380,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboBurstForce
       value: 1.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: crashable.m_Bits
+      value: 256
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
@@ -36289,6 +36337,10 @@ PrefabInstance:
       propertyPath: profile
       value: 
       objectReference: {fileID: 11400000, guid: 19119a66708ab2b499f4d4df6cde5efa, type: 2}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: sideSensorDist
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 7441913437842523348, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_LocalPosition.x
       value: -41.31
@@ -36870,27 +36922,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8457546873587466252, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
   m_PrefabInstance: {fileID: 980648513}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1460720733 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8410641648346012813, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
-  m_PrefabInstance: {fileID: 440593190}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1460720743
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1460720733}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b24f5972a2ee7e542b3da79ad1b8804b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  carPhysics: {fileID: 0}
-  viewportMargin: 0.15
-  brains: []
-  meshes: []
 --- !u!4 &1461537381 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6490648276860027159, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
@@ -37102,27 +37133,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7137809035586477724, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
   m_PrefabInstance: {fileID: 980648513}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1530804631 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8410641648346012813, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
-  m_PrefabInstance: {fileID: 244246385}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1530804641
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1530804631}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b24f5972a2ee7e542b3da79ad1b8804b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  carPhysics: {fileID: 0}
-  viewportMargin: 0.15
-  brains: []
-  meshes: []
 --- !u!4 &1531905007 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2826424036715169507, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
@@ -37239,7 +37249,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1891508622973969240, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
   m_PrefabInstance: {fileID: 2096149766}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 474161893}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9d5e87c61f9b48a4c82203569a24a8d9, type: 3}
@@ -37250,28 +37260,12 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6294504414630336068, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
   m_PrefabInstance: {fileID: 2096149766}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 474161893}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d49d25b83dec8ed4fb049d7082c77ddc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1562076099
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 474161893}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b24f5972a2ee7e542b3da79ad1b8804b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  carPhysics: {fileID: 0}
-  viewportMargin: 0.15
-  brains: []
-  meshes: []
 --- !u!4 &1567915459 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7863679313814493553, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
@@ -37691,6 +37685,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboBurstForce
       value: 1.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: crashable.m_Bits
+      value: 256
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
@@ -42520,6 +42518,38 @@ PrefabInstance:
       propertyPath: profile
       value: 
       objectReference: {fileID: 11400000, guid: 480054b7a37aabe4b9aa9be036298cc9, type: 2}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: sideSensorDist
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: maxCatchUpBoost
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: maxWaitSlowdown
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: useRubberBanding
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: attackThrottleBoost
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: pursuitBlockers.m_Bits
+      value: 128
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: pursuitEvent.targetCar
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: pursuitEvent.timeToInvoke
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7441913437842523348, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_LocalPosition.x
       value: -14.203375
@@ -42585,10 +42615,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5980821553096664176, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1544388231}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8410641648346012813, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2085175843}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
 --- !u!4 &1703672097 stripped
 Transform:
@@ -42871,28 +42898,12 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6294504414630336068, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
   m_PrefabInstance: {fileID: 586012361}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1302376204}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d49d25b83dec8ed4fb049d7082c77ddc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1801228821
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1302376204}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b24f5972a2ee7e542b3da79ad1b8804b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  carPhysics: {fileID: 0}
-  viewportMargin: 0.15
-  brains: []
-  meshes: []
 --- !u!4 &1803703887 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8327385461344439755, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
@@ -43750,7 +43761,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1891508622973969240, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
   m_PrefabInstance: {fileID: 1703354688}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 302657404}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9d5e87c61f9b48a4c82203569a24a8d9, type: 3}
@@ -43761,28 +43772,12 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6294504414630336068, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
   m_PrefabInstance: {fileID: 1703354688}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 302657404}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d49d25b83dec8ed4fb049d7082c77ddc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2085175843
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 302657404}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b24f5972a2ee7e542b3da79ad1b8804b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  carPhysics: {fileID: 0}
-  viewportMargin: 0.15
-  brains: []
-  meshes: []
 --- !u!4 &2092788716 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3514084687367162494, guid: 229637ebef3d09a4aa9b3ba9045305e5, type: 3}
@@ -43841,6 +43836,10 @@ PrefabInstance:
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: turboBurstForce
       value: 1.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: crashable.m_Bits
+      value: 256
       objectReference: {fileID: 0}
     - target: {fileID: 534998406666359623, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: hoverCarMaxSpeed
@@ -48662,6 +48661,38 @@ PrefabInstance:
       propertyPath: profile
       value: 
       objectReference: {fileID: 11400000, guid: 480054b7a37aabe4b9aa9be036298cc9, type: 2}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: sideSensorDist
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: maxCatchUpBoost
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: maxWaitSlowdown
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: useRubberBanding
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: attackThrottleBoost
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: pursuitBlockers.m_Bits
+      value: 128
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: pursuitEvent.targetCar
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7291292022362802018, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
+      propertyPath: pursuitEvent.timeToInvoke
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7441913437842523348, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       propertyPath: m_LocalPosition.x
       value: -31
@@ -48727,10 +48758,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5980821553096664176, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1701969119}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8410641648346012813, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1562076099}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e186c4119b1fcb24eb78b127b1d7ace1, type: 3}
 --- !u!4 &2097963790 stripped
 Transform:
