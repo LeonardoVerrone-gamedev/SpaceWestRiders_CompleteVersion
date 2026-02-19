@@ -6,4 +6,5 @@ public class RacerProfileSO : ScriptableObject
 {
     public string characterID; // O ID que usaremos para comparar
     public string racerName;
+    public TeamSO team;
 }

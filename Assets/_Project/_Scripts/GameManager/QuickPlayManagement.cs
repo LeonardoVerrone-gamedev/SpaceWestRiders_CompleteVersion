@@ -21,6 +21,23 @@ public class QuickPlayManagement : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        GameManagerInstance.Instance.SetGameMode(GameMode.QuickPlay);
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "TitleScreen")
+        {
+            Destroy(this);
+        }
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     public void CreateCircuit(string circuit = null)

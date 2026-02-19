@@ -31,6 +31,7 @@ public class RaceManager : MonoBehaviour
     void Start()
     {
         if(QuickPlayManagement.Instance != null) totalLaps = QuickPlayManagement.Instance.competition.circuits[0].lapCount;
+        if(MiniTournamentManager.Instance != null) totalLaps = MiniTournamentManager.Instance.CurrentState.competition.circuits[MiniTournamentManager.Instance.CurrentState.currentRaceIndex].lapCount;
     }
 
     void OnEnable()

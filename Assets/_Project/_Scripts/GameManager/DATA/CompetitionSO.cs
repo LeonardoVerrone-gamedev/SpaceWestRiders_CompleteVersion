@@ -9,6 +9,7 @@ public class CompetitionSO : ScriptableObject
     public bool enableCutscenes;
     public bool playerCanChooseCar;
     public TeamSO storyTeam;
+    public TeamSO[] teams;
 
     public void Inicializar(List<CircuitSO> _circuits, int[] _eliminateAt = null, bool _enableCutscenes = false, bool _playerCanChooseCar = true, TeamSO _storyTeam = null)
     {

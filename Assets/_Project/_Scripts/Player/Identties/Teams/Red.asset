@@ -9,9 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef3b32b321e2c81478a1d2ea55ae7fab, type: 3}
-  m_Name: '#1'
+  m_Script: {fileID: 11500000, guid: 14adb4cffa57fd64daa40e3d5980f237, type: 3}
+  m_Name: Red
   m_EditorClassIdentifier: 
-  characterID: 1
-  racerName: 1
-  team: {fileID: 11400000, guid: a42d945b3f62ca344bee7614dcca1222, type: 2}
+  racers:
+  - {fileID: 11400000, guid: 68690424ee370e74893616730dcc811a, type: 2}
+  - {fileID: 11400000, guid: 009efc0eea93ac04ca9cbe6311b0a228, type: 2}
+  teamName: Red
+  teamImage: {fileID: 0}

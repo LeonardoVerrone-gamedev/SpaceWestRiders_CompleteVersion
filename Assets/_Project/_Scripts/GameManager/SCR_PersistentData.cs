@@ -43,10 +43,18 @@ public class SCR_PersistentData : MonoBehaviour {
 }
 
 [System.Serializable]
-public class PlayerSessionData {
+public class PlayerSessionData
+{
     public int playerIndex;
     public InputDevice device;
-    public int selectedCarGridIndex = -1; // -1 significa "ainda não escolheu"
-    public bool hasConfirmed;
+    public int selectedCarGridIndex; // Mantido para compatibilidade
+    public string selectedCharacterID; // NOVO: para buscas robustas
     public RacerProfileSO selectedCarData;
+    public bool hasConfirmed;
+    
+    public PlayerSessionData()
+    {
+        selectedCharacterID = "";
+        selectedCarGridIndex = 0;
+    }
 }

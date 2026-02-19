@@ -5,7 +5,7 @@ public class CircuitSO : ScriptableObject
 {
     public string sceneName;
     public string circuitID;
-    string circuitName;
+    public string circuitName;
     Sprite circuitImage;
     public int lapCount;
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class RankingManager : MonoBehaviour
 {
@@ -25,10 +26,13 @@ public class RankingManager : MonoBehaviour
         if (rankingOpened) return;
 
         rankingOpened = true;
-
         rankingUI.Open(results);
     }
 
+    public void CloseRanking()
+    {
+        rankingOpened = false;
+    }
 
     Dictionary<RacerStatus, int> CalculatePoints(List<RacerStatus> ranking)
     {
@@ -59,21 +63,46 @@ public class RankingManager : MonoBehaviour
     }
 
     // ==========================
-    // BOTÕES
+    // BOTÕES - QUICK PLAY (chamam QuickPlayManagement diretamente)
     // ==========================
 
     public void TryAgain()
     {
+        if (GameManagerInstance.Instance?.currentGameMode != GameMode.QuickPlay) return;
         QuickPlayManagement.Instance?.TryAgain();
     }
 
     public void Continue()
     {
+        if (GameManagerInstance.Instance?.currentGameMode != GameMode.QuickPlay) return;
         QuickPlayManagement.Instance?.ReturnToMenu();
     }
 
     public void TryAnotherCircuit()
     {
+        if (GameManagerInstance.Instance?.currentGameMode != GameMode.QuickPlay) return;
         QuickPlayManagement.Instance?.TryAnotherCircuit();
+    }
+
+    // ==========================
+    // BOTÕES - MINI TOURNAMENT (chamam MiniTournamentManager diretamente)
+    // ==========================
+
+    public void ContinueToNextRace()
+    {
+        if (GameManagerInstance.Instance?.currentGameMode != GameMode.MiniTournament) return;
+        MiniTournamentManager.Instance?.AdvanceToNextRace();
+    }
+
+    public void BackToTournamentMenu()
+    {
+        if (GameManagerInstance.Instance?.currentGameMode != GameMode.MiniTournament) return;
+        SceneManager.LoadScene("MiniTournamentMainMenu");
+    }
+
+    public void GiveUp()
+    {
+        if (GameManagerInstance.Instance?.currentGameMode != GameMode.MiniTournament) return;
+        MiniTournamentManager.Instance?.EndTournament();
     }
 }

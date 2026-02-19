@@ -7,6 +7,7 @@ public class TitleScreenMenu : MonoBehaviour
 
     //Scenes
     string quickRaceSceneName = "QuickRaceSetupScene";
+    string miniTournamentSceneName = "MiniTournamentCompetitionSelector";
 
     public void ShowGameOptions()
     {
@@ -18,5 +19,10 @@ public class TitleScreenMenu : MonoBehaviour
     public void StartQuickRaceMode()
     {
         SceneManager.LoadScene(quickRaceSceneName);
+    }
+
+    public void StartMiniTournament()
+    {
+        SceneManager.LoadScene(miniTournamentSceneName);
     }
 }

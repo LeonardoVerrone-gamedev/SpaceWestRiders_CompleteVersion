@@ -20,6 +20,7 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
     [SerializeField] private List<RacerProfileSO> _allCharactersSO; // A lista global de SOs
     private List<SCR_CarIdentity> _carsInScene;
+    private Dictionary<string, SCR_CarInput> _carsByID; // NOVO: Mapa ID -> Carro
 
     [Header("Input Actions")]
     [SerializeField] private InputActionAsset _playerInputActions;
@@ -46,6 +47,31 @@ public class SCR_TrackSelectionManager : MonoBehaviour
     [SerializeField] private float _waitForOthersTime = 3f;
     private Coroutine _startRaceCoroutine;
     private bool _isCountingDown = false;
+
+    void Awake()
+    {
+        // Eliminação no Awake para modos de torneio
+        if (GameManagerInstance.Instance != null)
+        {
+            switch (GameManagerInstance.Instance.currentGameMode)
+            {
+                case GameMode.MiniTournament:
+                    if (MiniTournamentManager.Instance != null && 
+                        MiniTournamentManager.Instance.CurrentState != null)
+                    {
+                        EliminateCarsFromEliminatedTeams();
+                    }
+                    break;
+                case GameMode.Tournament:
+                if (TournamentFullManager.Instance != null && 
+                    TournamentFullManager.Instance.CurrentState != null)
+                {
+                    EliminateCarsFromTournamentFull();
+                }
+                break;
+            }
+        }
+    }
 
     void Start()
     {
@@ -91,6 +117,65 @@ public class SCR_TrackSelectionManager : MonoBehaviour
         HandleSelectionNavigation();
     }
 
+    // Elimina carros de times eliminados
+    private void EliminateCarsFromEliminatedTeams()
+    {
+        if (MiniTournamentManager.Instance?.CurrentState == null) return;
+
+        var eliminatedTeams = MiniTournamentManager.Instance.CurrentState.eliminatedTeams;
+        
+        var allCars = UnityEngine.Object.FindObjectsByType<SCR_CarIdentity>(FindObjectsSortMode.None);
+        
+        foreach (var car in allCars)
+        {
+            if (car.racerData != null && car.racerData.team != null)
+            {
+                if (eliminatedTeams.Contains(car.racerData.team))
+                {
+                    Destroy(car.gameObject);
+                }
+            }
+        }
+    }
+
+    private void EliminateCarsFromTournamentFull()
+    {
+        if (TournamentFullManager.Instance?.CurrentState == null) return;
+
+        var eliminatedTeams = TournamentFullManager.Instance.CurrentState.eliminatedTeams;
+        
+        var allCars = UnityEngine.Object.FindObjectsByType<SCR_CarIdentity>(FindObjectsSortMode.None);
+        
+        foreach (var car in allCars)
+        {
+            if (car.racerData != null && car.racerData.team != null)
+            {
+                if (eliminatedTeams.Contains(car.racerData.team))
+                {
+                    Destroy(car.gameObject);
+                }
+            }
+        }
+    }
+
+    // Constrói dicionário de carros por ID
+    private void BuildCarsDictionary()
+    {
+        _carsByID = new Dictionary<string, SCR_CarInput>();
+        _carsInScene = UnityEngine.Object.FindObjectsByType<SCR_CarIdentity>(FindObjectsSortMode.None).ToList();
+        
+        foreach (var car in _carsInScene)
+        {
+            if (car.racerData != null && !string.IsNullOrEmpty(car.racerData.characterID))
+            {
+                if (!_carsByID.ContainsKey(car.racerData.characterID))
+                {
+                    _carsByID[car.racerData.characterID] = car.GetComponent<SCR_CarInput>();
+                }
+            }
+        }
+    }
+
     private void PrepareSelectionNormally()
     {
         if (SCR_PersistentData.Instance == null)
@@ -98,9 +183,7 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
         _allCharactersSO = _allCharactersSO.OrderBy(so => so.characterID).ToList();
 
-        _carsInScene = UnityEngine.Object
-            .FindObjectsByType<SCR_CarIdentity>(FindObjectsSortMode.None)
-            .ToList();
+        BuildCarsDictionary();
 
         carCullings = UnityEngine.Object
             .FindObjectsByType<SCR_CarVisualCulling>(FindObjectsSortMode.None)
@@ -115,13 +198,11 @@ public class SCR_TrackSelectionManager : MonoBehaviour
     private void StartRaceWithJoinWindow()
     {
         if (_startRaceCoroutine != null)
-        return; // já está rodando
+            return;
         
         _inSelectionMode = true;
 
-        _carsInScene = UnityEngine.Object
-            .FindObjectsByType<SCR_CarIdentity>(FindObjectsSortMode.None)
-            .ToList();
+        BuildCarsDictionary();
 
         carCullings = UnityEngine.Object
             .FindObjectsByType<SCR_CarVisualCulling>(FindObjectsSortMode.None)
@@ -129,7 +210,13 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
         var p = SCR_PersistentData.Instance.players[0];
 
-        // Recria câmera
+        // Verifica se o carro ainda existe
+        if (!_carsByID.ContainsKey(p.selectedCharacterID))
+        {
+            Debug.LogError($"Jogador {p.playerIndex} está eliminado! Não é possível iniciar corrida.");
+            return;
+        }
+
         GameObject camObj = Instantiate(cameraPrefab);
         CameraController newCamController = camObj.GetComponent<CameraController>();
         newCamController.SetChannel(p.playerIndex);
@@ -141,22 +228,12 @@ public class SCR_TrackSelectionManager : MonoBehaviour
         foreach (var carCulling in carCullings)
             carCulling.AddCamera(brain);
 
-        // Reposiciona target
-        var targetCar = _carsInScene.FirstOrDefault(c => 
-            c.racerData.characterID == p.selectedCarData.characterID);
+        // Usa o dicionário para encontrar o carro
+        newCamController.SetTarget(_carsByID[p.selectedCharacterID].transform);
 
-        if (targetCar != null)
-        {
-            newCamController.SetTarget(targetCar.transform);
-            p.selectedCarGridIndex = _gridCars.FindIndex(car => car.gameObject == targetCar.gameObject);
-        }
-
-        // Marca como confirmado
         p.hasConfirmed = true;
-
         _isCountingDown = false;
 
-        // Inicia contagem de espera
         _startRaceCoroutine = StartCoroutine(WaitToStartRaceRoutine());
     }
 
@@ -164,7 +241,8 @@ public class SCR_TrackSelectionManager : MonoBehaviour
     {
         foreach (var car in _gridCars)
         {
-            if (car.TryGetComponent<Rigidbody>(out var rb)) rb.isKinematic = true;
+            if (car != null && car.TryGetComponent<Rigidbody>(out var rb)) 
+                rb.isKinematic = true;
         }
     }
 
@@ -185,45 +263,59 @@ public class SCR_TrackSelectionManager : MonoBehaviour
             playerIndex = newIndex,
             device = device,
             selectedCarGridIndex = 0,
-            // Inicializa com o primeiro personagem disponível
+            selectedCharacterID = "",
             selectedCarData = _allCharactersSO[0],
             hasConfirmed = _isStoryMode
         };
 
         if (_isStoryMode)
         {
-            // Assinala o personagem da história baseado na ordem de entrada
             int targetID = (newIndex == 0) ? _storyPlayer1ID : _storyPlayer2ID;
-            newPlayer.selectedCarData = _allCharactersSO.FirstOrDefault(c => int.Parse(c.characterID) == targetID);
+            string targetIDStr = targetID.ToString();
+            newPlayer.selectedCharacterID = targetIDStr;
+            newPlayer.selectedCarData = _allCharactersSO.FirstOrDefault(c => c.characterID == targetIDStr);
             
-            // Sincroniza o index do grid para o FinalizeSetup encontrar o carro
             newPlayer.selectedCarGridIndex = _gridCars.FindIndex(car => 
-                int.Parse(car.GetComponent<SCR_CarIdentity>().racerData.characterID) == targetID);
+                car != null && car.GetComponent<SCR_CarIdentity>() != null && 
+                car.GetComponent<SCR_CarIdentity>().racerData.characterID == targetIDStr);
         }
-        
         else
         {
-            // Encontra o primeiro carro que não está bloqueado nem ocupado por outro player
-            int firstValidIndex = 0;
+            RacerProfileSO selectedSO = null;
+            int selectedIndex = 0;
+            
             for (int i = 0; i < _allCharactersSO.Count; i++)
             {
                 int id = int.Parse(_allCharactersSO[i].characterID);
                 bool isBlocked = _blockedCharacterIDs.Contains(id);
-                bool isTaken = SCR_PersistentData.Instance.players.Any(pl => pl.selectedCarGridIndex == i);
+                bool isTaken = SCR_PersistentData.Instance.players.Any(p => p.selectedCharacterID == _allCharactersSO[i].characterID);
 
                 if (!isBlocked && !isTaken)
                 {
-                    firstValidIndex = i;
+                    selectedSO = _allCharactersSO[i];
+                    selectedIndex = i;
                     break;
                 }
             }
-            newPlayer.selectedCarGridIndex = firstValidIndex;
-            newPlayer.selectedCarData = _allCharactersSO[firstValidIndex];
+            
+            if (selectedSO != null)
+            {
+                newPlayer.selectedCharacterID = selectedSO.characterID;
+                newPlayer.selectedCarData = selectedSO;
+                newPlayer.selectedCarGridIndex = selectedIndex;
+            }
+            else
+            {
+                newPlayer.selectedCharacterID = _allCharactersSO[0].characterID;
+                newPlayer.selectedCarData = _allCharactersSO[0];
+                newPlayer.selectedCarGridIndex = 0;
+            }
         }
 
         SCR_PersistentData.Instance.players.Add(newPlayer);
-
         _playerJoinTimes[newIndex] = Time.time;
+
+        BuildCarsDictionary();
 
         GameObject camObj = Instantiate(cameraPrefab);
         CameraController newCamController = camObj.GetComponent<CameraController>();
@@ -236,7 +328,6 @@ public class SCR_TrackSelectionManager : MonoBehaviour
         newCamController.SetChannel(newIndex);
         _activeCameras.Add(newCamController);
 
-        // Posiciona a câmera no carro inicial
         UpdatePlayerCamera(newPlayer);
 
         if (SCR_PersistentData.Instance.players.Count == 1)
@@ -270,7 +361,6 @@ public class SCR_TrackSelectionManager : MonoBehaviour
             bool canConfirm = _playerJoinTimes.ContainsKey(p.playerIndex) && 
                          (Time.time - _playerJoinTimes[p.playerIndex] > 0.15f);
 
-            // Leitura de Input simplificada para o exemplo
             if (p.device is Keyboard k)
             {
                 if (k.dKey.wasPressedThisFrame || k.rightArrowKey.wasPressedThisFrame) direction = 1;
@@ -298,25 +388,34 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
     private void MoveSelection(PlayerSessionData p, int direction)
     {
+        int currentIndex = -1;
+        for (int i = 0; i < _allCharactersSO.Count; i++)
+        {
+            if (_allCharactersSO[i].characterID == p.selectedCharacterID)
+            {
+                currentIndex = i;
+                break;
+            }
+        }
+        
+        if (currentIndex == -1) currentIndex = 0;
+        
         int max = _allCharactersSO.Count;
-        int nextIndex = (p.selectedCarGridIndex + direction + max) % max;
+        int nextIndex = (currentIndex + direction + max) % max;
 
-        // Loop de validação: continua pulando enquanto o carro for inválido
         bool isValid = false;
-        int safetyBreak = 0; // Evita loop infinito se todos estiverem bloqueados
+        int safetyBreak = 0;
 
         while (!isValid && safetyBreak < max)
         {
-            int targetID = int.Parse(_allCharactersSO[nextIndex].characterID);
-
-            // Critério 1: Está na lista de bloqueados?
-            bool isBlocked = _blockedCharacterIDs.Contains(targetID);
-
-            // Critério 2: Outro player já pegou?
+            string targetID = _allCharactersSO[nextIndex].characterID;
+            int targetIDInt = int.Parse(targetID);
+            bool isBlocked = _blockedCharacterIDs.Contains(targetIDInt);
             bool isTaken = SCR_PersistentData.Instance.players.Any(other => 
-                other != p && other.selectedCarGridIndex == nextIndex);
+                other != p && other.selectedCharacterID == targetID);
+            bool carExists = _carsByID != null && _carsByID.ContainsKey(targetID);
 
-            if (isBlocked || isTaken)
+            if (isBlocked || isTaken || !carExists)
             {
                 nextIndex = (nextIndex + direction + max) % max;
                 safetyBreak++;
@@ -327,20 +426,19 @@ public class SCR_TrackSelectionManager : MonoBehaviour
             }
         }
 
-        p.selectedCarGridIndex = nextIndex;
+        p.selectedCharacterID = _allCharactersSO[nextIndex].characterID;
         p.selectedCarData = _allCharactersSO[nextIndex];
+        p.selectedCarGridIndex = nextIndex;
 
         UpdatePlayerCamera(p);
     }
 
     private void UpdatePlayerCamera(PlayerSessionData p)
     {
-        int targetID = int.Parse(_allCharactersSO[p.selectedCarGridIndex].characterID);
-        var targetCar = _carsInScene.FirstOrDefault(c => c.racerData != null && int.Parse(c.racerData.characterID) == targetID);
-
-        if (targetCar != null)
+        if (_carsByID != null && _carsByID.ContainsKey(p.selectedCharacterID) && 
+            p.playerIndex < _activeCameras.Count)
         {
-            _activeCameras[p.playerIndex].SetTarget(targetCar.transform);
+            _activeCameras[p.playerIndex].SetTarget(_carsByID[p.selectedCharacterID].transform);
         }
     }
 
@@ -357,13 +455,11 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
         if (allConfirmed)
         {
-            // Se temos 2 players (máximo) e ambos confirmaram, larga na hora
             if (playersCount >= 2)
             {
                 if (_startRaceCoroutine != null) StopCoroutine(_startRaceCoroutine);
                 FinalizeSetupAndStartRace();
             }
-            // Se só temos 1 player, inicia a contagem de espera por um segundo jogador
             else if (!_isCountingDown)
             {
                 _startRaceCoroutine = StartCoroutine(WaitToStartRaceRoutine());
@@ -380,7 +476,6 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
         while (timer > 0)
         {
-            // Se um novo player entrar durante a contagem, paramos tudo
             if (SCR_PersistentData.Instance.players.Count > 1)
             {
                 Debug.Log("Novo player detectado! Cancelando contagem.");
@@ -399,13 +494,38 @@ public class SCR_TrackSelectionManager : MonoBehaviour
     {
         _inSelectionMode = false;
 
+        BuildCarsDictionary();
+
+        // Remove da grid os carros que não existem mais
+        var carsToRemove = new List<SCR_CarInput>();
+        foreach (var car in _gridCars)
+        {
+            if (car == null || !_carsInScene.Any(c => c.gameObject == car.gameObject))
+            {
+                carsToRemove.Add(car);
+            }
+        }
+        foreach (var car in carsToRemove)
+        {
+            if (_gridCars.Contains(car))
+                _gridCars.Remove(car);
+        }
+
         for (int i = 0; i < _gridCars.Count; i++)
         {
             SCR_CarInput car = _gridCars[i];
-            PlayerSessionData owner = SCR_PersistentData.Instance.players.FirstOrDefault(p => p.selectedCarGridIndex == i);
+            if (car == null) continue;
+            
+            var identity = car.GetComponent<SCR_CarIdentity>();
+            if (identity == null || identity.racerData == null) continue;
+            
+            // ÚNICA MUDANÇA: Encontrar owner pelo ID em vez do índice
+            string carID = identity.racerData.characterID;
+            PlayerSessionData owner = SCR_PersistentData.Instance.players
+                .FirstOrDefault(p => p.selectedCharacterID == carID);
 
-            // 1. Configuração de Controle (Player vs IA)
-           if (owner != null)
+            // A PARTIR DAQUI É EXATAMENTE IGUAL AO ORIGINAL
+            if (owner != null)
             {
                 // Remove AI
                 if (car.TryGetComponent<AIRacingController>(out var ai))
@@ -416,37 +536,23 @@ public class SCR_TrackSelectionManager : MonoBehaviour
                 car.SetInputMode(mode);
 
                 // ===== RESET TOTAL DO INPUT =====
-
-                // Remove PlayerInput antigo se existir
                 if (car.TryGetComponent<PlayerInput>(out var oldPI))
                     Destroy(oldPI);
 
-                // Cria PlayerInput novo
                 var newPI = car.gameObject.AddComponent<PlayerInput>();
-
                 newPI.neverAutoSwitchControlSchemes = true;
                 newPI.actions = _playerInputActions;
                 newPI.defaultActionMap = "Driving";
-                newPI.defaultControlScheme = owner.device is Keyboard
-                    ? "Keyboard&Mouse"
-                    : "Gamepad";
-
-                // Começa DESATIVADO — OnEnable ainda não roda
+                newPI.defaultControlScheme = owner.device is Keyboard ? "Keyboard&Mouse" : "Gamepad";
                 newPI.enabled = false;
 
-                // Rebind no SCR_CarInput agora (pega refs)
                 car.RefreshInputActions();
-
-                // Ativa e faz pairing NO PRÓXIMO FRAME
                 StartCoroutine(EnablePlayerInputNextFrame(newPI, owner.device, car));
-
             }
             else
             {
                 if (car.TryGetComponent<PlayerInput>(out var pInput))
-                {
                     Destroy(pInput);
-                }
 
                 car.SetInputMode(InputMode.AI_Controlled);
                 if (car.TryGetComponent<AIRacingController>(out var ai)) ai.enabled = true;
@@ -458,62 +564,65 @@ public class SCR_TrackSelectionManager : MonoBehaviour
                 PI.enabled = true;
             }
 
-            // 2. Liberação da Física (Movido para garantir que execute para todos)
             if (car.TryGetComponent<Rigidbody>(out var rb))
             {
                 rb.isKinematic = false;
-                rb.WakeUp(); // Garante que a física processe imediatamente
+                rb.WakeUp();
             }
             car.enabled = true;
         }
+
         OnRaceSetupCompleted.Invoke();
         Debug.Log("TODOS PRONTOS! 3... 2... 1... GO!");
-
-        //Invoke("GoToNextSceneTest", 5f); testing :)
     }
 
     private System.Collections.IEnumerator EnablePlayerInputNextFrame(PlayerInput pi, InputDevice device, SCR_CarInput car)
     {
-        yield return null; // frame seguinte → PlayerInput inicializa certo
+        yield return null;
 
         if (pi == null) yield break;
 
-        pi.enabled = true; // OnEnable cria InputUser corretamente
-
-        // agora o user é válido
+        pi.enabled = true;
         pi.user.UnpairDevices();
         InputUser.PerformPairingWithDevice(device, pi.user);
-
         pi.ActivateInput();
-
         car.enabled = true;
     }
-
 
     private void StartRaceImmediate()
     {
         _inSelectionMode = false;
 
-        // 1. Localiza as referências necessárias na cena nova
-        _carsInScene = UnityEngine.Object.FindObjectsByType<SCR_CarIdentity>(FindObjectsSortMode.None).ToList();
+        BuildCarsDictionary();
 
-        // Rebusca os cullings da cena nova
         carCullings = UnityEngine.Object
             .FindObjectsByType<SCR_CarVisualCulling>(FindObjectsSortMode.None)
             .ToList();
 
-        
-        // 2. Recria as câmeras para os jogadores que já estão no PersistentData
+        // Remove da grid os carros que não existem mais
+        var carsToRemove = new List<SCR_CarInput>();
+        foreach (var car in _gridCars)
+        {
+            if (car == null || !_carsInScene.Any(c => c.gameObject == car.gameObject))
+            {
+                carsToRemove.Add(car);
+            }
+        }
+        foreach (var car in carsToRemove)
+        {
+            if (_gridCars.Contains(car))
+                _gridCars.Remove(car);
+        }
+
+        // Recria as câmeras para os jogadores que já estão no PersistentData
         foreach (var p in SCR_PersistentData.Instance.players)
         {
-            // Instancia a câmera prefab
             GameObject camObj = Instantiate(cameraPrefab);
             CameraController newCamController = camObj.GetComponent<CameraController>();
             
             newCamController.SetChannel(p.playerIndex);
             _activeCameras.Add(newCamController);
 
-            // Configura SplitScreen baseado no total de jogadores salvos
             int totalPlayers = SCR_PersistentData.Instance.players.Count;
             if (totalPlayers == 1)
             {
@@ -527,15 +636,13 @@ public class SCR_TrackSelectionManager : MonoBehaviour
                 if (camObj.TryGetComponent<AudioListener>(out var listener)) listener.enabled = isP1;
             }
 
-            // Foca a câmera no carro que o player escolheu (via characterID)
-            var targetCar = _carsInScene.FirstOrDefault(c => c.racerData != null && c.racerData.characterID == p.selectedCarData.characterID);
-            if (targetCar != null)
+            // Foca a câmera no carro usando o dicionário
+            if (_carsByID.ContainsKey(p.selectedCharacterID))
             {
-                newCamController.SetTarget(targetCar.transform);
+                newCamController.SetTarget(_carsByID[p.selectedCharacterID].transform);
                 
                 // ATUALIZA o selectedCarGridIndex para a nova cena
-                // Isso garante que seu loop no FinalizeSetup localize o 'owner' corretamente pelo índice
-                p.selectedCarGridIndex = _gridCars.FindIndex(car => car.gameObject == targetCar.gameObject);
+                p.selectedCarGridIndex = _gridCars.FindIndex(car => car.gameObject == _carsByID[p.selectedCharacterID].gameObject);
             }
 
             var brain = camObj.GetComponentInChildren<Camera>().GetComponent<CinemachineBrain>();
@@ -545,7 +652,6 @@ public class SCR_TrackSelectionManager : MonoBehaviour
             }
         }
 
-        // 3. Agora que as câmeras existem e os índices foram mapeados para a nova cena, inicia
         FinalizeSetupAndStartRace();
     }
 }
