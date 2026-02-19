@@ -1511,6 +1511,14 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             float impactAngle = Vector3.Angle(transform.forward, collision.relativeVelocity.normalized);
 
             if (impactForce > crashImpactForce){// && impactAngle > 30f) { // Valor alto para crash cinematográfico
+
+                if (collision.gameObject.CompareTag("Wall"))
+                {
+                    if(impactAngle < 60f) return;
+                }
+
+                if(crashing)return;
+
                 OnCrash?.Invoke(true);
                 deformer.Deform(collision.contacts[0].point, collision.relativeVelocity);
                 carCrash.TriggerCrash();

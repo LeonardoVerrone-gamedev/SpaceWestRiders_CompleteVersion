@@ -535,12 +535,33 @@ public class CameraController : MonoBehaviour
         rawSpeedFactor = 0f;
         if (currentSpeedKmh >= minSpeedForEffects)
         {
-            rawSpeedFactor = Mathf.Clamp01((currentSpeedKmh - minSpeedForEffects) / (maxSpeedForEffects - minSpeedForEffects));
+            float speedRange = maxSpeedForEffects - minSpeedForEffects;
+
+            if (speedRange <= 0.0001f)
+            {
+                rawSpeedFactor = 0f;
+            }
+            else
+            {
+                rawSpeedFactor = Mathf.Clamp01(
+                    (currentSpeedKmh - minSpeedForEffects) / speedRange
+                );
+            }
+        }
+        else
+        {
+            currentDistanceVelocity = 0f;
+            currentFOVVelocity = 0f;
         }
 
         //  SUAVIZAÇÃO INTELIGENTE: Resposta diferente para aceleração vs desaceleração
         float responseTime = rawSpeedFactor > smoothedSpeedFactor ? accelerationResponse : decelerationResponse;
-        smoothedSpeedFactor = Mathf.Lerp(smoothedSpeedFactor, rawSpeedFactor, responseTime * Time.deltaTime);
+        smoothedSpeedFactor = Mathf.MoveTowards(
+            smoothedSpeedFactor,
+            rawSpeedFactor,
+            responseTime * Time.deltaTime
+        );
+
 
         ApplyCameraInterpolation();
         ApplyVolumeEffects();
@@ -570,7 +591,21 @@ public class CameraController : MonoBehaviour
         //  SUAVIZAÇÃO DE FOV com Mathf.SmoothDamp
         float targetFOV = Mathf.Lerp(minFOV, maxFOV, smoothedSpeedFactor);
         var lens = vCam.Lens;
-        lens.FieldOfView = Mathf.SmoothDamp(lens.FieldOfView, targetFOV, ref currentFOVVelocity, fovSmoothTime);
+        float newFOV = Mathf.SmoothDamp(
+            lens.FieldOfView,
+            targetFOV,
+            ref currentFOVVelocity,
+            fovSmoothTime
+        );
+
+        if (float.IsNaN(newFOV) || float.IsInfinity(newFOV))
+        {
+            newFOV = minFOV;
+            currentFOVVelocity = 0f;
+        }
+
+        lens.FieldOfView = newFOV;
+
         vCam.Lens = lens;
 
         //  SUAVIZAÇÃO DE DISTÂNCIA com Mathf.SmoothDamp
@@ -578,21 +613,36 @@ public class CameraController : MonoBehaviour
         {
             float targetDistance = Mathf.Lerp(maxCameraDistance, minCameraDistance, smoothedSpeedFactor);
             float currentDistance = thirdPersonFollow.CameraDistance;
-            
-            // 1. LIMITA A MUDANÇA MÁXIMA POR FRAME
-            float maxChangePerFrame = 0.1f; // Máx 10cm por frame
-            float rawNewDistance = Mathf.SmoothDamp(currentDistance, targetDistance, 
-                                                ref currentDistanceVelocity, distanceSmoothTime);
-            
-            // 2. CLAMPA PARA EVITAR PULOS
-            float newDistance = Mathf.Clamp(rawNewDistance, 
-                                        currentDistance - maxChangePerFrame, 
-                                        currentDistance + maxChangePerFrame);
-            
-            // 3. GARANTE QUE FICA DENTRO DOS LIMITES
+
+            // Proteção contra velocity inválida
+            if (float.IsNaN(currentDistanceVelocity) || float.IsInfinity(currentDistanceVelocity))
+                currentDistanceVelocity = 0f;
+
+            float newDistance = Mathf.Lerp(
+                currentDistance,
+                targetDistance,
+                1f - Mathf.Exp(-8f * Time.deltaTime)
+            );
+
+
+            // Proteção contra NaN no resultado
+            if (float.IsNaN(newDistance) || float.IsInfinity(newDistance))
+            {
+                newDistance = targetDistance;
+                currentDistanceVelocity = 0f;
+            }
+
             newDistance = Mathf.Clamp(newDistance, minCameraDistance, maxCameraDistance);
-            
+
             thirdPersonFollow.CameraDistance = newDistance;
+
+            if (smoothedSpeedFactor <= 0.01f)
+            {
+                thirdPersonFollow.CameraDistance = Mathf.Max(
+                    thirdPersonFollow.CameraDistance,
+                    maxCameraDistance - 0.1f
+                );
+            }
         }
     }
 
@@ -732,6 +782,15 @@ public class CameraController : MonoBehaviour
     {
         smoothedSpeedFactor = 0f;
         rawSpeedFactor = 0f;
+
+        currentFOVVelocity = 0f;
+        currentDistanceVelocity = 0f;
+
+        currentNoiseAmplitude = 0f;
+        currentNoiseFrequency = 0f;
+
+        noiseAmplitudeVelocity = 0f;
+        noiseFrequencyVelocity = 0f;
     }
 
     //  COROUTINE para desbloquear após um frame
@@ -1077,7 +1136,15 @@ public class CameraController : MonoBehaviour
     {
         if (speedKmh < minSpeedForNoise) return 0f;
         
-        float normalizedSpeed = Mathf.Clamp01((speedKmh - minSpeedForNoise) / (maxSpeedForNoise - minSpeedForNoise));
+        float range = maxSpeedForNoise - minSpeedForNoise;
+
+        if (range <= 0.0001f)
+            return 0f;
+
+        float normalizedSpeed = Mathf.Clamp01(
+            (speedKmh - minSpeedForNoise) / range
+        );
+
         return speedNoiseCurve.Evaluate(normalizedSpeed);
     }
     
