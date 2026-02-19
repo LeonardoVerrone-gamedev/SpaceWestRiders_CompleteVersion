@@ -51,22 +51,28 @@ public class SCR_TrackSelectionManager : MonoBehaviour
     {
         camManager = UnityEngine.Object.FindFirstObjectByType<CameraController>();
 
-        if (SCR_PersistentData.Instance != null && SCR_PersistentData.Instance.isSequenceRace && !_isStoryMode)
+        if (SCR_PersistentData.Instance != null 
+            && SCR_PersistentData.Instance.isSequenceRace 
+            && !_isStoryMode)
         {
-            StartRaceImmediate();
+            int savedPlayers = SCR_PersistentData.Instance.players.Count;
+
+            if (savedPlayers >= 2)
+            {
+                StartRaceImmediate();
+            }
+            else if (savedPlayers == 1)
+            {
+                StartRaceWithJoinWindow();
+            }
+            else
+            {
+                PrepareSelectionNormally();
+            }
         }
         else
         {
-            if (SCR_PersistentData.Instance == null)
-                new GameObject("PersistentData").AddComponent<SCR_PersistentData>();
-                
-            _allCharactersSO = _allCharactersSO.OrderBy(so => so.characterID).ToList();
-
-            _carsInScene = UnityEngine.Object.FindObjectsByType<SCR_CarIdentity>(FindObjectsSortMode.None).ToList();
-            carCullings = UnityEngine.Object.FindObjectsByType<SCR_CarVisualCulling>(FindObjectsSortMode.None).ToList();
-            PrepareCarsForSelection();
-
-            if(!_isStoryMode) SCR_PersistentData.Instance.isSequenceRace = true; //adicionar if(!isStoryMode) se isso quebrar algo
+            PrepareSelectionNormally();
         }
     }
 
@@ -83,6 +89,75 @@ public class SCR_TrackSelectionManager : MonoBehaviour
         }
 
         HandleSelectionNavigation();
+    }
+
+    private void PrepareSelectionNormally()
+    {
+        if (SCR_PersistentData.Instance == null)
+            new GameObject("PersistentData").AddComponent<SCR_PersistentData>();
+
+        _allCharactersSO = _allCharactersSO.OrderBy(so => so.characterID).ToList();
+
+        _carsInScene = UnityEngine.Object
+            .FindObjectsByType<SCR_CarIdentity>(FindObjectsSortMode.None)
+            .ToList();
+
+        carCullings = UnityEngine.Object
+            .FindObjectsByType<SCR_CarVisualCulling>(FindObjectsSortMode.None)
+            .ToList();
+
+        PrepareCarsForSelection();
+
+        if(!_isStoryMode)
+            SCR_PersistentData.Instance.isSequenceRace = true;
+    }
+
+    private void StartRaceWithJoinWindow()
+    {
+        if (_startRaceCoroutine != null)
+        return; // já está rodando
+        
+        _inSelectionMode = true;
+
+        _carsInScene = UnityEngine.Object
+            .FindObjectsByType<SCR_CarIdentity>(FindObjectsSortMode.None)
+            .ToList();
+
+        carCullings = UnityEngine.Object
+            .FindObjectsByType<SCR_CarVisualCulling>(FindObjectsSortMode.None)
+            .ToList();
+
+        var p = SCR_PersistentData.Instance.players[0];
+
+        // Recria câmera
+        GameObject camObj = Instantiate(cameraPrefab);
+        CameraController newCamController = camObj.GetComponent<CameraController>();
+        newCamController.SetChannel(p.playerIndex);
+        newCamController.EnableSplitScreen(false, true);
+
+        _activeCameras.Add(newCamController);
+
+        var brain = camObj.GetComponentInChildren<Camera>().GetComponent<CinemachineBrain>();
+        foreach (var carCulling in carCullings)
+            carCulling.AddCamera(brain);
+
+        // Reposiciona target
+        var targetCar = _carsInScene.FirstOrDefault(c => 
+            c.racerData.characterID == p.selectedCarData.characterID);
+
+        if (targetCar != null)
+        {
+            newCamController.SetTarget(targetCar.transform);
+            p.selectedCarGridIndex = _gridCars.FindIndex(car => car.gameObject == targetCar.gameObject);
+        }
+
+        // Marca como confirmado
+        p.hasConfirmed = true;
+
+        _isCountingDown = false;
+
+        // Inicia contagem de espera
+        _startRaceCoroutine = StartCoroutine(WaitToStartRaceRoutine());
     }
 
     private void PrepareCarsForSelection()
