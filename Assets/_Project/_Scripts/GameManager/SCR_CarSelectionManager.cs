@@ -421,6 +421,12 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
         // 1. Localiza as referências necessárias na cena nova
         _carsInScene = UnityEngine.Object.FindObjectsByType<SCR_CarIdentity>(FindObjectsSortMode.None).ToList();
+
+        // Rebusca os cullings da cena nova
+        carCullings = UnityEngine.Object
+            .FindObjectsByType<SCR_CarVisualCulling>(FindObjectsSortMode.None)
+            .ToList();
+
         
         // 2. Recria as câmeras para os jogadores que já estão no PersistentData
         foreach (var p in SCR_PersistentData.Instance.players)
@@ -455,6 +461,12 @@ public class SCR_TrackSelectionManager : MonoBehaviour
                 // ATUALIZA o selectedCarGridIndex para a nova cena
                 // Isso garante que seu loop no FinalizeSetup localize o 'owner' corretamente pelo índice
                 p.selectedCarGridIndex = _gridCars.FindIndex(car => car.gameObject == targetCar.gameObject);
+            }
+
+            var brain = camObj.GetComponentInChildren<Camera>().GetComponent<CinemachineBrain>();
+            foreach (var carCulling in carCullings)
+            {
+                carCulling.AddCamera(brain);
             }
         }
 

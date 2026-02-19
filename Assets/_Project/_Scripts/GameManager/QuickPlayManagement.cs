@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 public class QuickPlayManagement : MonoBehaviour
 {
     public static QuickPlayManagement Instance;
+
     public CompetitionSO competition;
     public CircuitSO[] freeCircuits;
 
@@ -12,49 +13,72 @@ public class QuickPlayManagement : MonoBehaviour
 
     void Awake()
     {
-        if(Instance != null) Destroy(this);
-        else Instance = this; DontDestroyOnLoad(this);
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     public void CreateCircuit(string circuit = null)
     {
-        if (circuit == null || circuit == "")
+        if (string.IsNullOrEmpty(circuit))
         {
-            List<CircuitSO> selected = new List<CircuitSO>
-            {
-                freeCircuits[Random.Range(0, freeCircuits.Length)]
-            };
-
-            competition = ScriptableObject.CreateInstance<CompetitionSO>();
-            competition.Inicializar(selected, null, false, true, null);
+            selectedCircuit = freeCircuits[Random.Range(0, freeCircuits.Length)];
         }
-
         else
         {
             selectedCircuit = freeCircuits[0];
 
-            foreach(CircuitSO c in freeCircuits)
+            foreach (CircuitSO c in freeCircuits)
             {
-                if(c.circuitID == circuit) selectedCircuit = c;
+                if (c.circuitID == circuit)
+                {
+                    selectedCircuit = c;
+                    break;
+                }
             }
-
-            List<CircuitSO> selected = new List<CircuitSO>
-            {
-                selectedCircuit
-            };
-
-            competition = ScriptableObject.CreateInstance<CompetitionSO>();
-            competition.Inicializar(selected, null, false, true, null);
         }
+
+        List<CircuitSO> selected = new List<CircuitSO> { selectedCircuit };
+
+        competition = ScriptableObject.CreateInstance<CompetitionSO>();
+        competition.Inicializar(selected, null, false, true, null);
 
         StartRace();
     }
 
     public void StartRace()
     {
-        SceneManager.LoadScene(competition.circuits[0].sceneName);
+        SceneManager.LoadScene(selectedCircuit.sceneName);
+    }
 
-        //espera carregar
-        //procura RaceManager e seta o numero de voltas para selectedCircuit.lapCount
+    // ==========================
+    // CHAMADOS PELO RANKING
+    // ==========================
+
+    public void ReturnToMenu()
+    {
+        KillPlayerData();
+        SceneManager.LoadScene("TitleScreen");
+    }
+
+    public void TryAgain()
+    {
+        SceneManager.LoadScene(selectedCircuit.sceneName);
+    }
+
+    public void TryAnotherCircuit()
+    {
+        KillPlayerData();
+        SceneManager.LoadScene("QuickRaceSetupScene");
+    }
+
+    void KillPlayerData()
+    {
+        SCR_PersistentData.Instance.FullReset();
     }
 }

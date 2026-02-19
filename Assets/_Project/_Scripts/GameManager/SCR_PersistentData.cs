@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using UnityEngine.InputSystem.Users;
 
 public class SCR_PersistentData : MonoBehaviour {
     public static SCR_PersistentData Instance;
@@ -11,6 +12,34 @@ public class SCR_PersistentData : MonoBehaviour {
         if (Instance == null) { Instance = this; DontDestroyOnLoad(gameObject); }
         else Destroy(gameObject);
     }
+
+    public void ResetSession()
+    {
+        // Despareia devices corretamente
+        foreach (var p in players)
+        {
+            if (p.device != null)
+            {
+                var user = InputUser.FindUserPairedToDevice(p.device);
+                if (user.HasValue && user.Value.valid)
+                {
+                    user.Value.UnpairDevices();
+                }
+
+            }
+        }
+
+        players.Clear();
+
+        isSequenceRace = false;
+    }
+
+    public void FullReset()
+    {
+        ResetSession();
+        Destroy(gameObject);
+    }
+
 }
 
 [System.Serializable]

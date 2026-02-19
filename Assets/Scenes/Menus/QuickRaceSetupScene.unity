@@ -119,6 +119,52 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &171345682
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 171345684}
+  - component: {fileID: 171345683}
+  m_Layer: 0
+  m_Name: CircuitSelectionMenu
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &171345683
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 171345682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a2083cc5f70bd546a6331ee836a27fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allFreeCircuits:
+  - {fileID: 11400000, guid: 69072b6cd9f50d84fbf5015f1dd04108, type: 2}
+--- !u!4 &171345684
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 171345682}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 96.7846, y: 89.63333, z: -89.51727}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &310542376
 GameObject:
   m_ObjectHideFlags: 0
@@ -397,7 +443,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 945433620}
+      - m_Target: {fileID: 171345683}
         m_TargetAssemblyTypeName: CircuitSelection, Assembly-CSharp
         m_MethodName: RandomPlay
         m_Mode: 1
@@ -651,7 +697,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 945433620}
+      - m_Target: {fileID: 171345683}
         m_TargetAssemblyTypeName: CircuitSelection, Assembly-CSharp
         m_MethodName: PlayCircuit
         m_Mode: 5
@@ -1172,3 +1218,4 @@ SceneRoots:
   - {fileID: 310542380}
   - {fileID: 1673076244}
   - {fileID: 955635892}
+  - {fileID: 171345684}

@@ -18,7 +18,20 @@ public class RaceManager : MonoBehaviour
 
     private Dictionary<RacerStatus, bool> hasStartedFirstLap = new Dictionary<RacerStatus, bool>(); //dicionario para primeira volta
 
-    void Awake() => Instance = this;
+    [SerializeField] private int totalLaps = 3;
+
+    private bool raceFinished = false;
+    private List<RacerStatus> finalRanking = new List<RacerStatus>();
+
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    void Start()
+    {
+        if(QuickPlayManagement.Instance != null) totalLaps = QuickPlayManagement.Instance.competition.circuits[0].lapCount;
+    }
 
     void OnEnable()
     {
@@ -115,5 +128,81 @@ public class RaceManager : MonoBehaviour
         }
 
         for (int i = 0; i < sortedList.Count; i++) sortedList[i].SetGridPosition(i + 1);
+
+        CheckRaceEndCondition();
     }
+
+    void CheckRaceEndCondition()
+    {
+        if (raceFinished) return;
+
+        var humanRacers = allRacers.Where(r => r.isPlayer).ToList();
+
+        if (humanRacers.Count == 0) return;
+
+        bool allHumansFinished = humanRacers.All(r => r.lapsCompleted >= totalLaps);
+
+        if (allHumansFinished)
+        {
+            FinishRace();
+        }
+    }
+
+    void FinishRace()
+    {
+        raceFinished = true;
+
+        CancelInvoke(nameof(UpdateRacePositions));
+
+        var ordered = allRacers
+            .OrderBy(r => r.gridPosition)
+            .ToList();
+
+        List<RaceResultData> results = new List<RaceResultData>();
+
+        for (int i = 0; i < ordered.Count; i++)
+        {
+            var racerStatus = ordered[i];
+
+            var identity = racerStatus.GetComponent<SCR_CarIdentity>();
+
+            string racerName = identity != null && identity.racerData != null
+                ? identity.racerData.racerName
+                : racerStatus.name;
+
+            results.Add(new RaceResultData
+            {
+                racerName = racerName,
+                position = i + 1,
+                points = GetPoints(i + 1),
+                isPlayer = racerStatus.isPlayer
+            });
+        }
+
+        RankingManager.Instance?.OpenRanking(results);
+    }
+
+    int GetPoints(int position)
+    {
+        return position switch
+        {
+            1 => 10,
+            2 => 6,
+            3 => 5,
+            4 => 4,
+            5 => 3,
+            6 => 2,
+            7 => 1,
+            _ => 0
+        };
+    }
+
+}
+
+public class RaceResultData
+{
+    public string racerName;
+    public int position;
+    public int points;
+    public bool isPlayer;
 }

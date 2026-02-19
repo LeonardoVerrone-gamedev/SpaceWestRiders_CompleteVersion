@@ -11,7 +11,7 @@ public class RacerStatus : MonoBehaviour
     public int lapsCompleted = 0;
     public float distanceToNextWaypoint;
 
-    [SerializeField] int gridPosition;
+    [SerializeField] public int gridPosition{ get; private set; }
 
     public float TrackProgress { get; private set; }
 
