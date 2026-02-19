@@ -119,18 +119,6 @@ public class MiniTournamentManager : MonoBehaviour
         RecalculateEliminations();
     }
 
-    private void RevertRacePoints(int raceIndex)
-    {
-        var oldRace = CurrentState.raceResults[raceIndex];
-
-        foreach (var kvp in oldRace)
-        {
-            CurrentState.teamPoints[kvp.Key] -= kvp.Value;
-        }
-
-        CurrentState.raceResults.Remove(raceIndex);
-    }
-
     #endregion
 
     #region ELIMINATION
@@ -154,23 +142,42 @@ public class MiniTournamentManager : MonoBehaviour
         TeamSO lowestTeam = null;
         int lowestPoints = int.MaxValue;
 
-        foreach (var kvp in CurrentState.teamPoints)
-        {
-            if (CurrentState.eliminatedTeams.Contains(kvp.Key))
-                continue;
+        // Só considera times NÃO eliminados ATÉ AGORA
+        var teamsAlive = CurrentState.teamPoints.Keys
+            .Where(t => !CurrentState.eliminationHistory.IsTeamEliminatedByRace(CurrentState.currentRaceIndex, t))
+            .ToList();
 
-            if (kvp.Value < lowestPoints)
+        foreach (var team in teamsAlive)
+        {
+            if (CurrentState.teamPoints[team] < lowestPoints)
             {
-                lowestPoints = kvp.Value;
-                lowestTeam = kvp.Key;
+                lowestPoints = CurrentState.teamPoints[team];
+                lowestTeam = team;
             }
         }
 
         if (lowestTeam != null)
         {
-            CurrentState.eliminatedTeams.Add(lowestTeam);
+            // Registra a eliminação na corrida ATUAL
+            CurrentState.eliminationHistory.RegisterElimination(CurrentState.currentRaceIndex, lowestTeam);
+            Debug.Log($"Equipe {lowestTeam.teamName} eliminada na corrida {CurrentState.currentRaceIndex + 1} com {lowestPoints} pontos");
         }
     }
+
+    private void RevertRacePoints(int raceIndex)
+    {
+        var oldRace = CurrentState.raceResults[raceIndex];
+
+        foreach (var kvp in oldRace)
+        {
+            CurrentState.teamPoints[kvp.Key] -= kvp.Value;
+        }
+
+        CurrentState.raceResults.Remove(raceIndex);
+        
+        // CRUCIAL: Remove eliminações que ocorreram após esta corrida
+        CurrentState.eliminationHistory.ClearEliminationsAfter(raceIndex - 1);
+}
 
     public List<TeamSO> GetRemainingTeams()
     {

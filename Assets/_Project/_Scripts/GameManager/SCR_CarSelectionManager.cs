@@ -122,7 +122,11 @@ public class SCR_TrackSelectionManager : MonoBehaviour
     {
         if (MiniTournamentManager.Instance?.CurrentState == null) return;
 
-        var eliminatedTeams = MiniTournamentManager.Instance.CurrentState.eliminatedTeams;
+        int currentRaceIndex = MiniTournamentManager.Instance.CurrentState.currentRaceIndex;
+        
+        // Pega times eliminados ATÉ a corrida ANTERIOR
+        var teamsEliminatedBeforeCurrent = MiniTournamentManager.Instance.CurrentState.eliminationHistory
+            .GetTeamsEliminatedByRace(currentRaceIndex - 1);
         
         var allCars = UnityEngine.Object.FindObjectsByType<SCR_CarIdentity>(FindObjectsSortMode.None);
         
@@ -130,7 +134,7 @@ public class SCR_TrackSelectionManager : MonoBehaviour
         {
             if (car.racerData != null && car.racerData.team != null)
             {
-                if (eliminatedTeams.Contains(car.racerData.team))
+                if (teamsEliminatedBeforeCurrent.Contains(car.racerData.team))
                 {
                     Destroy(car.gameObject);
                 }

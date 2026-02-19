@@ -84,14 +84,18 @@ public class MiniTournamentMenu : MonoBehaviour
         var state = MiniTournamentManager.Instance?.CurrentState;
         if (state == null) return false;
 
-        // Primeira corrida sempre liberada
+        // Corridas já disputadas estão SEMPRE liberadas (pode rejogar)
+        if (state.raceResults.ContainsKey(raceIndex))
+            return true;
+
+        // Primeira corrida não disputada ainda
         if (raceIndex == 0) return true;
 
-        // Precisa ter disputado a anterior
+        // Para corridas futuras, precisa ter disputado a anterior
         bool previousPlayed = state.raceResults.ContainsKey(raceIndex - 1);
         if (!previousPlayed) return false;
 
-        // Precisa ter pelo menos um jogador vivo
+        // Para corridas futuras, precisa ter pelo menos um jogador vivo
         bool anyPlayerAlive = SCR_PersistentData.Instance.players
             .Any(p => !state.eliminatedTeams.Contains(p.selectedCarData.team));
 
