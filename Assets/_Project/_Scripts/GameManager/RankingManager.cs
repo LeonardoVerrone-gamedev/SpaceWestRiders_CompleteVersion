@@ -34,33 +34,6 @@ public class RankingManager : MonoBehaviour
         rankingOpened = false;
     }
 
-    Dictionary<RacerStatus, int> CalculatePoints(List<RacerStatus> ranking)
-    {
-        Dictionary<RacerStatus, int> results = new();
-
-        for (int i = 0; i < ranking.Count; i++)
-        {
-            int position = i + 1;
-            results.Add(ranking[i], GetPoints(position));
-        }
-
-        return results;
-    }
-
-    int GetPoints(int position)
-    {
-        return position switch
-        {
-            1 => 10,
-            2 => 6,
-            3 => 5,
-            4 => 4,
-            5 => 3,
-            6 => 2,
-            7 => 1,
-            _ => 0
-        };
-    }
 
     // ==========================
     // BOTÕES - QUICK PLAY (chamam QuickPlayManagement diretamente)
@@ -105,4 +78,27 @@ public class RankingManager : MonoBehaviour
         if (GameManagerInstance.Instance?.currentGameMode != GameMode.MiniTournament) return;
         MiniTournamentManager.Instance?.EndTournament();
     }
+
+    // ==========================
+    // BOTÕES - FULL TOURNAMENT (chamam FullTournamentManager diretamente)
+    // ==========================
+
+    public void ContinueFullTournament()
+    {
+        if (GameManagerInstance.Instance?.currentGameMode != GameMode.Tournament) return;
+        FullTournamentManager.Instance?.AdvanceToNextRace();
+    }
+
+    public void BackToFullTournamentMenu()
+    {
+        if (GameManagerInstance.Instance?.currentGameMode != GameMode.Tournament) return;
+        SceneManager.LoadScene("TournamentMainMenu");
+    }
+
+    public void SaveAndQuitFullTournament()
+    {
+        if (GameManagerInstance.Instance?.currentGameMode != GameMode.Tournament) return;
+        FullTournamentManager.Instance?.SaveAndQuit();
+    }
+
 }

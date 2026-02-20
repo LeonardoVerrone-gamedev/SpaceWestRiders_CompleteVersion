@@ -2,12 +2,15 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.IO;
 
-public class MiniTournamentManager : MonoBehaviour
+public class FullTournamentManager : MonoBehaviour
 {
-    public static MiniTournamentManager Instance;
+    public static FullTournamentManager Instance;
 
     public CompetitionRuntimeState CurrentState { get; private set; }
+
+    private string SavePath => Path.Combine(Application.persistentDataPath, "full_tournament_save.json");
 
     private void Awake()
     {
@@ -15,6 +18,7 @@ public class MiniTournamentManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            //LoadIfExists();
         }
         else
         {
@@ -37,7 +41,7 @@ public class MiniTournamentManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    #region START TOURNAMENT
+    #region START
 
     public void StartTournament(CompetitionSO competition)
     {
@@ -48,11 +52,18 @@ public class MiniTournamentManager : MonoBehaviour
         CurrentState.currentRaceIndex = 0;
 
         foreach (var team in competition.teams)
-        {
             CurrentState.teamPoints[team] = 0;
-        }
 
-        SceneManager.LoadScene("MiniTournamentMainMenu");
+        Save();
+
+        SceneManager.LoadScene("TournamentMainMenu");
+    }
+
+    public void LoadOldTournament()
+    {
+        LoadIfExists();
+        //SCR_PersistentData.Instance?.ResetSession();
+        SceneManager.LoadScene("TournamentMainMenu");
     }
 
     #endregion
@@ -63,13 +74,11 @@ public class MiniTournamentManager : MonoBehaviour
     {
         if (CurrentState == null) return;
 
-        if (!IsRaceUnlocked(raceIndex)) 
-        {
-            Debug.Log($"Corrida {raceIndex} não está liberada");
+        if (!IsRaceUnlocked(raceIndex))
             return;
-        }
 
         CurrentState.currentRaceIndex = raceIndex;
+        Save();
 
         var circuit = CurrentState.competition.circuits[raceIndex];
         SceneManager.LoadScene(circuit.sceneName);
@@ -85,22 +94,20 @@ public class MiniTournamentManager : MonoBehaviour
         if (!HasNextRace()) return;
 
         CurrentState.currentRaceIndex++;
+        Save();
         LoadRace(CurrentState.currentRaceIndex);
     }
 
     #endregion
 
-    #region PROCESS RESULTS
+    #region RESULTS
 
     public void ProcessRaceResults(List<RaceResultData> results)
     {
         int raceIndex = CurrentState.currentRaceIndex;
 
-        // Redisputa → remover pontos antigos
         if (CurrentState.raceResults.ContainsKey(raceIndex))
-        {
             RevertRacePoints(raceIndex);
-        }
 
         Dictionary<TeamSO, float> racePoints = new();
 
@@ -121,6 +128,8 @@ public class MiniTournamentManager : MonoBehaviour
         CurrentState.raceResults[raceIndex] = racePoints;
 
         RecalculateEliminations();
+
+        Save();
     }
 
     private void RevertRacePoints(int raceIndex)
@@ -128,19 +137,15 @@ public class MiniTournamentManager : MonoBehaviour
         var oldRace = CurrentState.raceResults[raceIndex];
 
         foreach (var kvp in oldRace)
-        {
             CurrentState.teamPoints[kvp.Key] -= kvp.Value;
-        }
 
         CurrentState.raceResults.Remove(raceIndex);
-        
-        // Remove eliminações que ocorreram após esta corrida
         CurrentState.eliminationHistory.ClearEliminationsAfter(raceIndex - 1);
     }
 
     #endregion
 
-    #region ELIMINATION
+    #region ELIMINATION (MESMA LÓGICA)
 
     private void RecalculateEliminations()
     {
@@ -190,11 +195,11 @@ public class MiniTournamentManager : MonoBehaviour
     private void EliminateLowest()
     {
         TeamSO lowestTeam = null;
-        float lowestPoints = int.MaxValue;
+        float lowestPoints = float.MaxValue;
 
-        // Times que ainda NÃO foram eliminados até a corrida ATUAL
         var teamsAlive = CurrentState.teamPoints.Keys
-            .Where(t => !CurrentState.eliminationHistory.IsTeamEliminatedByRace(CurrentState.currentRaceIndex, t))
+            .Where(t => !CurrentState.eliminationHistory
+            .IsTeamEliminatedByRace(CurrentState.currentRaceIndex, t))
             .ToList();
 
         foreach (var team in teamsAlive)
@@ -207,46 +212,132 @@ public class MiniTournamentManager : MonoBehaviour
         }
 
         if (lowestTeam != null)
-        {
-            CurrentState.eliminationHistory.RegisterElimination(CurrentState.currentRaceIndex, lowestTeam);
-            Debug.Log($"Equipe {lowestTeam.teamName} eliminada na corrida {CurrentState.currentRaceIndex + 1} com {lowestPoints} pontos");
-        }
-    }
-
-    public List<TeamSO> GetRemainingTeams()
-    {
-        return CurrentState.teamPoints.Keys
-            .Where(t => !CurrentState.eliminationHistory.IsTeamEliminatedByRace(CurrentState.currentRaceIndex, t))
-            .ToList();
-    }
-
-    public bool IsFinalRace()
-    {
-        return CurrentState.raceResults.Count >= 3;
+            CurrentState.eliminationHistory
+                .RegisterElimination(CurrentState.currentRaceIndex, lowestTeam);
     }
 
     #endregion
 
-    #region UNLOCK LOGIC (CORRIGIDA)
+    #region UNLOCK
 
     public bool IsRaceUnlocked(int raceIndex)
     {
-        // Corridas já disputadas estão SEMPRE liberadas
         if (CurrentState.raceResults.ContainsKey(raceIndex))
             return true;
 
-        // Primeira corrida não disputada ainda
         if (raceIndex == 0) return true;
 
-        // Precisa ter disputado a anterior
         if (!CurrentState.raceResults.ContainsKey(raceIndex - 1))
             return false;
 
-        // Para corridas futuras, precisa ter pelo menos um jogador vivo
-        bool anyPlayerAlive = SCR_PersistentData.Instance.players
-            .Any(p => !CurrentState.eliminationHistory.IsTeamEliminatedByRace(raceIndex - 1, p.selectedCarData.team));
+        bool anyAlive = SCR_PersistentData.Instance.players
+            .Any(p => !CurrentState.eliminationHistory
+            .IsTeamEliminatedByRace(raceIndex - 1, p.selectedCarData.team));
 
-        return anyPlayerAlive;
+        return anyAlive;
+    }
+
+    #endregion
+
+    #region SAVE SYSTEM
+
+    private void Save()
+    {
+        if (CurrentState == null) return;
+
+        SaveSessionData();
+
+        CurrentState.SyncListsFromDictionaries();
+
+        string json = JsonUtility.ToJson(CurrentState, true);
+        File.WriteAllText(SavePath, json);
+    }
+
+    private void SaveSessionData()
+    {
+        CurrentState.savedPlayers.Clear();
+
+        if (SCR_PersistentData.Instance == null)
+            return;
+
+        foreach (var p in SCR_PersistentData.Instance.players)
+        {
+            CurrentState.savedPlayers.Add(new PlayerSessionSaveData
+            {
+                playerIndex = p.playerIndex,
+                selectedCarGridIndex = p.selectedCarGridIndex,
+                selectedCharacterID = p.selectedCharacterID,
+                hasConfirmed = p.hasConfirmed
+            });
+        }
+
+        CurrentState.savedIsSequenceRace = SCR_PersistentData.Instance.isSequenceRace;
+    }
+
+
+    public void LoadIfExists()
+    {
+        if (!CheckFile()) return;
+
+        string json = File.ReadAllText(SavePath);
+        CurrentState = JsonUtility.FromJson<CompetitionRuntimeState>(json);
+
+        if (CurrentState.eliminationHistory == null)
+            CurrentState.eliminationHistory = new EliminationHistory();
+
+        CurrentState.BuildDictionaries();
+        CurrentState.eliminationHistory.BuildRuntimeDictionaries();
+        RestoreSessionData();
+    }
+
+    private void RestoreSessionData()
+    {
+        if (SCR_PersistentData.Instance == null)
+            return;
+
+        SCR_PersistentData.Instance.players.Clear();
+
+        foreach (var saved in CurrentState.savedPlayers)
+        {
+            var session = new PlayerSessionData
+            {
+                playerIndex = saved.playerIndex,
+                selectedCarGridIndex = saved.selectedCarGridIndex,
+                selectedCharacterID = saved.selectedCharacterID,
+                hasConfirmed = saved.hasConfirmed
+            };
+
+            // Reconstruir selectedCarData via ID
+            session.selectedCarData = FindRacerProfileByID(saved.selectedCharacterID);
+
+            SCR_PersistentData.Instance.players.Add(session);
+        }
+
+        SCR_PersistentData.Instance.isSequenceRace = CurrentState.savedIsSequenceRace;
+    }
+
+    private RacerProfileSO FindRacerProfileByID(string id)
+    {
+        foreach (var team in CurrentState.competition.teams)
+            foreach (var racer in team.racers)
+                if (racer.racerName == id)
+                    return racer;
+
+        return null;
+    }
+
+
+    public bool CheckFile()
+    {
+        if (File.Exists(SavePath)) return true;
+
+        return false;
+    }
+
+    public void DeleteSave()
+    {
+        if (File.Exists(SavePath))
+            File.Delete(SavePath);
     }
 
     #endregion
@@ -256,28 +347,23 @@ public class MiniTournamentManager : MonoBehaviour
     private RacerProfileSO FindRacerProfileByName(string racerName)
     {
         foreach (var team in CurrentState.competition.teams)
-        {
             foreach (var racer in team.racers)
-            {
                 if (racer.racerName == racerName)
                     return racer;
-            }
-        }
+
         return null;
     }
 
-    public bool IsTeamEliminated(TeamSO team)
-    {
-        return CurrentState.eliminationHistory.IsTeamEliminatedByRace(CurrentState.currentRaceIndex - 1, team);
-    }
-
-    #endregion
-
-    #region END TOURNAMENT
-
     public void EndTournament()
     {
+        DeleteSave();
         CurrentState = null;
+        SceneManager.LoadScene("TitleScreen");
+    }
+
+    public void SaveAndQuit()
+    {
+        Save();
         SceneManager.LoadScene("TitleScreen");
     }
 

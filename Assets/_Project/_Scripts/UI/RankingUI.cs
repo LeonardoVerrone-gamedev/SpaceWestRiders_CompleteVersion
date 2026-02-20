@@ -21,6 +21,12 @@ public class RankingUI : MonoBehaviour
     [SerializeField] private Button backToTitleButton;              // Torneio: desistir, voltar a title screen
     [SerializeField] private Button continueToNextRaceButton;       // Torneio: avançar para proxima corrida
 
+    [Header("FULL TOURNAMENT BUTTONS")]
+    [SerializeField] private Button backToFullTournamentMenuButton;
+    [SerializeField] private Button backToTitleFullButton;
+    [SerializeField] private Button continueFullTournamentButton;
+
+
     [Header("Button Labels")]
     [SerializeField] private TextMeshProUGUI continueToNextRaceLabel;
 
@@ -41,6 +47,7 @@ public class RankingUI : MonoBehaviour
     {
         bool isQuickRace = (GameManagerInstance.Instance?.currentGameMode == GameMode.QuickPlay);
         bool isTournament = (GameManagerInstance.Instance?.currentGameMode == GameMode.MiniTournament);
+        bool isFull = (GameManagerInstance.Instance?.currentGameMode == GameMode.Tournament);
 
         // Quick Play: mostra tryAgain, continue, tryAnotherCircuit
         if (tryAgainButton != null)
@@ -61,6 +68,16 @@ public class RankingUI : MonoBehaviour
 
         if (continueToNextRaceButton != null)
             continueToNextRaceButton.gameObject.SetActive(isTournament);
+
+                // FULL
+        if (backToFullTournamentMenuButton != null)
+            backToFullTournamentMenuButton.gameObject.SetActive(isFull);
+
+        if (backToTitleFullButton != null)
+            backToTitleFullButton.gameObject.SetActive(isFull);
+
+        if (continueFullTournamentButton != null)
+            continueFullTournamentButton.gameObject.SetActive(isFull);
     }
 
     public void Open(List<RaceResultData> results)
@@ -68,11 +85,17 @@ public class RankingUI : MonoBehaviour
         currentResults = results;
         rootPanel.SetActive(true);
 
-        // Se for torneio, processa os resultados antes de mostrar
-        if (GameManagerInstance.Instance?.currentGameMode == GameMode.MiniTournament)
+        var mode = GameManagerInstance.Instance?.currentGameMode;
+
+        if (mode == GameMode.MiniTournament)
         {
             MiniTournamentManager.Instance?.ProcessRaceResults(results);
-            UpdateContinueButtonState();
+            UpdateContinueButtonStateMini();
+        }
+        else if (mode == GameMode.Tournament)
+        {
+            FullTournamentManager.Instance?.ProcessRaceResults(results);
+            UpdateContinueButtonStateFull();
         }
 
         StringBuilder sb = new StringBuilder();
@@ -87,7 +110,7 @@ public class RankingUI : MonoBehaviour
         rankText.text = sb.ToString();
     }
 
-    private void UpdateContinueButtonState()
+    private void UpdateContinueButtonStateMini()
     {
         if (continueToNextRaceButton == null) return;
 
@@ -102,6 +125,23 @@ public class RankingUI : MonoBehaviour
 
         continueToNextRaceButton.interactable = hasNext && nextUnlocked;
     }
+
+    private void UpdateContinueButtonStateFull()
+    {
+        if (continueFullTournamentButton == null) return;
+
+        bool hasNext = FullTournamentManager.Instance?.HasNextRace() ?? false;
+        bool nextUnlocked = false;
+
+        if (hasNext)
+        {
+            int nextIndex = (FullTournamentManager.Instance.CurrentState?.currentRaceIndex ?? 0) + 1;
+            nextUnlocked = FullTournamentManager.Instance.IsRaceUnlocked(nextIndex);
+        }
+
+        continueFullTournamentButton.interactable = hasNext && nextUnlocked;
+    }
+
 
     // ========== BOTÕES QUICK PLAY ==========
 
@@ -136,4 +176,24 @@ public class RankingUI : MonoBehaviour
     {
         RankingManager.Instance.GiveUp();
     }
+
+    // ========== BOTÕES FULL TOURNAMENT ==========
+
+    // ========== BOTÕES FULL TOURNAMENT ==========
+
+    public void OnContinueFullTournament()
+    {
+        RankingManager.Instance.ContinueFullTournament();
+    }
+
+    public void OnBackToFullTournamentMenu()
+    {
+        RankingManager.Instance.BackToFullTournamentMenu();
+    }
+
+    public void OnBackToTitleFull()
+    {
+        RankingManager.Instance.SaveAndQuitFullTournament();
+}
+
 }

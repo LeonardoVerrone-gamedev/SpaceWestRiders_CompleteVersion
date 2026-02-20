@@ -720,6 +720,7 @@ MonoBehaviour:
   gameModeOptions:
   - {fileID: 229944179}
   - {fileID: 51473951}
+  - {fileID: 1155756415}
 --- !u!4 &1113131423
 Transform:
   m_ObjectHideFlags: 0
@@ -820,7 +821,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1113131422}
         m_TargetAssemblyTypeName: TitleScreenMenu, Assembly-CSharp
-        m_MethodName: StartMiniTournament
+        m_MethodName: StartTournament
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

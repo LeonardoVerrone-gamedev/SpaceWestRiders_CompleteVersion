@@ -58,3 +58,12 @@ public class PlayerSessionData
         selectedCarGridIndex = 0;
     }
 }
+
+[System.Serializable]
+public class PlayerSessionSaveData
+{
+    public int playerIndex;
+    public int selectedCarGridIndex;
+    public string selectedCharacterID;
+    public bool hasConfirmed;
+}

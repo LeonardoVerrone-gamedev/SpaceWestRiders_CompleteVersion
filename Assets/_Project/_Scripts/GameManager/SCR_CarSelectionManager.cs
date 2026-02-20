@@ -63,11 +63,11 @@ public class SCR_TrackSelectionManager : MonoBehaviour
                     }
                     break;
                 case GameMode.Tournament:
-                if (TournamentFullManager.Instance != null && 
-                    TournamentFullManager.Instance.CurrentState != null)
-                {
-                    EliminateCarsFromTournamentFull();
-                }
+                    if (FullTournamentManager.Instance != null && 
+                        FullTournamentManager.Instance.CurrentState != null)
+                    {
+                        EliminateCarsFromTournamentFull();
+                    }
                 break;
             }
         }
@@ -144,9 +144,13 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
     private void EliminateCarsFromTournamentFull()
     {
-        if (TournamentFullManager.Instance?.CurrentState == null) return;
+        if (FullTournamentManager.Instance?.CurrentState == null) return;
 
-        var eliminatedTeams = TournamentFullManager.Instance.CurrentState.eliminatedTeams;
+        int currentRaceIndex = FullTournamentManager.Instance.CurrentState.currentRaceIndex;
+        
+        // Pega times eliminados ATÉ a corrida ANTERIOR
+        var teamsEliminatedBeforeCurrent = FullTournamentManager.Instance.CurrentState.eliminationHistory
+            .GetTeamsEliminatedByRace(currentRaceIndex - 1);
         
         var allCars = UnityEngine.Object.FindObjectsByType<SCR_CarIdentity>(FindObjectsSortMode.None);
         
@@ -154,7 +158,7 @@ public class SCR_TrackSelectionManager : MonoBehaviour
         {
             if (car.racerData != null && car.racerData.team != null)
             {
-                if (eliminatedTeams.Contains(car.racerData.team))
+                if (teamsEliminatedBeforeCurrent.Contains(car.racerData.team))
                 {
                     Destroy(car.gameObject);
                 }

@@ -15,8 +15,18 @@ public class CompetitionSelector : MonoBehaviour
             break;
 
             case GameMode.Tournament:
-            TournamentFullManager.Instance.StartTournament(competitions[i]);
+            FullTournamentManager.Instance.StartTournament(competitions[i]);
             break;
+        }
+    }
+
+    public void LoadLastSave()
+    {
+        GameMode currentGameMode = GameManagerInstance.Instance.currentGameMode;
+        switch (currentGameMode){
+            case GameMode.Tournament:
+                FullTournamentManager.Instance.LoadOldTournament();
+                break;
         }
     }
 }
