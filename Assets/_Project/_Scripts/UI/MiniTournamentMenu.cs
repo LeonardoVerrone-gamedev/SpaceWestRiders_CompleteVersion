@@ -84,20 +84,20 @@ public class MiniTournamentMenu : MonoBehaviour
         var state = MiniTournamentManager.Instance?.CurrentState;
         if (state == null) return false;
 
-        // Corridas já disputadas estão SEMPRE liberadas (pode rejogar)
+        // Corridas já disputadas estão SEMPRE liberadas
         if (state.raceResults.ContainsKey(raceIndex))
             return true;
 
         // Primeira corrida não disputada ainda
         if (raceIndex == 0) return true;
 
-        // Para corridas futuras, precisa ter disputado a anterior
-        bool previousPlayed = state.raceResults.ContainsKey(raceIndex - 1);
-        if (!previousPlayed) return false;
+        // Precisa ter disputado a anterior
+        if (!state.raceResults.ContainsKey(raceIndex - 1))
+            return false;
 
         // Para corridas futuras, precisa ter pelo menos um jogador vivo
         bool anyPlayerAlive = SCR_PersistentData.Instance.players
-            .Any(p => !state.eliminatedTeams.Contains(p.selectedCarData.team));
+            .Any(p => !state.eliminationHistory.IsTeamEliminatedByRace(raceIndex - 1, p.selectedCarData.team));
 
         return anyPlayerAlive;
     }
@@ -107,14 +107,29 @@ public class MiniTournamentMenu : MonoBehaviour
         if (eliminatedTeamsText == null) return;
 
         var state = MiniTournamentManager.Instance?.CurrentState;
-        if (state == null || state.eliminatedTeams.Count == 0)
+        if (state == null) return;
+
+        // Em vez de usar state.currentRaceIndex - 1, vamos pegar TODAS as eliminações
+        // que aconteceram até a corrida ATUAL (considerando que podemos ter voltado)
+        var allEliminations = new List<TeamSO>();
+        
+        // Pega todas as eliminações registradas no histórico, independente da corrida atual
+        foreach (var raceEliminations in state.eliminationHistory.eliminationsByRace.Values)
+        {
+            allEliminations.AddRange(raceEliminations);
+        }
+
+        // Remove duplicatas (segurança)
+        allEliminations = allEliminations.Distinct().ToList();
+        
+        if (allEliminations.Count == 0)
         {
             eliminatedTeamsText.text = "Eliminated Teams: None";
             return;
         }
 
         string eliminated = "Eliminated Teams:\n";
-        foreach (var team in state.eliminatedTeams)
+        foreach (var team in allEliminations)
         {
             eliminated += $"• {team.teamName}\n";
         }

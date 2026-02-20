@@ -175,7 +175,7 @@ public class RaceManager : MonoBehaviour
             {
                 racerName = racerName,
                 position = i + 1,
-                points = GetPoints(i + 1),
+                points = GetPoints(i + 1, ordered[i].gridPosition),
                 isPlayer = racerStatus.isPlayer
             });
         }
@@ -183,19 +183,28 @@ public class RaceManager : MonoBehaviour
         RankingManager.Instance?.OpenRanking(results);
     }
 
-    int GetPoints(int position)
+    float GetPoints(int position, int raceIndex)
     {
-        return position switch
+        float basePoints = position switch
         {
-            1 => 10,
-            2 => 6,
-            3 => 5,
-            4 => 4,
-            5 => 3,
-            6 => 2,
-            7 => 1,
-            _ => 0
+            1 => 25.0f,
+            2 => 18.0f,
+            3 => 15.0f,
+            4 => 12.0f,
+            5 => 10.0f,
+            6 => 8.0f,
+            7 => 6.0f,
+            8 => 4.0f,
+            _ => 0.0f
         };
+        
+        // TIEBREAKER 1: posição na corrida (0.001 a 0.008)
+        float posTieBreaker = position / 1000.0f;
+        
+        // TIEBREAKER 2: índice da corrida (0.0001 a 0.0020)
+        float raceTieBreaker = (raceIndex + 1) / 10000.0f;
+        
+        return basePoints - posTieBreaker - raceTieBreaker;
     }
 
 }
@@ -204,6 +213,6 @@ public class RaceResultData
 {
     public string racerName;
     public int position;
-    public int points;
+    public float points;
     public bool isPlayer;
 }

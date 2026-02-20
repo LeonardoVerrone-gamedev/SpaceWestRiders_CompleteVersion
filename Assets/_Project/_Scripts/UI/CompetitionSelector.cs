@@ -13,7 +13,10 @@ public class CompetitionSelector : MonoBehaviour
             case GameMode.MiniTournament:
             MiniTournamentManager.Instance.StartTournament(competitions[i]);
             break;
-        }
 
+            case GameMode.Tournament:
+            TournamentFullManager.Instance.StartTournament(competitions[i]);
+            break;
+        }
     }
 }

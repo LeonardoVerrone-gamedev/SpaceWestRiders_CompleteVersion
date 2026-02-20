@@ -3,6 +3,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Text;
+using System;
 
 public class RankingUI : MonoBehaviour
 {
@@ -80,7 +81,7 @@ public class RankingUI : MonoBehaviour
         foreach (var r in results)
         {
             string playerTag = r.isPlayer ? " <color=yellow>(PLAYER)</color>" : "";
-            sb.AppendLine($"{r.position}º  -  {r.racerName}{playerTag}  -  {r.points} pts");
+            sb.AppendLine($"{r.position}º  -  {r.racerName}{playerTag}  -  {Math.Round(r.points)} pts");
         }
 
         rankText.text = sb.ToString();

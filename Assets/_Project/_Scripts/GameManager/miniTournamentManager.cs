@@ -28,7 +28,7 @@ public class MiniTournamentManager : MonoBehaviour
     {
         if (scene.name == "TitleScreen")
         {
-            Destroy(this);
+            Destroy(gameObject);
         }
     }
 
@@ -63,7 +63,11 @@ public class MiniTournamentManager : MonoBehaviour
     {
         if (CurrentState == null) return;
 
-        if (!IsRaceUnlocked(raceIndex)) return;
+        if (!IsRaceUnlocked(raceIndex)) 
+        {
+            Debug.Log($"Corrida {raceIndex} não está liberada");
+            return;
+        }
 
         CurrentState.currentRaceIndex = raceIndex;
 
@@ -98,7 +102,7 @@ public class MiniTournamentManager : MonoBehaviour
             RevertRacePoints(raceIndex);
         }
 
-        Dictionary<TeamSO, int> racePoints = new();
+        Dictionary<TeamSO, float> racePoints = new();
 
         foreach (var r in results)
         {
@@ -119,19 +123,35 @@ public class MiniTournamentManager : MonoBehaviour
         RecalculateEliminations();
     }
 
+    private void RevertRacePoints(int raceIndex)
+    {
+        var oldRace = CurrentState.raceResults[raceIndex];
+
+        foreach (var kvp in oldRace)
+        {
+            CurrentState.teamPoints[kvp.Key] -= kvp.Value;
+        }
+
+        CurrentState.raceResults.Remove(raceIndex);
+        
+        // Remove eliminações que ocorreram após esta corrida
+        CurrentState.eliminationHistory.ClearEliminationsAfter(raceIndex - 1);
+    }
+
     #endregion
 
     #region ELIMINATION
 
     private void RecalculateEliminations()
     {
-        CurrentState.eliminatedTeams.Clear();
-
         int racesCompleted = CurrentState.raceResults.Count;
-
-        int eliminationsToApply = Mathf.Min(racesCompleted, 3);
-
-        for (int i = 0; i < eliminationsToApply; i++)
+        int totalEliminationsSoFar = CurrentState.eliminationHistory.eliminationsByRace.Count;
+        
+        // Só elimina se:
+        // 1. Ainda não atingimos o máximo de 3 eliminações
+        // 2. O número de eliminações é menor que o número de corridas completadas
+        // (ou seja, esta corrida ainda não gerou eliminação)
+        if (totalEliminationsSoFar < 3 && totalEliminationsSoFar < racesCompleted)
         {
             EliminateLowest();
         }
@@ -140,9 +160,9 @@ public class MiniTournamentManager : MonoBehaviour
     private void EliminateLowest()
     {
         TeamSO lowestTeam = null;
-        int lowestPoints = int.MaxValue;
+        float lowestPoints = int.MaxValue;
 
-        // Só considera times NÃO eliminados ATÉ AGORA
+        // Times que ainda NÃO foram eliminados até a corrida ATUAL
         var teamsAlive = CurrentState.teamPoints.Keys
             .Where(t => !CurrentState.eliminationHistory.IsTeamEliminatedByRace(CurrentState.currentRaceIndex, t))
             .ToList();
@@ -158,32 +178,15 @@ public class MiniTournamentManager : MonoBehaviour
 
         if (lowestTeam != null)
         {
-            // Registra a eliminação na corrida ATUAL
             CurrentState.eliminationHistory.RegisterElimination(CurrentState.currentRaceIndex, lowestTeam);
             Debug.Log($"Equipe {lowestTeam.teamName} eliminada na corrida {CurrentState.currentRaceIndex + 1} com {lowestPoints} pontos");
         }
     }
 
-    private void RevertRacePoints(int raceIndex)
-    {
-        var oldRace = CurrentState.raceResults[raceIndex];
-
-        foreach (var kvp in oldRace)
-        {
-            CurrentState.teamPoints[kvp.Key] -= kvp.Value;
-        }
-
-        CurrentState.raceResults.Remove(raceIndex);
-        
-        // CRUCIAL: Remove eliminações que ocorreram após esta corrida
-        CurrentState.eliminationHistory.ClearEliminationsAfter(raceIndex - 1);
-}
-
     public List<TeamSO> GetRemainingTeams()
     {
-        return CurrentState.teamPoints
-            .Where(kvp => !CurrentState.eliminatedTeams.Contains(kvp.Key))
-            .Select(kvp => kvp.Key)
+        return CurrentState.teamPoints.Keys
+            .Where(t => !CurrentState.eliminationHistory.IsTeamEliminatedByRace(CurrentState.currentRaceIndex, t))
             .ToList();
     }
 
@@ -194,18 +197,26 @@ public class MiniTournamentManager : MonoBehaviour
 
     #endregion
 
-    #region UNLOCK LOGIC
+    #region UNLOCK LOGIC (CORRIGIDA)
 
     public bool IsRaceUnlocked(int raceIndex)
     {
+        // Corridas já disputadas estão SEMPRE liberadas
+        if (CurrentState.raceResults.ContainsKey(raceIndex))
+            return true;
+
+        // Primeira corrida não disputada ainda
         if (raceIndex == 0) return true;
 
-        bool previousPlayed = CurrentState.raceResults.ContainsKey(raceIndex - 1);
+        // Precisa ter disputado a anterior
+        if (!CurrentState.raceResults.ContainsKey(raceIndex - 1))
+            return false;
 
+        // Para corridas futuras, precisa ter pelo menos um jogador vivo
         bool anyPlayerAlive = SCR_PersistentData.Instance.players
-            .Any(p => !CurrentState.eliminatedTeams.Contains(p.selectedCarData.team));
+            .Any(p => !CurrentState.eliminationHistory.IsTeamEliminatedByRace(raceIndex - 1, p.selectedCarData.team));
 
-        return previousPlayed && anyPlayerAlive;
+        return anyPlayerAlive;
     }
 
     #endregion
@@ -227,7 +238,7 @@ public class MiniTournamentManager : MonoBehaviour
 
     public bool IsTeamEliminated(TeamSO team)
     {
-        return CurrentState.eliminatedTeams.Contains(team);
+        return CurrentState.eliminationHistory.IsTeamEliminatedByRace(CurrentState.currentRaceIndex - 1, team);
     }
 
     #endregion
@@ -237,7 +248,6 @@ public class MiniTournamentManager : MonoBehaviour
     public void EndTournament()
     {
         CurrentState = null;
-        //GameManagerInstance.Instance.SetGameMode(GameMode.None);
         SceneManager.LoadScene("TitleScreen");
     }
 

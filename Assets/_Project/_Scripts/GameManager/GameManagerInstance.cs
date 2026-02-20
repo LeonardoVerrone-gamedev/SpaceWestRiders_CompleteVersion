@@ -32,6 +32,11 @@ public class GameManagerInstance : MonoBehaviour
         {
             SetGameMode(GameMode.MiniTournament);
         }
+
+        if(scene.name == "TournamentCompetitionSelector")
+        {
+            SetGameMode(GameMode.Tournament);
+        }
     }
 
     void OnDisable()

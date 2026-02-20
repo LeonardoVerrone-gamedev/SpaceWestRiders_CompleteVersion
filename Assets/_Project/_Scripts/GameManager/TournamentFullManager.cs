@@ -8,9 +8,6 @@ public class TournamentFullManager : MonoBehaviour
     public static TournamentFullManager Instance;
 
     public CompetitionRuntimeState CurrentState { get; private set; }
-    
-    [Header("Tournament Settings")]
-    [SerializeField] private int[] eliminationRaces = new int[] { 7, 15, 18 }; // 8ª, 16ª e 19ª corridas (0-based)
 
     private void Awake()
     {
@@ -103,7 +100,7 @@ public class TournamentFullManager : MonoBehaviour
             RevertRacePoints(raceIndex);
         }
 
-        Dictionary<TeamSO, int> racePoints = new();
+        Dictionary<TeamSO, float> racePoints = new();
 
         foreach (var r in results)
         {
@@ -149,7 +146,7 @@ public class TournamentFullManager : MonoBehaviour
         int racesCompleted = CurrentState.raceResults.Count;
 
         // Aplica as eliminações apenas nas corridas específicas
-        foreach (int raceToEliminate in eliminationRaces)
+        foreach (int raceToEliminate in CurrentState.competition.EliminateAt)
         {
             if (racesCompleted > raceToEliminate) // Já passou da corrida de eliminação
             {
@@ -170,7 +167,7 @@ public class TournamentFullManager : MonoBehaviour
     private void EliminateLowest()
     {
         TeamSO lowestTeam = null;
-        int lowestPoints = int.MaxValue;
+        float lowestPoints = float.MaxValue;
 
         foreach (var kvp in CurrentState.teamPoints)
         {
