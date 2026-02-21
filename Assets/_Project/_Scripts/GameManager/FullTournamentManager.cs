@@ -282,20 +282,40 @@ public class FullTournamentManager : MonoBehaviour
         string json = File.ReadAllText(SavePath);
         CurrentState = JsonUtility.FromJson<CompetitionRuntimeState>(json);
 
+        //GARANTE QUE LISTAS NÃO VENHAM NULL
+        if (CurrentState.savedPlayers == null)
+            CurrentState.savedPlayers = new List<PlayerSessionSaveData>();
+
+        if (CurrentState.raceResults == null)
+            CurrentState.raceResults = new Dictionary<int, Dictionary<TeamSO, float>>();
+
+        if (CurrentState.teamPoints == null)
+            CurrentState.teamPoints = new Dictionary<TeamSO, float>();
+
         if (CurrentState.eliminationHistory == null)
             CurrentState.eliminationHistory = new EliminationHistory();
 
+        RestoreSessionData();
+
         CurrentState.BuildDictionaries();
         CurrentState.eliminationHistory.BuildRuntimeDictionaries();
-        RestoreSessionData();
     }
 
     private void RestoreSessionData()
     {
-        if (SCR_PersistentData.Instance == null)
-            return;
+        if (CurrentState == null) return;
 
-        SCR_PersistentData.Instance.players.Clear();
+        if (SCR_PersistentData.Instance == null)
+            Instantiate(new GameObject("PersistentData")
+                .AddComponent<SCR_PersistentData>());
+
+        if (SCR_PersistentData.Instance.players == null)
+            SCR_PersistentData.Instance.players = new List<PlayerSessionData>();
+        else
+            SCR_PersistentData.Instance.players.Clear();
+
+        if (CurrentState.savedPlayers == null)
+            return;
 
         foreach (var saved in CurrentState.savedPlayers)
         {
@@ -307,13 +327,14 @@ public class FullTournamentManager : MonoBehaviour
                 hasConfirmed = saved.hasConfirmed
             };
 
-            // Reconstruir selectedCarData via ID
-            session.selectedCarData = FindRacerProfileByID(saved.selectedCharacterID);
+            session.selectedCarData =
+                FindRacerProfileByID(saved.selectedCharacterID);
 
             SCR_PersistentData.Instance.players.Add(session);
         }
 
-        SCR_PersistentData.Instance.isSequenceRace = CurrentState.savedIsSequenceRace;
+        SCR_PersistentData.Instance.isSequenceRace =
+            CurrentState.savedIsSequenceRace;
     }
 
     private RacerProfileSO FindRacerProfileByID(string id)
