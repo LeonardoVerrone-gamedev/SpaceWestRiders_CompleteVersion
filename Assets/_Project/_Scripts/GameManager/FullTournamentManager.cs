@@ -324,7 +324,7 @@ public class FullTournamentManager : MonoBehaviour
                 playerIndex = saved.playerIndex,
                 selectedCarGridIndex = saved.selectedCarGridIndex,
                 selectedCharacterID = saved.selectedCharacterID,
-                hasConfirmed = saved.hasConfirmed
+                hasConfirmed = false
             };
 
             session.selectedCarData =

@@ -83,6 +83,14 @@ public class SCR_TrackSelectionManager : MonoBehaviour
         {
             int savedPlayers = SCR_PersistentData.Instance.players.Count;
 
+            if(savedPlayers > 0){
+                if(SCR_PersistentData.Instance.players[0].device == null || SCR_PersistentData.Instance.players[savedPlayers - 1].device == null)
+                { 
+                    PrepareSelectionNormally(); 
+                    return;
+                }
+            }
+
             if (savedPlayers >= 2)
             {
                 StartRaceImmediate();
@@ -107,14 +115,102 @@ public class SCR_TrackSelectionManager : MonoBehaviour
         if (!_inSelectionMode) return;
 
         // Registro de novos players
-        if (Keyboard.current.anyKey.wasPressedThisFrame) RegisterPlayer(Keyboard.current);
+        // Registro ou sequestro de device
+        if (Keyboard.current.anyKey.wasPressedThisFrame)
+        {
+            if (SCR_PersistentData.Instance.players.Any(p => p.device == null) && !(SCR_PersistentData.Instance.players.Any(p => p.device == Keyboard.current)))
+                AssignDeviceToLoadedPlayer(Keyboard.current);
+            else
+                RegisterPlayer(Keyboard.current);
+        }
+
         foreach (var gamepad in Gamepad.all)
         {
-            if (gamepad.allControls.Any(c => c is UnityEngine.InputSystem.Controls.ButtonControl b && b.wasPressedThisFrame))
-                RegisterPlayer(gamepad);
+            if (gamepad.allControls.Any(c =>
+                c is UnityEngine.InputSystem.Controls.ButtonControl b &&
+                b.wasPressedThisFrame))
+            {
+                if (SCR_PersistentData.Instance.players.Any(p => p.device == null) && !SCR_PersistentData.Instance.players.Any(p => p.device == gamepad))
+                    AssignDeviceToLoadedPlayer(gamepad);
+                else
+                    RegisterPlayer(gamepad);
+            }
         }
 
         HandleSelectionNavigation();
+    }
+
+    private void AssignDeviceToLoadedPlayer(InputDevice device)
+    {
+        if (SCR_PersistentData.Instance == null) return;
+
+        // Já existe alguém usando esse device?
+        if (SCR_PersistentData.Instance.players.Any(p => p.device == device))
+            return;
+
+        // Pega primeiro player sem device
+        PlayerSessionData player =
+            SCR_PersistentData.Instance.players
+            .FirstOrDefault(p => p.device == null);
+
+        if (player == null) return;
+
+        player.device = device;
+
+        BuildCarsDictionary();
+
+        carCullings = UnityEngine.Object
+            .FindObjectsByType<SCR_CarVisualCulling>(FindObjectsSortMode.None)
+            .ToList();
+
+        if (!_carsByID.ContainsKey(player.selectedCharacterID))
+        {
+            Debug.LogError($"Carro não encontrado para player {player.playerIndex}");
+            return;
+        }
+
+        SCR_CarInput car = _carsByID[player.selectedCharacterID];
+
+        // === CRIA CAMERA ===
+        GameObject camObj = Instantiate(cameraPrefab);
+        CameraController cam = camObj.GetComponent<CameraController>();
+
+        cam.SetChannel(player.playerIndex);
+        _activeCameras.Add(cam);
+
+        int totalPlayers = SCR_PersistentData.Instance.players.Count;
+
+        if (totalPlayers == 1)
+        {
+            cam.EnableSplitScreen(false, true);
+            if (camObj.TryGetComponent<AudioListener>(out var listener))
+                listener.enabled = true;
+        }
+        else if (totalPlayers == 2)
+        {
+            bool isP1 = player.playerIndex == 0;
+            cam.EnableSplitScreen(true, isP1);
+            if (camObj.TryGetComponent<AudioListener>(out var listener))
+                listener.enabled = isP1;
+        }
+
+        // === CULLING ===
+        var brain = camObj.GetComponentInChildren<Camera>()
+            .GetComponent<CinemachineBrain>();
+
+        foreach (var culling in carCullings)
+            culling.AddCamera(brain);
+
+        // === TARGET ===
+        cam.SetTarget(car.transform);
+
+        // Atualiza grid index
+        player.selectedCarGridIndex =
+            _gridCars.FindIndex(c => c.gameObject == car.gameObject);
+
+        ConfirmSelection(player);
+
+        Debug.Log($"Device {device.displayName} atribuído ao player {player.playerIndex}");
     }
 
     // Elimina carros de times eliminados
