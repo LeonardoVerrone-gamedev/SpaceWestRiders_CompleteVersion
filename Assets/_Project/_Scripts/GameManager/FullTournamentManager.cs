@@ -239,6 +239,18 @@ public class FullTournamentManager : MonoBehaviour
 
     #endregion
 
+    #region Kick P2
+
+    public void KickP2()
+    {
+        if (SCR_PersistentData.Instance == null || SCR_PersistentData.Instance.players.Count < 2)
+            return;
+
+        SCR_PersistentData.Instance.players.Remove(SCR_PersistentData.Instance.players[1]);
+    }
+
+    #endregion
+
     #region SAVE SYSTEM
 
     private void Save()

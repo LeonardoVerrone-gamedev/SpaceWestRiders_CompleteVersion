@@ -111,4 +111,9 @@ public class FullTournamentMenu : MonoBehaviour
     {
         FullTournamentManager.Instance.SaveAndQuit();
     }
+
+    public void OnKickP2()
+    {
+        FullTournamentManager.Instance.KickP2();
+    }
 }

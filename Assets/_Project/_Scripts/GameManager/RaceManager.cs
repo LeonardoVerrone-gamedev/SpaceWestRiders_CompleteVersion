@@ -367,8 +367,8 @@ public class RaceManager : MonoBehaviour
     {
         float basePoints = position switch
         {
-            1 => 25.0f,
-            2 => 18.0f,
+            1 => 35.0f,
+            2 => 22.0f,
             3 => 15.0f,
             4 => 12.0f,
             5 => 10.0f,
