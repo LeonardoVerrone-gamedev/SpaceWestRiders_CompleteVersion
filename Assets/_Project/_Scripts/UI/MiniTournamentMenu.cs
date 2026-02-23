@@ -175,4 +175,9 @@ public class MiniTournamentMenu : MonoBehaviour
         // Desiste do torneio e volta ao title
         MiniTournamentManager.Instance?.EndTournament();
     }
+
+    public void OnKickP2()
+    {
+        MiniTournamentManager.Instance.KickP2();
+    }
 }

@@ -1510,11 +1510,19 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             float impactForce = collision.relativeVelocity.magnitude;
             float impactAngle = Vector3.Angle(transform.forward, collision.relativeVelocity.normalized);
 
-            if (impactForce > crashImpactForce){// && impactAngle > 30f) { // Valor alto para crash cinematográfico
+            Vector3 dir = Vector3.zero;
+            foreach (var contact in collision.contacts)
+            {
+                dir += contact.normal;
+            }
+            dir.Normalize();
+            dir = -dir;
+
+            if (impactForce > crashImpactForce && IsFrontalCollision(dir)){// && impactAngle > 30f) { // Valor alto para crash cinematográfico
 
                 if (collision.gameObject.CompareTag("Wall"))
                 {
-                    if(impactAngle < 60f) return;
+                    if(impactAngle < 35f) return;
                 }
 
                 if(crashing)return;
@@ -1571,6 +1579,21 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         bool isRear = includeRearCollisions && angleToRear <= maxFrontalAngle;
         
         return isFrontal || isRear;
+    }
+
+    bool IsFrontalCollision(Vector3 collisionDirection)
+    {
+         Vector3 normalizedCollisionDir = collisionDirection.normalized;
+        Vector3 carForward = transform.forward.normalized;
+        Vector3 carBackward = -carForward;
+        
+        // Calcular ângulo com a frente do carro
+        float angleToFront = Vector3.Angle(normalizedCollisionDir, carForward);
+        float angleToRear = Vector3.Angle(normalizedCollisionDir, carBackward);
+        
+        bool isFrontal = includeFrontCollisions && angleToFront <= maxFrontalAngle;
+
+        return isFrontal;
     }
 
     void ResetCrashCam()

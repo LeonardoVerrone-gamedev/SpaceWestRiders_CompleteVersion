@@ -121,7 +121,7 @@ public class SCR_CarCrashPhysics : MonoBehaviour
     {
         if (racerStatus == null || racerStatus.waypoints.Count == 0) return null;
         float speed = rb.linearVelocity.magnitude;
-        int lookAheadAmount = Mathf.Clamp(Mathf.RoundToInt(speed / 6f), 3, 8);
+        int lookAheadAmount = Mathf.Clamp(Mathf.RoundToInt(speed / 6f), 7, 15);
         int targetIndex = (racerStatus.currentWaypointIndex + lookAheadAmount) % racerStatus.waypoints.Count;
         return racerStatus.waypoints[targetIndex];
     }
