@@ -25,6 +25,8 @@ public class RaceManager : MonoBehaviour
 
     private CircuitSO currentCircuit;
 
+    bool isLastRace = false;
+
     private enum AISettingGroup
     {
         Rival,
@@ -84,11 +86,26 @@ public class RaceManager : MonoBehaviour
 
     void Start()
     {
-        if(QuickPlayManagement.Instance != null) currentCircuit = QuickPlayManagement.Instance.competition.circuits[0];
-        if(MiniTournamentManager.Instance != null) currentCircuit = MiniTournamentManager.Instance.CurrentState.competition.circuits[MiniTournamentManager.Instance.CurrentState.currentRaceIndex];
-        if(FullTournamentManager.Instance != null) currentCircuit = FullTournamentManager.Instance.CurrentState.competition.circuits[FullTournamentManager.Instance.CurrentState.currentRaceIndex];
+        if(QuickPlayManagement.Instance != null)
+        { 
+            currentCircuit = QuickPlayManagement.Instance.competition.circuits[0];
+            isLastRace = true;
+        }
+
+        if(MiniTournamentManager.Instance != null)
+        { 
+            currentCircuit = MiniTournamentManager.Instance.CurrentState.competition.circuits[MiniTournamentManager.Instance.CurrentState.currentRaceIndex];
+            isLastRace = MiniTournamentManager.Instance.CurrentState.IsFinal;
+        }
+
+        if(FullTournamentManager.Instance != null)
+        { 
+            currentCircuit = FullTournamentManager.Instance.CurrentState.competition.circuits[FullTournamentManager.Instance.CurrentState.currentRaceIndex];
+            isLastRace = FullTournamentManager.Instance.CurrentState.IsFinal;
+        }
 
         if(currentCircuit != null) totalLaps = currentCircuit.lapCount;
+        
     }
 
     void OnEnable()
@@ -178,11 +195,15 @@ public class RaceManager : MonoBehaviour
             // RIVAL CHECK
             // --------------------------------------------------
             bool isRival = currentCircuit.rivals != null &&
-                        currentCircuit.rivals.Contains(identity.racerData);
+               currentCircuit.rivals.Contains(identity.racerData);
 
             if (isRival)
             {
-                ApplyRubberProfile(ai, rivalProfile);
+                if (currentCircuit.allowRubberBanding)
+                    ApplyRubberProfile(ai, rivalProfile);
+                else
+                    ApplyRubberProfile(ai, noRubberProfile);
+
                 ai.SetHuntingGroup(true);
                 rivalCount++;
                 continue;
@@ -207,7 +228,18 @@ public class RaceManager : MonoBehaviour
 
             if (teammateTarget != null)
             {
-                SetupTeammateAI(ai, teammateTarget);
+                if (isLastRace)
+                {
+                    // Última corrida: boss
+                    ApplyRubberProfile(ai, rivalProfile);
+                    ai.SetHuntingGroup(true);
+                    rivalCount++;
+                }
+                else
+                {
+                    SetupTeammateAI(ai, teammateTarget);
+                }
+
                 continue;
             }
 
@@ -227,7 +259,7 @@ public class RaceManager : MonoBehaviour
         {
             AIRacingController ai = neutralAIs[i].GetComponent<AIRacingController>();
 
-            if (i < easyCount)
+            if (i < easyCount && currentCircuit.allowRubberBanding)
                 ApplyRubberProfile(ai, easyProfile);
             else
                 ApplyRubberProfile(ai, noRubberProfile);
@@ -264,9 +296,9 @@ public class RaceManager : MonoBehaviour
 
     void UpdateRacePositions()
     {
-        var sortedList = allRacers.OrderByDescending(r => r.lapsCompleted)
-                                .ThenByDescending(r => r.currentWaypointIndex).ToList();
-                                //.ThenBy(r => r.distanceToNextWaypoint).ToList();
+        var sortedList = allRacers
+            .OrderByDescending(r => r.TrackProgress)
+            .ToList();
 
         var humans = sortedList.Where(r => r.isPlayer).ToList();
         if (humans.Count > 0)
@@ -354,9 +386,7 @@ public class RaceManager : MonoBehaviour
         
         return basePoints - posTieBreaker - raceTieBreaker;
     }
-
 }
-
 
 public class RaceResultData
 {

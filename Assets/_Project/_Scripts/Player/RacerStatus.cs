@@ -60,7 +60,10 @@ public class RacerStatus : MonoBehaviour
 
         float segmentProgress = 1f - Mathf.Clamp01(distanceToNextWaypoint / segmentLength);
 
-        TrackProgress = currentWaypointIndex + segmentProgress;
+        TrackProgress = 
+            (lapsCompleted * waypoints.Count) +
+            currentWaypointIndex +
+            segmentProgress;
     }
 
     public void CountLap()

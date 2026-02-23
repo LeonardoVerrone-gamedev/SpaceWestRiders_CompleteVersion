@@ -1803,9 +1803,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             cachedSurfaceNormal = transform.up;
         }
     }
-
-
-
     #endregion
 }
 public enum CarType {classic, hover};

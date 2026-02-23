@@ -662,105 +662,56 @@ public class AIRacingController : MonoBehaviour
 
     private void ApplyRubberBanding()
     {
+        if (!rubberBandingValues.useRubberBanding)
+        {
+            car.rubberBandingFactor = 1f;
+            return;
+        }
+
         RacerStatus myStatus = GetComponent<RacerStatus>();
-
-        // --- PURSUIT RUBBER BANDING ---
-        if (isPursuing && pursuitTarget != null)
+        if (myStatus == null || myStatus.waypoints == null || myStatus.waypoints.Count == 0)
         {
-            RacerStatus targetStatus = pursuitTarget.GetComponent<RacerStatus>();
-
-            if (myStatus == null || targetStatus == null) return;
-
-            float totalWaypoints = waypoints.Count;
-
-            float progressDiff = targetStatus.TrackProgress - myStatus.TrackProgress;
-
-            // Normalização circular da pista
-            if (progressDiff > totalWaypoints * 0.5f)
-                progressDiff -= totalWaypoints;
-            else if (progressDiff < -totalWaypoints * 0.5f)
-                progressDiff += totalWaypoints;
-
-            float catchDistance = 2.5f;  
-            float waitDistance  = 6f;
-
-            float pursuitFactor = 1.3f;
-
-            if (progressDiff > catchDistance)
-            {
-                // Estou atrás → boost
-                float t = Mathf.InverseLerp(catchDistance, waitDistance, progressDiff);
-                t = t * t * (3f - 2f * t); // smoothstep
-                pursuitFactor = Mathf.Lerp(1f, maxCatchUpBoost, t);
-            }
-            else if (progressDiff < -catchDistance)
-            {
-                // Estou muito à frente → FREIA
-                float t = Mathf.InverseLerp(catchDistance, waitDistance, -progressDiff);
-                t = t * t * (3f - 2f * t);
-
-                pursuitFactor = Mathf.Lerp(1f, 0.6f, t); 
-            }
-
-            car.rubberBandingFactor = pursuitFactor;
-            return; // ignora RB normal
+            car.rubberBandingFactor = 1f;
+            return;
         }
 
-        // 1. Definição do Alvo
-        RacerStatus myTarget = huntsLeader ? RaceManager.Instance.HumanLeader : RaceManager.Instance.HumanTrailer;
-        if (myTarget == null || !rubberBandingValues.useRubberBanding) return;
+        RacerStatus target = huntsLeader
+            ? RaceManager.Instance.HumanLeader
+            : RaceManager.Instance.HumanTrailer;
 
-        SCR_RayBasedCarPhysics targetPhysics = myTarget.GetComponent<SCR_RayBasedCarPhysics>();
-        
-        float dist = Vector3.Distance(transform.position, myTarget.transform.position);
-        bool isAheadOfTarget = myStatus.position < myTarget.position;
-
-        // Distâncias de controle
-        float minCatchUpDist = rubberBandingValues.minCatchUpDist;
-        float maxCatchUpDist = rubberBandingValues.minCatchUpDist; // A partir daqui, a IA usa o boost máximo
-        float minWaitDist = rubberBandingValues.minCatchUpDist;
-        float maxWaitDist = rubberBandingValues.minCatchUpDist;  // A partir daqui, a IA usa o debuff máximo
-
-        // Valor padrão (IA em performance normal)
-        float factor = 1.0f;
-
-        // --- CATCH UP (IA ATRÁS) ---
-        if (!isAheadOfTarget && dist > minCatchUpDist)
+        if (target == null)
         {
-            // Interpolação linear de 0 a 1 baseada na distância
-            float t = Mathf.InverseLerp(minCatchUpDist, maxCatchUpDist, dist);
-            
-            // Curva suave para não dar trancos (S-Curve)
+            car.rubberBandingFactor = 1f;
+            return;
+        }
+
+        float progressDiff = target.TrackProgress - myStatus.TrackProgress;
+        bool isBehind = progressDiff > 0f;
+        float absDiff = Mathf.Abs(progressDiff);
+
+        int waypointCount = myStatus.waypoints.Count;
+
+        // Escala automática baseada no tamanho da pista
+        float minCatchUpDist = waypointCount * 0.02f;
+        float maxCatchUpDist = waypointCount * 0.15f;
+        float minWaitDist    = waypointCount * 0.02f;
+        float maxWaitDist    = waypointCount * 0.10f;
+
+        float factor = 1f;
+
+        if (isBehind && absDiff > minCatchUpDist)
+        {
+            float t = Mathf.InverseLerp(minCatchUpDist, maxCatchUpDist, absDiff);
             t = t * t * (3f - 2f * t);
-
-            // O fator vai de 1.0 até maxCatchUpBoost
-            float targetBoost = maxCatchUpBoost;
-
-            factor = Mathf.Lerp(1.0f, targetBoost, t);
-            //currentSkillModifier = hardSkillModifier;
+            factor = Mathf.Lerp(1f, maxCatchUpBoost, t);
         }
-        // --- WAIT (IA À FRENTE) ---
-        else if (isAheadOfTarget && dist > minWaitDist)
+        else if (!isBehind && absDiff > minWaitDist)
         {
-            float t = Mathf.InverseLerp(minWaitDist, maxWaitDist, dist);
+            float t = Mathf.InverseLerp(minWaitDist, maxWaitDist, absDiff);
             t = t * t * (3f - 2f * t);
-
-            // O fator vai de 1.0 até maxWaitSlowdown (ex: 0.75)
-            float targetWait = maxWaitSlowdown;
-
-            factor = Mathf.Lerp(1.0f, targetWait, t);
-            //currentSkillModifier = easySkillModifier;
-        }
-        else
-        {
-            // Zona de conforto (IA perto do player)
-            factor = 1.0f;
-            //currentSkillModifier = 1.0f;
+            factor = Mathf.Lerp(1f, maxWaitSlowdown, t);
         }
 
-        // --- APLICAÇÃO FINAL ---
-        
-        // 1. Atualiza a variável no script de física (afeta aceleração e freio)
         car.rubberBandingFactor = factor;
     }
     #endregion
