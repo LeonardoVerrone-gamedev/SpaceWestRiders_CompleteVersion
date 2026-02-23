@@ -85,19 +85,19 @@ public class RankingManager : MonoBehaviour
 
     public void ContinueFullTournament()
     {
-        if (GameManagerInstance.Instance?.currentGameMode != GameMode.Tournament) return;
+        if (GameManagerInstance.Instance?.currentGameMode != GameMode.Tournament && GameManagerInstance.Instance?.currentGameMode != GameMode.StoryMode) return;
         FullTournamentManager.Instance?.AdvanceToNextRace();
     }
 
     public void BackToFullTournamentMenu()
     {
-        if (GameManagerInstance.Instance?.currentGameMode != GameMode.Tournament) return;
+        if (GameManagerInstance.Instance?.currentGameMode != GameMode.Tournament && GameManagerInstance.Instance?.currentGameMode != GameMode.StoryMode) return;
         SceneManager.LoadScene("TournamentMainMenu");
     }
 
     public void SaveAndQuitFullTournament()
     {
-        if (GameManagerInstance.Instance?.currentGameMode != GameMode.Tournament) return;
+        if (GameManagerInstance.Instance?.currentGameMode != GameMode.Tournament && GameManagerInstance.Instance?.currentGameMode != GameMode.StoryMode) return;
         FullTournamentManager.Instance?.SaveAndQuit();
     }
 

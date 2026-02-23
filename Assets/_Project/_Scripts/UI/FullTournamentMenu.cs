@@ -20,7 +20,7 @@ public class FullTournamentMenu : MonoBehaviour
 
     private void Start()
     {
-        if (GameManagerInstance.Instance.currentGameMode != GameMode.Tournament)
+        if (GameManagerInstance.Instance.currentGameMode != GameMode.Tournament && GameManagerInstance.Instance.currentGameMode != GameMode.StoryMode)
         {
             gameObject.SetActive(false);
             return;

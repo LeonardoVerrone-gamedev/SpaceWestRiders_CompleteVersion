@@ -9,6 +9,7 @@ public class TitleScreenMenu : MonoBehaviour
     string quickRaceSceneName = "QuickRaceSetupScene";
     string miniTournamentSceneName = "MiniTournamentCompetitionSelector";
     string TournamentScene = "TournamentCompetitionSelector";
+    string StoryModeScene = "StoryCompetitionSelector";
 
     public void ShowGameOptions()
     {
@@ -30,5 +31,10 @@ public class TitleScreenMenu : MonoBehaviour
     public void StartTournament()
     {
         SceneManager.LoadScene(TournamentScene);
+    }
+    
+    public void StartStoryMode()
+    {
+        SceneManager.LoadScene(StoryModeScene);
     }
 }

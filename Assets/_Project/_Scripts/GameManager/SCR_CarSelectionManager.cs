@@ -69,6 +69,13 @@ public class SCR_TrackSelectionManager : MonoBehaviour
                         EliminateCarsFromTournamentFull();
                     }
                 break;
+                case GameMode.StoryMode:
+                    if (FullTournamentManager.Instance != null && 
+                        FullTournamentManager.Instance.CurrentState != null)
+                    {
+                        EliminateCarsFromTournamentFull();
+                    }
+                break;
             }
         }
     }
@@ -76,6 +83,14 @@ public class SCR_TrackSelectionManager : MonoBehaviour
     void Start()
     {
         camManager = UnityEngine.Object.FindFirstObjectByType<CameraController>();
+
+        _isStoryMode = GameManagerInstance.Instance.currentGameMode == GameMode.StoryMode;
+
+        if(_isStoryMode)
+        {
+            _storyPlayer1ID = int.Parse(StoryModeManager.Instance.storyTournaments[StoryModeManager.Instance.CurrentState.currentTournamentIndex].storyTeam.racers[0].characterID);
+            _storyPlayer2ID = int.Parse(StoryModeManager.Instance.storyTournaments[StoryModeManager.Instance.CurrentState.currentTournamentIndex].storyTeam.racers[1].characterID);
+        }
 
         if (SCR_PersistentData.Instance != null 
             && SCR_PersistentData.Instance.isSequenceRace 

@@ -121,6 +121,17 @@ public class MiniTournamentManager : MonoBehaviour
         CurrentState.raceResults[raceIndex] = racePoints;
 
         RecalculateEliminations();
+
+        if (CurrentState.IsFinal)
+        {
+            // Pega o primeiro colocado da última corrida
+            var firstPlace = results.OrderBy(r => r.position).FirstOrDefault();
+            
+            if (firstPlace != null && firstPlace.isPlayer)
+            {
+                Debug.Log("MINI TORNEIO CONCLUIDO! Vencedor: {firstPlace.racerName}");
+            }
+        }
     }
 
     private void RevertRacePoints(int raceIndex)

@@ -5,7 +5,7 @@ public class GameManagerInstance : MonoBehaviour
 {
     public static GameManagerInstance Instance;
 
-    public GameMode currentGameMode {get; private set;}
+    public GameMode currentGameMode;
 
     void Awake(){
         if(GameManagerInstance.Instance == null) 
@@ -33,9 +33,14 @@ public class GameManagerInstance : MonoBehaviour
             SetGameMode(GameMode.MiniTournament);
         }
 
-        if(scene.name == "TournamentCompetitionSelector")
+        if(scene.name == "TournamentCompetitionSelector" && currentGameMode != GameMode.StoryMode)
         {
             SetGameMode(GameMode.Tournament);
+        }
+
+        if(scene.name == "StoryCompetitionSelector")
+        {
+            SetGameMode(GameMode.StoryMode);
         }
     }
 

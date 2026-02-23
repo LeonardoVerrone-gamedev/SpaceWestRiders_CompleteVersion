@@ -10,7 +10,21 @@ public class FullTournamentManager : MonoBehaviour
 
     public CompetitionRuntimeState CurrentState { get; private set; }
 
-    private string SavePath => Path.Combine(Application.persistentDataPath, "full_tournament_save.json");
+    private string SavePath
+    {
+        get
+        {
+            if (GameManagerInstance.Instance.currentGameMode == GameMode.StoryMode)
+            {
+                int index = StoryModeManager.Instance.CurrentState.currentTournamentIndex;
+                return Path.Combine(Application.persistentDataPath,
+                    $"story_tournament_{index}.json");
+            }
+
+            return Path.Combine(Application.persistentDataPath,
+                "full_tournament_save.json");
+        }
+    }
 
     private void Awake()
     {
@@ -62,7 +76,13 @@ public class FullTournamentManager : MonoBehaviour
     public void LoadOldTournament()
     {
         LoadIfExists();
-        //SCR_PersistentData.Instance?.ResetSession();
+
+        if (CurrentState != null)
+        {
+            CurrentState.BuildDictionaries();
+            CurrentState.eliminationHistory?.BuildRuntimeDictionaries();
+        }
+
         SceneManager.LoadScene("TournamentMainMenu");
     }
 
@@ -130,6 +150,20 @@ public class FullTournamentManager : MonoBehaviour
         RecalculateEliminations();
 
         Save();
+
+        if (CurrentState.IsFinal)
+        {
+            // Pega o primeiro colocado da última corrida
+            var firstPlace = results.OrderBy(r => r.position).FirstOrDefault();
+            
+            if (firstPlace != null && firstPlace.isPlayer)
+            {
+                Debug.Log($"Torneio completado! " +
+                        $"Vencedor: {firstPlace.racerName}");
+                
+                if(GameManagerInstance.Instance.currentGameMode == GameMode.StoryMode) StoryModeManager.Instance.OnTournamentCompleted();
+            }
+        }
     }
 
     private void RevertRacePoints(int raceIndex)

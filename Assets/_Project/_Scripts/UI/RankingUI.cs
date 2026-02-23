@@ -47,7 +47,7 @@ public class RankingUI : MonoBehaviour
     {
         bool isQuickRace = (GameManagerInstance.Instance?.currentGameMode == GameMode.QuickPlay);
         bool isTournament = (GameManagerInstance.Instance?.currentGameMode == GameMode.MiniTournament);
-        bool isFull = (GameManagerInstance.Instance?.currentGameMode == GameMode.Tournament);
+        bool isFull = (GameManagerInstance.Instance?.currentGameMode == GameMode.Tournament || GameManagerInstance.Instance?.currentGameMode == GameMode.StoryMode);
 
         // Quick Play: mostra tryAgain, continue, tryAnotherCircuit
         if (tryAgainButton != null)
@@ -92,7 +92,7 @@ public class RankingUI : MonoBehaviour
             MiniTournamentManager.Instance?.ProcessRaceResults(results);
             UpdateContinueButtonStateMini();
         }
-        else if (mode == GameMode.Tournament)
+        else if (mode == GameMode.Tournament || mode == GameMode.StoryMode)
         {
             FullTournamentManager.Instance?.ProcessRaceResults(results);
             UpdateContinueButtonStateFull();
