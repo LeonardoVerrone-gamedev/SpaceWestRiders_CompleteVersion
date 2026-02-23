@@ -378,6 +378,15 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     [Tooltip("Considerar colisões frontais")]
     bool includeFrontCollisions = true;
+
+    [Header("Spin Out Settings")]
+    [SerializeField] float spinMinForce = 20f;
+    [SerializeField] float spinMaxForceForCrash = 30f;
+    [SerializeField] float spinMinSpeed = 40f;
+    [SerializeField] float spinTorqueForce = 18f;
+    [SerializeField] float spinDuration = 0.6f;
+    [SerializeField][Range(0,90)] float lateralMinAngle = 60f;
+
     #endregion
 
     // ======================================================
@@ -1503,62 +1512,54 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        if (((1 << collision.gameObject.layer) & drivable) != 0)
+            return;
+
+        float impactForce = collision.relativeVelocity.magnitude;
+        float currentSpeed = rb.linearVelocity.magnitude;
+
+        Vector3 dir = Vector3.zero;
+        foreach (var contact in collision.contacts)
+            dir += contact.normal;
+
+        dir.Normalize();
+        dir = -dir;
+
         bool isCrashableObject = ((1 << collision.gameObject.layer) & crashable) != 0;
 
-        if(isCrashableObject){
+        //  CRASH
+        if (isCrashableObject &&
+            impactForce > crashImpactForce &&
+            IsFrontalCollision(dir))
+        {
+            if (crashing) return;
 
-            float impactForce = collision.relativeVelocity.magnitude;
-            float impactAngle = Vector3.Angle(transform.forward, collision.relativeVelocity.normalized);
-
-            Vector3 dir = Vector3.zero;
-            foreach (var contact in collision.contacts)
-            {
-                dir += contact.normal;
-            }
-            dir.Normalize();
-            dir = -dir;
-
-            if (impactForce > crashImpactForce && IsFrontalCollision(dir)){// && impactAngle > 30f) { // Valor alto para crash cinematográfico
-
-                if (collision.gameObject.CompareTag("Wall"))
-                {
-                    if(impactAngle < 35f) return;
-                }
-
-                if(crashing)return;
-
-                OnCrash?.Invoke(true);
-                deformer.Deform(collision.contacts[0].point, collision.relativeVelocity);
-                carCrash.TriggerCrash();
-                Invoke("ResetCrashCam", carCrash.crashDuration);
-            }
+            OnCrash?.Invoke(true);
+            deformer.Deform(collision.contacts[0].point, collision.relativeVelocity);
+            carCrash.TriggerCrash();
+            Invoke("ResetCrashCam", carCrash.crashDuration);
+            return;
         }
 
-        if (((1 << collision.gameObject.layer) & drivable) != 0) return;
+        // SPIN OUT
+        if (impactForce > spinMinForce &&
+            impactForce < spinMaxForceForCrash &&
+            currentSpeed > spinMinSpeed &&
+            IsLateralCollision(dir))
+        {
+            TriggerSpin(dir, impactForce);
+            return;
+        }
 
-        float force = collision.impulse.magnitude / Time.fixedDeltaTime;
-        force = Mathf.Clamp(force, .1f, 1);
-        
-        // VERIFICAÇÕES PARA SHAKE
-        if (enableCollisionShake && 
-            force >= minForceToShake &&
+        // NEUTRA (SHAKE)
+        if (enableCollisionShake &&
+            impactForce >= minForceToShake &&
             Time.time >= lastCollisionShakeTime + shakeCooldown)
         {
-            Vector3 dir = Vector3.zero;
-            foreach (var contact in collision.contacts)
-            {
-                dir += contact.normal;
-            }
-            dir.Normalize();
-            dir = -dir;
-            
-            // VERIFICAR SE É COLISÃO FRONTAL OU TRASEIRA
             if (IsFrontalOrRearCollision(dir))
             {
-                // Shake reduzido e controlado
-                float finalForce = force * shakeIntensity;
+                float finalForce = Mathf.Clamp01(impactForce / 20f) * shakeIntensity;
                 OnCollision?.Invoke(finalForce, dir);
-                
                 lastCollisionShakeTime = Time.time;
             }
         }
@@ -1594,6 +1595,33 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         bool isFrontal = includeFrontCollisions && angleToFront <= maxFrontalAngle;
 
         return isFrontal;
+    }
+
+    void TriggerSpin(Vector3 collisionDirection, float force)
+    {
+        if (crashing) return;
+        if (_isDrifting) return; // não spin durante drift
+
+        float spinDirection = Mathf.Sign(Vector3.Dot(transform.right, collisionDirection));
+
+        rb.angularVelocity = Vector3.zero;
+
+        rb.AddTorque(
+            transform.up * spinDirection * spinTorqueForce * (force / spinMinForce),
+            ForceMode.VelocityChange
+        );
+
+        rb.AddForce(-transform.forward * 5f, ForceMode.VelocityChange);
+
+        OnCollision?.Invoke(0.5f, collisionDirection);
+    }
+
+    bool IsLateralCollision(Vector3 collisionDirection)
+    {
+        Vector3 forward = transform.forward.normalized;
+        float angle = Vector3.Angle(forward, collisionDirection.normalized);
+
+        return angle > lateralMinAngle && angle < (180f - lateralMinAngle);
     }
 
     void ResetCrashCam()

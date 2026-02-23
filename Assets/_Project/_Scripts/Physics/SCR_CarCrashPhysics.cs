@@ -5,16 +5,19 @@ public class SCR_CarCrashPhysics : MonoBehaviour
 {
     private Rigidbody rb;
     private SCR_RayBasedCarPhysics carPhysics;
-    SCR_MeshDeformer deformer;
+    private SCR_MeshDeformer deformer;
     private RacerStatus racerStatus;
 
     [Header("Crash Settings")]
-    [SerializeField] float verticalJumpVelocity = 10f;
-    [SerializeField] float rollAngularVelocity = 25f;
+    [SerializeField] float verticalJumpVelocity = 8f;
+    [SerializeField] float rollAngularVelocity = 20f;
     [SerializeField] public float crashDuration = 3.5f;
-    
+    [SerializeField] float extraGravity = 18f;
+
     private Vector3 originalCenterOfMass;
-    public bool isCrashing { get; private set; } = false;
+    private float originalAngularDrag;
+
+    public bool isCrashing { get; private set; }
 
     void Awake()
     {
@@ -22,7 +25,9 @@ public class SCR_CarCrashPhysics : MonoBehaviour
         carPhysics = GetComponent<SCR_RayBasedCarPhysics>();
         racerStatus = GetComponent<RacerStatus>();
         deformer = GetComponent<SCR_MeshDeformer>();
+
         originalCenterOfMass = rb.centerOfMass;
+        originalAngularDrag = rb.angularDamping;
     }
 
     public void TriggerCrash()
@@ -36,58 +41,55 @@ public class SCR_CarCrashPhysics : MonoBehaviour
         isCrashing = true;
         carPhysics.crashing = true;
 
-        rb.centerOfMass = new Vector3(0, 1.8f, 0); 
+        // Desestabiliza levemente
+        rb.centerOfMass = originalCenterOfMass + Vector3.up * 0.5f;
+        rb.angularDamping = 0.5f;
+
+        // Impulso vertical
         rb.AddForce(Vector3.up * verticalJumpVelocity, ForceMode.VelocityChange);
-        
-        Vector3 intenseSpin = new Vector3(
-            Random.Range(0.7f, 1f) * (Random.value > 0.5f ? 1 : -1),
-            Random.Range(-0.2f, 0.2f), 
-            Random.Range(0.7f, 1f) * (Random.value > 0.5f ? 1 : -1)
-        ).normalized * rollAngularVelocity;
-        
-        rb.AddTorque(intenseSpin, ForceMode.VelocityChange);
 
-        float elapsed = 0;
-        float effectiveDuration = racerStatus.isPlayer ? crashDuration : (crashDuration / 1.5f);
+        // Torque coerente com direção do carro
+        Vector3 velocityDir = rb.linearVelocity.normalized;
+        Vector3 sideAxis = Vector3.Cross(velocityDir, Vector3.up);
+        Vector3 spinTorque = sideAxis * Random.Range(0.8f, 1.2f) * rollAngularVelocity;
 
-        while (elapsed < effectiveDuration)
+        rb.AddTorque(spinTorque, ForceMode.VelocityChange);
+
+        float elapsed = 0f;
+        float duration = racerStatus.isPlayer ? crashDuration : crashDuration * 0.75f;
+
+        while (elapsed < duration)
         {
             elapsed += Time.fixedDeltaTime;
-            float progress = elapsed / effectiveDuration;
+            float progress = elapsed / duration;
 
-            if (racerStatus.isPlayer)
+            // Gravidade extra
+            rb.AddForce(Vector3.down * extraGravity, ForceMode.Acceleration);
+
+            // Perda natural de rotação
+            rb.angularDamping = Mathf.Lerp(0.5f, 4f, progress);
+
+            // Alinhamento gradual apenas para player
+            if (racerStatus.isPlayer && progress > 0.6f)
             {
-                // ATRASO: Só começamos a alinhar após 60% do tempo
-                if (progress > 0.6f)
+                Transform target = GetLookAheadWaypoint();
+                if (target != null)
                 {
-                    Transform dynamicTarget = GetLookAheadWaypoint();
-                    if (dynamicTarget != null)
-                    {
-                        if (progress > 0.85f)
-                        {
-                            rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, Time.fixedDeltaTime * 7f);
-                        }
-
-                        float alignmentStrength = Mathf.Pow(progress, 4); 
-                        AlignTowardsWaypoint(dynamicTarget, alignmentStrength);
-                    }
+                    float strength = Mathf.Pow((progress - 0.6f) / 0.4f, 2f);
+                    AlignTowardsWaypoint(target, strength);
                 }
             }
 
-            // Gravidade extra
-            rb.AddForce(Vector3.down * 18f, ForceMode.Acceleration);
             yield return new WaitForFixedUpdate();
         }
 
-        // 3. FINALIZAÇÃO
-        Transform finalTarget = GetLookAheadWaypoint();
-        FinalizeRotation(finalTarget);
-
-        deformer.RestoreMesh();
-
-        // 4. RESTAURAR ESTADO
+        // Finalização
         rb.centerOfMass = originalCenterOfMass;
+        rb.angularDamping = originalAngularDrag;
         rb.angularVelocity = Vector3.zero;
+
+        deformer?.RestoreMesh();
+
         isCrashing = false;
         carPhysics.crashing = false;
     }
@@ -97,40 +99,38 @@ public class SCR_CarCrashPhysics : MonoBehaviour
         Vector3 targetDir = (nextPoint.position - transform.position).normalized;
         Quaternion targetRot = Quaternion.LookRotation(targetDir, Vector3.up);
 
-        Quaternion deltaRot = targetRot * Quaternion.Inverse(transform.rotation);
-        deltaRot.ToAngleAxis(out float angle, out Vector3 axis);
+        Quaternion delta = targetRot * Quaternion.Inverse(transform.rotation);
+        delta.ToAngleAxis(out float angle, out Vector3 axis);
 
         if (angle > 180f) angle -= 360f;
+        if (axis == Vector3.zero || float.IsNaN(axis.x)) return;
 
-        if (axis != Vector3.zero && !float.IsNaN(axis.x))
-        {
-            rb.AddTorque(axis * (angle * strength * 1.2f), ForceMode.Acceleration);
-        }
-    }
+        Vector3 torque = axis * angle * strength;
+        torque -= rb.angularVelocity * 0.5f; // damping
 
-    private void FinalizeRotation(Transform nextPoint)
-    {
-        if (racerStatus.isPlayer && nextPoint != null)
-        {
-            Vector3 finalDir = (nextPoint.position - transform.position).normalized;
-            transform.rotation = Quaternion.LookRotation(finalDir, Vector3.up);
-        }
+        rb.AddTorque(torque, ForceMode.Acceleration);
     }
 
     private Transform GetLookAheadWaypoint()
     {
         if (racerStatus == null || racerStatus.waypoints.Count == 0) return null;
+
         float speed = rb.linearVelocity.magnitude;
-        int lookAheadAmount = Mathf.Clamp(Mathf.RoundToInt(speed / 6f), 7, 15);
-        int targetIndex = (racerStatus.currentWaypointIndex + lookAheadAmount) % racerStatus.waypoints.Count;
-        return racerStatus.waypoints[targetIndex];
+        int lookAhead = Mathf.Clamp(Mathf.RoundToInt(speed / 6f), 7, 15);
+        int index = (racerStatus.currentWaypointIndex + lookAhead) % racerStatus.waypoints.Count;
+
+        return racerStatus.waypoints[index];
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        if (isCrashing)
-        {
-            deformer.Deform(collision.contacts[0].point, collision.relativeVelocity);
-        }
+        if (!isCrashing || deformer == null) return;
+
+        ContactPoint contact = collision.contacts[0];
+
+        float impactForce = collision.relativeVelocity.magnitude;
+        Vector3 deformForce = -contact.normal * impactForce;
+
+        deformer.Deform(contact.point, deformForce);
     }
 }

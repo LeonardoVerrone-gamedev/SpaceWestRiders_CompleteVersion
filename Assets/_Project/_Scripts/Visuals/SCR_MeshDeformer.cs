@@ -11,65 +11,70 @@ public class SCR_MeshDeformer : MonoBehaviour
         [HideInInspector] public Vector3[] originalVertices;
         [HideInInspector] public Vector3[] modifiedVertices;
     }
-    SCR_CarVisualCulling culling;
+
+    private SCR_CarVisualCulling culling;
 
     [SerializeField] private List<MeshData> carParts = new List<MeshData>();
 
-    [Header("Settings")]
-    public float radius = 1.2f;       
-    public float deformation = 0.5f; 
+    [Header("Deformation Settings")]
+    public float radius = 1.2f;
+    public float deformationMultiplier = 0.02f;
+    public float maxDeformation = 0.8f;
 
     void Start()
     {
         culling = GetComponent<SCR_CarVisualCulling>();
 
-        // Inicializa todas as peças da lista
         for (int i = 0; i < carParts.Count; i++)
         {
             var part = carParts[i];
             if (part.filter == null) continue;
 
-            part.mesh = part.filter.mesh; // Instância única
+            part.mesh = part.filter.mesh;
             part.originalVertices = part.mesh.vertices;
             part.modifiedVertices = (Vector3[])part.originalVertices.Clone();
-            
-            carParts[i] = part; // Salva de volta na lista
+
+            carParts[i] = part;
         }
     }
 
-    public void Deform(Vector3 worldContactPoint, Vector3 worldContactVelocity)
+    public void Deform(Vector3 worldPoint, Vector3 worldForce)
     {
-        if(!culling.visible)return;
-        // Percorre cada peça do carro (capô, portas, etc)
+        if (culling != null && !culling.visible) return;
+
+        float impactStrength = worldForce.magnitude;
+        if (impactStrength < 0.1f) return;
+
         foreach (var part in carParts)
         {
             if (part.filter == null) continue;
 
-            Transform partTransform = part.filter.transform;
-            
-            // Converte o impacto global para o espaço local DESTA peça específica
-            Vector3 localPoint = partTransform.InverseTransformPoint(worldContactPoint);
-            Vector3 localVel = partTransform.InverseTransformDirection(worldContactVelocity);
-            Vector3 deformDir = localVel.normalized;
+            Transform t = part.filter.transform;
 
-            bool meshChanged = false;
+            Vector3 localPoint = t.InverseTransformPoint(worldPoint);
+            Vector3 localForce = t.InverseTransformDirection(worldForce).normalized;
+
+            bool changed = false;
 
             for (int i = 0; i < part.modifiedVertices.Length; i++)
             {
-                float dist = (part.modifiedVertices[i] - localPoint).sqrMagnitude;
-                
-                // Usamos sqrMagnitude por performance (evita raiz quadrada)
-                if (dist < radius * radius)
+                float sqrDist = (part.modifiedVertices[i] - localPoint).sqrMagnitude;
+                if (sqrDist > radius * radius) continue;
+
+                float distance = Mathf.Sqrt(sqrDist);
+                float falloff = Mathf.Pow((radius - distance) / radius, 2.5f);
+
+                Vector3 currentOffset = part.modifiedVertices[i] - part.originalVertices[i];
+
+                if (currentOffset.magnitude < maxDeformation)
                 {
-                    float distance = Mathf.Sqrt(dist);
-                    float falloff = (radius - distance) / radius;
-                    
-                    part.modifiedVertices[i] += deformDir * falloff * deformation;
-                    meshChanged = true;
+                    Vector3 deformAmount = localForce * impactStrength * deformationMultiplier * falloff;
+                    part.modifiedVertices[i] += deformAmount;
+                    changed = true;
                 }
             }
 
-            if (meshChanged)
+            if (changed)
             {
                 part.mesh.vertices = part.modifiedVertices;
                 part.mesh.RecalculateNormals();
@@ -83,6 +88,7 @@ public class SCR_MeshDeformer : MonoBehaviour
         foreach (var part in carParts)
         {
             if (part.mesh == null) continue;
+
             System.Array.Copy(part.originalVertices, part.modifiedVertices, part.originalVertices.Length);
             part.mesh.vertices = part.modifiedVertices;
             part.mesh.RecalculateNormals();
