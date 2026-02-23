@@ -16,7 +16,6 @@ public class AIRacingController : MonoBehaviour
     [SerializeField] private float lookAheadSpeedFactor = 1.5f; // Quanto maior, mais longe ela olha ao acelerar
 
     [Header("Rubber banding")]
-    public bool useRubberBanding = false;
     private bool huntsLeader = true;
 
     public bool forceHuntLeader;
@@ -44,9 +43,6 @@ public class AIRacingController : MonoBehaviour
     [SerializeField] private float maxTracingError = 5.0f; // Metros máximos de desvio do traçado
     private float currentTracingNoise = 0f;
     private float noiseChangeTimer = 0f;
-
-    [Header("Dificuldade")]
-    [SerializeField] private AIDifficulty currentDifficulty = AIDifficulty.Hard;
 
     [Header("Turbo e drift")]
     [SerializeField] private float driftThresholdAngle = 25f; // Ângulo mínimo para decidir driftar
@@ -94,6 +90,8 @@ public class AIRacingController : MonoBehaviour
 
     [SerializeField] PursuitEvent pursuitEvent;
 
+    [SerializeField] public RubberBandingValues rubberBandingValues;
+
 
     void OnEnable()//switch to onEnable later
     {
@@ -104,7 +102,7 @@ public class AIRacingController : MonoBehaviour
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         if (sensorPivot == null) sensorPivot = transform;
 
-        SetDifficulty(currentDifficulty);
+        SetAI();
 
         waypoints.Clear();
         SCR_WaypointHolder holder = FindFirstObjectByType<SCR_WaypointHolder>();
@@ -130,10 +128,8 @@ public class AIRacingController : MonoBehaviour
     }
 
 
-    public void SetDifficulty(AIDifficulty difficulty)
+    public void SetAI()
     {
-        currentDifficulty = difficulty;
-
         if (rayBasedPhysics != null)
         {
             //rayBasedPhysics.SetAI(true, accMult, speedMult, decelDivisor, this);
@@ -471,7 +467,7 @@ public class AIRacingController : MonoBehaviour
         // Define o alvo como o próximo após o mais próximo, 
         // para garantir que ela não tente voltar no caminho.
         currentTargetIndex = (closestIndex + 1) % waypoints.Count;
-        Debug.Log($"AI Recovery: Redirecionando para waypoint {currentTargetIndex}");
+        //Debug.Log($"AI Recovery: Redirecionando para waypoint {currentTargetIndex}");
     }
 
     float CalculateThrottle()
@@ -712,7 +708,7 @@ public class AIRacingController : MonoBehaviour
 
         // 1. Definição do Alvo
         RacerStatus myTarget = huntsLeader ? RaceManager.Instance.HumanLeader : RaceManager.Instance.HumanTrailer;
-        if (myTarget == null || !useRubberBanding) return;
+        if (myTarget == null || !rubberBandingValues.useRubberBanding) return;
 
         SCR_RayBasedCarPhysics targetPhysics = myTarget.GetComponent<SCR_RayBasedCarPhysics>();
         
@@ -720,10 +716,10 @@ public class AIRacingController : MonoBehaviour
         bool isAheadOfTarget = myStatus.position < myTarget.position;
 
         // Distâncias de controle
-        float minCatchUpDist = 20f;
-        float maxCatchUpDist = 150f; // A partir daqui, a IA usa o boost máximo
-        float minWaitDist = 40f;
-        float maxWaitDist = 180f;  // A partir daqui, a IA usa o debuff máximo
+        float minCatchUpDist = rubberBandingValues.minCatchUpDist;
+        float maxCatchUpDist = rubberBandingValues.minCatchUpDist; // A partir daqui, a IA usa o boost máximo
+        float minWaitDist = rubberBandingValues.minCatchUpDist;
+        float maxWaitDist = rubberBandingValues.minCatchUpDist;  // A partir daqui, a IA usa o debuff máximo
 
         // Valor padrão (IA em performance normal)
         float factor = 1.0f;
@@ -895,7 +891,7 @@ public class AIRacingController : MonoBehaviour
         {
             // Se antes caçava leader/trailer humano, desliga
             huntsLeader = false;
-            useRubberBanding = true;
+            rubberBandingValues.useRubberBanding = true;
         }
 
         // Opcional: deixa IA mais agressiva enquanto persegue
@@ -986,11 +982,29 @@ public class AIRacingController : MonoBehaviour
     #endregion
 }
 
-public enum AIDifficulty { Easy, Medium, Hard, UltraHard }
-
 [System.Serializable]
 public class PursuitEvent
 {
     public SCR_RayBasedCarPhysics targetCar;
     public float timeToInvoke;
+}
+
+[System.Serializable]
+public class RubberBandingValues
+{
+    public float minCatchUpDist = 20f;
+    public float maxCatchUpDist = 150f; // A partir daqui, a IA usa o boost máximo
+    public float minWaitDist = 40f;
+    public float maxWaitDist = 180f;
+
+    public bool useRubberBanding = false;
+
+    public void SetRubberBandingValues(bool use, float minCatch, float maxCatch, float minWait, float maxWait)
+    {
+        useRubberBanding = use;
+        minCatchUpDist = minCatch;
+        maxCatchUpDist = maxCatch;
+        minWaitDist = minWait;
+        maxWaitDist = maxWait;
+    }
 }

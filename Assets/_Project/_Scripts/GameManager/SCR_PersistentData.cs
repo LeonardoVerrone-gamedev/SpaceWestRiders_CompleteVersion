@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using UnityEngine.InputSystem.Users;
+using UnityEngine.SceneManagement;
 
 public class SCR_PersistentData : MonoBehaviour {
     public static SCR_PersistentData Instance;
@@ -11,6 +12,22 @@ public class SCR_PersistentData : MonoBehaviour {
     void Awake() {
         if (Instance == null) { Instance = this; DontDestroyOnLoad(gameObject); }
         else Destroy(gameObject);
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "TitleScreen")
+        {
+            players?.Clear();
+            Destroy(gameObject);
+        }
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     public void ResetSession()

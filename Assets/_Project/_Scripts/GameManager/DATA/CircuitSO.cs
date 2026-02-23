@@ -8,4 +8,6 @@ public class CircuitSO : ScriptableObject
     public string circuitName;
     Sprite circuitImage;
     public int lapCount;
+
+    public RacerProfileSO[] rivals;
 }

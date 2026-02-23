@@ -23,6 +23,60 @@ public class RaceManager : MonoBehaviour
     private bool raceFinished = false;
     private List<RacerStatus> finalRanking = new List<RacerStatus>();
 
+    private CircuitSO currentCircuit;
+
+    private enum AISettingGroup
+    {
+        Rival,
+        Teammate,
+        EasyRubber,
+        NoRubber
+    }
+
+    private struct RubberProfile
+    {
+        public bool use;
+        public float minCatch;
+        public float maxCatch;
+        public float minWait;
+        public float maxWait;
+        public bool huntLeader;
+
+        public RubberProfile(bool use, float minCatch, float maxCatch, float minWait, float maxWait, bool huntLeader)
+        {
+            this.use = use;
+            this.minCatch = minCatch;
+            this.maxCatch = maxCatch;
+            this.minWait = minWait;
+            this.maxWait = maxWait;
+            this.huntLeader = huntLeader;
+        }
+    }
+
+    private RubberProfile rivalProfile = new RubberProfile(
+        true,
+        10f,   // catch começa cedo
+        60f,   // boost máximo cedo
+        25f,   // quase não espera
+        80f,
+        true   // sempre caça líder
+    );
+
+    private RubberProfile easyProfile = new RubberProfile(
+        true,
+        40f,
+        180f,
+        60f,
+        250f,
+        true
+    );
+
+    private RubberProfile noRubberProfile = new RubberProfile(
+        false,
+        0f, 0f, 0f, 0f,
+        true
+    );
+
     void Awake()
     {
         Instance = this;
@@ -30,9 +84,11 @@ public class RaceManager : MonoBehaviour
 
     void Start()
     {
-        if(QuickPlayManagement.Instance != null) totalLaps = QuickPlayManagement.Instance.competition.circuits[0].lapCount;
-        if(MiniTournamentManager.Instance != null) totalLaps = MiniTournamentManager.Instance.CurrentState.competition.circuits[MiniTournamentManager.Instance.CurrentState.currentRaceIndex].lapCount;
-        if(FullTournamentManager.Instance != null) totalLaps = FullTournamentManager.Instance.CurrentState.competition.circuits[FullTournamentManager.Instance.CurrentState.currentRaceIndex].lapCount;
+        if(QuickPlayManagement.Instance != null) currentCircuit = QuickPlayManagement.Instance.competition.circuits[0];
+        if(MiniTournamentManager.Instance != null) currentCircuit = MiniTournamentManager.Instance.CurrentState.competition.circuits[MiniTournamentManager.Instance.CurrentState.currentRaceIndex];
+        if(FullTournamentManager.Instance != null) currentCircuit = FullTournamentManager.Instance.CurrentState.competition.circuits[FullTournamentManager.Instance.CurrentState.currentRaceIndex];
+
+        if(currentCircuit != null) totalLaps = currentCircuit.lapCount;
     }
 
     void OnEnable()
@@ -80,7 +136,7 @@ public class RaceManager : MonoBehaviour
                 {
                     // É a largada! Marcamos que ele começou a corrida
                     hasStartedFirstLap[racer] = true;
-                    Debug.Log($"{racer.name} largou!");
+                   // Debug.Log($"{racer.name} largou!");
                 }
 
                 racerCheckpointProgress[racer] = 1;
@@ -95,24 +151,115 @@ public class RaceManager : MonoBehaviour
                 }
             }
             
-            Debug.Log($"{racer.name} no CP {checkpointIndex}. Próximo: {racerCheckpointProgress[racer]}");
+           // Debug.Log($"{racer.name} no CP {checkpointIndex}. Próximo: {racerCheckpointProgress[racer]}");
         }
     }
 
-    void AssignAIGroups()
+   void AssignAIGroups()
     {
         var allAIs = allRacers.Where(r => !r.isPlayer).ToList();
-        int focusLeaderCount = Mathf.RoundToInt(allAIs.Count * 0.75f);
+        var humanPlayers = allRacers.Where(r => r.isPlayer).ToList();
 
-        for (int i = 0; i < allAIs.Count; i++)
+        List<RacerStatus> neutralAIs = new List<RacerStatus>();
+        int rivalCount = 0;
+
+        foreach (var aiStatus in allAIs)
         {
-            AIRacingController AI = allAIs[i].GetComponent<AIRacingController>();
-            // Se for do primeiro grupo (75%), persegue o líder, senão o trailer
-            bool huntLeader = i < focusLeaderCount;
-            if(AI.forceHuntLeader) huntLeader = true;
-            
-            AI.SetHuntingGroup(huntLeader);
+            AIRacingController ai = aiStatus.GetComponent<AIRacingController>();
+            SCR_CarIdentity identity = aiStatus.GetComponent<SCR_CarIdentity>();
+
+            if (ai == null || identity == null || identity.racerData == null)
+            {
+                neutralAIs.Add(aiStatus);
+                continue;
+            }
+
+            // --------------------------------------------------
+            // RIVAL CHECK
+            // --------------------------------------------------
+            bool isRival = currentCircuit.rivals != null &&
+                        currentCircuit.rivals.Contains(identity.racerData);
+
+            if (isRival)
+            {
+                ApplyRubberProfile(ai, rivalProfile);
+                ai.SetHuntingGroup(true);
+                rivalCount++;
+                continue;
+            }
+
+            // --------------------------------------------------
+            // TEAMMATE CHECK
+            // --------------------------------------------------
+            RacerStatus teammateTarget = null;
+
+            foreach (var player in humanPlayers)
+            {
+                var playerIdentity = player.GetComponent<SCR_CarIdentity>();
+                if (playerIdentity != null &&
+                    playerIdentity.racerData != null &&
+                    playerIdentity.racerData.team == identity.racerData.team)
+                {
+                    teammateTarget = player;
+                    break;
+                }
+            }
+
+            if (teammateTarget != null)
+            {
+                SetupTeammateAI(ai, teammateTarget);
+                continue;
+            }
+
+            // --------------------------------------------------
+            // NEUTRAL
+            // --------------------------------------------------
+            neutralAIs.Add(aiStatus);
         }
+
+        // --------------------------------------------------
+        // EASY = mesmo número de Rivals
+        // --------------------------------------------------
+
+        int easyCount = Mathf.Min(rivalCount, neutralAIs.Count);
+
+        for (int i = 0; i < neutralAIs.Count; i++)
+        {
+            AIRacingController ai = neutralAIs[i].GetComponent<AIRacingController>();
+
+            if (i < easyCount)
+                ApplyRubberProfile(ai, easyProfile);
+            else
+                ApplyRubberProfile(ai, noRubberProfile);
+        }
+    }
+
+    void ApplyRubberProfile(AIRacingController ai, RubberProfile profile)
+    {
+        ai.rubberBandingValues.SetRubberBandingValues(
+            profile.use,
+            profile.minCatch,
+            profile.maxCatch,
+            profile.minWait,
+            profile.maxWait
+        );
+
+        ai.SetHuntingGroup(profile.huntLeader);
+    }
+
+    void SetupTeammateAI(AIRacingController ai, RacerStatus playerTarget)
+    {
+        ai.rubberBandingValues.SetRubberBandingValues(
+            true,
+            5f,
+            80f,
+            5f,
+            30f
+         );
+
+        ai.SetHuntingGroup(true);
+
+        ai.SetPursuitTarget(playerTarget.GetComponent<SCR_RayBasedCarPhysics>());
     }
 
     void UpdateRacePositions()
@@ -210,6 +357,7 @@ public class RaceManager : MonoBehaviour
 
 }
 
+
 public class RaceResultData
 {
     public string racerName;
@@ -217,3 +365,4 @@ public class RaceResultData
     public float points;
     public bool isPlayer;
 }
+
