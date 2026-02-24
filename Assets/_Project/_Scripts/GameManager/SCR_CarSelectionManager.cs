@@ -90,6 +90,17 @@ public class SCR_TrackSelectionManager : MonoBehaviour
         {
             _storyPlayer1ID = int.Parse(StoryModeManager.Instance.storyTournaments[StoryModeManager.Instance.CurrentState.currentTournamentIndex].storyTeam.racers[0].characterID);
             _storyPlayer2ID = int.Parse(StoryModeManager.Instance.storyTournaments[StoryModeManager.Instance.CurrentState.currentTournamentIndex].storyTeam.racers[1].characterID);
+        
+            int savedPlayers = SCR_PersistentData.Instance.players.Count;
+
+            if(savedPlayers < 2)
+            {
+                StartRaceWithJoinWindow();
+            }
+            else
+            {
+                StartRaceImmediate();
+            }
         }
 
         if (SCR_PersistentData.Instance != null 

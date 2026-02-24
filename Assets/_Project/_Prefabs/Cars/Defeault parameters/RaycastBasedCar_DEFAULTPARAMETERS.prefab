@@ -89353,6 +89353,12 @@ MonoBehaviour:
   turboBodyTiltBase: -5
   rubberBandingFactor: 1
   speedKMH: 0
+  spinMinForce: 20
+  spinMaxForceForCrash: 30
+  spinMinSpeed: 40
+  spinTorqueForce: 18
+  spinDuration: 0.6
+  lateralMinAngle: 60
   totalGears: 4
   gearShiftCooldown: 0.15
   gearAccelerationDrop: 0.85
@@ -90589,7 +90595,6 @@ MonoBehaviour:
   currentWaypointIndex: 0
   lapsCompleted: 0
   distanceToNextWaypoint: 0
-  gridPosition: -1
 --- !u!114 &7291292022362802018
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91662,7 +91667,6 @@ MonoBehaviour:
   waypointPassRadius: 30
   lookAheadDistance: 20
   lookAheadSpeedFactor: 1.5
-  useRubberBanding: 0
   forceHuntLeader: 0
   maxCatchUpBoost: 1.15
   maxWaitSlowdown: 0.75
@@ -91682,7 +91686,6 @@ MonoBehaviour:
   maxSteerAngle: 15
   steeringSmoothness: 15
   maxTracingError: 2
-  currentDifficulty: 0
   driftThresholdAngle: 25
   turboStraightReach: 150
   minStaminaForTurbo: 20
@@ -91701,6 +91704,12 @@ MonoBehaviour:
   pursuitEvent:
     targetCar: {fileID: 0}
     timeToInvoke: 0
+  rubberBandingValues:
+    minCatchUpDist: 20
+    maxCatchUpDist: 150
+    minWaitDist: 40
+    maxWaitDist: 180
+    useRubberBanding: 0
 --- !u!114 &4188370516142532924
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91745,6 +91754,7 @@ MonoBehaviour:
   verticalJumpVelocity: 8
   rollAngularVelocity: 10
   crashDuration: 3
+  extraGravity: 18
 --- !u!114 &3072247668244555567
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91787,7 +91797,8 @@ MonoBehaviour:
     originalVertices: []
     modifiedVertices: []
   radius: 1
-  deformation: 0.75
+  deformationMultiplier: 0.02
+  maxDeformation: 0.8
 --- !u!1 &8568694381742411748
 GameObject:
   m_ObjectHideFlags: 0
@@ -101547,6 +101558,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4563655748157315882}
     m_Modifications:
+    - target: {fileID: -8765269762556033208, guid: e9c6e3cd5444d7349af40e5c7cb7be3b, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b25313566e2cb7b47a7765fce5e109a3, type: 2}
     - target: {fileID: -8679921383154817045, guid: e9c6e3cd5444d7349af40e5c7cb7be3b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -101587,6 +101602,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: e9c6e3cd5444d7349af40e5c7cb7be3b, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b25313566e2cb7b47a7765fce5e109a3, type: 2}
     - target: {fileID: 919132149155446097, guid: e9c6e3cd5444d7349af40e5c7cb7be3b, type: 3}
       propertyPath: m_Name
       value: car_spyder_psx
@@ -101599,6 +101618,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 7877422100809805671, guid: e9c6e3cd5444d7349af40e5c7cb7be3b, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b25313566e2cb7b47a7765fce5e109a3, type: 2}
     - target: {fileID: 9087572713813147406, guid: e9c6e3cd5444d7349af40e5c7cb7be3b, type: 3}
       propertyPath: m_Layer
       value: 8
