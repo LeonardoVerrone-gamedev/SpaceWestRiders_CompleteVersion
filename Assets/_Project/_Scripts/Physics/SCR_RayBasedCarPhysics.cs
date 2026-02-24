@@ -18,6 +18,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     public bool canSwitchType = false;
     [HideInInspector] public bool AIControlled = false;
 
+    RacerStatus racerStatus;
+
     // ======================================================
     // BASIC COMPONENT REFERENCES
     // ======================================================
@@ -148,7 +150,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     [HideInInspector][SerializeField] float dragCoefficient = 1f;
 
     [HideInInspector] [SerializeField] float airControlStrength;
-    [SerializeField] float classicCornerGrip;
 
     #endregion
 
@@ -876,7 +877,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         if (carType == CarType.classic && isGrounded && Mathf.Abs(_currentSteerInput) > 0.1f)
         {
             float speedFactor = planarVelocity.magnitude / maxSpeed;
-            Vector3 gripForce = lateralDir * _currentSteerInput * classicCornerGrip * speedFactor;
+            Vector3 gripForce = lateralDir * _currentSteerInput * speedFactor;
 
             rb.AddForce(gripForce, ForceMode.Acceleration);
         }
@@ -1535,7 +1536,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         //  CRASH
         if (isCrashableObject &&
             impactForce > crashImpactForce &&
-            IsFrontalCollision(dir))
+            IsFrontalCollision(dir) && !_isTurboActive)
         {
             if (crashing) return;
 
@@ -1550,7 +1551,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         if (impactForce > spinMinForce &&
             impactForce < spinMaxForceForCrash &&
             currentSpeed > spinMinSpeed &&
-            IsLateralCollision(dir))
+            IsLateralCollision(dir) && !_isTurboActive)
         {
             TriggerSpin(dir, impactForce);
             return;
@@ -1703,7 +1704,29 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         // Reposiciona o carro
         transform.position = _lastSafePosition;
-        transform.rotation = _lastSafeRotation;
+        Transform target = GetRespawnTarget();
+
+        if (target != null)
+        {
+            Vector3 direction = (target.position - _lastSafePosition).normalized;
+
+            // Projetar direção no plano da pista
+            Vector3 planarDir = Vector3.ProjectOnPlane(direction, cachedSurfaceNormal).normalized;
+
+            if (planarDir.sqrMagnitude > 0.01f)
+            {
+                Quaternion newRotation = Quaternion.LookRotation(planarDir, cachedSurfaceNormal);
+                transform.rotation = newRotation;
+            }
+            else
+            {
+                transform.rotation = _lastSafeRotation;
+            }
+        }
+        else
+        {
+            transform.rotation = _lastSafeRotation;
+        }
 
         // Aplica um boost de aceleração imediato para retomar a corrida
         if(!AIControlled)
@@ -1722,6 +1745,20 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     {
         _isRespawning = false;
         _airTimer = 0;
+    }
+
+    private Transform GetRespawnTarget()
+    {
+        if (racerStatus == null)
+        {
+            racerStatus = GetComponent<RacerStatus>();
+        } 
+
+        if(racerStatus.waypoints.Count == 0)
+            return null;
+
+        int index = (racerStatus.currentWaypointIndex + 15) % racerStatus.waypoints.Count;
+        return racerStatus.waypoints[index];
     }
 
     #endregion
