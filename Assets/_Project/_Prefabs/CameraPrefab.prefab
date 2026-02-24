@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 1039085489496636139}
   - component: {fileID: 6423261101763196260}
   - component: {fileID: 3080923769079063991}
-  - component: {fileID: 5461503721476505267}
   - component: {fileID: 9074195049161490763}
   - component: {fileID: 9042430620532470407}
   - component: {fileID: 2248035105068941808}
@@ -107,45 +106,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LookAtOffset: {x: 0, y: 0, z: 0}
---- !u!114 &5461503721476505267
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 48006246186159412}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbe43d662878a7c43bcd44d43c9e2094, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CollideAgainst:
-    serializedVersion: 2
-    m_Bits: 128
-  IgnoreTag: 
-  TransparentLayers:
-    serializedVersion: 2
-    m_Bits: 321
-  MinimumDistanceFromTarget: 3
-  AvoidObstacles:
-    Enabled: 1
-    DistanceLimit: 15
-    MinimumOcclusionTime: 0.15
-    CameraRadius: 0.3
-    UseFollowTarget:
-      Enabled: 0
-      YOffset: 0
-    Strategy: 1
-    MaximumEffort: 4
-    SmoothingTime: 0
-    Damping: 0.4
-    DampingWhenOccluded: 0.3
-  ShotQualityEvaluation:
-    Enabled: 0
-    OptimalDistance: 10
-    NearLimit: 5
-    FarLimit: 30
-    MaxQualityBoost: 0.2
 --- !u!114 &9074195049161490763
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -218,7 +178,6 @@ GameObject:
   - component: {fileID: 6006575281523438177}
   - component: {fileID: 6511669426896610584}
   - component: {fileID: 7099718546023426541}
-  - component: {fileID: 3337176076577964149}
   - component: {fileID: 1962416285394638996}
   - component: {fileID: 2951974762300501046}
   - component: {fileID: 8907515961719490833}
@@ -331,45 +290,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damping: 1
---- !u!114 &3337176076577964149
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 413456675171575745}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbe43d662878a7c43bcd44d43c9e2094, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CollideAgainst:
-    serializedVersion: 2
-    m_Bits: 128
-  IgnoreTag: 
-  TransparentLayers:
-    serializedVersion: 2
-    m_Bits: 321
-  MinimumDistanceFromTarget: 3
-  AvoidObstacles:
-    Enabled: 1
-    DistanceLimit: 15
-    MinimumOcclusionTime: 0.15
-    CameraRadius: 0.3
-    UseFollowTarget:
-      Enabled: 0
-      YOffset: 0
-    Strategy: 0
-    MaximumEffort: 4
-    SmoothingTime: 0
-    Damping: 0.4
-    DampingWhenOccluded: 0.3
-  ShotQualityEvaluation:
-    Enabled: 0
-    OptimalDistance: 10
-    NearLimit: 5
-    FarLimit: 30
-    MaxQualityBoost: 0.2
 --- !u!114 &1962416285394638996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -475,7 +395,6 @@ GameObject:
   - component: {fileID: 6455902257967099038}
   - component: {fileID: 8809060948119110445}
   - component: {fileID: 8057302775447255767}
-  - component: {fileID: 2910909610039468116}
   - component: {fileID: 8847833551608715248}
   - component: {fileID: 7399868083544364847}
   - component: {fileID: 6687654593161059874}
@@ -588,45 +507,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damping: 1
---- !u!114 &2910909610039468116
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3648613549037306568}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbe43d662878a7c43bcd44d43c9e2094, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CollideAgainst:
-    serializedVersion: 2
-    m_Bits: 128
-  IgnoreTag: 
-  TransparentLayers:
-    serializedVersion: 2
-    m_Bits: 321
-  MinimumDistanceFromTarget: 3
-  AvoidObstacles:
-    Enabled: 1
-    DistanceLimit: 15
-    MinimumOcclusionTime: 0.15
-    CameraRadius: 0.3
-    UseFollowTarget:
-      Enabled: 0
-      YOffset: 0
-    Strategy: 0
-    MaximumEffort: 4
-    SmoothingTime: 0
-    Damping: 0.4
-    DampingWhenOccluded: 0.3
-  ShotQualityEvaluation:
-    Enabled: 0
-    OptimalDistance: 10
-    NearLimit: 5
-    FarLimit: 30
-    MaxQualityBoost: 0.2
 --- !u!114 &8847833551608715248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -699,7 +579,6 @@ GameObject:
   - component: {fileID: 1711924952615140759}
   - component: {fileID: 9177958647141622937}
   - component: {fileID: 284489244263527612}
-  - component: {fileID: 4770334404591517705}
   - component: {fileID: 5426802166498466000}
   - component: {fileID: 4004932940953632633}
   - component: {fileID: 6578021992625207047}
@@ -794,45 +673,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LookAtOffset: {x: 0, y: 0, z: 0}
---- !u!114 &4770334404591517705
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4064449434941950362}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbe43d662878a7c43bcd44d43c9e2094, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CollideAgainst:
-    serializedVersion: 2
-    m_Bits: 128
-  IgnoreTag: 
-  TransparentLayers:
-    serializedVersion: 2
-    m_Bits: 321
-  MinimumDistanceFromTarget: 3
-  AvoidObstacles:
-    Enabled: 1
-    DistanceLimit: 15
-    MinimumOcclusionTime: 0.15
-    CameraRadius: 0.3
-    UseFollowTarget:
-      Enabled: 0
-      YOffset: 0
-    Strategy: 1
-    MaximumEffort: 4
-    SmoothingTime: 0
-    Damping: 0.4
-    DampingWhenOccluded: 0.3
-  ShotQualityEvaluation:
-    Enabled: 0
-    OptimalDistance: 10
-    NearLimit: 5
-    FarLimit: 30
-    MaxQualityBoost: 0.2
 --- !u!114 &5426802166498466000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1200,7 +1040,6 @@ GameObject:
   - component: {fileID: 399189663687196659}
   - component: {fileID: 1746510105421401937}
   - component: {fileID: 4291484879657917022}
-  - component: {fileID: 1585631865792103507}
   - component: {fileID: 2379232975677964061}
   - component: {fileID: 4426219900785310446}
   - component: {fileID: 8128044420731409029}
@@ -1295,45 +1134,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LookAtOffset: {x: 0, y: 0, z: 0}
---- !u!114 &1585631865792103507
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5539177966689578999}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbe43d662878a7c43bcd44d43c9e2094, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CollideAgainst:
-    serializedVersion: 2
-    m_Bits: 128
-  IgnoreTag: 
-  TransparentLayers:
-    serializedVersion: 2
-    m_Bits: 321
-  MinimumDistanceFromTarget: 3
-  AvoidObstacles:
-    Enabled: 1
-    DistanceLimit: 15
-    MinimumOcclusionTime: 0.15
-    CameraRadius: 0.3
-    UseFollowTarget:
-      Enabled: 0
-      YOffset: 0
-    Strategy: 1
-    MaximumEffort: 4
-    SmoothingTime: 0
-    Damping: 0.4
-    DampingWhenOccluded: 0.3
-  ShotQualityEvaluation:
-    Enabled: 0
-    OptimalDistance: 10
-    NearLimit: 5
-    FarLimit: 30
-    MaxQualityBoost: 0.2
 --- !u!114 &2379232975677964061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1406,7 +1206,6 @@ GameObject:
   - component: {fileID: 7315426906243505994}
   - component: {fileID: 5534178252065346163}
   - component: {fileID: 8475567940290260061}
-  - component: {fileID: 1660777193505458538}
   - component: {fileID: 7081768176430544115}
   - component: {fileID: 5519156879083931345}
   - component: {fileID: 5483212482153497775}
@@ -1501,45 +1300,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LookAtOffset: {x: 0, y: 0, z: 0}
---- !u!114 &1660777193505458538
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6658380893947570512}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbe43d662878a7c43bcd44d43c9e2094, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CollideAgainst:
-    serializedVersion: 2
-    m_Bits: 128
-  IgnoreTag: 
-  TransparentLayers:
-    serializedVersion: 2
-    m_Bits: 321
-  MinimumDistanceFromTarget: 3
-  AvoidObstacles:
-    Enabled: 1
-    DistanceLimit: 15
-    MinimumOcclusionTime: 0.15
-    CameraRadius: 0.3
-    UseFollowTarget:
-      Enabled: 0
-      YOffset: 0
-    Strategy: 1
-    MaximumEffort: 4
-    SmoothingTime: 0
-    Damping: 0.4
-    DampingWhenOccluded: 0.3
-  ShotQualityEvaluation:
-    Enabled: 0
-    OptimalDistance: 10
-    NearLimit: 5
-    FarLimit: 30
-    MaxQualityBoost: 0.2
 --- !u!114 &7081768176430544115
 MonoBehaviour:
   m_ObjectHideFlags: 0
