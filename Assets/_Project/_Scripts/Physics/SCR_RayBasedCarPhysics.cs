@@ -841,40 +841,45 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             localAngularVel.y *= 0.9f; // Amortece o giro no eixo Y
             rb.angularVelocity = transform.TransformDirection(localAngularVel);
         }
+
+        Vector3 turnAxis = cachedSurfaceNormal;
         
         if(carType == CarType.classic && !_isDrifting)
         {
             // Aplica o torque final (usando o steerInput processado pelo self-steering se necessário)
-            rb.AddTorque(steerPower * steerInput * speedFactor * accelerationSteerBoost 
-                * transform.up, ForceMode.VelocityChange);
+            rb.AddTorque(turnAxis * steerPower * steerInput * speedFactor * accelerationSteerBoost, ForceMode.VelocityChange);
         }
         else
         {
-            rb.AddTorque(steerPower * steerInput * speedFactor * accelerationSteerBoost 
-                * transform.up, ForceMode.Acceleration);
+            rb.AddTorque(turnAxis * steerPower * steerInput * speedFactor * accelerationSteerBoost, ForceMode.Acceleration);
         }
     }
 
     private void SidewaysDrag()
     {
-        float currentSidewaysSpeed = currentCarLocalVelocity.x;
-        
-        // 1. Mantemos um drag base para não virar saboneteira
-        float dragMagnitude = -currentSidewaysSpeed * dragCoefficient;
-        
-        // 2. Aplicamos o "Grip Assistido" para o Classic
+        // 1. Projetar velocidade no plano da superfície
+        Vector3 planarVelocity = Vector3.ProjectOnPlane(rb.linearVelocity, cachedSurfaceNormal);
+
+        // 2. Direção lateral real no plano
+        Vector3 lateralDir = Vector3.Cross(cachedSurfaceNormal, transform.forward).normalized;
+
+        // 3. Velocidade lateral real
+        float lateralSpeed = Vector3.Dot(planarVelocity, lateralDir);
+
+        // 4. Drag lateral base
+        float dragForceAmount = -lateralSpeed * dragCoefficient;
+        Vector3 dragForce = lateralDir * dragForceAmount;
+
+        rb.AddForce(dragForce, ForceMode.Acceleration);
+
+        // 5. Grip assistido (Classic)
         if (carType == CarType.classic && isGrounded && Mathf.Abs(_currentSteerInput) > 0.1f)
         {
-            // Esta força empurra o carro para dentro da curva baseado no input do volante
-            // Ela anula parte da força centrífuga que joga o carro na parede
-            Vector3 gripDir = transform.right * _currentSteerInput;
-            float speedFactor = rb.linearVelocity.magnitude / maxSpeed;
-            
-            rb.AddForce(gripDir * classicCornerGrip * speedFactor, ForceMode.Acceleration);
-        }
+            float speedFactor = planarVelocity.magnitude / maxSpeed;
+            Vector3 gripForce = lateralDir * _currentSteerInput * classicCornerGrip * speedFactor;
 
-        Vector3 dragForce = dragMagnitude * transform.right;
-        rb.AddForceAtPosition(dragForce, rb.worldCenterOfMass, ForceMode.Acceleration);
+            rb.AddForce(gripForce, ForceMode.Acceleration);
+        }
     }
 
     #endregion
@@ -1138,7 +1143,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         if (!isHover)
         {
             float df = rb.linearVelocity.magnitude * downforceAmount * extraGripModifier;
-            rb.AddForce(-transform.up * df);
+            rb.AddForce(-_currentCarUp * df);
             return;
         }
 
@@ -1349,34 +1354,26 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     private void CalculateDriftAngle()
     {
-        // Calcular o ângulo entre a direção do carro e a direção da velocidade
-        Vector3 carForward = transform.forward;
-        Vector3 velocityDirection = rb.linearVelocity.normalized;
-        
-        // Ignorar componente vertical
-        carForward.y = 0;
-        velocityDirection.y = 0;
-        
-        // Normalizar após remover componente Y
-        carForward.Normalize();
-        velocityDirection.Normalize();
-        
-        // Verificar se temos vetores válidos
-        if (carForward.magnitude > 0.1f && velocityDirection.magnitude > 0.1f)
+        if (rb.linearVelocity.magnitude < 0.1f)
         {
-            float rawAngle = Vector3.Angle(carForward, velocityDirection);
-            
-            // Determinar direção do drift (positivo = drift para direita, negativo = para esquerda)
-            float driftDirection = Mathf.Sign(Vector3.Cross(carForward, velocityDirection).y);
-            
-            // Usar ângulo absoluto para cálculos internos
-            _currentDriftAngle = rawAngle * driftDirection;
-        }
-        else
-        {
-            // Resetar ângulo se não houver velocidade suficiente
             _currentDriftAngle = 0f;
+            return;
         }
+
+        // Projetar tudo no plano da superfície
+        Vector3 planarForward = Vector3.ProjectOnPlane(transform.forward, cachedSurfaceNormal).normalized;
+        Vector3 planarVelocity = Vector3.ProjectOnPlane(rb.linearVelocity, cachedSurfaceNormal).normalized;
+
+        float angle = Vector3.Angle(planarForward, planarVelocity);
+
+        float sign = Mathf.Sign(
+            Vector3.Dot(
+                Vector3.Cross(planarForward, planarVelocity),
+                cachedSurfaceNormal
+            )
+        );
+
+        _currentDriftAngle = angle * sign;
     }
 
     private void LimitDriftAngle()
@@ -1424,7 +1421,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         // 4. FORÇA CENTRÍFUGA
         float centrifugalForce = rb.linearVelocity.magnitude * driftIntensity * 0.3f;
-        Vector3 forceDirection = -transform.right * Mathf.Sign(_currentDriftAngle);
+        Vector3 lateralDir = Vector3.Cross(cachedSurfaceNormal, transform.forward).normalized;
+        Vector3 forceDirection = -lateralDir * Mathf.Sign(_currentDriftAngle);
         rb.AddForce(forceDirection * centrifugalForce, ForceMode.Acceleration);
         
         // 5. LIMITADOR DE VELOCIDADE ANGULAR
@@ -1567,34 +1565,39 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     private bool IsFrontalOrRearCollision(Vector3 collisionDirection)
     {
-        // Normalizar direções
-        Vector3 normalizedCollisionDir = collisionDirection.normalized;
-        Vector3 carForward = transform.forward.normalized;
-        Vector3 carBackward = -carForward;
-        
-        // Calcular ângulo com a frente do carro
-        float angleToFront = Vector3.Angle(normalizedCollisionDir, carForward);
-        float angleToRear = Vector3.Angle(normalizedCollisionDir, carBackward);
-        
-        bool isFrontal = includeFrontCollisions && angleToFront <= maxFrontalAngle;
-        bool isRear = includeRearCollisions && angleToRear <= maxFrontalAngle;
-        
+        Vector3 planarForward = Vector3.ProjectOnPlane(transform.forward, cachedSurfaceNormal);
+        Vector3 planarCollision = Vector3.ProjectOnPlane(collisionDirection, cachedSurfaceNormal);
+
+        if (planarCollision.sqrMagnitude < 0.0001f)
+            return false;
+
+        planarForward.Normalize();
+        planarCollision.Normalize();
+
+        float dot = Vector3.Dot(planarForward, planarCollision);
+        float minDot = Mathf.Cos(maxFrontalAngle * Mathf.Deg2Rad);
+
+        bool isFrontal = includeFrontCollisions && dot >= minDot;
+        bool isRear    = includeRearCollisions && dot <= -minDot;
+
         return isFrontal || isRear;
     }
 
-    bool IsFrontalCollision(Vector3 collisionDirection)
+    private bool IsFrontalCollision(Vector3 collisionDirection)
     {
-         Vector3 normalizedCollisionDir = collisionDirection.normalized;
-        Vector3 carForward = transform.forward.normalized;
-        Vector3 carBackward = -carForward;
-        
-        // Calcular ângulo com a frente do carro
-        float angleToFront = Vector3.Angle(normalizedCollisionDir, carForward);
-        float angleToRear = Vector3.Angle(normalizedCollisionDir, carBackward);
-        
-        bool isFrontal = includeFrontCollisions && angleToFront <= maxFrontalAngle;
+        Vector3 planarForward = Vector3.ProjectOnPlane(transform.forward, cachedSurfaceNormal);
+        Vector3 planarCollision = Vector3.ProjectOnPlane(collisionDirection, cachedSurfaceNormal);
 
-        return isFrontal;
+        if (planarCollision.sqrMagnitude < 0.0001f)
+            return false;
+
+        planarForward.Normalize();
+        planarCollision.Normalize();
+
+        float dot = Vector3.Dot(planarForward, planarCollision);
+        float minDot = Mathf.Cos(maxFrontalAngle * Mathf.Deg2Rad);
+
+        return includeFrontCollisions && dot >= minDot;
     }
 
     void TriggerSpin(Vector3 collisionDirection, float force)
@@ -1618,10 +1621,21 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     bool IsLateralCollision(Vector3 collisionDirection)
     {
-        Vector3 forward = transform.forward.normalized;
-        float angle = Vector3.Angle(forward, collisionDirection.normalized);
+        Vector3 planarForward = Vector3.ProjectOnPlane(transform.forward, cachedSurfaceNormal);
+        Vector3 planarCollision = Vector3.ProjectOnPlane(collisionDirection, cachedSurfaceNormal);
 
-        return angle > lateralMinAngle && angle < (180f - lateralMinAngle);
+        if (planarCollision.sqrMagnitude < 0.0001f)
+            return false;
+
+        planarForward.Normalize();
+        planarCollision.Normalize();
+
+        float dot = Vector3.Dot(planarForward, planarCollision);
+
+        float minDot = Mathf.Cos(lateralMinAngle * Mathf.Deg2Rad);
+
+        // lateral = região entre frontal e traseira
+        return Mathf.Abs(dot) < minDot;
     }
 
     void ResetCrashCam()

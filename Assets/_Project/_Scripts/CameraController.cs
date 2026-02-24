@@ -363,6 +363,23 @@ public class CameraController : MonoBehaviour
 
     public void SetTarget(Transform newTarget)
     {
+        if(newTarget == null) return;
+
+        CameraController[] allCams = Object.FindObjectsByType<CameraController>(UnityEngine.FindObjectsSortMode.None);
+
+        foreach (var camController in allCams)
+        {
+            if (camController == this) 
+                continue;
+
+            if (camController.cameraTarget == newTarget)
+            {
+                Debug.LogWarning($"Camera duplicada detectada para {newTarget.name}. Destruindo esta instância.");
+                Destroy(gameObject);
+                return;
+            }
+        }
+
         player = newTarget;
         playerRB = player?.GetComponent<Rigidbody>();
 

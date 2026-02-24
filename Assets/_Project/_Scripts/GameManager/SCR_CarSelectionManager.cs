@@ -649,14 +649,18 @@ public class SCR_TrackSelectionManager : MonoBehaviour
             var identity = car.GetComponent<SCR_CarIdentity>();
             if (identity == null || identity.racerData == null) continue;
             
-            // ÚNICA MUDANÇA: Encontrar owner pelo ID em vez do índice
             string carID = identity.racerData.characterID;
             PlayerSessionData owner = SCR_PersistentData.Instance.players
                 .FirstOrDefault(p => p.selectedCharacterID == carID);
 
-            // A PARTIR DAQUI É EXATAMENTE IGUAL AO ORIGINAL
             if (owner != null)
             {
+
+                if(owner.device is Gamepad)
+                {
+                    car.gameObject.GetComponent<SCR_GamepadVibrationController>().enabled = true;
+                }
+
                 // Remove AI
                 if (car.TryGetComponent<AIRacingController>(out var ai))
                     Destroy(ai);

@@ -88995,6 +88995,7 @@ GameObject:
   - component: {fileID: 5267084700608821396}
   - component: {fileID: 5441913473968968390}
   - component: {fileID: 3072247668244555567}
+  - component: {fileID: 6726469345223895627}
   m_Layer: 8
   m_Name: RaycastBasedCar_DEFAULTPARAMETERS
   m_TagString: Player
@@ -91799,6 +91800,26 @@ MonoBehaviour:
   radius: 1
   deformationMultiplier: 0.02
   maxDeformation: 0.8
+--- !u!114 &6726469345223895627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8410641648346012813}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b77d0ae876370eb4cb0b01e29b2c0b7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  carPhysics: {fileID: 0}
+  carInput: {fileID: 0}
+  collisionMultiplier: 3
+  hardAccelMultiplier: 0.4
+  hardBrakeMultiplier: 0.5
+  driftMultiplier: 0.3
+  jumpMultiplier: 2
+  turboMultiplier: 1
 --- !u!1 &8568694381742411748
 GameObject:
   m_ObjectHideFlags: 0

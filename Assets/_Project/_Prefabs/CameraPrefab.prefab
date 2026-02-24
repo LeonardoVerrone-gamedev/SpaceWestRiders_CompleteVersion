@@ -908,8 +908,8 @@ MonoBehaviour:
   collisionShake:
     amplitude: 0.8
     frequency: 3
-    duration: 0.2
-    direction: {x: -0.5, y: 0, z: -0.5}
+    duration: 0.5
+    direction: {x: 1, y: 0.5, z: -1}
   defaultNoise: {fileID: 2951974762300501046}
   turboNoise: {fileID: 8847833551608715248}
   defaultRotate: {fileID: 7099718546023426541}
@@ -975,6 +975,8 @@ MonoBehaviour:
   - {fileID: 8907515961719490833}
   - {fileID: 6687654593161059874}
   dutchMultiplier: 10
+  idleThresholdTime: 1.5
+  idleSpeedThreshold: 5
 --- !u!114 &8852203778450995052
 MonoBehaviour:
   m_ObjectHideFlags: 0
