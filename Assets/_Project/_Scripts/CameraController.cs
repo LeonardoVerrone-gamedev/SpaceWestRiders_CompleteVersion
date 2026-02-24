@@ -265,6 +265,10 @@ public class CameraController : MonoBehaviour
     [SerializeField] List<CinemachineRecomposer> cinemachineRecomposer;
     [SerializeField] float dutchMultiplier = 10f;
 
+    private float idleTimer = 0f;
+    public float idleThresholdTime = 1.5f; // tempo parado antes de resetar
+    public float idleSpeedThreshold = 5f;  // km/h considerado parado
+
 
     void Start()
     {
@@ -618,10 +622,11 @@ public class CameraController : MonoBehaviour
             if (float.IsNaN(currentDistanceVelocity) || float.IsInfinity(currentDistanceVelocity))
                 currentDistanceVelocity = 0f;
 
-            float newDistance = Mathf.Lerp(
+            float newDistance = Mathf.SmoothDamp(
                 currentDistance,
                 targetDistance,
-                1f - Mathf.Exp(-8f * Time.deltaTime)
+                ref currentDistanceVelocity,
+                distanceSmoothTime
             );
 
 
@@ -693,8 +698,42 @@ public class CameraController : MonoBehaviour
 
          if (defaultVolume.profile.TryGet<LensDistortion>(out var lensDistortion))
         {
-            currentLensDistortionIntensity = Mathf.SmoothDamp(currentLensDistortionIntensity, targetLensDistortionIntensity, ref currentLensDistortionIntensityVelocity, volumeSmoothTime);
-            lensDistortion.intensity.value = currentLensDistortionIntensity;
+            currentLensDistortionIntensity = Mathf.Clamp(
+                currentLensDistortionIntensity,
+                minLensDistortionntensity,
+                maxLensDistortionntensity
+            );
+
+            if (float.IsNaN(currentLensDistortionIntensity) ||
+                float.IsInfinity(currentLensDistortionIntensity))
+            {
+                currentLensDistortionIntensity = 0f;
+                currentLensDistortionIntensityVelocity = 0f;
+            }
+        }
+
+        // HARD RESET se estiver parado por tempo suficiente
+        if (currentSpeedKmh < idleSpeedThreshold)
+        {
+            idleTimer += Time.deltaTime;
+
+            if (idleTimer >= idleThresholdTime)
+            {
+                smoothedSpeedFactor = 0f;
+                rawSpeedFactor = 0f;
+
+                currentLensDistortionIntensity = 0f;
+                currentLensDistortionIntensityVelocity = 0f;
+
+                if (defaultVolume.profile.TryGet<LensDistortion>(out var ld))
+                    ld.intensity.value = 0f;
+
+                return;
+            }
+        }
+        else
+        {
+            idleTimer = 0f;
         }
     }
 
@@ -1068,10 +1107,27 @@ public class CameraController : MonoBehaviour
     private void UpdateContinuousNoise()
     {
         if (playerRB == null || carPhysics == null) return;
+
+        if (currentSpeedKmh < 2f)
+        {
+            currentAcceleration = 0f;
+            lastSpeed = 0f;
+
+            defaultNoise.AmplitudeGain = 0f;
+            defaultNoise.FrequencyGain = 0f;
+
+            if (turboNoise != null)
+            {
+                turboNoise.AmplitudeGain = 0f;
+                turboNoise.FrequencyGain = 0f;
+            }
+
+            return;
+        }
         
         // Calcular velocidade atual
         Vector3 localVelocity = playerRB.transform.InverseTransformDirection(playerRB.linearVelocity);
-        float currentSpeed = Mathf.Abs(localVelocity.z * 3.6f);
+        float currentSpeed = playerRB.linearVelocity.magnitude * 3.6f;
         
         // Calcular aceleração (m/s²)
         currentAcceleration = (currentSpeed - lastSpeed) / Time.deltaTime;
