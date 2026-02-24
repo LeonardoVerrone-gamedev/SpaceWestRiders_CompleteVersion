@@ -1354,26 +1354,34 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     private void CalculateDriftAngle()
     {
-        if (rb.linearVelocity.magnitude < 0.1f)
+        // Calcular o ângulo entre a direção do carro e a direção da velocidade
+        Vector3 carForward = transform.forward;
+        Vector3 velocityDirection = rb.linearVelocity.normalized;
+        
+        // Ignorar componente vertical
+        carForward.y = 0;
+        velocityDirection.y = 0;
+        
+        // Normalizar após remover componente Y
+        carForward.Normalize();
+        velocityDirection.Normalize();
+        
+        // Verificar se temos vetores válidos
+        if (carForward.magnitude > 0.1f && velocityDirection.magnitude > 0.1f)
         {
-            _currentDriftAngle = 0f;
-            return;
+            float rawAngle = Vector3.Angle(carForward, velocityDirection);
+            
+            // Determinar direção do drift (positivo = drift para direita, negativo = para esquerda)
+            float driftDirection = Mathf.Sign(Vector3.Cross(carForward, velocityDirection).y);
+            
+            // Usar ângulo absoluto para cálculos internos
+            _currentDriftAngle = rawAngle * driftDirection;
         }
-
-        // Projetar tudo no plano da superfície
-        Vector3 planarForward = Vector3.ProjectOnPlane(transform.forward, cachedSurfaceNormal).normalized;
-        Vector3 planarVelocity = Vector3.ProjectOnPlane(rb.linearVelocity, cachedSurfaceNormal).normalized;
-
-        float angle = Vector3.Angle(planarForward, planarVelocity);
-
-        float sign = Mathf.Sign(
-            Vector3.Dot(
-                Vector3.Cross(planarForward, planarVelocity),
-                cachedSurfaceNormal
-            )
-        );
-
-        _currentDriftAngle = angle * sign;
+        else
+        {
+            // Resetar ângulo se não houver velocidade suficiente
+            _currentDriftAngle = 0f;
+        }
     }
 
     private void LimitDriftAngle()
@@ -1421,8 +1429,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         // 4. FORÇA CENTRÍFUGA
         float centrifugalForce = rb.linearVelocity.magnitude * driftIntensity * 0.3f;
-        Vector3 lateralDir = Vector3.Cross(cachedSurfaceNormal, transform.forward).normalized;
-        Vector3 forceDirection = -lateralDir * Mathf.Sign(_currentDriftAngle);
+        Vector3 forceDirection = -transform.right * Mathf.Sign(_currentDriftAngle);
         rb.AddForce(forceDirection * centrifugalForce, ForceMode.Acceleration);
         
         // 5. LIMITADOR DE VELOCIDADE ANGULAR
