@@ -269,6 +269,8 @@ public class CameraController : MonoBehaviour
     public float idleThresholdTime = 1.5f; // tempo parado antes de resetar
     public float idleSpeedThreshold = 5f;  // km/h considerado parado
 
+    private List<Transform> crashCamPoints = new List<Transform>(4);
+
 
     void Start()
     {
@@ -410,22 +412,21 @@ public class CameraController : MonoBehaviour
             UpdateVolumes(currentCameraType);
         }
 
-        foreach(CinemachineCamera cam in crashCams){
-            cam.Follow = newTarget;
-            cam.LookAt = newTarget;
+        crashCamPoints.Clear();
+
+        crashCamPoints.Add(player.transform.Find("CrashCamTarget(Side1)"));
+        crashCamPoints.Add(player.transform.Find("CrashCamTarget(Side2)"));
+        crashCamPoints.Add(player.transform.Find("CrashCamTarget(Front)"));
+        crashCamPoints.Add(player.transform.Find("CrashCamTarget(Back)"));
+
+        for (int i = 0; i < crashCams.Length; i++)
+        {
+            if (crashCams[i] != null)
+            {
+                crashCams[i].Follow = player;
+                crashCams[i].LookAt = player;
+            }
         }
-
-        crashCams[0].Follow = player.transform.Find("CrashCamTarget(Side1)");
-        crashCams[0].LookAt = newTarget;
-
-        crashCams[1].Follow = player.transform.Find("CrashCamTarget(Side2)");
-        crashCams[1].LookAt = newTarget;
-
-        crashCams[2].Follow = player.transform.Find("CrashCamTarget(Front)");
-        crashCams[2].LookAt = newTarget;
-
-        crashCams[3].Follow = player.transform.Find("CrashCamTarget(Back)");
-        crashCams[3].LookAt = newTarget;
     }
 
     public void SetChannel(int playerIndex)
@@ -923,66 +924,107 @@ public class CameraController : MonoBehaviour
     {
         if (value)
         {
-            transform.position = player.position;
-            transform.rotation = player.rotation;
-
-            // 1. Encontra a melhor câmera entre as 4 disponíveis
             activeCrashCam = GetBestCrashCamera();
 
             if (activeCrashCam != null)
             {
-                // 2. Ativa a câmera escolhida com prioridade máxima
                 activeCrashCam.Priority = 100;
             }
         }
         else
         {
-            // Retorna ao normal
-            if (activeCrashCam != null) activeCrashCam.Priority = 0;
+            if (activeCrashCam != null)
+                activeCrashCam.Priority = 0;
+
             activeCrashCam = null;
         }
     }
 
     private CinemachineCamera GetBestCrashCamera()
     {
-        CinemachineCamera bestCam = null;
-        float highestScore = -1f;
+        if (player == null || crashCamPoints.Count == 0)
+            return crashCams[0];
 
-        foreach (var cCam in crashCams)
+        float bestScore = float.MinValue;
+        int bestIndex = 0;
+
+        Vector3 playerVelocity = playerRB != null && playerRB.linearVelocity.magnitude > 1f
+            ? playerRB.linearVelocity.normalized
+            : player.forward;
+
+        for (int i = 0; i < crashCamPoints.Count; i++)
         {
-            if (cCam == null) continue;
+            Transform point = crashCamPoints[i];
+            if (point == null) continue;
 
-            // RESET: Garante que as outras estão com prioridade baixa
-            cCam.Priority = 0;
+            Vector3 dirToPlayer = (player.position - point.position).normalized;
+            float distance = Vector3.Distance(point.position, player.position);
 
-            // CRITÉRIO 1: Visibilidade (Raycast)
-            // Lançamos um raio da câmera para o carro para ver se há obstáculos
-            Vector3 directionToPlayer = (player.position - cCam.transform.position).normalized;
-            float distanceToPlayer = Vector3.Distance(cCam.transform.position, player.position);
-            
-            // Camada de colisão do cenário (ajuste o LayerMask conforme seu projeto)
-            bool hasLineOfSight = !Physics.Raycast(cCam.transform.position, directionToPlayer, distanceToPlayer, LayerMask.GetMask("Default", "Static Environment"));
+            // Linha de visão
+            bool hasLineOfSight = !Physics.Raycast(
+                point.position,
+                dirToPlayer,
+                distance,
+                LayerMask.GetMask("Default", "Static Environment")
+            );
 
-            if (!hasLineOfSight) continue; // Descarta câmeras obstruídas
+            if (!hasLineOfSight)
+                continue;
 
-            // CRITÉRIO 2: Ângulo Cinematográfico (Dot Product)
-            // Câmeras que olham para a FRENTE ou LADO do carro pontuam mais que as que olham a traseira
-            float angleScore = Vector3.Dot(cCam.transform.forward, player.forward);
-            
-            // Invertemos o score: se o dot for negativo, a cam está de frente para o carro (Melhor!)
-            float finalScore = 1f - angleScore; 
+            // Preferir câmera contra a direção do impacto
+            float velocityScore = Vector3.Dot(dirToPlayer, -playerVelocity);
 
-            if (finalScore > highestScore)
+            // Distância ideal
+            float idealDistance = 6f;
+            float distanceScore = 1f - Mathf.Abs(distance - idealDistance) / idealDistance;
+
+            float finalScore = velocityScore + distanceScore;
+
+            if (finalScore > bestScore)
             {
-                highestScore = finalScore;
-                bestCam = cCam;
+                bestScore = finalScore;
+                bestIndex = i;
             }
         }
 
-        // Se todas estiverem obstruídas, retorna a primeira da lista como fallback
-        return bestCam != null ? bestCam : crashCams[0];
-    }
+        CinemachineCamera selectedCam = crashCams[bestIndex];
+        Transform bestPoint = crashCamPoints[bestIndex];
 
+        if (selectedCam == null || bestPoint == null)
+            return crashCams[0];
+
+        Vector3 localUp = player.up;
+        Vector3 rayDirection = -localUp;
+
+        RaycastHit hit;
+        Vector3 origin = bestPoint.position + localUp * 2f;
+
+        if (Physics.Raycast(origin, rayDirection, out hit, 15f, LayerMask.GetMask("Default", "Static Environment")))
+        {
+            Vector3 safePos = hit.point + hit.normal * 0.3f;
+
+            selectedCam.transform.position = safePos;
+
+            // Alinha a câmera com o plano da pista
+            Quaternion alignedRotation = Quaternion.LookRotation(
+                Vector3.ProjectOnPlane(player.position - safePos, hit.normal),
+                hit.normal
+            );
+
+            selectedCam.transform.rotation = alignedRotation;
+        }
+        else
+        {
+            selectedCam.transform.position = bestPoint.position;
+            selectedCam.transform.rotation = bestPoint.rotation;
+        }
+
+        // Apenas olha para o carro (sem Follow rígido)
+        selectedCam.Follow = null;
+        selectedCam.LookAt = player;
+
+        return selectedCam;
+    }
     #endregion
 
     #region shake
