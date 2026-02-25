@@ -4,6 +4,8 @@ using System.Collections.Generic;
 [CreateAssetMenu(fileName = "New Competition", menuName = "Racing/CompetitionSO")]
 public class CompetitionSO : ScriptableObject
 {
+    public string competitionID;
+    
     public List<CircuitSO> circuits;
     public int[] EliminateAt = {8, 16, 19};
     public bool enableCutscenes;

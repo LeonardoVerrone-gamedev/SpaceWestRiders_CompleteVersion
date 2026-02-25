@@ -3,7 +3,10 @@ using System.Linq;
 
 public class CompetitionRuntimeState
 {
+    [System.NonSerialized]
     public CompetitionSO competition;
+
+    public string competitionID;
     public int currentRaceIndex;
     public List<TeamPointsEntry> teamPointsList = new();
     public List<RacePointsEntry> raceResultsList = new();

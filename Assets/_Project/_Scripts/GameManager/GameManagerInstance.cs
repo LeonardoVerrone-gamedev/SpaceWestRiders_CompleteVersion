@@ -1,3 +1,4 @@
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,6 +9,7 @@ public class GameManagerInstance : MonoBehaviour
     public GameMode currentGameMode;
 
     void Awake(){
+        
         if(GameManagerInstance.Instance == null) 
         {
             Instance = this;
@@ -19,6 +21,19 @@ public class GameManagerInstance : MonoBehaviour
         }
 
         SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    public void ForceDeleteAllTournamentSaves()
+    {
+        string folder = Application.persistentDataPath;
+
+        var files = Directory.GetFiles(folder, "*.json");
+
+        foreach (var file in files)
+        {
+            Debug.Log("Deleting: " + file);
+            File.Delete(file);
+        }
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)

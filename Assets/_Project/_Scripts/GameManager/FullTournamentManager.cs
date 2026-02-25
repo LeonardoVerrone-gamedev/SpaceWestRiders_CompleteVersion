@@ -59,10 +59,11 @@ public class FullTournamentManager : MonoBehaviour
 
     public void StartTournament(CompetitionSO competition)
     {
-        SCR_PersistentData.Instance?.ResetSession();
-
         CurrentState = new CompetitionRuntimeState();
+        
         CurrentState.competition = competition;
+        CurrentState.competitionID = competition.competitionID;
+
         CurrentState.currentRaceIndex = 0;
 
         foreach (var team in competition.teams)
@@ -327,6 +328,10 @@ public class FullTournamentManager : MonoBehaviour
 
         string json = File.ReadAllText(SavePath);
         CurrentState = JsonUtility.FromJson<CompetitionRuntimeState>(json);
+
+        CurrentState.competition =
+        CompetitionDatabase.Instance.GetCompetitionByID(
+            CurrentState.competitionID);
 
         //GARANTE QUE LISTAS NÃO VENHAM NULL
         if (CurrentState.savedPlayers == null)
