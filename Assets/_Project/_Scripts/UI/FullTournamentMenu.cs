@@ -10,9 +10,15 @@ public class FullTournamentMenu : MonoBehaviour
     [SerializeField] private Button[] circuitButtons;
     [SerializeField] private TextMeshProUGUI[] circuitNames;
     [SerializeField] private TextMeshProUGUI[] circuitStatus;
+    [Header("Race Results Display")]
+    [SerializeField] private TextMeshProUGUI[] raceResultsTexts;
 
     [Header("Elimination Display")]
     [SerializeField] private TextMeshProUGUI eliminatedTeamsText;
+
+    [Header("Global Ranking Display")]
+    [SerializeField] private TextMeshProUGUI teamRankingText;
+    [SerializeField] private TextMeshProUGUI driverRankingText;
 
     [Header("Navigation")]
     [SerializeField] private Button continueButton;
@@ -29,6 +35,117 @@ public class FullTournamentMenu : MonoBehaviour
         UpdateCircuitButtons();
         UpdateEliminatedTeamsDisplay();
         UpdateContinueButton();
+        UpdateRaceResultsDisplay();
+        UpdateTeamRankingDisplay();
+        UpdateDriverRankingDisplay();
+    }
+
+    private void UpdateRaceResultsDisplay()
+    {
+        var state = FullTournamentManager.Instance?.CurrentState;
+
+        if (state == null)
+        {
+            Debug.Log("NULL STATE");
+            return;
+        }
+
+        if (raceResultsTexts == null)
+        {
+            Debug.Log("NULL race text");
+            return;
+        }
+
+        for (int i = 0; i < raceResultsTexts.Length; i++)
+        {
+            if (i >= state.competition.circuits.Count)
+            {
+                raceResultsTexts[i].text = "";
+                continue;
+            }
+
+            var results = state.GetRaceResults(i);
+
+            if (results == null || results.Count == 0)
+            {
+                raceResultsTexts[i].text = "-";
+                continue;
+            }
+
+            var podium = results
+                .OrderBy(r => r.position)
+                .Take(3)
+                .ToList();
+
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+            foreach (var r in podium)
+            {
+                string medal = r.position switch
+                {
+                    1 => "1º",
+                    2 => "2º",
+                    3 => "3º",
+                    _ => $"{r.position}º"
+                };
+
+                sb.AppendLine($"{medal} {r.racerName}");
+            }
+
+            raceResultsTexts[i].text = sb.ToString();
+        }
+    }
+
+    private void UpdateTeamRankingDisplay()
+    {
+        if (teamRankingText == null) return;
+
+        var ranking = FullTournamentManager.Instance.GetTeamRanking();
+
+        if (ranking == null || ranking.Count == 0)
+        {
+            teamRankingText.text = "No team standings yet.";
+            return;
+        }
+
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        sb.AppendLine("TEAM STANDINGS\n");
+
+        int position = 1;
+
+        foreach (var entry in ranking)
+        {
+            sb.AppendLine($"{position}º  {entry.team.teamName}  -  {entry.points} pts");
+            position++;
+        }
+
+        teamRankingText.text = sb.ToString();
+    }
+
+    private void UpdateDriverRankingDisplay()
+    {
+        if (driverRankingText == null) return;
+
+        var ranking = FullTournamentManager.Instance.GetDriverRanking();
+
+        if (ranking == null || ranking.Count == 0)
+        {
+            driverRankingText.text = "No driver standings yet.";
+            return;
+        }
+
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        sb.AppendLine("DRIVER STANDINGS\n");
+
+        int position = 1;
+
+        foreach (var entry in ranking)
+        {
+            sb.AppendLine($"{position}º  {entry.racerName}  -  {entry.points} pts");
+            position++;
+        }
+
+        driverRankingText.text = sb.ToString();
     }
 
     private void UpdateCircuitButtons()
@@ -99,7 +216,7 @@ public class FullTournamentMenu : MonoBehaviour
             nextUnlocked = FullTournamentManager.Instance.IsRaceUnlocked(next);
         }
 
-        continueButton.interactable = hasNext && nextUnlocked;
+        //continueButton.interactable = hasNext && nextUnlocked;
     }
 
     public void OnContinue()

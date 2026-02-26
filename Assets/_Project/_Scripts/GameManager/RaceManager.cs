@@ -388,6 +388,7 @@ public class RaceManager : MonoBehaviour
     }
 }
 
+[System.Serializable]
 public class RaceResultData
 {
     public string racerName;

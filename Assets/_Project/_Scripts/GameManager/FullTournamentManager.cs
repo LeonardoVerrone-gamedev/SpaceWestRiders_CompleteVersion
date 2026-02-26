@@ -32,7 +32,6 @@ public class FullTournamentManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            //LoadIfExists();
         }
         else
         {
@@ -127,6 +126,18 @@ public class FullTournamentManager : MonoBehaviour
     {
         int raceIndex = CurrentState.currentRaceIndex;
 
+        if (CurrentState.finalRankings == null)
+            CurrentState.finalRankings = new Dictionary<int, List<RaceResultData>>();
+
+        if (CurrentState.finalRankings.ContainsKey(raceIndex))
+        {
+            CurrentState.finalRankings[raceIndex] = new List<RaceResultData>(results);
+        }
+        else
+        {
+            CurrentState.finalRankings.Add(raceIndex, new List<RaceResultData>(results));
+        }
+
         if (CurrentState.raceResults.ContainsKey(raceIndex))
             RevertRacePoints(raceIndex);
 
@@ -176,6 +187,41 @@ public class FullTournamentManager : MonoBehaviour
 
         CurrentState.raceResults.Remove(raceIndex);
         CurrentState.eliminationHistory.ClearEliminationsAfter(raceIndex - 1);
+    }
+
+    public List<(TeamSO team, float points)> GetTeamRanking()
+    {
+        if (CurrentState == null || CurrentState.teamPoints == null)
+            return new List<(TeamSO, float)>();
+
+        return CurrentState.teamPoints
+            .OrderByDescending(kvp => kvp.Value)
+            .Select(kvp => (kvp.Key, kvp.Value))
+            .ToList();
+    }
+
+    public List<(string racerName, float points)> GetDriverRanking()
+    {
+        if (CurrentState == null || CurrentState.finalRankings == null)
+            return new List<(string, float)>();
+
+        Dictionary<string, float> driverPoints = new();
+
+        foreach (var race in CurrentState.finalRankings.Values)
+        {
+            foreach (var result in race)
+            {
+                if (!driverPoints.ContainsKey(result.racerName))
+                    driverPoints[result.racerName] = 0;
+
+                driverPoints[result.racerName] += result.points;
+            }
+        }
+
+        return driverPoints
+            .OrderByDescending(kvp => kvp.Value)
+            .Select(kvp => (kvp.Key, kvp.Value))
+            .ToList();
     }
 
     #endregion
@@ -292,9 +338,9 @@ public class FullTournamentManager : MonoBehaviour
     {
         if (CurrentState == null) return;
 
-        SaveSessionData();
-
         CurrentState.SyncListsFromDictionaries();
+
+        SaveSessionData();
 
         string json = JsonUtility.ToJson(CurrentState, true);
         File.WriteAllText(SavePath, json);
@@ -345,6 +391,9 @@ public class FullTournamentManager : MonoBehaviour
 
         if (CurrentState.eliminationHistory == null)
             CurrentState.eliminationHistory = new EliminationHistory();
+
+        if (CurrentState.finalRankingsList == null)
+            CurrentState.finalRankingsList = new List<CompetitionRuntimeState.RaceFinalRankingEntry>();
 
         RestoreSessionData();
 

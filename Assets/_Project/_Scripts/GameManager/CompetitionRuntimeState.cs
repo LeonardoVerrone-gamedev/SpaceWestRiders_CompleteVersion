@@ -30,6 +30,20 @@ public class CompetitionRuntimeState
     
     public bool IsFinal => currentRaceIndex == competition.circuits.Count - 1;
 
+    [System.Serializable]
+    public class RaceFinalRankingEntry
+    {
+        public int raceIndex;
+        public List<RaceResultData> results = new();
+    }
+
+    // SERIALIZADO
+    public List<RaceFinalRankingEntry> finalRankingsList = new();
+
+    // RUNTIME
+    [System.NonSerialized]
+    public Dictionary<int, List<RaceResultData>> finalRankings = new();
+
     public void BuildDictionaries()
     {
         teamPoints = new Dictionary<TeamSO, float>();
@@ -45,6 +59,14 @@ public class CompetitionRuntimeState
 
             raceResults[race.raceIndex] = dict;
         }
+
+        // FINAL RANKINGS
+        finalRankings = new Dictionary<int, List<RaceResultData>>();
+
+        foreach (var entry in finalRankingsList)
+        {
+            finalRankings[entry.raceIndex] = new List<RaceResultData>(entry.results);
+}
     }
 
     public void SyncListsFromDictionaries()
@@ -78,7 +100,31 @@ public class CompetitionRuntimeState
 
             raceResultsList.Add(raceEntry);
         }
+
+        // FINAL RANKINGS
+        finalRankingsList = new List<RaceFinalRankingEntry>();
+
+        foreach (var kvp in finalRankings)
+        {
+            finalRankingsList.Add(new RaceFinalRankingEntry
+            {
+                raceIndex = kvp.Key,
+                results = new List<RaceResultData>(kvp.Value)
+            });
+        }
     }
+
+    public List<RaceResultData> GetRaceResults(int raceIndex)
+    {
+        if (finalRankings == null)
+            BuildDictionaries();
+
+        if (finalRankings.ContainsKey(raceIndex))
+            return finalRankings[raceIndex];
+
+        return null;
+    }
+
 }
 
 [System.Serializable]
