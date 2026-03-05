@@ -1143,7 +1143,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     {
         if (!isHover)
         {
-            float df = rb.linearVelocity.magnitude * downforceAmount * extraGripModifier;
+            float df = Mathf.Sqrt(rb.linearVelocity.magnitude) * downforceAmount;
             rb.AddForce(-_currentCarUp * df);
             return;
         }
