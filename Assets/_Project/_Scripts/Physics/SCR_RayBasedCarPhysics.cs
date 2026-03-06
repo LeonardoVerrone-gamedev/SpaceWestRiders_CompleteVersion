@@ -68,8 +68,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     private float currentTargetSuspensionLength;
     private float currentDamper;
 
-    [HideInInspector] private int[] wheelsGrounded = new int[4];
-    [HideInInspector] private bool isGrounded = false;
+    [SerializeField] private int[] wheelsGrounded = new int[4];
+    [SerializeField] private bool isGrounded = false;
     bool wasGrounded;
     float airTime = 0f;
 
@@ -158,8 +158,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     // ======================================================
 
     #region Balancing Curves
-    [HideInInspector][SerializeField] private AnimationCurve hoverCarTurningCurve;
-    [HideInInspector] [SerializeField] private AnimationCurve classicCarTurningCurve;
+    [SerializeField] private AnimationCurve hoverCarTurningCurve;
+    [SerializeField] private AnimationCurve classicCarTurningCurve;
     [HideInInspector][SerializeField] AnimationCurve turningCurve;
 
     #endregion
@@ -682,7 +682,10 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     private void HandleMovement()
     {
-        if(isGrounded)
+        bool hoverLostSurface = isHover && cachedGroundedCount == 0;
+        bool classicOffGround = !isHover && !isGrounded;
+
+        if(!hoverLostSurface && !classicOffGround)
         {
             if(_currentThrottleInput > 0.1f)
             {
@@ -800,14 +803,14 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     private void Turn()
     {
-        float TurnPowerMultiplier = isGrounded ? 1 : 0.5f;
+        float TurnPowerMultiplier = (isGrounded || isHover) ? 1 : 0.5f;
 
         float newSteerStrenght = (carType == CarType.classic && !_isDrifting) ? steerStrenght / 50f : steerStrenght;
         float steerPower = newSteerStrenght * TurnPowerMultiplier;
         float steerInput = _currentSteerInput;
 
         // --- LÓGICA DE SELF-STEERING (DENTRO DO DRIFT) ---
-        if (_isDrifting && isGrounded)
+        if (_isDrifting)
         {
             // Se o jogador NÃO está dando input de direção (analogico solto ou neutro)
             if (Mathf.Abs(steerInput) < 0.1f)
@@ -1309,7 +1312,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     private void TryStartDrift()
     {
         // Só pode começar drift se estiver no chão
-        if (!isGrounded) return;
+        if ((!isHover && !isGrounded)) return;
         
         // Calcular velocidade mínima para entrar em drift
         float minDriftSpeed = maxSpeed * driftEnterThreshold;
@@ -1347,7 +1350,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         // O drift agora SÓ termina automaticamente se:
         // 1. O carro sair do chão
         // 2. A velocidade ficar muito baixa
-        if (!isGrounded || rb.linearVelocity.magnitude < minDriftSpeed)
+        if ((!isHover && !isGrounded) || rb.linearVelocity.magnitude < minDriftSpeed)
         {
             EndDrift(false); // Sai sem boost pois perdeu o controle/velocidade
         }
@@ -1399,7 +1402,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
    private void ApplyDriftForces()
     {
-        if (!isGrounded || !_isDrifting) return;
+        if ((!isHover && !isGrounded) || !_isDrifting) return;
 
         // 1. Calcular intensidade do drift (0 a 1)
         float driftIntensity = Mathf.Clamp01(Mathf.Abs(_currentDriftAngle) / maxDriftAngle);
@@ -1518,6 +1521,9 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        if (collision.transform.root == transform.root)
+            return;
+
         if (((1 << collision.gameObject.layer) & drivable) != 0)
             return;
 
@@ -1685,13 +1691,13 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     bool IsAreaSafe()
     {
         // Precisa ter chão suficiente
-        if (cachedGroundedCount < MIN_WHEELS_TO_CONSIDERE_GROUNDED)
+        if (cachedGroundedCount < 3)
             return false;
 
         // Evita salvar em paredes / loopings extremos
-        float upDot = Vector3.Dot(cachedSurfaceNormal, Vector3.up);
+        //float upDot = Vector3.Dot(cachedSurfaceNormal, Vector3.up);
 
-        return upDot > 0.4f;
+        return true;
     }
 
     private void ExecuteRespawn()
@@ -1731,7 +1737,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         // Aplica um boost de aceleração imediato para retomar a corrida
         if(!AIControlled)
         {
-            rb.AddForce(transform.forward * acceleration * respawnBoostIntensity, ForceMode.VelocityChange);
+            //rb.AddForce(transform.forward * acceleration * respawnBoostIntensity, ForceMode.VelocityChange);
         }
         else
         {

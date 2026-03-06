@@ -119,7 +119,7 @@ public class AIRacingController : MonoBehaviour
 
     void Start()
     {
-        myUniqueLaneOffset = Random.Range(-5f, 5f);
+        myUniqueLaneOffset = Random.Range(-7f, 7f);
 
         if (pursuitEvent != null && pursuitEvent.targetCar != null)
         {
