@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 572498648386341501}
   - component: {fileID: 4503203359977958571}
   m_Layer: 8
-  m_Name: '#3'
+  m_Name: Danny Tongue
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -125,8 +125,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d4b0d5a49472584fb17a3d8c74a47e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  carType: 0
-  canSwitchType: 1
+  carType: 1
+  canSwitchType: 0
   AIControlled: 0
   rb: {fileID: 6312453639661522750}
   drivable:
@@ -509,7 +509,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 134413080898623409}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3578ac2517995d440a09bd029a971343, type: 3}
   m_Name: 

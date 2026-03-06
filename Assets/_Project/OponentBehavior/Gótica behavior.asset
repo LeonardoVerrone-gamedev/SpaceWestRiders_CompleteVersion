@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 14adb4cffa57fd64daa40e3d5980f237, type: 3}
-  m_Name: Red
+  m_Script: {fileID: 11500000, guid: 8b3911cbd6845194fa0a8b8775ad8306, type: 3}
+  m_Name: "G\xF3tica behavior"
   m_EditorClassIdentifier: 
-  racers:
-  - {fileID: 11400000, guid: 861e60abec895d749b53e348d09fad83, type: 2}
-  - {fileID: 11400000, guid: b9be408c9f8ab4b4e9cd6692c6920a85, type: 2}
-  teamName: Red
-  teamImage: {fileID: 0}
+  aggressiveness: 0.9
+  caution: 0.3
+  defensiveSkill: 0.25
+  skillLevel: 0.9
+  brutality: 0.7

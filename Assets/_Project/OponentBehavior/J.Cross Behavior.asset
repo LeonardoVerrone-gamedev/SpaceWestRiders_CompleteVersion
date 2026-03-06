@@ -10,9 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8b3911cbd6845194fa0a8b8775ad8306, type: 3}
-  m_Name: Brute and smart
+  m_Name: J.Cross Behavior
   m_EditorClassIdentifier: 
-  aggressiveness: 1
-  caution: 0.1
+  aggressiveness: 0.9
+  caution: 0.2
   defensiveSkill: 0.2
-  skillLevel: 1
+  skillLevel: 0.8
+  brutality: 0.7

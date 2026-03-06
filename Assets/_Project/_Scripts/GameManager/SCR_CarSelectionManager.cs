@@ -12,11 +12,11 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 {
     [Header("Story Mode Settings")]
     [SerializeField] private bool _isStoryMode = false;
-    [SerializeField] private int _storyPlayer1ID; // ID do Protagonista
-    [SerializeField] private int _storyPlayer2ID;
+    [SerializeField] private string _storyPlayer1ID;
+    [SerializeField] private string _storyPlayer2ID;
 
     [Header("Selection Restrictions")]
-    [SerializeField] private List<int> _blockedCharacterIDs = new List<int>();
+    [SerializeField] private List<string> _blockedCharacterIDs = new List<string>();
 
     [SerializeField] private List<RacerProfileSO> _allCharactersSO; // A lista global de SOs
     private List<SCR_CarIdentity> _carsInScene;
@@ -80,6 +80,11 @@ public class SCR_TrackSelectionManager : MonoBehaviour
         }
     }
 
+    bool HasPlayerWithoutDevice()
+    {
+        return SCR_PersistentData.Instance.players.Any(p => p.device == null);
+    }
+
     void Start()
     {
         camManager = UnityEngine.Object.FindFirstObjectByType<CameraController>();
@@ -88,10 +93,16 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
         if(_isStoryMode)
         {
-            _storyPlayer1ID = int.Parse(StoryModeManager.Instance.storyTournaments[StoryModeManager.Instance.CurrentState.currentTournamentIndex].storyTeam.racers[0].characterID);
-            _storyPlayer2ID = int.Parse(StoryModeManager.Instance.storyTournaments[StoryModeManager.Instance.CurrentState.currentTournamentIndex].storyTeam.racers[1].characterID);
+            _storyPlayer1ID = StoryModeManager.Instance.storyTournaments[StoryModeManager.Instance.CurrentState.currentTournamentIndex].storyTeam.racers[0].characterID;
+            _storyPlayer2ID = StoryModeManager.Instance.storyTournaments[StoryModeManager.Instance.CurrentState.currentTournamentIndex].storyTeam.racers[1].characterID;
         
             int savedPlayers = SCR_PersistentData.Instance.players.Count;
+
+            if(HasPlayerWithoutDevice())
+            {
+                PrepareSelectionNormally();
+                return;
+            }
 
             if(savedPlayers < 2)
             {
@@ -400,8 +411,8 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
         if (_isStoryMode)
         {
-            int targetID = (newIndex == 0) ? _storyPlayer1ID : _storyPlayer2ID;
-            string targetIDStr = targetID.ToString();
+            string targetID = (newIndex == 0) ? _storyPlayer1ID : _storyPlayer2ID;
+            string targetIDStr = targetID;
             newPlayer.selectedCharacterID = targetIDStr;
             newPlayer.selectedCarData = _allCharactersSO.FirstOrDefault(c => c.characterID == targetIDStr);
             
@@ -416,7 +427,7 @@ public class SCR_TrackSelectionManager : MonoBehaviour
             
             for (int i = 0; i < _allCharactersSO.Count; i++)
             {
-                int id = int.Parse(_allCharactersSO[i].characterID);
+                string id = _allCharactersSO[i].characterID;
                 bool isBlocked = _blockedCharacterIDs.Contains(id);
                 bool isTaken = SCR_PersistentData.Instance.players.Any(p => p.selectedCharacterID == _allCharactersSO[i].characterID);
 
@@ -539,8 +550,7 @@ public class SCR_TrackSelectionManager : MonoBehaviour
         while (!isValid && safetyBreak < max)
         {
             string targetID = _allCharactersSO[nextIndex].characterID;
-            int targetIDInt = int.Parse(targetID);
-            bool isBlocked = _blockedCharacterIDs.Contains(targetIDInt);
+            bool isBlocked = _blockedCharacterIDs.Contains(targetID);
             bool isTaken = SCR_PersistentData.Instance.players.Any(other => 
                 other != p && other.selectedCharacterID == targetID);
             bool carExists = _carsByID != null && _carsByID.ContainsKey(targetID);
