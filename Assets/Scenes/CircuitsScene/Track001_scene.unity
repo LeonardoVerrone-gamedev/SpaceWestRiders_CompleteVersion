@@ -93,8 +93,8 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 112000000, guid: 3fce6d94be18aa846ad7e23bbbc7bf10, type: 2}
-  m_LightingSettings: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 39607aa839254a54a8c1910939d42f58, type: 2}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: c0cb3d8c108df704bb5c0e403502c85b, type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -3495,9 +3495,21 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: -7895738268992622808, guid: 382425ac01e39ca41ac702c81adf1f7a, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 382425ac01e39ca41ac702c81adf1f7a, type: 3}
       propertyPath: m_Name
       value: Antigravity challange Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 382425ac01e39ca41ac702c81adf1f7a, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5329099553608597627, guid: 382425ac01e39ca41ac702c81adf1f7a, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2049
       objectReference: {fileID: 0}
     - target: {fileID: 5329099553608597627, guid: 382425ac01e39ca41ac702c81adf1f7a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -4805,9 +4817,21 @@ PrefabInstance:
       propertyPath: 'waypoints.Array.data[285]'
       value: 
       objectReference: {fileID: 824957707}
+    - target: {fileID: 2616408579466213219, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
+      propertyPath: m_Name
+      value: Car Decal Left
+      objectReference: {fileID: 0}
+    - target: {fileID: 3667339702483502907, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3820662635277455633, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
       propertyPath: m_Name
       value: Billy SIn
+      objectReference: {fileID: 0}
+    - target: {fileID: 5625540952174649654, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
+      propertyPath: m_Name
+      value: Car Decal Right
       objectReference: {fileID: 0}
     - target: {fileID: 7233265701248866632, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6054,9 +6078,21 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: -6829578374155274165, guid: 47638e532876b7549b8ee117b54a0424, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 47638e532876b7549b8ee117b54a0424, type: 3}
       propertyPath: m_Name
       value: Antigravity challange Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 47638e532876b7549b8ee117b54a0424, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 2746361075882894259, guid: 47638e532876b7549b8ee117b54a0424, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2746361075882894259, guid: 47638e532876b7549b8ee117b54a0424, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -6440,7 +6476,7 @@ MonoBehaviour:
   _isStoryMode: 0
   _storyPlayer1ID: 5
   _storyPlayer2ID: 7
-  _blockedCharacterIDs: 010000000200000003000000040000000600000008000000
+  _blockedCharacterIDs: []
   _allCharactersSO:
   - {fileID: 11400000, guid: c78f0d673d9ba4148bb2f614cbdda411, type: 2}
   - {fileID: 11400000, guid: 021b387a8b03add49ae25c7f6ecbdce5, type: 2}

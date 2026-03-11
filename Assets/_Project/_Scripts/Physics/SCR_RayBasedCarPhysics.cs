@@ -303,6 +303,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     private float _airTimer;
     private bool _isRespawning = false;
 
+    int indexAtSavePoint;
+
     #endregion
 
     // ======================================================
@@ -1663,23 +1665,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     private void HandleRespawnSystem()
     {
-        if (isGrounded)
-        {
-            _airTimer = 0; // Reseta o timer se estiver no chão
-            _saveTimer += Time.fixedDeltaTime;
-
-            // Salva a posição se o intervalo passou e o carro está estável (velocidade mínima)
-            if (_saveTimer >= savePositionInterval && rb.linearVelocity.magnitude > 1f && IsAreaSafe())
-            {
-                _lastSafePosition = transform.position;
-                // No modo Hover, garantimos que ele respawne um pouco acima do chão
-                if (isHover) _lastSafePosition += Vector3.up * 1f;
-                
-                _lastSafeRotation = transform.rotation;
-                _saveTimer = 0;
-            }
-        }
-        else
+        if (!isGrounded)
         {
             _airTimer += Time.fixedDeltaTime;
 
@@ -1694,8 +1680,9 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         if (cachedGroundedCount < 3)
             return false;
 
-        // Evita salvar em paredes / loopings extremos
-        //float upDot = Vector3.Dot(cachedSurfaceNormal, Vector3.up);
+        float upDot = Vector3.Dot(cachedSurfaceNormal, Vector3.up);
+        if (upDot < 0.7f) 
+            return false;
 
         return true;
     }
@@ -1763,13 +1750,28 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         if(racerStatus.waypoints.Count == 0)
             return null;
 
-        int index = (racerStatus.currentWaypointIndex + 15) % racerStatus.waypoints.Count;
+        int index = (indexAtSavePoint + 15) % racerStatus.waypoints.Count;
         return racerStatus.waypoints[index];
+    }
+
+    private Vector3 GetCurrentPoint()
+    {
+        if (racerStatus == null)
+        {
+            racerStatus = GetComponent<RacerStatus>();
+        } 
+
+        int index = racerStatus.currentWaypointIndex;
+
+        indexAtSavePoint = index;
+
+        Vector3 point = new Vector3(racerStatus.waypoints[index].position.x, (racerStatus.waypoints[index].position.y + racerStatus.waypoints[index].up.y * 1.25f), racerStatus.waypoints[index].position.z);
+        return point;
     }
 
     #endregion
 
-    #region Turbo
+    #region nitro
 
     public void ActivateTurbo() 
     {
@@ -1832,6 +1834,16 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         isGrounded = (tempGroundedWheels >= MIN_WHEELS_TO_CONSIDERE_GROUNDED) ? true : false;
 
+        if (isGrounded && IsAreaSafe())
+        {
+            _lastSafePosition = GetCurrentPoint();
+            // No modo Hover, garantimos que ele respawne um pouco acima do chão
+            if (isHover) _lastSafePosition += transform.up * 1f;
+                
+            _lastSafeRotation = transform.rotation;
+            _saveTimer = 0;
+        }
+
         if (!wasGrounded && isGrounded && !isHover)
         {
             OnLand?.Invoke(airTime);
@@ -1842,7 +1854,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             airTime += Time.deltaTime;
         }
 
-        if (wasGrounded && !isGrounded)
+        if (wasGrounded && !isGrounded && !isHover)
         {
             OnJump?.Invoke(0f);
         }
