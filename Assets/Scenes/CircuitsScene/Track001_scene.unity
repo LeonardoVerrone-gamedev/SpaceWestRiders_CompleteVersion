@@ -6429,6 +6429,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ad1fb78fedbed4aa76b8608954e206, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  carRBs: []
   officialCheckpoints:
   - {fileID: 1364846868}
   - {fileID: 1590069635}
@@ -6443,6 +6444,8 @@ MonoBehaviour:
   - {fileID: 753388573}
   - {fileID: 1935695246}
   totalLaps: 3
+  playersReady: 0
+  hasActuallyStarted: 0
 --- !u!4 &800101965
 Transform:
   m_ObjectHideFlags: 0
