@@ -10,6 +10,8 @@ public class SCR_PhysicsConnector : MonoBehaviour
     [Header("Physics Modules")]
     [SerializeField] private SCR_RayBasedCarPhysics _rayPhysics;
 
+    [SerializeField] SCR_CarDecalsManager decalManager;
+
     [Header("Settings")]
     [SerializeField] private bool _autoFind = true;
 
@@ -34,6 +36,8 @@ public class SCR_PhysicsConnector : MonoBehaviour
     {
         if (!_carInput) _carInput = GetComponent<SCR_CarInput>();
         if (!_rayPhysics) _rayPhysics = GetComponent<SCR_RayBasedCarPhysics>();
+
+        if(!decalManager)decalManager = GetComponent<SCR_CarDecalsManager>();
 
         _carInput.enabled = true;
     }
@@ -93,11 +97,18 @@ public class SCR_PhysicsConnector : MonoBehaviour
     private void OnSteer(float value)
     {
         if (_rayPhysics && _rayPhysics.enabled) _rayPhysics.SetSteering(value);
+
+        if(decalManager && decalManager.inDecalSelection) decalManager.SetDecal((int)value);
     }
 
     private void OnThrottle(float value)
     {
         if (_rayPhysics && _rayPhysics.enabled) _rayPhysics.SetThrottle(value);
+
+        if(value > 0.1f)
+        {
+            if(decalManager && decalManager.inDecalSelection) decalManager.EndSelection();
+        }
     }
 
 
@@ -110,7 +121,12 @@ public class SCR_PhysicsConnector : MonoBehaviour
     {
         if (value)
         {
-            if (_rayPhysics && _rayPhysics.enabled) _rayPhysics.ActivateTurbo();
+            if(decalManager && decalManager.inDecalSelection)
+            { 
+                decalManager.EndSelection();
+            }
+
+            if (_rayPhysics && _rayPhysics.enabled && RaceManager.Instance.hasActuallyStarted) _rayPhysics.ActivateTurbo();
         }
     }
 

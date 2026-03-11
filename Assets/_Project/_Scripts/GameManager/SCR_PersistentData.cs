@@ -68,6 +68,7 @@ public class PlayerSessionData
     public string selectedCharacterID; // NOVO: para buscas robustas
     public RacerProfileSO selectedCarData;
     public bool hasConfirmed;
+    public bool isSelectingDecal;
     
     public PlayerSessionData()
     {

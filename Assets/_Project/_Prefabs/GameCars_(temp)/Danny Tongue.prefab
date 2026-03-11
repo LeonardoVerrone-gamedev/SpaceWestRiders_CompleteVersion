@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 4245191241612453450}
   - component: {fileID: 572498648386341501}
   - component: {fileID: 4503203359977958571}
+  - component: {fileID: -8924434163404839318}
   m_Layer: 8
   m_Name: Danny Tongue
   m_TagString: Player
@@ -2849,6 +2850,37 @@ MonoBehaviour:
   driftMultiplier: 0.3
   jumpMultiplier: 2
   turboMultiplier: 1
+--- !u!114 &-8924434163404839318
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 134413080898623409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b29b4f559225da4aaa535f86e9e2781, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lateralDecalOptions:
+  - {fileID: 2100000, guid: cab1f567c7881364ea9aa6ed0848820e, type: 2}
+  - {fileID: 2100000, guid: b6a7ad913b4d95d4297d1580c9e13347, type: 2}
+  frontalDecalOptions:
+  - {fileID: 2100000, guid: cab1f567c7881364ea9aa6ed0848820e, type: 2}
+  - {fileID: 2100000, guid: b6a7ad913b4d95d4297d1580c9e13347, type: 2}
+  topDecalOptions:
+  - {fileID: 2100000, guid: cab1f567c7881364ea9aa6ed0848820e, type: 2}
+  - {fileID: 2100000, guid: b6a7ad913b4d95d4297d1580c9e13347, type: 2}
+  backDecalOptions:
+  - {fileID: 2100000, guid: cab1f567c7881364ea9aa6ed0848820e, type: 2}
+  - {fileID: 2100000, guid: b6a7ad913b4d95d4297d1580c9e13347, type: 2}
+  lateralDecalProjector:
+  - {fileID: 7372117352400038824}
+  - {fileID: 6289371345069334629}
+  frontalDecalProjector: {fileID: 1444995026937392098}
+  topDecalProjector: {fileID: 3824562727459364461}
+  backDecalProjector: {fileID: 6597972923102863306}
+  currentDecalIndex: 0
 --- !u!1 &154450185186096534
 GameObject:
   m_ObjectHideFlags: 0
@@ -2880,6 +2912,62 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8819039255336965610}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!1 &184703450915751770
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8387419541307278736}
+  - component: {fileID: 7372117352400038824}
+  m_Layer: 0
+  m_Name: Car Decal Side1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8387419541307278736
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 184703450915751770}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -1, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2249263168059041617}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+--- !u!114 &7372117352400038824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 184703450915751770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 2100000, guid: cab1f567c7881364ea9aa6ed0848820e, type: 2}
+  m_DrawDistance: 1000
+  m_FadeScale: 0
+  m_StartAngleFade: 180
+  m_EndAngleFade: 180
+  m_UVScale: {x: 1, y: 1}
+  m_UVBias: {x: 0, y: 0}
+  m_DecalLayerMask: 16
+  m_ScaleMode: 0
+  m_Offset: {x: -0.09955168, y: 0.5956013, z: -0.0694878}
+  m_Size: {x: 4.296937, y: 0.71412396, z: 0.22757663}
+  m_FadeFactor: 1
 --- !u!1 &303541476092888985
 GameObject:
   m_ObjectHideFlags: 0
@@ -2912,6 +3000,62 @@ Transform:
   - {fileID: 8663003734697728926}
   m_Father: {fileID: 7889873178376322749}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &334252678168355531
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3282740865012780062}
+  - component: {fileID: 1444995026937392098}
+  m_Layer: 0
+  m_Name: Car Decal Frontal
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3282740865012780062
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 334252678168355531}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7002243, y: -0, z: -0, w: 0.71392304}
+  m_LocalPosition: {x: 0, y: 0.9610683, z: 2.0189967}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2249263168059041617}
+  m_LocalEulerAnglesHint: {x: -88.89, y: 0, z: 0}
+--- !u!114 &1444995026937392098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 334252678168355531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 2100000, guid: cab1f567c7881364ea9aa6ed0848820e, type: 2}
+  m_DrawDistance: 1000
+  m_FadeScale: 0
+  m_StartAngleFade: 180
+  m_EndAngleFade: 180
+  m_UVScale: {x: 1, y: 1}
+  m_UVBias: {x: 0, y: 0}
+  m_DecalLayerMask: 16
+  m_ScaleMode: 0
+  m_Offset: {x: -0.0055189133, y: 0.4475003, z: -0.0694878}
+  m_Size: {x: 1.6846962, y: 1.2802607, z: 0.22757663}
+  m_FadeFactor: 1
 --- !u!1 &474697043515233107
 GameObject:
   m_ObjectHideFlags: 0
@@ -52493,6 +52637,42 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1 &4252074943400262883
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2249263168059041617}
+  m_Layer: 8
+  m_Name: Decals
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2249263168059041617
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4252074943400262883}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8387419541307278736}
+  - {fileID: 3282740865012780062}
+  - {fileID: 7631514525962023139}
+  - {fileID: 3976313021866059200}
+  - {fileID: 2158448105907467704}
+  m_Father: {fileID: 3611935140199501036}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4305980902272371361
 GameObject:
   m_ObjectHideFlags: 0
@@ -52586,6 +52766,7 @@ Transform:
   m_Children:
   - {fileID: 2213959233931732498}
   - {fileID: 7889873178376322749}
+  - {fileID: 2249263168059041617}
   m_Father: {fileID: 8819039255336965610}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4606304713029190469
@@ -57510,6 +57691,62 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4560973029569747910}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4979589840544865237
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2158448105907467704}
+  - component: {fileID: 6289371345069334629}
+  m_Layer: 0
+  m_Name: Car Decal Side2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2158448105907467704
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4979589840544865237}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 1.1800003, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2249263168059041617}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &6289371345069334629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4979589840544865237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 2100000, guid: cab1f567c7881364ea9aa6ed0848820e, type: 2}
+  m_DrawDistance: 1000
+  m_FadeScale: 0
+  m_StartAngleFade: 180
+  m_EndAngleFade: 180
+  m_UVScale: {x: 1, y: 1}
+  m_UVBias: {x: 0, y: 0}
+  m_DecalLayerMask: 16
+  m_ScaleMode: 0
+  m_Offset: {x: -0.09955156, y: 0.5956013, z: -0.15573783}
+  m_Size: {x: 4.296937, y: 0.71412396, z: 0.40007672}
+  m_FadeFactor: 1
 --- !u!1 &5066104285579655127
 GameObject:
   m_ObjectHideFlags: 0
@@ -62427,6 +62664,62 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1 &5928116472345489414
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3976313021866059200}
+  - component: {fileID: 3824562727459364461}
+  m_Layer: 0
+  m_Name: Car Decal Top
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3976313021866059200
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5928116472345489414}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7002243, y: -0, z: -0, w: 0.71392304}
+  m_LocalPosition: {x: 0, y: 0.99981236, z: 0.019371595}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2249263168059041617}
+  m_LocalEulerAnglesHint: {x: -88.89, y: 0, z: 0}
+--- !u!114 &3824562727459364461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5928116472345489414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 2100000, guid: cab1f567c7881364ea9aa6ed0848820e, type: 2}
+  m_DrawDistance: 1000
+  m_FadeScale: 0
+  m_StartAngleFade: 180
+  m_EndAngleFade: 180
+  m_UVScale: {x: 1, y: 1}
+  m_UVBias: {x: 0, y: 0}
+  m_DecalLayerMask: 16
+  m_ScaleMode: 0
+  m_Offset: {x: -0.0055189133, y: 0.4178672, z: 0.38215575}
+  m_Size: {x: 1.6846962, y: 1.1613324, z: 0.07356745}
+  m_FadeFactor: 1
 --- !u!1 &6156445890555115170
 GameObject:
   m_ObjectHideFlags: 0
@@ -67521,6 +67814,62 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1 &7674832043240752230
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7631514525962023139}
+  - component: {fileID: 6597972923102863306}
+  m_Layer: 0
+  m_Name: Car Decal Back
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7631514525962023139
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7674832043240752230}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7002243, y: -0, z: -0, w: 0.71392304}
+  m_LocalPosition: {x: 0, y: 1.0191844, z: -0.9804407}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2249263168059041617}
+  m_LocalEulerAnglesHint: {x: -88.89, y: 0, z: 0}
+--- !u!114 &6597972923102863306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7674832043240752230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 2100000, guid: cab1f567c7881364ea9aa6ed0848820e, type: 2}
+  m_DrawDistance: 1000
+  m_FadeScale: 0
+  m_StartAngleFade: 180
+  m_EndAngleFade: 180
+  m_UVScale: {x: 1, y: 1}
+  m_UVBias: {x: 0, y: 0}
+  m_DecalLayerMask: 16
+  m_ScaleMode: 0
+  m_Offset: {x: -0.0055189133, y: 0.48086703, z: 0.008369666}
+  m_Size: {x: 1.6846962, y: 1.0353327, z: 0.104974456}
+  m_FadeFactor: 1
 --- !u!1 &7765439424820740263
 GameObject:
   m_ObjectHideFlags: 0

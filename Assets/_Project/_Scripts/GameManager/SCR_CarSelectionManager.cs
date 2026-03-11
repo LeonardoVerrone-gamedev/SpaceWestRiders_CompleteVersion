@@ -42,6 +42,7 @@ public class SCR_TrackSelectionManager : MonoBehaviour
     private List<SCR_CarVisualCulling> carCullings = new List<SCR_CarVisualCulling>();
 
     public static event Action OnRaceSetupCompleted;
+    
 
     [Header("Race Start Settings")]
     [SerializeField] private float _waitForOthersTime = 3f;
@@ -710,8 +711,7 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
             if (car.TryGetComponent<Rigidbody>(out var rb))
             {
-                rb.isKinematic = false;
-                rb.WakeUp();
+                RaceManager.Instance.AddRigidbodyForRaceStart(rb);
             }
             car.enabled = true;
         }

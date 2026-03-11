@@ -1,10 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 public class RaceManager : MonoBehaviour
 {
     public static RaceManager Instance;
+
+    public List<Rigidbody> carRBs = new List<Rigidbody>();
     
     [Header("Configurações de Pista")]
     [SerializeField] private List<BoxCollider> officialCheckpoints; // Arraste os 5 triggers aqui na ordem
@@ -26,6 +29,11 @@ public class RaceManager : MonoBehaviour
     private CircuitSO currentCircuit;
 
     bool isLastRace = false;
+
+    public int playersReady = 0;
+    public static event Action OnDecalSelectionStart;
+
+    public bool hasActuallyStarted;
 
     private enum AISettingGroup
     {
@@ -120,7 +128,9 @@ public class RaceManager : MonoBehaviour
 
     void StartRace()
     {
-        allRacers = Object.FindObjectsByType<RacerStatus>(FindObjectsSortMode.None).ToList();
+        OnDecalSelectionStart.Invoke();
+
+        allRacers = GameObject.FindObjectsByType<RacerStatus>(FindObjectsSortMode.None).ToList();
         
         foreach (var racer in allRacers)
         {
@@ -385,6 +395,38 @@ public class RaceManager : MonoBehaviour
         float raceTieBreaker = (raceIndex + 1) / 10000.0f;
         
         return basePoints - posTieBreaker - raceTieBreaker;
+    }
+
+    public void AddRigidbodyForRaceStart(Rigidbody rb)
+    {
+        Debug.Log($"RB {rb.gameObject} adicionado");
+        if(!carRBs.Contains(rb))
+        {
+            carRBs.Add(rb);
+        }
+    }
+
+    public void AwakeRacers()
+    {
+        foreach(Rigidbody rb in carRBs)
+        {
+            rb.isKinematic = false;
+            Debug.Log($"RB {rb.gameObject} disparado");
+            rb.WakeUp();
+        }
+        hasActuallyStarted = true;
+    }
+
+    public void EndSelectionAndGoToStart()
+    {
+        playersReady ++;
+
+        var humanPlayers = allRacers.Where(r => r.isPlayer).ToList();
+
+        if(playersReady >= humanPlayers.Count)
+        {
+            Invoke("AwakeRacers", 3f);
+        }
     }
 }
 
