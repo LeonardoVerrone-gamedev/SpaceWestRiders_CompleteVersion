@@ -11,6 +11,7 @@ using System.Collections.Generic;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] bool useCinemachine = true;
+    [SerializeField] CinemachineCamera selectionVcam;
     [SerializeField] CinemachineCamera vCam;
     [SerializeField] CinemachineCamera turbo_VCam;
 
@@ -363,6 +364,12 @@ public class CameraController : MonoBehaviour
         }
     }
 
+    public void ExitSelectionCam()
+    {
+       // Debug.Log($"{this.gameObject} removendo a selection cam");
+        selectionVcam.gameObject.SetActive(false);
+    }
+
     public void SetTarget(Transform newTarget)
     {
         if(newTarget == null) return;
@@ -404,6 +411,7 @@ public class CameraController : MonoBehaviour
         if (useCinemachine && vCam != null)
         {
             vCam.Follow = player.transform.Find("CameraTarget");
+            selectionVcam.Follow = vCam.Follow;
             if (turbo_VCam != null) turbo_VCam.Follow = player.transform.Find("CameraTarget");
             
             ResetAllCameras();
@@ -456,6 +464,7 @@ public class CameraController : MonoBehaviour
 
         // 2. Configura todas as Virtual Cameras do Prefab para esse canal
         vCam.OutputChannel = channelMask;
+        selectionVcam.OutputChannel = channelMask;
         if (turbo_VCam != null) turbo_VCam.OutputChannel = channelMask;
 
         foreach(CinemachineCamera cam in crashCams) cam.OutputChannel = channelMask;

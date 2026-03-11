@@ -411,7 +411,7 @@ public class RaceManager : MonoBehaviour
         foreach(Rigidbody rb in carRBs)
         {
             rb.isKinematic = false;
-            Debug.Log($"RB {rb.gameObject} disparado");
+           // Debug.Log($"RB {rb.gameObject} disparado");
             rb.WakeUp();
         }
         hasActuallyStarted = true;
@@ -425,6 +425,13 @@ public class RaceManager : MonoBehaviour
 
         if(playersReady >= humanPlayers.Count)
         {
+            List<CameraController> _cams = GameObject.FindObjectsByType<CameraController>(FindObjectsSortMode.None).ToList();
+            //Debug.Log($"Finded {_cams.Count} cameras");
+            foreach(CameraController cam in _cams)
+            {
+                //Debug.Log($"{cam.gameObject} removendo a selection cam");
+                cam.ExitSelectionCam();
+            }
             Invoke("AwakeRacers", 3f);
         }
     }
