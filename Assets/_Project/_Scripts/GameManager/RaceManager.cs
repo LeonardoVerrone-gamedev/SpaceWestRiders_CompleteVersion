@@ -24,6 +24,7 @@ public class RaceManager : MonoBehaviour
     [SerializeField] private int totalLaps = 3;
 
     private bool raceFinished = false;
+    private List<RacerStatus> finishedRacers = new List<RacerStatus>();
     private List<RacerStatus> finalRanking = new List<RacerStatus>();
 
     private CircuitSO currentCircuit;
@@ -158,6 +159,11 @@ public class RaceManager : MonoBehaviour
                 if (hasStartedFirstLap[racer])
                 {
                     racer.CountLap();
+
+                    if (racer.lapsCompleted >= totalLaps)
+                    {
+                        RegisterFinish(racer);
+                    }
                 }
                 else
                 {
@@ -180,6 +186,13 @@ public class RaceManager : MonoBehaviour
             
            // Debug.Log($"{racer.name} no CP {checkpointIndex}. Próximo: {racerCheckpointProgress[racer]}");
         }
+    }
+
+    void RegisterFinish(RacerStatus racer)
+    {
+        if (finishedRacers.Contains(racer)) return;
+
+        finishedRacers.Add(racer);
     }
 
    void AssignAIGroups()
@@ -345,15 +358,21 @@ public class RaceManager : MonoBehaviour
 
         CancelInvoke(nameof(UpdateRacePositions));
 
-        var ordered = allRacers
-            .OrderBy(r => r.gridPosition)
+        var unfinished = allRacers
+            .Where(r => !finishedRacers.Contains(r))
+            .OrderByDescending(r => r.TrackProgress)
             .ToList();
+
+        var finalOrder = new List<RacerStatus>();
+
+        finalOrder.AddRange(finishedRacers);
+        finalOrder.AddRange(unfinished);
 
         List<RaceResultData> results = new List<RaceResultData>();
 
-        for (int i = 0; i < ordered.Count; i++)
+        for (int i = 0; i < finalOrder.Count; i++)
         {
-            var racerStatus = ordered[i];
+            var racerStatus = finalOrder[i];
 
             var identity = racerStatus.GetComponent<SCR_CarIdentity>();
 
@@ -365,7 +384,7 @@ public class RaceManager : MonoBehaviour
             {
                 racerName = racerName,
                 position = i + 1,
-                points = GetPoints(i + 1, ordered[i].gridPosition),
+                points = GetPoints(i + 1, finalOrder[i].gridPosition),
                 isPlayer = racerStatus.isPlayer
             });
         }
