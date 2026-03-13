@@ -70,12 +70,18 @@ public class AIRacingController : MonoBehaviour
 
     SCR_RayBasedCarPhysics rayBasedPhysics;
 
-
-
-
     float berserkTimer = 0f;
 
     [SerializeField] public RubberBandingValues rubberBandingValues;
+
+    float nextAggressionDecisionTime;
+    bool decidedToBrakeCheck;
+
+    float nextDefenseDecisionTime;
+    bool decidedToDefend;
+
+    float nextOvertakeDecisionTime;
+    bool decidedToOvertake;
 
 
     void OnEnable()//switch to onEnable later
@@ -139,6 +145,8 @@ public class AIRacingController : MonoBehaviour
 
         HandleAdvancedDriving();
 
+        UpdateAIDecisions();
+
         DetermineAIState();
 
         float steeringInput = (currentState == AIState.Recovering) ? CalculateRecoverySteer() : CalculateSteering();
@@ -164,6 +172,27 @@ public class AIRacingController : MonoBehaviour
                 
                 float gripCorrection = Mathf.Lerp(2.0f, 0.5f, Mathf.Abs(carInputs.GetCurrentInputState().steering));
             }
+        }
+    }
+
+    void UpdateAIDecisions()
+    {
+        if (Time.time > nextDefenseDecisionTime)
+        {
+            decidedToDefend = Random.value < Mathf.Clamp01((profile.skillLevel * 0.3f) + (profile.defensiveSkill * 0.7f));
+            nextDefenseDecisionTime = Time.time + Random.Range(0.5f, 1.5f);
+        }
+
+        if (Time.time > nextAggressionDecisionTime)
+        {
+            decidedToBrakeCheck = Random.value < profile.aggressiveness * 0.475f;
+            nextAggressionDecisionTime = Time.time + Random.Range(1.0f, 2.5f);
+        }
+
+        if (Time.time > nextOvertakeDecisionTime)
+        {
+            decidedToOvertake = Random.value < profile.aggressiveness;
+            nextOvertakeDecisionTime = Time.time + Random.Range(0.4f, 1.2f);
         }
     }
 
@@ -199,7 +228,7 @@ public class AIRacingController : MonoBehaviour
         float defenseRange = opponentDetectDist * 0.6f;
         if (Physics.BoxCast(sensorPivot.position, new Vector3(2.5f, 2f, 1f), backDir, out hit, sensorPivot.rotation, defenseRange, opponentLayer))
         {
-            if (hit.transform != transform && Random.value < profile.skillLevel && profile.defensiveSkill > 0.2f)
+            if (hit.transform != transform && decidedToDefend)
             {
                 currentState = AIState.Defending;
                 Vector3 opponentLocalPos = transform.InverseTransformPoint(hit.transform.position);
@@ -211,10 +240,10 @@ public class AIRacingController : MonoBehaviour
                 return;
             }
 
-            if (profile.aggressiveness > 0.75f && Random.value < 0.4f)
+            if (decidedToBrakeCheck)
             {
                 // Brake-check
-                carInputs.SetThrottleInput(-0.2f);
+                carInputs.SetThrottleInput(-0.4f);
             }
 
         }
@@ -232,7 +261,7 @@ public class AIRacingController : MonoBehaviour
 
             float relativeSpeedZ = myForwardSpeed - opponentForwardSpeed;
 
-            if (hit.transform != transform && Random.value < profile.aggressiveness && profile.aggressiveness > 0.3f && (relativeSpeedZ > 2f || hit.distance < 15f))
+            if (hit.transform != transform && decidedToOvertake && profile.aggressiveness > 0.3f && (relativeSpeedZ > 2f || hit.distance < 15f))
             {
                 Vector3 potentialSide = transform.InverseTransformPoint(hit.transform.position).x > 0 ? -transform.right : transform.right;
 
@@ -771,6 +800,36 @@ public class AIRacingController : MonoBehaviour
             {
                 _isCurrentlyDrifting = false;
             }
+        }
+
+        bool shouldTurbo = false;
+
+        if (straightLen > turboStraightReach && !_isCurrentlyDrifting)
+        {
+            float turboChance = 0f;
+
+            switch(currentState)
+            {
+                case AIState.Overtaking:
+                    turboChance = 0.9f;
+                    break;
+
+                case AIState.Defending:
+                    turboChance = 0.4f;
+                    break;
+
+                case AIState.Racing:
+                    turboChance = Mathf.Lerp(0.3f, 0.7f, profile.aggressiveness);
+                    break;
+            }
+
+            if (Random.value < turboChance)
+                shouldTurbo = true;
+        }
+
+        if (shouldTurbo && car.GetNOSAmount() > 0f)
+        {
+            carInputs.TriggerTurbo(true);
         }
     }
 

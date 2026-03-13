@@ -61179,6 +61179,10 @@ MonoBehaviour:
   currentWaypointIndex: 0
   lapsCompleted: 0
   distanceToNextWaypoint: 0
+  wrongWayDetectionDelay: 1.2
+  minLookAhead: 3
+  maxLookAhead: 12
+  speedForMaxLookAhead: 200
 --- !u!114 &6493070286812276922
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62271,7 +62275,7 @@ MonoBehaviour:
   steeringSmoothness: 15
   maxTracingError: 2
   driftThresholdAngle: 25
-  turboStraightReach: 150
+  turboStraightReach: 135
   minStaminaForTurbo: 20
   rubberBandingValues:
     minCatchUpDist: 20

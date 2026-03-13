@@ -130,7 +130,7 @@ public class PlayerGameplayManager : MonoBehaviour
 
     void UpdateWrongWay()
     {
-        returnSymbol.gameObject.SetActive(racerStatus.isDrivingWrongWay);
+        returnSymbol.gameObject.SetActive(racerStatus.isDrivingWrongWay && (carPhysics.GetThrottleInput() > 0.1f));
     }
 
     string FormatTime(float time)
