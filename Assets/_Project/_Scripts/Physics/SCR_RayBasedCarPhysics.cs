@@ -315,6 +315,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     [Header("Turbo & Stamina Settings")]
     [SerializeField] private int NOS_amount = 3;
+    [SerializeField] private int max_NOS_amount = 5;
     [SerializeField] private float turboInitialImpulse = 15f;
     [SerializeField] private float turboMaxSpeedMultiplier = 2.0f;
     [SerializeField] private float turboAccelMultiplier = 2.0f;
@@ -330,6 +331,16 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     private bool _isTurboRequestActive = false;
 
     [HideInInspector] public float rubberBandingFactor = 1f;
+
+    public int GetNOSAmount()
+    {
+        return NOS_amount;
+    }
+
+    public int GetMaxNOSAmount()
+    {
+        return max_NOS_amount;
+    }
 
     #endregion
 
@@ -478,6 +489,18 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         390f    // 7ª -> 6ª abaixo de 390km/h
     };
 
+    [Header("Fake Engine")]
+
+    [SerializeField] private float minRPM = 3000f;
+    [SerializeField] private float maxRPM = 9000f;
+
+    [SerializeField] private float upshiftRPM = 8500f;
+    [SerializeField] private float downshiftRPM = 3500f;
+
+    [SerializeField] private float engineInertia = 8f;
+
+    public float engineRPM{get; private set;}
+
 
     [SerializeField] private int currentGear = 1;
     private float lastGearShiftTime = -999f;
@@ -493,6 +516,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     SCR_MeshDeformer deformer;
 
     #endregion
+    
 
     // --- Métodos de Física Central ---
 
@@ -536,49 +560,52 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(crashing) return;
+        if(!crashing){
 
-        sensorFrameCounter = (sensorFrameCounter + 1) % aiSensorFrequency;
-        if (!AIControlled || sensorFrameCounter == 0)
-        {
-            UpdateGroundSensors();
+            sensorFrameCounter = (sensorFrameCounter + 1) % aiSensorFrequency;
+            if (!AIControlled || sensorFrameCounter == 0)
+            {
+                UpdateGroundSensors();
+            }
+
+
+            if (isGrounded)
+            {
+                UpdateGravityDirection();
+                ApplyAngularDamping();
+                ApplyDownforce();
+            }
+
+            AlignToTrack();
+
+            ApplySuspension();
+            GroundCheck();
+
+            HandleMovement();
+
+            CalculateCarVelocity();
+
+            Visuals();
+            
+            UpdateBodyTilt();
+
+            if (_isDrifting)
+            {
+                ApplyDriftForces();
+                LimitDriftAngle();
+            }
+
+            if (_isTurboActive)
+            {
+                ApplyTurboPhysics();
+            }
+
+            HandleRespawnSystem();
+
+            LimitVelocity();
         }
 
-
-        if (isGrounded)
-        {
-            UpdateGravityDirection();
-            ApplyAngularDamping();
-            ApplyDownforce();
-        }
-
-        AlignToTrack();
-
-        ApplySuspension();
-        GroundCheck();
-
-        HandleMovement();
-
-        CalculateCarVelocity();
-
-        Visuals();
-        
-        UpdateBodyTilt();
-
-        if (_isDrifting)
-        {
-            ApplyDriftForces();
-            LimitDriftAngle();
-        }
-
-        if (_isTurboActive)
-        {
-            ApplyTurboPhysics();
-        }
-
-        HandleRespawnSystem();
-
-        LimitVelocity();
+        UpdateFakeRPM();
 
         UpdateAutomaticGears();
     }
@@ -607,16 +634,16 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         if (Time.time < lastShiftTime + minTimeBetweenShifts) return;
 
-        float speed = Mathf.Abs(speedKMH);
-        int targetGear = currentGear; // Mantém a marcha atual por padrão
+        int targetGear = currentGear;
 
-        // --- TROCA PARA CIMA 
-        if (currentGear < totalGears && speed >= shiftUpThresholds[currentGear])
+        // SUBIR MARCHA
+        if (currentGear < totalGears && engineRPM >= upshiftRPM)
         {
             targetGear = currentGear + 1;
         }
-        // --- TROCA PARA BAIXO 
-        else if (currentGear > 1 && speed < shiftDownThresholds[currentGear - 1])
+
+        // REDUZIR
+        else if (currentGear > 1 && engineRPM <= downshiftRPM)
         {
             targetGear = currentGear - 1;
         }
@@ -630,6 +657,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     private IEnumerator GearShiftCoroutine(int newGear)
     {
         isShifting = true;
+        lastShiftTime = Time.time;
 
         // micro corte de força
         float originalDrop = gearAccelerationDrop;
@@ -641,6 +669,33 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         gearAccelerationDrop = originalDrop;
         isShifting = false;
+    }
+
+    private void UpdateFakeRPM()
+    {
+        float forwardSpeed = Mathf.Max(0f, currentCarLocalVelocity.z);
+
+        float effectiveMaxSpeed = maxSpeed;
+
+        if (AIControlled)
+            effectiveMaxSpeed *= rubberBandingFactor;
+
+        float gearSpeedRange = effectiveMaxSpeed / totalGears;
+
+        float gearMin = (currentGear - 1) * gearSpeedRange;
+        float gearMax = currentGear * gearSpeedRange;
+
+        float gearProgress = Mathf.InverseLerp(gearMin, gearMax, forwardSpeed);
+
+        float effectiveMinRPM = crashing ? 0f : minRPM;
+
+        float targetRPM = Mathf.Lerp(effectiveMinRPM, maxRPM, gearProgress);
+
+        if(crashing) targetRPM = 0f;
+
+        engineRPM = Mathf.Lerp(engineRPM, targetRPM, Time.fixedDeltaTime * engineInertia);
+
+        engineRPM = Mathf.Clamp(engineRPM, effectiveMinRPM, maxRPM);
     }
 
     #endregion
@@ -1523,7 +1578,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.transform.root == transform.root)
+        if (collision.transform.root == transform.root || collision.gameObject == this.gameObject)
             return;
 
         if (((1 << collision.gameObject.layer) & drivable) != 0)
@@ -1532,12 +1587,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         float impactForce = collision.relativeVelocity.magnitude;
         float currentSpeed = rb.linearVelocity.magnitude;
 
-        Vector3 dir = Vector3.zero;
-        foreach (var contact in collision.contacts)
-            dir += contact.normal;
-
-        dir.Normalize();
-        dir = -dir;
+        Vector3 dir = -collision.contacts[0].normal;
 
         bool isCrashableObject = ((1 << collision.gameObject.layer) & crashable) != 0;
 
@@ -1817,6 +1867,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     public void GainNOS(int qnt)
     {
         NOS_amount += qnt;
+        Mathf.Clamp(NOS_amount, 0, max_NOS_amount);
     }
 
     #endregion

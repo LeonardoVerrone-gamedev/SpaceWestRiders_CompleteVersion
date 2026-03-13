@@ -33,6 +33,7 @@ public class RaceManager : MonoBehaviour
 
     public int playersReady = 0;
     public static event Action OnDecalSelectionStart;
+    public static event Action OnRaceEffectiveStart;
 
     public bool hasActuallyStarted;
 
@@ -88,6 +89,8 @@ public class RaceManager : MonoBehaviour
         true
     );
 
+    private Dictionary<RacerStatus, float> lapStartTimes = new Dictionary<RacerStatus, float>();
+
     void Awake()
     {
         Instance = this;
@@ -114,6 +117,8 @@ public class RaceManager : MonoBehaviour
         }
 
         if(currentCircuit != null) totalLaps = currentCircuit.lapCount;
+
+        //Debug.Log(PlayerPrefs.GetFloat("PLAYER_BEST_" + currentCircuit.circuitName));
         
     }
 
@@ -132,12 +137,6 @@ public class RaceManager : MonoBehaviour
         OnDecalSelectionStart.Invoke();
 
         allRacers = GameObject.FindObjectsByType<RacerStatus>(FindObjectsSortMode.None).ToList();
-        
-        foreach (var racer in allRacers)
-        {
-            racerCheckpointProgress.Add(racer, 0);
-            hasStartedFirstLap.Add(racer, false);
-        }
 
         AssignAIGroups();
         InvokeRepeating(nameof(UpdateRacePositions), 0.5f, 0.2f);
@@ -146,6 +145,9 @@ public class RaceManager : MonoBehaviour
     // Este método será chamado pelos Checkpoints ou pelo próprio Trigger do Manager
     public void NotifyCheckpoint(RacerStatus racer, BoxCollider checkpointHit)
     {
+        if (!racerCheckpointProgress.ContainsKey(racer))
+            return;
+
         int checkpointIndex = officialCheckpoints.IndexOf(checkpointHit);
         if (checkpointIndex == -1) return;
 
@@ -158,6 +160,18 @@ public class RaceManager : MonoBehaviour
                 // SÓ conta volta se já tiver passado pelo checkpoint 0 pelo menos uma vez antes
                 if (hasStartedFirstLap[racer])
                 {
+                    float lapTime = Time.time - lapStartTimes[racer];
+                    lapStartTimes[racer] = Time.time;
+
+                    var identity = racer.GetComponent<SCR_CarIdentity>();
+
+                    string racerName =
+                        identity != null && identity.racerData != null
+                        ? identity.racerData.racerName
+                        : racer.name;
+
+                    racer.RegisterLapTime(lapTime, currentCircuit.circuitName, racerName);
+
                     racer.CountLap();
 
                     if (racer.lapsCompleted >= totalLaps)
@@ -314,7 +328,7 @@ public class RaceManager : MonoBehaviour
 
         ai.SetHuntingGroup(true);
 
-        ai.SetPursuitTarget(playerTarget.GetComponent<SCR_RayBasedCarPhysics>());
+        //ai.SetPursuitTarget(playerTarget.GetComponent<SCR_RayBasedCarPhysics>());
     }
 
     void UpdateRacePositions()
@@ -384,7 +398,7 @@ public class RaceManager : MonoBehaviour
             {
                 racerName = racerName,
                 position = i + 1,
-                points = GetPoints(i + 1, finalOrder[i].gridPosition),
+                points = GetPoints(i + 1, finalOrder[i].gridPosition, racerStatus),
                 isPlayer = racerStatus.isPlayer
             });
         }
@@ -392,28 +406,31 @@ public class RaceManager : MonoBehaviour
         RankingManager.Instance?.OpenRanking(results);
     }
 
-    float GetPoints(int position, int raceIndex)
+    float GetPoints(int position, int raceIndex, RacerStatus racer)
     {
         float basePoints = position switch
         {
-            1 => 35.0f,
-            2 => 22.0f,
-            3 => 15.0f,
-            4 => 12.0f,
-            5 => 10.0f,
-            6 => 8.0f,
-            7 => 6.0f,
-            8 => 4.0f,
-            _ => 0.0f
+            1 => 35f,
+            2 => 22f,
+            3 => 15f,
+            4 => 12f,
+            5 => 10f,
+            6 => 8f,
+            7 => 6f,
+            8 => 4f,
+            _ => 0f
         };
-        
-        // TIEBREAKER 1: posição na corrida (0.001 a 0.008)
-        float posTieBreaker = position / 1000.0f;
-        
-        // TIEBREAKER 2: índice da corrida (0.0001 a 0.0020)
-        float raceTieBreaker = (raceIndex + 1) / 10000.0f;
-        
-        return basePoints - posTieBreaker - raceTieBreaker;
+
+        float lapTieBreaker = 0f;
+
+        if (racer.bestLapTime < float.MaxValue)
+        {
+            lapTieBreaker = Mathf.Clamp(10f - racer.bestLapTime, 0f, 0.009f);
+        }
+
+        float raceTieBreaker = (raceIndex + 1) / 10000f;
+
+        return basePoints - lapTieBreaker - raceTieBreaker;
     }
 
     public void AddRigidbodyForRaceStart(Rigidbody rb)
@@ -434,6 +451,18 @@ public class RaceManager : MonoBehaviour
             rb.WakeUp();
         }
         hasActuallyStarted = true;
+        OnRaceEffectiveStart.Invoke();
+
+        racerCheckpointProgress.Clear();
+        hasStartedFirstLap.Clear();
+        lapStartTimes.Clear();
+
+        foreach (var racer in allRacers)
+        {
+            racerCheckpointProgress.Add(racer, 0);
+            hasStartedFirstLap.Add(racer, false);
+            lapStartTimes.Add(racer, Time.time);
+        }
     }
 
     public void EndSelectionAndGoToStart()
@@ -453,6 +482,11 @@ public class RaceManager : MonoBehaviour
             }
             Invoke("AwakeRacers", 3f);
         }
+    }
+
+    public string GetCurrentCircuitName()
+    {
+        return currentCircuit != null ? currentCircuit.circuitName : "UNKNOWN";
     }
 }
 

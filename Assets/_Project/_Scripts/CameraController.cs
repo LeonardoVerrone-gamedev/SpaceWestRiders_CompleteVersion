@@ -514,6 +514,28 @@ public class CameraController : MonoBehaviour
                 cam.rect = new Rect(0, 0, 1, 0.5f);
             }
         }
+
+        //PlayerGameplayManager playerHudCanvas = player
+         //   .transform
+          //  .Find("PlayerHUD")
+          //  .GetComponent<PlayerGameplayManager>();
+
+          //  playerHudCanvas.SetSplitScreen(cam.rect);
+
+        if(player == null) return;
+
+        Transform hudTransform = player.transform.Find("PlayerHUD");
+
+        if (hudTransform == null) return;
+
+        PlayerGameplayManager hud;
+
+        if (hudTransform.TryGetComponent(out hud))
+        {
+            hud.SetSplitScreen(cam.rect);
+        }
+
+   
     }
 
     //  INICIALIZAR VALORES DOS VOLUMES
@@ -943,7 +965,7 @@ public class CameraController : MonoBehaviour
         else
         {
             if (activeCrashCam != null)
-                activeCrashCam.Priority = 0;
+                activeCrashCam.Priority = -1;
 
             activeCrashCam = null;
         }

@@ -70,25 +70,10 @@ public class AIRacingController : MonoBehaviour
 
     SCR_RayBasedCarPhysics rayBasedPhysics;
 
-    [Header("Pursuit / Combat")]
-    [SerializeField] private float pursuitTriggerDistance = 60f;
-    [SerializeField] private float attackDistance = 25f;
-    [SerializeField] private float attackSteerMultiplier = 1.4f;
-    [SerializeField] private float attackThrottleBoost = 1.15f;
-    [SerializeField] private LayerMask pursuitBlockers; // paredes / cenário
 
-    private SCR_RayBasedCarPhysics pursuitTarget;
-    private bool isPursuing = false;
 
-    [SerializeField] float berserkDistance = 18f;
-    [SerializeField] float berserkDuration = 0.6f;
-    [SerializeField] float berserkSteerMultiplier = 2.2f;
-    [SerializeField] float berserkThrottleBoost = 1.35f;
-    [SerializeField] float berserkWallTolerance = 0.6f;
 
     float berserkTimer = 0f;
-
-    [SerializeField] PursuitEvent pursuitEvent;
 
     [SerializeField] public RubberBandingValues rubberBandingValues;
 
@@ -119,12 +104,7 @@ public class AIRacingController : MonoBehaviour
 
     void Start()
     {
-        myUniqueLaneOffset = Random.Range(-7f, 7f);
-
-        if (pursuitEvent != null && pursuitEvent.targetCar != null)
-        {
-            Invoke(nameof(InvokePursuitTarget), pursuitEvent.timeToInvoke);
-        }
+        myUniqueLaneOffset = Random.Range(-10f, 10f);
     }
 
 
@@ -163,12 +143,6 @@ public class AIRacingController : MonoBehaviour
 
         float steeringInput = (currentState == AIState.Recovering) ? CalculateRecoverySteer() : CalculateSteering();
         float throttleInput = (currentState == AIState.Recovering) ? -0.5f : CalculateThrottle();
-
-        if (TryPursuitAttack(out float pursueSteer, out float pursueThrottle))
-        {
-            steeringInput = Mathf.Lerp(steeringInput, pursueSteer, 0.65f);
-            throttleInput *= pursueThrottle;
-        }
 
         if (carInputs != null)
         {
@@ -346,17 +320,6 @@ public class AIRacingController : MonoBehaviour
         float driftMultiplier = _isCurrentlyDrifting ? 1.5f : 1.0f;
         
         float avoidance = GetDifferentialAvoidance();
-
-        if (isPursuing && berserkTimer > 0f && pursuitTarget != null)
-        {
-            Vector3 localTarget = transform.InverseTransformPoint(pursuitTarget.transform.position);
-
-            // Só ignora parede se estiver atacando NA DIREÇÃO do alvo
-            if (Mathf.Sign(localTarget.x) == Mathf.Sign(avoidance))
-            {
-                avoidance *= berserkWallTolerance;
-            }
-        }
 
         float wallDanger = Mathf.Abs(avoidance);
         float safetyFilter = Mathf.Clamp01(1.0f - (wallDanger * 1.5f));
@@ -811,125 +774,6 @@ public class AIRacingController : MonoBehaviour
         }
     }
 
-    #endregion
-
-    #region pursuit
-
-    private void InvokePursuitTarget()
-    {
-        if (pursuitEvent != null && pursuitEvent.targetCar != null)
-        {
-            SetPursuitTarget(pursuitEvent.targetCar);
-        }
-    }
-
-    public void SetPursuitTarget(SCR_RayBasedCarPhysics targetCar)
-    {
-        if (targetCar == null)
-        {
-            ClearPursuitTarget();
-            return;
-        }
-
-        pursuitTarget = targetCar;
-        isPursuing = true;
-
-        // Desativa caça ao player se o alvo NÃO for o player
-        RacerStatus targetStatus = targetCar.GetComponent<RacerStatus>();
-        RacerStatus myStatus = GetComponent<RacerStatus>();
-
-        if (targetStatus != null && RaceManager.Instance != null)
-        {
-            // Se antes caçava leader/trailer humano, desliga
-            huntsLeader = false;
-            rubberBandingValues.useRubberBanding = true;
-        }
-
-        // Opcional: deixa IA mais agressiva enquanto persegue
-        currentState = AIState.Racing;
-    }
-
-    public void ClearPursuitTarget()
-    {
-        pursuitTarget = null;
-        isPursuing = false;
-
-        // Volta para lógica normal da corrida
-        huntsLeader = true;
-    }
-
-    private bool TryPursuitAttack(out float steerOverride, out float throttleOverride)
-    {
-        if (berserkTimer > 0f)
-        {
-            berserkTimer -= Time.fixedDeltaTime;
-        }
-
-        steerOverride = 0f;
-        throttleOverride = 0f;
-
-        if (!isPursuing || pursuitTarget == null) return false;
-
-        Vector3 toTarget = pursuitTarget.transform.position - transform.position;
-        float dist = toTarget.magnitude;
-
-        if (dist > pursuitTriggerDistance) return false;
-
-        // Linha de visão
-        Vector3 origin = sensorPivot.position;
-        Vector3 dir = toTarget.normalized;
-
-        if (Physics.Raycast(origin, dir, out RaycastHit hit, dist, pursuitBlockers))
-            return false; // caminho bloqueado
-
-        // Direção local
-        Vector3 localDir = transform.InverseTransformDirection(dir);
-        // --- SIDE RAM ---
-        if (Mathf.Abs(localDir.x) > 1.2f && Mathf.Abs(localDir.z) < 8f)
-        {
-            // Empurra sempre para o lado onde existe menos pista
-            steerOverride += Mathf.Sign(localDir.x) * 0.35f;
-        }
-
-        localDir.y = 0;
-
-        float angle = Mathf.Atan2(localDir.x, localDir.z) * Mathf.Rad2Deg;
-
-        float steerStrength = attackSteerMultiplier;
-
-        if (berserkTimer > 0f)
-            steerStrength = berserkSteerMultiplier;
-
-        steerOverride = Mathf.Clamp(
-            (angle / maxSteerAngle) * steerStrength,
-            -1.25f, 1.25f // SIM, maior que 1 de propósito
-        );
-
-
-        if (berserkTimer > 0f)
-        {
-            throttleOverride = berserkThrottleBoost;
-        }
-        else if (dist < attackDistance)
-        {
-            throttleOverride = attackThrottleBoost;
-        }
-        else
-        {
-            throttleOverride = 1.0f;
-        }
-
-
-        // --- BERSERK TRIGGER ---
-        if (dist < berserkDistance && berserkTimer <= 0f)
-        {
-            berserkTimer = berserkDuration;
-        }
-
-        if (profile.brutality < 0.6f) berserkTimer = 0f;
-
-        return true;
-    }
     #endregion
 }
 

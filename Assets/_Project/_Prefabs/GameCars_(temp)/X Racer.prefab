@@ -94588,7 +94588,7 @@ MonoBehaviour:
   hoverAirDrag: 0.002
   classicAirDrag: 0
   dragThreshold: 50
-  downforceAmount: 75
+  downforceAmount: 500
   classicCarAcceleration: 45
   hoverCarAcceleration: 45
   acceleration: 45
@@ -94798,8 +94798,9 @@ MonoBehaviour:
   airTimeThreshold: 5
   respawnBoostIntensity: 1.5
   NOS_amount: 3
+  max_NOS_amount: 5
   turboInitialImpulse: 10
-  turboMaxSpeedMultiplier: 2
+  turboMaxSpeedMultiplier: 1.3
   turboAccelMultiplier: 2
   _turboCooldownTime: 3
   turboDuration: 4
@@ -94829,6 +94830,11 @@ MonoBehaviour:
   - 120
   - 240
   - 310
+  minRPM: 3000
+  maxRPM: 9000
+  upshiftRPM: 8500
+  downshiftRPM: 3500
+  engineInertia: 8
   currentGear: 1
   crashing: 0
   crashable:
@@ -94849,6 +94855,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _carInput: {fileID: 0}
   _rayPhysics: {fileID: 0}
+  decalManager: {fileID: 0}
   _autoFind: 1
 --- !u!114 &7177145092060845961
 MonoBehaviour:
@@ -97143,21 +97150,6 @@ MonoBehaviour:
   driftThresholdAngle: 25
   turboStraightReach: 150
   minStaminaForTurbo: 20
-  pursuitTriggerDistance: 60
-  attackDistance: 25
-  attackSteerMultiplier: 1.4
-  attackThrottleBoost: 1.15
-  pursuitBlockers:
-    serializedVersion: 2
-    m_Bits: 0
-  berserkDistance: 18
-  berserkDuration: 0.6
-  berserkSteerMultiplier: 2.2
-  berserkThrottleBoost: 1.35
-  berserkWallTolerance: 0.6
-  pursuitEvent:
-    targetCar: {fileID: 0}
-    timeToInvoke: 0
   rubberBandingValues:
     minCatchUpDist: 20
     maxCatchUpDist: 150
@@ -97304,6 +97296,7 @@ MonoBehaviour:
   topDecalProjector: {fileID: 7364130267255294173}
   backDecalProjector: {fileID: 902897794168527695}
   currentDecalIndex: 0
+  inDecalSelection: 0
 --- !u!1 &8946938007523153858
 GameObject:
   m_ObjectHideFlags: 0
