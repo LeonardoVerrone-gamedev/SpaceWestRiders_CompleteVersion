@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class PlayerGameplayManager : MonoBehaviour
 {
@@ -35,6 +36,12 @@ public class PlayerGameplayManager : MonoBehaviour
     [SerializeField] RacerStatus racerStatus;
     [SerializeField] SCR_RayBasedCarPhysics carPhysics;
 
+    [Header("Proximity Settings")]
+    [SerializeField] GameObject opponentIndicatorPrefab; // Imagem UI com OpponentUIIndicator
+    [SerializeField] float detectionTrackDistance = 5.0f; // Distância em unidades de waypoint (ex: 5 segmentos)
+    [SerializeField] float maxVisualDistance = 100f; // Distância em metros para escala mínima
+    private List<OpponentUIIndicator> indicators = new List<OpponentUIIndicator>();
+    private List<RacerStatus> allRacers = new List<RacerStatus>();
 
     [Header("Status")]
     float playerSpeed;
@@ -48,6 +55,7 @@ public class PlayerGameplayManager : MonoBehaviour
     {
         racerStatus = transform.root.gameObject.GetComponent<RacerStatus>();
         carPhysics = transform.root.gameObject.GetComponent<SCR_RayBasedCarPhysics>();
+        InitializeProximityIndicators();
     }
     
 
@@ -62,6 +70,7 @@ public class PlayerGameplayManager : MonoBehaviour
         UpdateNOSGauge();
         UpdateNitroAmountText();
         UpdateWrongWay();
+        UpdateProximityIndicators();
     }
 
     void UpdateRPMGauge()
@@ -142,5 +151,59 @@ public class PlayerGameplayManager : MonoBehaviour
         return $"{minutes:00}:{seconds:00}:{milliseconds:000}";
     }
 
+    void InitializeProximityIndicators()
+    {
+        // Limpa se já houver
+        foreach(var ind in indicators) Destroy(ind.gameObject);
+        indicators.Clear();
+
+        // Encontra todos os competidores na cena
+        allRacers.AddRange(FindObjectsByType<RacerStatus>(FindObjectsSortMode.None));
+        
+        foreach(var racer in allRacers)
+        {
+            if(racer == racerStatus) continue; // Pula o próprio jogador
+
+            GameObject go = Instantiate(opponentIndicatorPrefab, hudCanvas.transform);
+            var indicator = go.GetComponent<OpponentUIIndicator>();
+            indicator.targetRacer = racer;
+            indicators.Add(indicator);
+        }
+    }
+
+    void UpdateProximityIndicators()
+    {
+        foreach(var ind in indicators)
+        {
+            RacerStatus target = ind.targetRacer;
+            
+            // 1. Cálculo de Distância via TrackProgress
+            float distDiff = racerStatus.TrackProgress - target.TrackProgress;
+
+            // Se o valor for negativo, o alvo está na frente. 
+            // Se for muito grande, está longe demais atrás.
+            if(distDiff > 0 && distDiff < detectionTrackDistance)
+            {
+                // 2. Cálculo de Escala (0.25f a 2f)
+                // Usamos a distância real para a escala parecer natural em 3D
+                float realDist = Vector3.Distance(transform.position, target.transform.position);
+                float scale = Mathf.Lerp(2f, 0.25f, realDist / maxVisualDistance);
+                scale = Mathf.Clamp(scale, 0.25f, 2f);
+
+                // 3. Cálculo de Posição Lateral (Esquerda/Direita)
+                // Transformamos a posição do oponente para o espaço local do jogador
+                Vector3 relativePos = transform.InverseTransformPoint(target.transform.position);
+                
+                // Normalizamos o X (largura da pista aproximada de 10-15 unidades)
+                float screenX = Mathf.Clamp(relativePos.x / 10f, -1f, 1f);
+
+                ind.UpdateUI(screenX, scale, true);
+            }
+            else
+            {
+                ind.UpdateUI(0, 0, false);
+            }
+        }
+    }
 
 }
