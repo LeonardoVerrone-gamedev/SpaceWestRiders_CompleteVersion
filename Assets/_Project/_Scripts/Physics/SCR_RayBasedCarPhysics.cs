@@ -355,7 +355,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     private float _driftExitTime = 0f;
 
-    private bool _isTurboActive = false;
+    [SerializeField] private bool _isTurboActive = false;
     private float _turboEndTime = 0f;
 
     private float _currentSteerAngle;

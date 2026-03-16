@@ -69,7 +69,6 @@ public class SCR_CarEffects : MonoBehaviour
     private ParticleSystem.EmissionModule rightSparkEM;
     private bool isCollidingLeft, isCollidingRight;
     private bool _lastBoostState = false;
-    private bool _lastTurboState = false;
 
     Rigidbody rb;
 
@@ -116,12 +115,38 @@ public class SCR_CarEffects : MonoBehaviour
         
 
         SetupToggleableParticles(boostParticles);
-        SetupToggleableParticles(turboParticles);
+        
 
         if (sparksLeft) { leftSparkEM = sparksLeft.emission; leftSparkEM.rateOverTime = 0; }
         if (sparksRight) { rightSparkEM = sparksRight.emission; rightSparkEM.rateOverTime = 0; }
 
         rb = carPhysics.GetComponent<Rigidbody>();
+
+        SetNitroParticles();
+
+        if (turboParticles != null)
+        {
+            var em = turboParticles.emission;
+            em.enabled = false;
+            turboParticles.Stop();
+        }
+    }
+
+    void SetNitroParticles()
+    {
+        carPhysics.OnTurboStart += () =>
+        {
+            var em = turboParticles.emission;
+            em.enabled = true;
+            turboParticles.Play();
+        };
+
+        carPhysics.OnTurboEnd += () =>
+        {
+            var em = turboParticles.emission;
+            em.enabled = false;
+            turboParticles.Stop();
+        };
     }
 
     void Update()
@@ -136,7 +161,7 @@ public class SCR_CarEffects : MonoBehaviour
 
         HandleDriftVFX();
         HandleBoostVFX();
-        HandleTurboVFX();
+        //HandleTurboVFX();
         ResetSparkStates();
     }
 
@@ -155,10 +180,6 @@ public class SCR_CarEffects : MonoBehaviour
         // Hover
         foreach (var ps in hoverDriftParticles)
             Add(ps);
-
-        // Toggleables
-        Add(boostParticles);
-        Add(turboParticles);
 
         // Sparks
         Add(sparksLeft);
@@ -187,7 +208,6 @@ public class SCR_CarEffects : MonoBehaviour
         visualsWereDisabled = true;
 
         _lastBoostState = false;
-        _lastTurboState = false;
 
         isCollidingLeft = false;
         isCollidingRight = false;
@@ -225,6 +245,12 @@ public class SCR_CarEffects : MonoBehaviour
         }
 
         visualsWereDisabled = false;
+
+        if (turboParticles != null)
+        {
+            var em = turboParticles.emission;
+            em.enabled = false;
+        }
     }
 
 
@@ -287,17 +313,13 @@ public class SCR_CarEffects : MonoBehaviour
         UpdateParticleState(boostParticles, carPhysics.IsDriftBoostActive(), ref _lastBoostState);
     }
 
-    private void HandleTurboVFX()
-    {
-        UpdateParticleState(turboParticles, carPhysics.IsTurboActive(), ref _lastTurboState);
-    }
-
     private void UpdateParticleState(ParticleSystem ps, bool currentState, ref bool lastState)
     {
         if (ps == null) return;
         if (currentState && !lastState)
         {
-            ps.Play();
+            if (!ps.isPlaying) ps.Play();
+
             var em = ps.emission;
             em.enabled = true;
         }

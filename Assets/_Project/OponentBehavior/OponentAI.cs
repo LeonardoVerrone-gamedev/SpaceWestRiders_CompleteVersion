@@ -83,6 +83,8 @@ public class AIRacingController : MonoBehaviour
     float nextOvertakeDecisionTime;
     bool decidedToOvertake;
 
+    float nextTurboDecision;
+
 
     void OnEnable()//switch to onEnable later
     {
@@ -827,9 +829,12 @@ public class AIRacingController : MonoBehaviour
                 shouldTurbo = true;
         }
 
-        if (shouldTurbo && car.GetNOSAmount() > 0f)
+        if (shouldTurbo && car.GetNOSAmount() > 0f && Time.time > nextTurboDecision)
         {
             carInputs.TriggerTurbo(true);
+            carInputs.TriggerTurbo(false);
+
+            nextTurboDecision = Time.time + Random.Range(25f, 45f);
         }
     }
 

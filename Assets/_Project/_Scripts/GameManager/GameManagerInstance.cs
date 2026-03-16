@@ -21,6 +21,8 @@ public class GameManagerInstance : MonoBehaviour
         }
 
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        //ForceDeleteAllTournamentSaves();
     }
 
     public void ForceDeleteAllTournamentSaves()

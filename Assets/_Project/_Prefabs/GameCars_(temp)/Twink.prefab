@@ -44767,6 +44767,7 @@ MonoBehaviour:
   turboBurstForce: 1.15
   turboBodyTiltBase: -5
   rubberBandingFactor: 1
+  _isTurboActive: 0
   speedKMH: 0
   spinMinForce: 20
   spinMaxForceForCrash: 30
@@ -47112,7 +47113,7 @@ MonoBehaviour:
   steeringSmoothness: 15
   maxTracingError: 2
   driftThresholdAngle: 25
-  turboStraightReach: 135
+  turboStraightReach: 30
   minStaminaForTurbo: 20
   rubberBandingValues:
     minCatchUpDist: 20
