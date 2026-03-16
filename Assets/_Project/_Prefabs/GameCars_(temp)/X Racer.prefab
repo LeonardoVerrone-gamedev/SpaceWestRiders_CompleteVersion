@@ -94447,6 +94447,7 @@ GameObject:
   - component: {fileID: 3955780886237902802}
   - component: {fileID: 2048457439914333766}
   - component: {fileID: -8923686743230924714}
+  - component: {fileID: 8945870425743068157}
   m_Layer: 8
   m_Name: X Racer
   m_TagString: Player
@@ -97302,6 +97303,18 @@ MonoBehaviour:
   backDecalProjector: {fileID: 902897794168527695}
   currentDecalIndex: 0
   inDecalSelection: 0
+--- !u!114 &8945870425743068157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8911016554528439290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76748803c002efc4ca71dfcf88ba9dea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8946938007523153858
 GameObject:
   m_ObjectHideFlags: 0

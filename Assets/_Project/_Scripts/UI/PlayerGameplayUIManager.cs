@@ -43,6 +43,15 @@ public class PlayerGameplayManager : MonoBehaviour
     private List<OpponentUIIndicator> indicators = new List<OpponentUIIndicator>();
     private List<RacerStatus> allRacers = new List<RacerStatus>();
 
+    [Header("Dialogue system")]
+    [SerializeField] TextMeshProUGUI racerNameText;
+    [SerializeField] TextMeshProUGUI DialogueLine;
+    [SerializeField] Image TextBox;
+    [SerializeField] Image TRacerNameTextBox;
+    [SerializeField] Image Portrait;
+    private bool isDialogueActive = false;
+    public bool IsBusy() => isDialogueActive;
+
     [Header("Status")]
     float playerSpeed;
     float playerRPM;
@@ -54,8 +63,15 @@ public class PlayerGameplayManager : MonoBehaviour
     void Start()
     {
         racerStatus = transform.root.gameObject.GetComponent<RacerStatus>();
+
+        if (racerStatus != null)
+        {
+            racerStatus.SetGameplayManager(this);
+        }
         carPhysics = transform.root.gameObject.GetComponent<SCR_RayBasedCarPhysics>();
         InitializeProximityIndicators();
+
+        HideDialogue();
     }
     
 
@@ -164,7 +180,7 @@ public class PlayerGameplayManager : MonoBehaviour
         {
             if(racer == racerStatus) continue; // Pula o próprio jogador
 
-            GameObject go = Instantiate(opponentIndicatorPrefab, hudCanvas.transform);
+            GameObject go = Instantiate(opponentIndicatorPrefab, panel.transform);
             var indicator = go.GetComponent<OpponentUIIndicator>();
             indicator.targetRacer = racer;
             indicators.Add(indicator);
@@ -206,4 +222,46 @@ public class PlayerGameplayManager : MonoBehaviour
         }
     }
 
+    private Coroutine activeTypewriter;
+
+    public void ShowDialogue(string name, string text)
+    {
+        if (activeTypewriter != null) StopCoroutine(activeTypewriter);
+
+        isDialogueActive = true;
+        
+        // Ativa os elementos de UI
+        TextBox.gameObject.SetActive(true);
+        Portrait.gameObject.SetActive(true);
+        racerNameText.gameObject.SetActive(true);
+        DialogueLine.gameObject.SetActive(true);
+        TRacerNameTextBox.gameObject.SetActive(true);
+
+        racerNameText.text = name;
+        activeTypewriter = StartCoroutine(Typewrite(text));
+    }
+
+    private System.Collections.IEnumerator Typewrite(string text)
+    {
+        DialogueLine.text = "";
+        foreach (char c in text.ToCharArray())
+        {
+            DialogueLine.text += c;
+            // 0.01s a 0.02s
+            yield return new WaitForSeconds(0.008f); 
+        }
+        activeTypewriter = null;
+    }
+
+    public void HideDialogue()
+    {
+        if (activeTypewriter != null) StopCoroutine(activeTypewriter);
+        TextBox.gameObject.SetActive(false);
+        Portrait.gameObject.SetActive(false);
+        racerNameText.gameObject.SetActive(false);
+        DialogueLine.gameObject.SetActive(false);
+        TRacerNameTextBox.gameObject.SetActive(false);
+
+        isDialogueActive = false;
+    }    
 }

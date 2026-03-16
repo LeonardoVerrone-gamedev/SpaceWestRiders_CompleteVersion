@@ -59570,6 +59570,7 @@ GameObject:
   - component: {fileID: 6662492128679106042}
   - component: {fileID: 6569210801809603955}
   - component: {fileID: -7391737292772689977}
+  - component: {fileID: 3665942712262991220}
   m_Layer: 8
   m_Name: XLR8
   m_TagString: Player
@@ -62425,6 +62426,18 @@ MonoBehaviour:
   backDecalProjector: {fileID: 6900370152754742280}
   currentDecalIndex: 0
   inDecalSelection: 0
+--- !u!114 &3665942712262991220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4660778744560911697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76748803c002efc4ca71dfcf88ba9dea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4832990728899310696
 GameObject:
   m_ObjectHideFlags: 0

@@ -18,7 +18,7 @@ public class OpponentUIIndicator : MonoBehaviour
         rt.pivot = new Vector2(0.5f, 0f);
 
         // screenX varia de -1 (esquerda) a 1 (direita)
-        float horizontalPadding = 400f; // Quão longe ele vai para os lados
+        float horizontalPadding = 800f; // Quão longe ele vai para os lados
         rt.anchoredPosition = new Vector3(screenX * horizontalPadding, 50f, 0f);
         
         rt.localScale = Vector3.one * scale;

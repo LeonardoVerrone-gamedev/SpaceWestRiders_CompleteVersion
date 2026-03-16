@@ -44407,6 +44407,7 @@ GameObject:
   - component: {fileID: 6572503575102673129}
   - component: {fileID: 3596762990343231398}
   - component: {fileID: 2907307040687142273}
+  - component: {fileID: 218513557881979691}
   m_Layer: 8
   m_Name: Twink
   m_TagString: Player
@@ -47262,6 +47263,18 @@ MonoBehaviour:
   backDecalProjector: {fileID: 2570021372084256638}
   currentDecalIndex: 0
   inDecalSelection: 0
+--- !u!114 &218513557881979691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3618951823427800580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76748803c002efc4ca71dfcf88ba9dea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3678096875074437981
 GameObject:
   m_ObjectHideFlags: 0

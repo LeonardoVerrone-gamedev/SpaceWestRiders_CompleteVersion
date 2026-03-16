@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eff137e82f6c46418812e46bb76bd5a, type: 3}
+  m_Name: Temp01 Dialogue Database
+  m_EditorClassIdentifier: 
+  collisionDialogues:
+  - conversationID: A001
+    challenge:
+      racerID: Billy Sin
+      text: Deixa de ser lerdo e sai da frente!
+    response:
+      racerID: Alien Maconheiro
+      text: "Ih, qual foi? Ta doid\xE3o bixo?"
+  - conversationID: A002
+    challenge:
+      racerID: Alien Maconheiro
+      text: Bip Bip. Toma cuidado bro!
+    response:
+      racerID: Billy Sin
+      text: "Mere\xE7o..."
+  overtakeDialogues:
+  - conversationID: B001
+    challenge:
+      racerID: Billy Sin
+      text: "Uma banheira voadora ainda \xE9 uma banheira!"
+    response:
+      racerID: Alien Maconheiro
+      text: "J\xE1 te falei que \xE9 uma kombi bixo..."
+  - conversationID: B002
+    challenge:
+      racerID: Alien Maconheiro
+      text: "T\xE1 vendo bro? eu te disse que os motores el\xE9tricos e os propulsores
+        a jato s\xE3o mais rapidos que esse seu V8 e essas rodas velhas..."
+    response:
+      racerID: Billy Sin
+      text: Ah, cala a boca!

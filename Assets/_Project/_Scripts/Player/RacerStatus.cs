@@ -258,4 +258,13 @@ public class RacerStatus : MonoBehaviour
         
         isDrivingWrongWay = wrongWayTimer > wrongWayDetectionDelay;
     }
+
+    private PlayerGameplayManager myManager;
+
+    public void SetGameplayManager(PlayerGameplayManager manager) 
+    {
+        myManager = manager;
+    }
+
+    public PlayerGameplayManager GetGameplayManager() => myManager;
 }

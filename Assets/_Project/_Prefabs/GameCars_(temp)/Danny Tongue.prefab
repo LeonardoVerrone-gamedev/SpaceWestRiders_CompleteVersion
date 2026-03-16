@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 572498648386341501}
   - component: {fileID: 4503203359977958571}
   - component: {fileID: -8924434163404839318}
+  - component: {fileID: -100594030190518012}
   m_Layer: 8
   m_Name: Danny Tongue
   m_TagString: Player
@@ -2879,6 +2880,18 @@ MonoBehaviour:
   backDecalProjector: {fileID: 6597972923102863306}
   currentDecalIndex: 0
   inDecalSelection: 0
+--- !u!114 &-100594030190518012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 134413080898623409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76748803c002efc4ca71dfcf88ba9dea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &154450185186096534
 GameObject:
   m_ObjectHideFlags: 0
