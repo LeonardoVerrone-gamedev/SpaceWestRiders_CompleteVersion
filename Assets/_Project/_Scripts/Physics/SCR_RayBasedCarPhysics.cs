@@ -56,12 +56,12 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     [Header("Suspension System")]
     [SerializeField] Transform[] rayPoints;
-    [HideInInspector][SerializeField] float restLenght;
-    [HideInInspector][SerializeField] float hoverDistance = 1.5f;
-    [HideInInspector][SerializeField] float springTravel;
+    [SerializeField] float restLenght;
+    [SerializeField] float hoverDistance = 1.5f;
+    [SerializeField] float springTravel;
 
     [HideInInspector][SerializeField] float springStiffness;
-    [HideInInspector][SerializeField] float wheelRadius;
+    [SerializeField] float wheelRadius;
     [HideInInspector][SerializeField] float hoverDamper = 8000f;
     [HideInInspector][SerializeField] float classicDamper = 3500f;
 
