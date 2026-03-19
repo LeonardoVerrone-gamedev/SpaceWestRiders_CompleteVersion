@@ -1201,23 +1201,32 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     public void ApplyDownforce()
     {
+        float speed = rb.linearVelocity.magnitude;
+
         if (!isHover)
         {
-            float df = Mathf.Sqrt(rb.linearVelocity.magnitude) * downforceAmount;
-            rb.AddForce(-_currentCarUp * df);
+            // Modo Classic: Física quadrática para sensação de Stock Car pesado
+            float df = (speed * speed) * downforceAmount;
+            
+            // Clamp de segurança para evitar que o carro atravesse o chão em velocidades extremas
+            float maxForce = rb.mass * Mathf.Abs(Physics.gravity.y) * 4f;
+            df = Mathf.Clamp(df, 0f, maxForce);
+
+            rb.AddForce(-_currentCarUp * df, ForceMode.Force);
             return;
         }
 
+        // --- Daqui para baixo, a lógica original do Hover foi mantida intacta ---
         if (cachedGroundedCount == 0) return;
 
         float heightRatio = cachedAverageHeight / restLenght;
         if (heightRatio < minHeightThreshold) return;
 
         float speedFactor = useDynamicDownforce
-            ? rb.linearVelocity.magnitude / (maxSpeed / 3.6f)
+            ? speed / (maxSpeed / 3.6f)
             : 1f;
 
-        rb.AddForce(-_currentCarUp * hoverDownforceAmount * speedFactor);
+        rb.AddForce(-_currentCarUp * hoverDownforceAmount * speedFactor, ForceMode.Force);
     }
 
 
