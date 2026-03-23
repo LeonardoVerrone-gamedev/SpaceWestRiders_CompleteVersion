@@ -989,9 +989,9 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
                 if (currentSpringLength > maxVisualLenght)
                 {
                     float distanceGap = currentSpringLength - maxVisualLenght;
-                    float suctionMultiplier = 50f;
+                   // float suctionMultiplier = 50f;
 
-                    netForce -= distanceGap * suctionMultiplier * rb.mass;
+                    netForce -= distanceGap * rb.mass;// * suctionMultiplier;
                 }
                 else if (currentSpringLength < targetDistance * 0.5f)
                 {
@@ -1305,9 +1305,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         // 2. Força de Nivelamento (Auto-Leveling)
         ForceLeveling();
         
-        // 3. Puxão para baixo (Simulação de asas ou gravidade aumentada)
-        // Isso garante que o carro não fique planando indefinidamente, acelerando o retorno ao chão.
-        rb.AddForce(-Vector3.up * 50f, ForceMode.Acceleration); // Aumentei a força
+        rb.AddForce(-transform.up * 50f, ForceMode.Acceleration);
     }
 
     private void ForceLeveling()
