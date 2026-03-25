@@ -56,14 +56,14 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     [Header("Suspension System")]
     [SerializeField] Transform[] rayPoints;
-    [SerializeField] float restLenght;
-    [SerializeField] float hoverDistance = 1.5f;
-    [SerializeField] float springTravel;
+    [SerializeField] float restLenght = 1f;
+    [SerializeField] float hoverDistance = 2f;
+    [SerializeField] float springTravel = 2.5f;
 
-    [HideInInspector][SerializeField] float springStiffness;
-    [SerializeField] float wheelRadius;
-    [HideInInspector][SerializeField] float hoverDamper = 8000f;
-    [HideInInspector][SerializeField] float classicDamper = 3500f;
+    [SerializeField] float springStiffness = 8000f;
+    [SerializeField] float wheelRadius = 0.33f;
+    [SerializeField] float hoverDamper = 8000f;
+    [SerializeField] float classicDamper = 3500f;
 
     private float currentTargetSuspensionLength;
     private float currentDamper;
@@ -998,6 +998,9 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
                     netForce *= 1.5f;
                 }
             }
+
+            float maxForce = rb.mass * 10f;
+            netForce = Mathf.Clamp(netForce, -maxForce, maxForce);
 
             rb.AddForceAtPosition(netForce * transform.up, rayPoints[i].position);
 

@@ -24,6 +24,8 @@ public class CameraController : MonoBehaviour
     private Transform player;
     private Rigidbody playerRB;
 
+    RacerStatus racerStatus;
+
     private SCR_CarInput carInput;
 
     public Transform cameraTarget => player;
@@ -392,6 +394,8 @@ public class CameraController : MonoBehaviour
         player = newTarget;
         playerRB = player?.GetComponent<Rigidbody>();
 
+        racerStatus = player.gameObject.GetComponent<RacerStatus>();
+
         // ATUALIZAÇÃO DO CACHE DE FÍSICA SEMPRE QUE O PLAYER MUDA
         if (player != null)
         {
@@ -439,8 +443,7 @@ public class CameraController : MonoBehaviour
 
     public void SetChannel(int playerIndex)
     {
-        int impulseChannel = playerIndex+1;
-        int impulseMask = playerIndex+1;
+        int impulseChannel = 1 << playerIndex;
         // Converte o index (0, 1) para uma Layer Mask de canais (1, 2, 4...)
         // Canal 0 = 1, Canal 1 = 2, Canal 2 = 4
         OutputChannels channelMask = (OutputChannels)(1 << playerIndex);
@@ -449,17 +452,16 @@ public class CameraController : MonoBehaviour
         var brain = GetComponentInChildren<CinemachineBrain>();
         if (brain != null)
         {
-            brain.ChannelMask = channelMask;
+            brain.ChannelMask = (OutputChannels)impulseChannel;
+
             impulseSource.ImpulseDefinition.ImpulseChannel = impulseChannel;
 
             if (vCam.TryGetComponent<CinemachineImpulseListener>(out var listener))
-            listener.ChannelMask = impulseChannel;
+                listener.ChannelMask = impulseChannel;
 
-            if (turbo_VCam != null)
-            {
-                if (turbo_VCam.TryGetComponent<CinemachineImpulseListener>(out var tListener))
-                    tListener.ChannelMask = impulseChannel;
-            }
+            if (turbo_VCam != null &&
+                turbo_VCam.TryGetComponent<CinemachineImpulseListener>(out var tListener))
+                tListener.ChannelMask = impulseChannel;
         }
 
         // 2. Configura todas as Virtual Cameras do Prefab para esse canal
@@ -953,6 +955,8 @@ public class CameraController : MonoBehaviour
     #region crash
     public void SetCrashCam(bool value)
     {
+        if (carPhysics == null || !racerStatus.isPlayer) return;
+        
         if (value)
         {
             activeCrashCam = GetBestCrashCamera();
@@ -1065,6 +1069,8 @@ public class CameraController : MonoBehaviour
     {
         if (!CanPlayShake(priority, duration)) return;
 
+        if (carPhysics == null || !racerStatus.isPlayer) return;
+
         GenerateShake(amplitude, duration, frequency, direction);
     }
 
@@ -1072,6 +1078,8 @@ public class CameraController : MonoBehaviour
     public void GenerateShake(float amplitude, float duration, float frequency, Vector3 direction)
     {
         if (!enableImpulseShake || impulseSource == null) return;
+
+        if (carPhysics == null || !racerStatus.isPlayer) return;
 
         var def = impulseSource.ImpulseDefinition;
 
@@ -1137,11 +1145,20 @@ public class CameraController : MonoBehaviour
     {
         if (carPhysics == null) return;
 
+        // REMOVE antes de adicionar (evita duplicação)
+        carPhysics.OnTurboStart -= HandleTurboStart;
+        carPhysics.OnTurboEnd   -= HandleTurboEnd;
+
+        carPhysics.OnCollision  -= HandleCollision;
+        carPhysics.OnCrash      -= SetCrashCam;
+        carPhysics.OnLand       -= HandleLanding;
+
+        // ADICIONA
         carPhysics.OnTurboStart += HandleTurboStart;
         carPhysics.OnTurboEnd   += HandleTurboEnd;
 
         carPhysics.OnCollision  += HandleCollision;
-        carPhysics.OnCrash += SetCrashCam;
+        carPhysics.OnCrash      += SetCrashCam;
         carPhysics.OnLand       += HandleLanding;
     }
 
@@ -1162,11 +1179,14 @@ public class CameraController : MonoBehaviour
 
     private void HandleCollision(float force, Vector3 direction)
     {
+        if (carPhysics == null || !racerStatus.isPlayer) return;
         GenerateCollisionShake(force, direction);
     }
 
     private void HandleLanding(float airtime)
     {
+        if (carPhysics == null || !racerStatus.isPlayer) return;
+
         if (carPhysics.carType == CarType.hover)
         {
             return; // Nenhum shake para hover
