@@ -14,7 +14,7 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
-  m_Fog: 0
+  m_Fog: 1
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
   m_FogDensity: 0.01
@@ -427,9 +427,21 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: -7895738268992622808, guid: 9d8b1c9f2e2d4e1449f75dec823b7613, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 9d8b1c9f2e2d4e1449f75dec823b7613, type: 3}
       propertyPath: m_Name
       value: Green City Track Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9d8b1c9f2e2d4e1449f75dec823b7613, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5329099553608597627, guid: 9d8b1c9f2e2d4e1449f75dec823b7613, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2049
       objectReference: {fileID: 0}
     - target: {fileID: 5329099553608597627, guid: 9d8b1c9f2e2d4e1449f75dec823b7613, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -470,6 +482,62 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -1667533562971578787, guid: 9d8b1c9f2e2d4e1449f75dec823b7613, type: 3}
+--- !u!1 &272323336
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 272323337}
+  - component: {fileID: 272323338}
+  m_Layer: 0
+  m_Name: "Posi\xE7\xE3o de largada (7)"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &272323337
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 272323336}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071057, y: 0.0012341102, z: -0.0012341102, w: 0.7071057}
+  m_LocalPosition: {x: 2.1, y: -37, z: -36.46}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1443571643}
+  m_LocalEulerAnglesHint: {x: 90, y: 0.2, z: 0}
+--- !u!114 &272323338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 272323336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 2100000, guid: 49f61e628db23a54b97c9c46313895cd, type: 2}
+  m_DrawDistance: 1000
+  m_FadeScale: 0.9
+  m_StartAngleFade: 180
+  m_EndAngleFade: 180
+  m_UVScale: {x: 1, y: 1}
+  m_UVBias: {x: 0, y: 0}
+  m_DecalLayerMask: 2
+  m_ScaleMode: 0
+  m_Offset: {x: 3.0000024, y: 0.4999981, z: 0.00000047683716}
+  m_Size: {x: 5, y: 5.999996, z: 6}
+  m_FadeFactor: 0.5
 --- !u!1 &299712214
 GameObject:
   m_ObjectHideFlags: 0
@@ -1002,6 +1070,62 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f1dc6c4175455af45854d4c12d08373a, type: 3}
+--- !u!1 &665231564
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 665231565}
+  - component: {fileID: 665231566}
+  m_Layer: 0
+  m_Name: "Posi\xE7\xE3o de largada (1)"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &665231565
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 665231564}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.70710653, y: 0.00000032663812, z: -0.0000003266379, w: 0.70710707}
+  m_LocalPosition: {x: 8.2, y: -32.870064, z: 7.17}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1443571643}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &665231566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 665231564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 2100000, guid: 49f61e628db23a54b97c9c46313895cd, type: 2}
+  m_DrawDistance: 1000
+  m_FadeScale: 0.9
+  m_StartAngleFade: 180
+  m_EndAngleFade: 180
+  m_UVScale: {x: 1, y: 1}
+  m_UVBias: {x: 0, y: 0}
+  m_DecalLayerMask: 2
+  m_ScaleMode: 0
+  m_Offset: {x: 3.0000024, y: 0.4999981, z: 0.00000047683716}
+  m_Size: {x: 5, y: 5.999996, z: 6}
+  m_FadeFactor: 0.5
 --- !u!1 &669668985
 GameObject:
   m_ObjectHideFlags: 0
@@ -1350,6 +1474,118 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 115ac48cc40664c43a57fb25ae5d42b9, type: 3}
+--- !u!1 &713920268
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 713920269}
+  - component: {fileID: 713920270}
+  m_Layer: 0
+  m_Name: "Posi\xE7\xE3o de largada (6)"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &713920269
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 713920268}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7069765, y: 0.0135746505, z: -0.0135746505, w: 0.7069765}
+  m_LocalPosition: {x: -17, y: -37, z: -31.61}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1443571643}
+  m_LocalEulerAnglesHint: {x: 90, y: 2.2, z: 0}
+--- !u!114 &713920270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 713920268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 2100000, guid: 49f61e628db23a54b97c9c46313895cd, type: 2}
+  m_DrawDistance: 1000
+  m_FadeScale: 0.9
+  m_StartAngleFade: 180
+  m_EndAngleFade: 180
+  m_UVScale: {x: 1, y: 1}
+  m_UVBias: {x: 0, y: 0}
+  m_DecalLayerMask: 2
+  m_ScaleMode: 0
+  m_Offset: {x: 3.0000024, y: 0.4999981, z: 0.00000047683716}
+  m_Size: {x: 5, y: 5.999996, z: 6}
+  m_FadeFactor: 0.5
+--- !u!1 &725032674
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 725032675}
+  - component: {fileID: 725032676}
+  m_Layer: 0
+  m_Name: "Posi\xE7\xE3o de largada (3)"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &725032675
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 725032674}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071057, y: 0.0012341102, z: -0.0012341102, w: 0.7071057}
+  m_LocalPosition: {x: 8.67, y: -32.870064, z: -7.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1443571643}
+  m_LocalEulerAnglesHint: {x: 90, y: 0.2, z: 0}
+--- !u!114 &725032676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 725032674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 2100000, guid: 49f61e628db23a54b97c9c46313895cd, type: 2}
+  m_DrawDistance: 1000
+  m_FadeScale: 0.9
+  m_StartAngleFade: 180
+  m_EndAngleFade: 180
+  m_UVScale: {x: 1, y: 1}
+  m_UVBias: {x: 0, y: 0}
+  m_DecalLayerMask: 2
+  m_ScaleMode: 0
+  m_Offset: {x: 3.0000024, y: 0.4999981, z: 0.00000047683716}
+  m_Size: {x: 5, y: 5.999996, z: 6}
+  m_FadeFactor: 0.5
 --- !u!1 &745013264
 GameObject:
   m_ObjectHideFlags: 0
@@ -2565,6 +2801,62 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d49d25b83dec8ed4fb049d7082c77ddc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &872046168
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 872046169}
+  - component: {fileID: 872046170}
+  m_Layer: 0
+  m_Name: "Posi\xE7\xE3o de largada"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &872046169
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 872046168}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.70710653, y: 0.00000032663812, z: -0.0000003266379, w: 0.70710707}
+  m_LocalPosition: {x: -11.432167, y: -32.870064, z: 6.8141327}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1443571643}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &872046170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 872046168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 2100000, guid: 49f61e628db23a54b97c9c46313895cd, type: 2}
+  m_DrawDistance: 1000
+  m_FadeScale: 0.9
+  m_StartAngleFade: 180
+  m_EndAngleFade: 180
+  m_UVScale: {x: 1, y: 1}
+  m_UVBias: {x: 0, y: 0}
+  m_DecalLayerMask: 2
+  m_ScaleMode: 0
+  m_Offset: {x: 3.0000024, y: 0.4999981, z: 0.00000047683716}
+  m_Size: {x: 5, y: 5.999996, z: 6}
+  m_FadeFactor: 0.5
 --- !u!1001 &879949455
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2953,12 +3245,68 @@ Transform:
   m_GameObject: {fileID: 965457484}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.000000014901161, z: -0, w: 1}
-  m_LocalPosition: {x: 144.24529, y: -81.79095, z: 157.08075}
+  m_LocalPosition: {x: 144.24529, y: -81.79095, z: 162.08075}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 592188890}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &990784735
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 990784736}
+  - component: {fileID: 990784737}
+  m_Layer: 0
+  m_Name: "Posi\xE7\xE3o de largada (5)"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &990784736
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 990784735}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071057, y: 0.0012341102, z: -0.0012341102, w: 0.7071057}
+  m_LocalPosition: {x: 4.4, y: -34.77, z: -25.8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1443571643}
+  m_LocalEulerAnglesHint: {x: 90, y: 0.2, z: 0}
+--- !u!114 &990784737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 990784735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 2100000, guid: 49f61e628db23a54b97c9c46313895cd, type: 2}
+  m_DrawDistance: 1000
+  m_FadeScale: 0.9
+  m_StartAngleFade: 180
+  m_EndAngleFade: 180
+  m_UVScale: {x: 1, y: 1}
+  m_UVBias: {x: 0, y: 0}
+  m_DecalLayerMask: 2
+  m_ScaleMode: 0
+  m_Offset: {x: 3.0000024, y: 0.4999981, z: 0.00000047683716}
+  m_Size: {x: 5, y: 5.999996, z: 6}
+  m_FadeFactor: 0.5
 --- !u!1001 &1011196804
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3205,7 +3553,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8811395454165776735, guid: 1857e67441c6d5d44a67d4a1c4291728, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 92.5
+      value: 97.2
       objectReference: {fileID: 0}
     - target: {fileID: 8811395454165776735, guid: 1857e67441c6d5d44a67d4a1c4291728, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3217,19 +3565,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8811395454165776735, guid: 1857e67441c6d5d44a67d4a1c4291728, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9847476
+      value: 0.9972378
       objectReference: {fileID: 0}
     - target: {fileID: 8811395454165776735, guid: 1857e67441c6d5d44a67d4a1c4291728, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.07386756
+      value: -0.07247965
       objectReference: {fileID: 0}
     - target: {fileID: 8811395454165776735, guid: 1857e67441c6d5d44a67d4a1c4291728, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.15748999
+      value: 0.006898164
       objectReference: {fileID: 0}
     - target: {fileID: 8811395454165776735, guid: 1857e67441c6d5d44a67d4a1c4291728, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.0035735986
+      value: -0.014693102
       objectReference: {fileID: 0}
     - target: {fileID: 8811395454165776735, guid: 1857e67441c6d5d44a67d4a1c4291728, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3237,7 +3585,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8811395454165776735, guid: 1857e67441c6d5d44a67d4a1c4291728, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 18.3
+      value: 0.92
       objectReference: {fileID: 0}
     - target: {fileID: 8811395454165776735, guid: 1857e67441c6d5d44a67d4a1c4291728, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -3508,9 +3856,21 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: -6829578374155274165, guid: 9ad7472d6c6021b41a113f367d60afe4, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 9ad7472d6c6021b41a113f367d60afe4, type: 3}
       propertyPath: m_Name
       value: Green City Track Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9ad7472d6c6021b41a113f367d60afe4, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 2746361075882894259, guid: 9ad7472d6c6021b41a113f367d60afe4, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2746361075882894259, guid: 9ad7472d6c6021b41a113f367d60afe4, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -7694,6 +8054,62 @@ RectTransform:
   m_AnchoredPosition: {x: 527.3871, y: -258.16205}
   m_SizeDelta: {x: 407.414, y: 76.39}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1339655362
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1339655363}
+  - component: {fileID: 1339655364}
+  m_Layer: 0
+  m_Name: Linha de chegada
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1339655363
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1339655362}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7071067, y: 0.00000032037497, z: 0.0000003337676, w: 0.70710695}
+  m_LocalPosition: {x: 0, y: -32.965927, z: 16.25882}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1443571643}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!114 &1339655364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1339655362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 2100000, guid: 136cb436410ed294cb3e66c56645d38e, type: 2}
+  m_DrawDistance: 1000
+  m_FadeScale: 0.9
+  m_StartAngleFade: 180
+  m_EndAngleFade: 180
+  m_UVScale: {x: 6.93, y: 1.9999993}
+  m_UVBias: {x: -5.7999988, y: -3.0000021}
+  m_DecalLayerMask: 2
+  m_ScaleMode: 0
+  m_Offset: {x: 3.5, y: 0.4999981, z: -0.5000016}
+  m_Size: {x: 34, y: 7.999997, z: 3.000002}
+  m_FadeFactor: 0.5
 --- !u!1 &1346806272
 GameObject:
   m_ObjectHideFlags: 0
@@ -7963,6 +8379,46 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!1 &1443571642
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1443571643}
+  m_Layer: 0
+  m_Name: Road Marks
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1443571643
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1443571642}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 111.11073, y: 1.4323972, z: 73.20484}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1339655363}
+  - {fileID: 872046169}
+  - {fileID: 665231565}
+  - {fileID: 1828983144}
+  - {fileID: 725032675}
+  - {fileID: 1641984707}
+  - {fileID: 990784736}
+  - {fileID: 713920269}
+  - {fileID: 272323337}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1459260796 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 667363336588430630, guid: 115ac48cc40664c43a57fb25ae5d42b9, type: 3}
@@ -8368,6 +8824,62 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 10
   m_TargetDisplay: 0
+--- !u!1 &1641984706
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1641984707}
+  - component: {fileID: 1641984708}
+  m_Layer: 0
+  m_Name: "Posi\xE7\xE3o de largada (4)"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1641984707
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1641984706}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071057, y: 0.0012341102, z: -0.0012341102, w: 0.7071057}
+  m_LocalPosition: {x: -16.34, y: -34.8, z: -21.4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1443571643}
+  m_LocalEulerAnglesHint: {x: 90, y: 0.2, z: 0}
+--- !u!114 &1641984708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1641984706}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 2100000, guid: 49f61e628db23a54b97c9c46313895cd, type: 2}
+  m_DrawDistance: 1000
+  m_FadeScale: 0.9
+  m_StartAngleFade: 180
+  m_EndAngleFade: 180
+  m_UVScale: {x: 1, y: 1}
+  m_UVBias: {x: 0, y: 0}
+  m_DecalLayerMask: 2
+  m_ScaleMode: 0
+  m_Offset: {x: 3.0000024, y: 0.4999981, z: 0.00000047683716}
+  m_Size: {x: 5, y: 5.999996, z: 6}
+  m_FadeFactor: 0.5
 --- !u!1 &1667017600
 GameObject:
   m_ObjectHideFlags: 0
@@ -8824,6 +9336,62 @@ Transform:
   m_Children: []
   m_Father: {fileID: 592188890}
   m_LocalEulerAnglesHint: {x: 0, y: -15, z: -15}
+--- !u!1 &1828983143
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1828983144}
+  - component: {fileID: 1828983145}
+  m_Layer: 0
+  m_Name: "Posi\xE7\xE3o de largada (2)"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1828983144
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1828983143}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071057, y: 0.0012341102, z: -0.0012341102, w: 0.7071057}
+  m_LocalPosition: {x: -14.98, y: -32.870064, z: -8.6}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1443571643}
+  m_LocalEulerAnglesHint: {x: 90, y: 0.2, z: 0}
+--- !u!114 &1828983145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1828983143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 2100000, guid: 49f61e628db23a54b97c9c46313895cd, type: 2}
+  m_DrawDistance: 1000
+  m_FadeScale: 0.9
+  m_StartAngleFade: 180
+  m_EndAngleFade: 180
+  m_UVScale: {x: 1, y: 1}
+  m_UVBias: {x: 0, y: 0}
+  m_DecalLayerMask: 2
+  m_ScaleMode: 0
+  m_Offset: {x: 3.0000024, y: 0.4999981, z: 0.00000047683716}
+  m_Size: {x: 5, y: 5.999996, z: 6}
+  m_FadeFactor: 0.5
 --- !u!1001 &1972785607
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9084,3 +9652,4 @@ SceneRoots:
   - {fileID: 689069960}
   - {fileID: 1472890465}
   - {fileID: 1118335347}
+  - {fileID: 1443571643}

@@ -7,7 +7,7 @@ using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
-
+////
 public class CameraController : MonoBehaviour
 {
     [SerializeField] bool useCinemachine = true;
@@ -375,6 +375,16 @@ public class CameraController : MonoBehaviour
     public void SetTarget(Transform newTarget)
     {
         if(newTarget == null) return;
+
+        if(carPhysics != null)
+        {
+            carPhysics.OnTurboStart -= HandleTurboStart;
+            carPhysics.OnTurboEnd   -= HandleTurboEnd;
+
+            carPhysics.OnCollision  -= HandleCollision;
+            carPhysics.OnCrash      -= SetCrashCam;
+            carPhysics.OnLand       -= HandleLanding;          
+        }
 
         CameraController[] allCams = Object.FindObjectsByType<CameraController>(UnityEngine.FindObjectsSortMode.None);
 
@@ -1144,14 +1154,6 @@ public class CameraController : MonoBehaviour
     private void SetupCarEventListeners()
     {
         if (carPhysics == null) return;
-
-        // REMOVE antes de adicionar (evita duplicação)
-        carPhysics.OnTurboStart -= HandleTurboStart;
-        carPhysics.OnTurboEnd   -= HandleTurboEnd;
-
-        carPhysics.OnCollision  -= HandleCollision;
-        carPhysics.OnCrash      -= SetCrashCam;
-        carPhysics.OnLand       -= HandleLanding;
 
         // ADICIONA
         carPhysics.OnTurboStart += HandleTurboStart;
