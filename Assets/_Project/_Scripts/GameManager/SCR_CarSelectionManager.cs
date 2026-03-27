@@ -767,6 +767,14 @@ public class SCR_TrackSelectionManager : MonoBehaviour
             newCamController.SetChannel(p.playerIndex);
             _activeCameras.Add(newCamController);
 
+            if (_carsByID.ContainsKey(p.selectedCharacterID))
+            {
+                newCamController.SetTarget(_carsByID[p.selectedCharacterID].transform);
+                
+                // ATUALIZA o selectedCarGridIndex para a nova cena
+                p.selectedCarGridIndex = _gridCars.FindIndex(car => car.gameObject == _carsByID[p.selectedCharacterID].gameObject);
+            }
+
             int totalPlayers = SCR_PersistentData.Instance.players.Count;
             if (totalPlayers == 1)
             {
@@ -778,15 +786,6 @@ public class SCR_TrackSelectionManager : MonoBehaviour
                 bool isP1 = p.playerIndex == 0;
                 newCamController.EnableSplitScreen(true, isP1);
                 if (camObj.TryGetComponent<AudioListener>(out var listener)) listener.enabled = isP1;
-            }
-
-            // Foca a câmera no carro usando o dicionário
-            if (_carsByID.ContainsKey(p.selectedCharacterID))
-            {
-                newCamController.SetTarget(_carsByID[p.selectedCharacterID].transform);
-                
-                // ATUALIZA o selectedCarGridIndex para a nova cena
-                p.selectedCarGridIndex = _gridCars.FindIndex(car => car.gameObject == _carsByID[p.selectedCharacterID].gameObject);
             }
 
             var brain = camObj.GetComponentInChildren<Camera>().GetComponent<CinemachineBrain>();

@@ -534,20 +534,11 @@ public class CameraController : MonoBehaviour
 
           //  playerHudCanvas.SetSplitScreen(cam.rect);
 
-        if(player == null) return;
-
         Transform hudTransform = player.transform.Find("PlayerHUD");
 
-        if (hudTransform == null) return;
 
-        PlayerGameplayManager hud;
-
-        if (hudTransform.TryGetComponent(out hud))
-        {
-            hud.SetSplitScreen(cam.rect);
-        }
-
-   
+        PlayerGameplayManager hud = hudTransform.GetComponent<PlayerGameplayManager>();
+        hud.SetSplitScreen(cam.rect);
     }
 
     //  INICIALIZAR VALORES DOS VOLUMES

@@ -94,10 +94,7 @@ public class RaceManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
-    }
-
-    void Start()
-    {
+        
         if(QuickPlayManagement.Instance != null)
         { 
             currentCircuit = QuickPlayManagement.Instance.competition.circuits[0];
