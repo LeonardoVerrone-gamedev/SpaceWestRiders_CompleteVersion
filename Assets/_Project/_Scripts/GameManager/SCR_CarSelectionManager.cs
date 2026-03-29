@@ -213,6 +213,9 @@ public class SCR_TrackSelectionManager : MonoBehaviour
         GameObject camObj = Instantiate(cameraPrefab);
         CameraController cam = camObj.GetComponent<CameraController>();
 
+        // === TARGET ===
+        cam.SetTarget(car.transform);
+
         cam.SetChannel(player.playerIndex);
         _activeCameras.Add(cam);
 
@@ -238,9 +241,6 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
         foreach (var culling in carCullings)
             culling.AddCamera(brain);
-
-        // === TARGET ===
-        cam.SetTarget(car.transform);
 
         // Atualiza grid index
         player.selectedCarGridIndex =
@@ -361,6 +361,7 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
         GameObject camObj = Instantiate(cameraPrefab);
         CameraController newCamController = camObj.GetComponent<CameraController>();
+        newCamController.SetTarget(_carsByID[p.selectedCharacterID].transform);
         newCamController.SetChannel(p.playerIndex);
         newCamController.EnableSplitScreen(false, true);
 
@@ -371,7 +372,6 @@ public class SCR_TrackSelectionManager : MonoBehaviour
             carCulling.AddCamera(brain);
 
         // Usa o dicionário para encontrar o carro
-        newCamController.SetTarget(_carsByID[p.selectedCharacterID].transform);
 
         p.hasConfirmed = true;
         _isCountingDown = false;

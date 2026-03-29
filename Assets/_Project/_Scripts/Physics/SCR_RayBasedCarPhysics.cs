@@ -293,8 +293,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     #region Respawn System
 
     [Header("Respawn System")]
-    [HideInInspector][SerializeField] private float savePositionInterval = 2f;
-    [HideInInspector][SerializeField] private float airTimeThreshold = 5f;
+    [SerializeField]private float airTimeThreshold = 3f;
     [HideInInspector][SerializeField] private float respawnBoostIntensity = 1.5f;
 
     private Vector3 _lastSafePosition;
@@ -1600,11 +1599,12 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         Vector3 dir = -collision.contacts[0].normal;
 
         bool isCrashableObject = ((1 << collision.gameObject.layer) & crashable) != 0;
+ 
 
         //  CRASH
         if (isCrashableObject &&
             impactForce > crashImpactForce &&
-            IsFrontalCollision(dir) && !_isTurboActive)
+            IsFrontalCollision(dir) && !_isTurboActive && (ShouldAvoidCrashForSlowPlayers() == false))
         {
             if (crashing) return;
 
@@ -1636,6 +1636,18 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
                 OnCollision?.Invoke(finalForce, dir);
                 lastCollisionShakeTime = Time.time;
             }
+        }
+    }
+
+    bool ShouldAvoidCrashForSlowPlayers()
+    {
+        if(racerStatus.isPlayer && speedKMH <= 150f)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
