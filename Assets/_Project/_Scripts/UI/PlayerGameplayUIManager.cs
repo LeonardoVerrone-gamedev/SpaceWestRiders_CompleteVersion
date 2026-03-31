@@ -62,13 +62,13 @@ public class PlayerGameplayManager : MonoBehaviour
 
     void Start()
     {
-        racerStatus = transform.root.gameObject.GetComponent<RacerStatus>();
+        racerStatus = transform.parent.gameObject.GetComponent<RacerStatus>();
 
         if (racerStatus != null)
         {
             racerStatus.SetGameplayManager(this);
         }
-        carPhysics = transform.root.gameObject.GetComponent<SCR_RayBasedCarPhysics>();
+        carPhysics = transform.parent.gameObject.GetComponent<SCR_RayBasedCarPhysics>();
         InitializeProximityIndicators();
 
         HideDialogue();
