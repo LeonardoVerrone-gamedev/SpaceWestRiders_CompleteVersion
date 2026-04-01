@@ -104,9 +104,10 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     #region Hover Downforce
 
     [Header("Hover Downforce (Aero)")]
-    [HideInInspector] [SerializeField] private float hoverDownforceAmount = 2500f;
+    [SerializeField] private float hoverDownforceAmount = 2500f;
     [HideInInspector] [SerializeField] private float minHeightThreshold = 0.4f;
     [HideInInspector] [SerializeField] private bool useDynamicDownforce = true;
+    private float[] hoverHeightErrorCache = new float[4];
 
     #endregion
 
@@ -251,7 +252,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     #region Gravity & Ground Hugging
 
     [Header("Gravity/Ground Hugging")]
-    [HideInInspector][SerializeField] float gravityStrength = 9.81f;
+    float gravityStrength = 9.81f * 2;
     [HideInInspector][SerializeField] float surfaceAlignmentSpeed = 10f;
     [HideInInspector][SerializeField] float groundHugDistance = 1.5f;
 
@@ -951,7 +952,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         float targetDistance = currentTargetSuspensionLength;
         float damperStiffness = currentDamper;
 
-
         float maxVisualLenght = .125f + .15f;
 
         for (int i = 0; i < rayPoints.Length; i++)
@@ -971,6 +971,58 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             wheelsGrounded[i] = 1;
             RaycastHit hit = groundSensors[i].hitInfo;
 
+            // =========================
+            // HOVER MODE (NOVO - 31/03)
+            // =========================
+            if (isHover)
+            {
+                float heightError = targetDistance - hit.distance;
+
+                // smoothing (remove jitter)
+                heightError = Mathf.Lerp(hoverHeightErrorCache[i], heightError, 0.25f);
+                hoverHeightErrorCache[i] = heightError;
+
+                float hoverSpringVelocity = Vector3.Dot(
+                    rb.GetPointVelocity(rayPoints[i].position),
+                    cachedSurfaceNormal
+                );
+
+                // força base (controle de altura)
+
+                float liftForce = heightError * springStiffness;
+
+                // curva mais estável (SOFT NON-LINEAR)
+                liftForce *= 1f + Mathf.Abs(heightError) * 0.5f;
+
+                // damping dinâmico (mais estável em alta velocidade)
+                float speedFactor = rb.linearVelocity.magnitude * 0.05f;
+                float dynamicDamper = damperStiffness * (1f + Mathf.Abs(hoverSpringVelocity) * 0.5f);
+
+                float dampForce = dynamicDamper * hoverSpringVelocity;
+
+                float netForce = liftForce - dampForce;
+
+                // leve oscilação (float feeling)
+                //float hoverOscillation = Mathf.Sin(Time.time * 2f + i) * 0.1f;
+               // netForce += hoverOscillation * rb.mass;
+
+                // clamp suave (hover não pode explodir força)
+                float maxHoverForce = rb.mass * 8f;
+                netForce = Mathf.Clamp(netForce, -maxHoverForce, maxHoverForce);
+
+                // aplica na normal do chão (IMPORTANTE)
+                rb.AddForceAtPosition(netForce * cachedSurfaceNormal, rayPoints[i].position);
+
+                // visual hover (fixo)
+                SetTirePosition(tires[i], rayPoints[i].position);
+
+                continue;
+            }
+
+            // =========================
+            // CLASSIC MODE
+            // =========================
+
             float currentSpringLength = hit.distance - wheelRadius;
             float springCompressionRatio = (targetDistance - currentSpringLength) / springTravel;
 
@@ -980,48 +1032,48 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             );
 
             float springForce = springStiffness * springCompressionRatio;
-            float dampForce = damperStiffness * springVelocity;
-            float netForce = springForce - dampForce;
 
-            if (!isHover)
+            float speedFactorClassic = rb.linearVelocity.magnitude * 0.1f;
+            float dynamicDamperClassic = damperStiffness * (1f + speedFactorClassic);
+
+            float dampForceClassic = dynamicDamperClassic * springVelocity;
+
+            float netForceClassic = springForce - dampForceClassic;
+
+            if (currentSpringLength > maxVisualLenght)
             {
-                if (currentSpringLength > maxVisualLenght)
-                {
-                    float distanceGap = currentSpringLength - maxVisualLenght;
-                   // float suctionMultiplier = 50f;
-
-                    netForce -= distanceGap * rb.mass;// * suctionMultiplier;
-                }
-                else if (currentSpringLength < targetDistance * 0.5f)
-                {
-                    netForce *= 1.5f;
-                }
+                float distanceGap = currentSpringLength - maxVisualLenght;
+                netForceClassic -= distanceGap * rb.mass;
+            }
+            else if (currentSpringLength < targetDistance * 0.5f)
+            {
+                netForceClassic *= 1.5f;
             }
 
-            float maxForce = rb.mass * 10f;
-            netForce = Mathf.Clamp(netForce, -maxForce, maxForce);
+            float maxUpForce = rb.mass * 5f;
+            float maxDownForce = rb.mass * 15f;
 
-            rb.AddForceAtPosition(netForce * transform.up, rayPoints[i].position);
+            netForceClassic = Mathf.Clamp(netForceClassic, -maxDownForce, maxUpForce);
 
-            // -----------------------------
-            // VISUAL
-            // -----------------------------
-            if (isHover)
-            {
-                SetTirePosition(tires[i], rayPoints[i].position);
-            }
-            else
-            {
-                float visualSpringDistance = Mathf.Min(currentSpringLength, maxVisualLenght);
-                Vector3 visualPos = rayPoints[i].position - transform.up * visualSpringDistance;
-                SetTirePosition(tires[i], visualPos);
-            }
+            // normal do chão melhora estabilidade
+            rb.AddForceAtPosition(netForceClassic * cachedSurfaceNormal, rayPoints[i].position);
+
+            // visual classic
+            float visualSpringDistance = Mathf.Min(currentSpringLength, maxVisualLenght);
+            Vector3 visualPos = rayPoints[i].position - transform.up * visualSpringDistance;
+            SetTirePosition(tires[i], visualPos);
         }
 
-        // Gravidade baseada na normal cacheada
-        rb.AddForce(-_currentCarUp * rb.mass * gravityStrength);
-    }
+        // =========================
+        // FORÇAS GLOBAIS
+        // =========================
 
+        // Gravidade base
+        float hoverGravityFactor;
+        if(isHover) hoverGravityFactor = 0.6f;
+        else hoverGravityFactor = 1f;
+        rb.AddForce(-_currentCarUp * rb.mass * gravityStrength * hoverGravityFactor);
+    }
 
     #endregion
 
@@ -1048,7 +1100,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         float steeringAngle = maxSteerAngle * _currentSteerInput;
         
         // Acumuladores de rotação (X local)
-        // Traseira: PURA tração (só com acelerador)
+        // Traseira: tração (só com acelerador)
         if(Mathf.Abs(_currentThrottleInput ) > 0.1f){
             _rearWheelRotationAccumulator += tireRorationSpeed * _currentThrottleInput * Time.deltaTime;
         }
@@ -1056,7 +1108,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         {
             _rearWheelRotationAccumulator += tireRorationSpeed * carVelocityRatio * Time.deltaTime;
         }
-        // Dianteira: Pura velocidade (rolagem baseada no movimento)
+        // Dianteira: rolagem baseada no movimento
         _frontWheelRotationAccumulator += tireRorationSpeed * carVelocityRatio * Time.deltaTime;
 
         for (int i = 0; i < tires.Length; i++)
