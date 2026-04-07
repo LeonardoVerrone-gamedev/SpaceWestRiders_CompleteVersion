@@ -88,12 +88,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     private float cachedAverageHeight;
     private int cachedGroundedCount;
 
-    private int sensorFrameCounter = 0;
-    [SerializeField] int aiSensorFrequency = 3;
-
     private RaycastHit[] _raycastBuffer = new RaycastHit[1];
-
-
 
     #endregion
 
@@ -562,12 +557,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     {
         if(!crashing){
 
-            sensorFrameCounter = (sensorFrameCounter + 1) % aiSensorFrequency;
-            if (!AIControlled || sensorFrameCounter == 0)
-            {
-                UpdateGroundSensors();
-            }
-
+            UpdateGroundSensors();
 
             if (isGrounded)
             {
