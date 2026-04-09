@@ -380,7 +380,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     [Header("Filtro de Direção de Colisão")]
     [Tooltip("Ângulo máximo para considerar colisão frontal/traseira (graus)")]
     [Range(0, 90)]
-    float maxFrontalAngle = 60f; // ±45° da frente ou trás
+    float maxFrontalAngle = 120f; // ±45° da frente ou trás
 
     [Tooltip("Considerar colisões traseiras")]
     bool includeRearCollisions = true;
@@ -507,7 +507,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     private SCR_CarCrashPhysics carCrash;
     public bool crashing = false;
     [SerializeField] LayerMask crashable;
-    [SerializeField] float crashImpactForce = 35f;
+    float crashImpactForce = 5f;
     SCR_MeshDeformer deformer;
 
     #endregion
@@ -1062,7 +1062,15 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         float hoverGravityFactor;
         if(isHover) hoverGravityFactor = 0.6f;
         else hoverGravityFactor = 1f;
-        rb.AddForce(-_currentCarUp * rb.mass * gravityStrength * hoverGravityFactor);
+
+        if(isGrounded)
+        {
+            rb.AddForce(-_currentCarUp * rb.mass * gravityStrength * hoverGravityFactor);
+        }
+        else
+        {
+            rb.AddForce(-Vector3.up * rb.mass * gravityStrength * hoverGravityFactor);
+        }
     }
 
     #endregion
@@ -1249,7 +1257,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         if (!isHover)
         {
-            // Modo Classic: Física quadrática para sensação de Stock Car pesado
             float df = (speed * speed) * downforceAmount;
             
             // Clamp de segurança para evitar que o carro atravesse o chão em velocidades extremas
@@ -1260,7 +1267,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             return;
         }
 
-        // --- Daqui para baixo, a lógica original do Hover foi mantida intacta ---
         if (cachedGroundedCount == 0) return;
 
         float heightRatio = cachedAverageHeight / restLenght;
@@ -1683,14 +1689,11 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     bool ShouldAvoidCrashForSlowPlayers()
     {
-        if(racerStatus.isPlayer && speedKMH <= 150f)
+        if(racerStatus.isPlayer && speedKMH <= 60f)
         {
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     private bool IsFrontalOrRearCollision(Vector3 collisionDirection)

@@ -5,49 +5,91 @@ public class SCR_WaypointHolder : MonoBehaviour
 {
     [Header("Configurações Visuais")]
     [SerializeField] private Color gizmoColor = Color.cyan;
-    [SerializeField] private float gizmoRadius = 2f;
+    [SerializeField] private float gizmoRadius = 0.5f;
+    [Range(2, 20)] [SerializeField] private int splineResolution = 10; // Suavidade visual
 
-    // Esta é a lista que a IA vai consultar
     public List<Transform> waypoints = new List<Transform>();
 
     [ContextMenu("Atualizar Lista de Waypoints")]
     public void FetchWaypoints()
     {
         waypoints.Clear();
-
-        // Pega todos os filhos diretos em ordem de hierarquia
         foreach (Transform child in transform)
         {
             waypoints.Add(child);
         }
-
-        Debug.Log($"Sucesso: {waypoints.Count} waypoints encontrados em {gameObject.name}");
     }
 
-    // Desenha as linhas no Editor para você visualizar o traçado
+    // Retorna a posição na spline baseada em um float (0 a waypoints.Count)
+    // Útil para a IA saber onde deve estar na curva
+    public Vector3 GetSplinePosition(float t, bool loop = true)
+    {
+        int count = waypoints.Count;
+        if (count < 2) return Vector3.zero;
+
+        int i = Mathf.FloorToInt(t);
+        float weight = t - i;
+
+        if (loop)
+        {
+            i %= count;
+        }
+        else if (i >= count - 1)
+        {
+            return waypoints[count - 1].position;
+        }
+
+        // Pontos adjacentes para o cálculo (Catmull-Rom precisa de 4 pontos)
+        Vector3 p0 = waypoints[ClampIndex(i - 1, count, loop)].position;
+        Vector3 p1 = waypoints[ClampIndex(i, count, loop)].position;
+        Vector3 p2 = waypoints[ClampIndex(i + 1, count, loop)].position;
+        Vector3 p3 = waypoints[ClampIndex(i + 2, count, loop)].position;
+
+        return CatmullRom(p0, p1, p2, p3, weight);
+    }
+
+    private int ClampIndex(int index, int count, bool loop)
+    {
+        if (index < 0) return loop ? count + index : 0;
+        if (index >= count) return loop ? index % count : count - 1;
+        return index;
+    }
+
+    // Equação matemática da Spline de Catmull-Rom
+    private Vector3 CatmullRom(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
+    {
+        float t2 = t * t;
+        float t3 = t2 * t;
+
+        return 0.5f * (
+            (2f * p1) +
+            (-p0 + p2) * t +
+            (2f * p0 - 5f * p1 + 4f * p2 - p3) * t2 +
+            (-p0 + 3f * p1 - 3f * p2 + p3) * t3
+        );
+    }
+
     private void OnDrawGizmos()
     {
-        if (transform.childCount < 2) return;
+        FetchWaypoints();
+        if (waypoints.Count < 2) return;
 
         Gizmos.color = gizmoColor;
-        
-        for (int i = 0; i < transform.childCount; i++)
+
+        for (int i = 0; i < waypoints.Count; i++)
         {
-            Vector3 current = transform.GetChild(i).position;
-            Vector3 next;
+            // Desenha os pontos principais
+            Gizmos.DrawSphere(waypoints[i].position, gizmoRadius);
 
-            if (i < transform.childCount - 1)
+            // Desenha os segmentos da Spline
+            Vector3 lastPos = waypoints[i].position;
+            for (int j = 1; j <= splineResolution; j++)
             {
-                next = transform.GetChild(i + 1).position;
+                float t = i + (j / (float)splineResolution);
+                Vector3 currentPos = GetSplinePosition(t);
+                Gizmos.DrawLine(lastPos, currentPos);
+                lastPos = currentPos;
             }
-            else
-            {
-                // Fecha o circuito voltando para o primeiro
-                next = transform.GetChild(0).position;
-            }
-
-            Gizmos.DrawSphere(current, gizmoRadius);
-            Gizmos.DrawLine(current, next);
         }
     }
 }

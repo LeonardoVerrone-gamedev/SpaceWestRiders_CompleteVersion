@@ -30787,7 +30787,6 @@ MonoBehaviour:
   classicDamper: 3500
   wheelsGrounded: 00000000000000000000000000000000
   isGrounded: 0
-  aiSensorFrequency: 3
   hoverDownforceAmount: 2500
   minHeightThreshold: 0.4
   useDynamicDownforce: 1
@@ -30796,10 +30795,10 @@ MonoBehaviour:
   dragThreshold: 50
   downforceAmount: 1
   classicCarAcceleration: 45
-  hoverCarAcceleration: 45
+  hoverCarAcceleration: 50
   acceleration: 45
   classicCarMaxSpeed: 100
-  hoverCarMaxSpeed: 100
+  hoverCarMaxSpeed: 105
   maxSpeed: 100
   deceleration: 40
   steerStrenght: 20
@@ -31045,7 +31044,6 @@ MonoBehaviour:
   crashable:
     serializedVersion: 2
     m_Bits: 256
-  crashImpactForce: 35
 --- !u!114 &6385092583249701625
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33353,7 +33351,7 @@ MonoBehaviour:
   frontSensorDist: 120
   avoidanceForce: 5
   sideDecisionCooldown: 1.5
-  maxSteerAngle: 15
+  maxSteerAngle: 20
   steeringSmoothness: 15
   maxTracingError: 2
   driftThresholdAngle: 25
@@ -33365,6 +33363,34 @@ MonoBehaviour:
     minWaitDist: 40
     maxWaitDist: 180
     useRubberBanding: 0
+  speedBasedSteeringCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 25
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 200
+      value: 12
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  steeringPrediction: 1.2
+  cornerLookaheadPoints: 3
+  cornerBrakingDistance: 50
+  stateTransitionTime: 0.5
 --- !u!114 &4320786817482674494
 MonoBehaviour:
   m_ObjectHideFlags: 0
