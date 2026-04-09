@@ -99445,8 +99445,8 @@ MonoBehaviour:
   steeringSmoothness: 15
   maxTracingError: 2
   driftThresholdAngle: 25
-  turboStraightReach: 30
-  minStaminaForTurbo: 20
+  turboStraightReach: 3
+  minStaminaForTurbo: 2.5
   rubberBandingValues:
     minCatchUpDist: 20
     maxCatchUpDist: 150
@@ -99481,6 +99481,8 @@ MonoBehaviour:
   cornerLookaheadPoints: 3
   cornerBrakingDistance: 50
   stateTransitionTime: 0.5
+  driftSteeringSensitivity: 0.6
+  driftAngleCorrectionSpeed: 3
 --- !u!114 &6564888775705968093
 MonoBehaviour:
   m_ObjectHideFlags: 0

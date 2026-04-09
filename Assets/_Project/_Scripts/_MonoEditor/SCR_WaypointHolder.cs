@@ -92,4 +92,12 @@ public class SCR_WaypointHolder : MonoBehaviour
             }
         }
     }
+
+    public Vector3 GetSplineTangent(float t, bool loop = true)
+    {
+        float delta = 0.01f; // Passo curto para precisão da tangente
+        Vector3 p1 = GetSplinePosition(t, loop);
+        Vector3 p2 = GetSplinePosition(t + delta, loop);
+        return (p2 - p1).normalized;
+    }
 }
