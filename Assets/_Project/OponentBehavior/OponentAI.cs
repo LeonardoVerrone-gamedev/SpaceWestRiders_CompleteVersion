@@ -102,6 +102,14 @@ public class AIRacingController : MonoBehaviour
     [SerializeField] private float driftAngleCorrectionSpeed = 3f;
     private float driftDuration;
 
+    enum SteeringMode {
+        PathFollow,
+        Drift,
+        Avoidance
+    }
+
+    [SerializeField] private SteeringMode currentSteeringMode;
+
     void OnEnable()
     {
         car = GetComponent<SCR_RayBasedCarPhysics>();
@@ -314,6 +322,27 @@ public class AIRacingController : MonoBehaviour
         }
     }
 
+    void DetermineSteeringMode()
+    {
+        float avoidance = Mathf.Abs(GetDifferentialAvoidance());
+
+        bool highWallDanger = avoidance > 0.6f; // ajustável
+        bool drifting = _isCurrentlyDrifting;
+
+        if (highWallDanger)
+        {
+            currentSteeringMode = SteeringMode.Avoidance;
+        }
+        else if (drifting)
+        {
+            currentSteeringMode = SteeringMode.Drift;
+        }
+        else
+        {
+            currentSteeringMode = SteeringMode.PathFollow;
+        }
+    }
+
     float CalculateSteering()
     {
         noiseChangeTimer -= Time.fixedDeltaTime;
@@ -347,40 +376,23 @@ public class AIRacingController : MonoBehaviour
         Vector3 predictedPosition = transform.position + rb.linearVelocity * steeringPrediction * Time.fixedDeltaTime;
         Vector3 predictedDirection = targetPos - predictedPosition;
         
-        float angleToTarget;
-        
-        if (_isCurrentlyDrifting)
+        DetermineSteeringMode();
+
+        float angleToTarget = 0f;
+
+        switch (currentSteeringMode)
         {
-            Vector3 velocityDir = rb.linearVelocity.normalized;
-            Vector3 localTargetDir = transform.InverseTransformDirection(predictedDirection.normalized);
-            
-            float targetAngle = Mathf.Atan2(localTargetDir.x, localTargetDir.z) * Mathf.Rad2Deg;
-            
-            float driftAngle = Vector3.Angle(velocityDir, transform.forward);
-            float targetDriftAngle = Mathf.Lerp(15f, 35f, profile.aggressiveness);
+            case SteeringMode.PathFollow:
+                angleToTarget = CalculatePathSteering(predictedDirection);
+                break;
 
-            float driftError = targetDriftAngle - driftAngle;
+            case SteeringMode.Drift:
+                angleToTarget = CalculateDriftSteering(predictedDirection);
+                break;
 
-            // direção da pista (o que você já tinha)
-            float pathSteer = targetAngle;
-
-            // steering de drift
-            float driftSteer = driftError * 2.0f;
-
-            // 🔥 peso dinâmico
-            float driftWeight = Mathf.InverseLerp(5f, 40f, driftAngle);
-
-            // MAIS IMPORTANTE: clamp no drift
-            driftSteer = Mathf.Clamp(driftSteer, -30f, 30f);
-
-            // mistura correta
-            angleToTarget = Mathf.Lerp(pathSteer, driftSteer, driftWeight * 0.7f);
-        }
-        else
-        {
-            Vector3 localDir = transform.InverseTransformDirection(predictedDirection.normalized);
-            localDir.y = 0;
-            angleToTarget = Vector3.SignedAngle(Vector3.forward, localDir.normalized, Vector3.up);
+            case SteeringMode.Avoidance:
+                angleToTarget = CalculateAvoidanceSteering();
+                break;
         }
         
         float currentSpeed = rb.linearVelocity.magnitude;
@@ -409,7 +421,7 @@ public class AIRacingController : MonoBehaviour
         }
         lastSteeringError = currentError;
         
-        float finalTarget = Mathf.Clamp(rawSteerInput + (avoidance * 0.3f), -1f, 1f);
+        float finalTarget = Mathf.Clamp(rawSteerInput, -1f, 1f);
         
         float steerLerpSpeed = (Mathf.Abs(finalTarget) < 0.1f && !_isCurrentlyDrifting) ? 20f : 12f;
         steerLerpSpeed = Mathf.Lerp(steerLerpSpeed, steerLerpSpeed * 1.5f, profile.skillLevel);
@@ -449,6 +461,51 @@ public class AIRacingController : MonoBehaviour
         }
         
         return lastPoint;
+    }
+
+    float CalculatePathSteering(Vector3 predictedDirection)
+    {
+        Vector3 localDir = transform.InverseTransformDirection(predictedDirection.normalized);
+        localDir.y = 0;
+
+        float angle = Vector3.SignedAngle(Vector3.forward, localDir.normalized, Vector3.up);
+        return angle;
+    }
+
+    float CalculateDriftSteering(Vector3 predictedDirection)
+    {
+        float angleToTarget;
+        Vector3 velocityDir = rb.linearVelocity.normalized;
+        Vector3 localTargetDir = transform.InverseTransformDirection(predictedDirection.normalized);
+            
+        float targetAngle = Mathf.Atan2(localTargetDir.x, localTargetDir.z) * Mathf.Rad2Deg;
+            
+        float driftAngle = Vector3.Angle(velocityDir, transform.forward);
+        float targetDriftAngle = Mathf.Lerp(15f, 35f, profile.aggressiveness);
+
+        float driftError = targetDriftAngle - driftAngle;
+
+        // direção da pista 
+        float pathSteer = targetAngle;
+
+        // steering de drift
+        float driftSteer = driftError * 2.0f;
+
+        // peso dinâmico
+        float driftWeight = Mathf.InverseLerp(5f, 40f, driftAngle);
+
+        // MAIS IMPORTANTE: clamp no drift
+        driftSteer = Mathf.Clamp(driftSteer, -30f, 30f);
+        // mistura correta
+        angleToTarget = Mathf.Lerp(pathSteer, driftSteer, driftWeight * 0.7f);
+
+        return Mathf.Clamp(angleToTarget, -30f, 30f);
+    }
+
+    float CalculateAvoidanceSteering()
+    {
+        float avoidance = GetDifferentialAvoidance();
+        return avoidance * maxSteerAngle;
     }
 
     float PlanForUpcomingCorner()
