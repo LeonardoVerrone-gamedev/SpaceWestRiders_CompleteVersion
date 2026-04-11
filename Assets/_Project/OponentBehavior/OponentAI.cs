@@ -100,6 +100,7 @@ public class AIRacingController : MonoBehaviour
     [Header("Drift Control")]
     [SerializeField] private float driftSteeringSensitivity = 0.6f;
     [SerializeField] private float driftAngleCorrectionSpeed = 3f;
+    private float driftDuration;
 
     void OnEnable()
     {
@@ -166,6 +167,7 @@ public class AIRacingController : MonoBehaviour
         {
             carInputs.SetSteeringInput(steeringInput);
             carInputs.SetThrottleInput(throttleInput);
+            carInputs.SetHandbrakeInput(_isCurrentlyDrifting);
 
             if (currentState == AIState.Racing && car.IsGrounded)
             {
@@ -350,19 +352,29 @@ public class AIRacingController : MonoBehaviour
         if (_isCurrentlyDrifting)
         {
             Vector3 velocityDir = rb.linearVelocity.normalized;
-            Vector3 localVelocityDir = transform.InverseTransformDirection(velocityDir);
             Vector3 localTargetDir = transform.InverseTransformDirection(predictedDirection.normalized);
             
-            float velocityAngle = Mathf.Atan2(localVelocityDir.x, localVelocityDir.z) * Mathf.Rad2Deg;
             float targetAngle = Mathf.Atan2(localTargetDir.x, localTargetDir.z) * Mathf.Rad2Deg;
             
             float driftAngle = Vector3.Angle(velocityDir, transform.forward);
-            float desiredCorrection = targetAngle - velocityAngle;
-            
-            angleToTarget = Mathf.Clamp(desiredCorrection, -driftSteeringSensitivity * 50f, driftSteeringSensitivity * 50f);
-            
-            float driftFactor = Mathf.Clamp01(driftAngle / 45f);
-            angleToTarget *= (1f - driftFactor * 0.5f);
+            float targetDriftAngle = Mathf.Lerp(15f, 35f, profile.aggressiveness);
+
+            float driftError = targetDriftAngle - driftAngle;
+
+            // direção da pista (o que você já tinha)
+            float pathSteer = targetAngle;
+
+            // steering de drift
+            float driftSteer = driftError * 2.0f;
+
+            // 🔥 peso dinâmico
+            float driftWeight = Mathf.InverseLerp(5f, 40f, driftAngle);
+
+            // MAIS IMPORTANTE: clamp no drift
+            driftSteer = Mathf.Clamp(driftSteer, -30f, 30f);
+
+            // mistura correta
+            angleToTarget = Mathf.Lerp(pathSteer, driftSteer, driftWeight * 0.7f);
         }
         else
         {
@@ -822,7 +834,6 @@ public class AIRacingController : MonoBehaviour
         
         float minDriftAngle = Mathf.Lerp(45f, 25f, profile.aggressiveness);
         float minSpeedForDrift = Mathf.Lerp(60f, 40f, profile.aggressiveness);
-        float driftDuration = 0f;
         
         Vector3 localDirToNextPoint = transform.InverseTransformPoint(waypoints[currentTargetIndex].position);
         localDirToNextPoint.y = 0;
@@ -854,7 +865,7 @@ public class AIRacingController : MonoBehaviour
             driftDuration += Time.fixedDeltaTime;
             
             float exitAngleThreshold = Mathf.Lerp(20f, 8f, profile.skillLevel);
-            float maxDriftTime = Mathf.Lerp(1.5f, 3f, profile.aggressiveness);
+            float maxDriftTime = Mathf.Lerp(3f, 6f, profile.aggressiveness);
             
             Vector3 velocityDir = rb.linearVelocity.normalized;
             Vector3 localVelocityDir = transform.InverseTransformDirection(velocityDir);
@@ -877,6 +888,8 @@ public class AIRacingController : MonoBehaviour
         }
         
         bool shouldTurbo = false;
+
+        if(shouldDrift || _isCurrentlyDrifting)return;
         
         if (straightLen > turboStraightReach && !_isCurrentlyDrifting && car.GetNOSAmount() > minStaminaForTurbo)
         {
