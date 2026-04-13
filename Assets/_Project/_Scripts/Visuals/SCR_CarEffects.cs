@@ -35,7 +35,7 @@ public class SCR_CarEffects : MonoBehaviour
     [SerializeField] private ParticleSystem boostParticles;
     
     [Header("Turbo VFX")]
-    [SerializeField] private ParticleSystem turboParticles;
+    [SerializeField] private ParticleSystem[] turboParticles;
 
     [Header("Spark VFX (Collisions)")]
     [SerializeField] private ParticleSystem sparksLeft;
@@ -124,11 +124,11 @@ public class SCR_CarEffects : MonoBehaviour
 
         SetNitroParticles();
 
-        if (turboParticles != null)
+        foreach(ParticleSystem particle in turboParticles)
         {
-            var em = turboParticles.emission;
+            var em = particle.emission;
             em.enabled = false;
-            turboParticles.Stop();
+            particle.Stop();
         }
     }
 
@@ -136,16 +136,24 @@ public class SCR_CarEffects : MonoBehaviour
     {
         carPhysics.OnTurboStart += () =>
         {
-            var em = turboParticles.emission;
-            em.enabled = true;
-            turboParticles.Play();
+
+            foreach(ParticleSystem particle in turboParticles)
+            {
+                var em = particle.emission;
+                em.enabled = true;
+                particle.Play();
+            }
         };
 
         carPhysics.OnTurboEnd += () =>
         {
-            var em = turboParticles.emission;
-            em.enabled = false;
-            turboParticles.Stop();
+
+            foreach(ParticleSystem particle in turboParticles)
+            {
+                var em = particle.emission;
+                em.enabled = false;
+                particle.Stop();
+            }
         };
     }
 
@@ -246,10 +254,13 @@ public class SCR_CarEffects : MonoBehaviour
 
         visualsWereDisabled = false;
 
-        if (turboParticles != null)
+        if (turboParticles.Length > 0)
         {
-            var em = turboParticles.emission;
-            em.enabled = false;
+            foreach(ParticleSystem particle in turboParticles)
+            {
+                var em = particle.emission;
+                em.enabled = false;
+            }
         }
     }
 
