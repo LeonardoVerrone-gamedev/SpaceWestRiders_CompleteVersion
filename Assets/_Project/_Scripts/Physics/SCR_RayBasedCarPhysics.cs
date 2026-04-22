@@ -1608,6 +1608,11 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         
         // Aplicar a força na direção misturada
         Vector3 boostForce = boostDirection * driftBoostForce;
+
+        if (!racerStatus.isPlayer)
+        {
+            return;           
+        }
         rb.AddForce(boostForce, ForceMode.VelocityChange);
         
         // Aumentar velocidade máxima temporariamente
@@ -1951,6 +1956,11 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         }
 
         isGrounded = (tempGroundedWheels >= MIN_WHEELS_TO_CONSIDERE_GROUNDED) ? true : false;
+
+        if (isGrounded)
+        {
+            _airTimer = 0;
+        }
 
         if (isGrounded && IsAreaSafe())
         {

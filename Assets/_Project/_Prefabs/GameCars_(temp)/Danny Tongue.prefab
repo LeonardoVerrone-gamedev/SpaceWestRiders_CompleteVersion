@@ -317,6 +317,10 @@ MonoBehaviour:
   driftSelfSteerStrength: 5
   driftCounterSteerLimit: 0.5
   dragRestoreDuration: 0.5
+  minAngleToCount: 5
+  driftAngleWeight: 2
+  driftTimeWeight: 1
+  minDriftScoreForBoost: 50
   maxPitchAngle: 5
   maxRollAngle: 10
   tiltResponseSpeed: 5
