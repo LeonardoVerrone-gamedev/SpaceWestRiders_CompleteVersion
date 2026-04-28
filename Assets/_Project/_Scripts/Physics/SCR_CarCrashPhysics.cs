@@ -42,11 +42,11 @@ public class SCR_CarCrashPhysics : MonoBehaviour
         carPhysics.crashing = true;
 
         // Desestabiliza levemente
-        rb.centerOfMass = originalCenterOfMass + Vector3.up * 0.5f;
+        rb.centerOfMass = originalCenterOfMass + transform.up * 0.5f;
         rb.angularDamping = 0.5f;
 
         // Impulso vertical
-        rb.AddForce(Vector3.up * verticalJumpVelocity, ForceMode.VelocityChange);
+        rb.AddForce(transform.up * verticalJumpVelocity, ForceMode.VelocityChange);
 
         // Torque coerente com direção do carro
         Vector3 velocityDir = rb.linearVelocity.normalized;
@@ -116,7 +116,7 @@ public class SCR_CarCrashPhysics : MonoBehaviour
         if (racerStatus == null || racerStatus.waypoints.Count == 0) return null;
 
         float speed = rb.linearVelocity.magnitude;
-        int lookAhead = Mathf.Clamp(Mathf.RoundToInt(speed / 6f), 7, 15);
+        int lookAhead = Mathf.Clamp(Mathf.RoundToInt(speed / 6f), 2, 7);
         int index = (racerStatus.currentWaypointIndex + lookAhead) % racerStatus.waypoints.Count;
 
         return racerStatus.waypoints[index];

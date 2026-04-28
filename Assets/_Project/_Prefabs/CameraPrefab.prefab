@@ -792,7 +792,7 @@ MonoBehaviour:
   m_IsGlobal: 1
   priority: 1
   blendDistance: 0
-  weight: 0.5
+  weight: 1
   sharedProfile: {fileID: 11400000, guid: c40d8588f3c4bda44b8f2802454ceac8, type: 2}
 --- !u!1 &5010083973395992739
 GameObject:
@@ -868,23 +868,23 @@ MonoBehaviour:
   - {fileID: 267018412328677699}
   - {fileID: 5397743836950780649}
   minSpeedForEffects: 150
-  maxSpeedForEffects: 400
+  maxSpeedForEffects: 360
   minFOV: 30
-  maxFOV: 80
+  maxFOV: 90
   minCameraDistance: 4
   maxCameraDistance: 10
   minVignetteIntensity: 0.2
-  maxVignetteIntensity: 0.6
-  minVignetteSmoothness: 0.6
-  maxVignetteSmoothness: 1
-  minChromaticIntensity: 0.1
-  maxChromaticIntensity: 0.2
-  minPostExposure: 0.5
-  maxPostExposure: 2
-  minSaturation: 10
+  maxVignetteIntensity: 0.5
+  minVignetteSmoothness: 0.1
+  maxVignetteSmoothness: 0.3
+  minChromaticIntensity: 0
+  maxChromaticIntensity: 0.1
+  minPostExposure: 0.25
+  maxPostExposure: 1
+  minSaturation: 0
   maxSaturation: 30
   minMotionBlurIntensity: 0.1
-  maxMotionBlurIntensity: 0.3
+  maxMotionBlurIntensity: 0.5
   minLensDistortionntensity: 0
   maxLensDistortionntensity: 0.3
   fovSmoothTime: 0
@@ -1655,7 +1655,7 @@ MonoBehaviour:
   m_IsGlobal: 1
   priority: 0
   blendDistance: 0
-  weight: 0.5
+  weight: 1
   sharedProfile: {fileID: 11400000, guid: 1b82e12dc23281445aed549ee4a743f2, type: 2}
 --- !u!1 &8852778497626760986
 GameObject:

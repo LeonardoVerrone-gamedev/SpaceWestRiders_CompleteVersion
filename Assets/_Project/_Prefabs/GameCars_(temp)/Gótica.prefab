@@ -66329,7 +66329,7 @@ MonoBehaviour:
   hoverCarMaxSpeed: 105
   maxSpeed: 100
   deceleration: 40
-  steerStrenght: 20
+  steerStrenght: 15
   classicCarDragCoefficient: 5
   hoverCarDragCoefficient: 4
   dragCoefficient: 5
@@ -66462,7 +66462,6 @@ MonoBehaviour:
     m_RotationOrder: 4
   maxDriftAngle: 35
   driftBoostForce: 15
-  driftBoostDuration: 0.5
   driftEnterThreshold: 0.3
   driftStability: 0.15
   driftAccelerationMultiplier: 1.1
@@ -66471,10 +66470,6 @@ MonoBehaviour:
   driftSelfSteerStrength: 5
   driftCounterSteerLimit: 0.5
   dragRestoreDuration: 0.5
-  minAngleToCount: 5
-  driftAngleWeight: 2
-  driftTimeWeight: 1
-  minDriftScoreForBoost: 50
   maxPitchAngle: 5
   maxRollAngle: 10
   tiltResponseSpeed: 5
@@ -66544,6 +66539,7 @@ MonoBehaviour:
   rubberBandingFactor: 1
   _isTurboActive: 0
   speedKMH: 0
+  maxFrontalAngle: 30
   spinMinForce: 20
   spinMaxForceForCrash: 30
   spinMinSpeed: 40
@@ -66576,6 +66572,8 @@ MonoBehaviour:
   crashable:
     serializedVersion: 2
     m_Bits: 256
+  crashImpactForce: 20
+  minDriftTimeForBoost: 3
 --- !u!114 &4114259976808285671
 MonoBehaviour:
   m_ObjectHideFlags: 0

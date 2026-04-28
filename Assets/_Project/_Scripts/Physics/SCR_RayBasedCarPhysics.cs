@@ -380,7 +380,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     [Header("Filtro de Direção de Colisão")]
     [Tooltip("Ângulo máximo para considerar colisão frontal/traseira (graus)")]
     [Range(0, 90)]
-    float maxFrontalAngle = 120f; // ±45° da frente ou trás
+    [SerializeField] float maxFrontalAngle = 30f; // ±45° da frente ou trás
 
     [Tooltip("Considerar colisões traseiras")]
     bool includeRearCollisions = true;
@@ -507,7 +507,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     private SCR_CarCrashPhysics carCrash;
     public bool crashing = false;
     [SerializeField] LayerMask crashable;
-    float crashImpactForce = 5f;
+    [SerializeField] float crashImpactForce = 20f;
     SCR_MeshDeformer deformer;
 
     #endregion
@@ -1567,7 +1567,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         _dragRestoreTimer = 0f;
         
         // Aplicar boost se merecido
-        if (giveBoost && Mathf.Abs(_currentDriftAngle) > 20f) // Ângulo mínimo para ganhar boost
+        if (giveBoost && Mathf.Abs(_currentDriftAngle) > 15f) // Ângulo mínimo para ganhar boost
         {
             ApplyDriftBoost();
         }
@@ -1640,11 +1640,13 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.transform.root == transform.root || collision.gameObject == this.gameObject)
+        if (collision.gameObject == this.gameObject)
             return;
 
         if (((1 << collision.gameObject.layer) & drivable) != 0)
             return;
+
+        float upDot = Vector3.Dot(cachedSurfaceNormal, Vector3.up);
 
         float impactForce = collision.relativeVelocity.magnitude;
         float currentSpeed = rb.linearVelocity.magnitude;
@@ -1657,7 +1659,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         //  CRASH
         if (isCrashableObject &&
             impactForce > crashImpactForce &&
-            IsFrontalCollision(dir) && !_isTurboActive && (ShouldAvoidCrashForSlowPlayers() == false))
+            IsFrontalCollision(dir) && !_isTurboActive && (ShouldAvoidCrashForSlowPlayers() == false) && upDot > 0.6f)
         {
             if (crashing) return;
 
@@ -1799,11 +1801,11 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     bool IsAreaSafe()
     {
         // Precisa ter chão suficiente
-        if (cachedGroundedCount < 3)
+        if (cachedGroundedCount < 4)
             return false;
 
         float upDot = Vector3.Dot(cachedSurfaceNormal, Vector3.up);
-        if (upDot < 0.7f) 
+        if (upDot < 0.75f) 
             return false;
 
         return true;
@@ -2018,7 +2020,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         cachedAverageHeight = 0f;
         cachedGroundedCount = 0;
 
-        float rayLength = restLenght + springTravel + wheelRadius;
+        float rayLength = restLenght + wheelRadius;
         Vector3 rayDir = -transform.up;
 
         for (int i = 0; i < rayPoints.Length; i++)
