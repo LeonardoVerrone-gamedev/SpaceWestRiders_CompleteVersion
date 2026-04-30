@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 
 // Requer que o GameObject tenha um Rigidbody
 [RequireComponent(typeof(Rigidbody))]
