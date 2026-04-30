@@ -50448,7 +50448,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   carType: 0
-  canSwitchType: 0
+  canSwitchType: 1
   AIControlled: 0
   rb: {fileID: 7542009723913951103}
   drivable:
@@ -50469,13 +50469,13 @@ MonoBehaviour:
   - {fileID: 5253097242969427648}
   - {fileID: 2593597031955641523}
   - {fileID: 906109381728408611}
-  restLenght: 1
-  hoverDistance: 1.75
+  restLenght: 1.5
+  hoverDistance: 1
   springTravel: 2.5
-  springStiffness: 8000
+  springStiffness: 4000
   wheelRadius: 0.33
-  hoverDamper: 8000
-  classicDamper: 3500
+  hoverDamper: 1500
+  classicDamper: 800
   wheelsGrounded: 00000000000000000000000000000000
   isGrounded: 0
   hoverDownforceAmount: 2500
@@ -50839,13 +50839,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3820662635277455633}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3578ac2517995d440a09bd029a971343, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  recordingInterval: 0.15
-  racingLineName: TestRacingLine3
+  recordingInterval: 1
+  racingLineName: OceanCircuit
 --- !u!114 &3187116834261055985
 MonoBehaviour:
   m_ObjectHideFlags: 0

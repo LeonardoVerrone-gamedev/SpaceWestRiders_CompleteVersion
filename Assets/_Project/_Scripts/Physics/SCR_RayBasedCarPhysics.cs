@@ -43,7 +43,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     #region Basic Setup
 
-    [HideInInspector][SerializeField] private static int MIN_WHEELS_TO_CONSIDERE_GROUNDED = 2;
+    private static int MIN_WHEELS_TO_CONSIDERE_GROUNDED = 1;
 
     #endregion
 
@@ -326,6 +326,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     [HideInInspector] public float rubberBandingFactor = 1f;
 
+    Vector3[] smoothedNormals;
+
     public int GetNOSAmount()
     {
         return NOS_amount;
@@ -509,6 +511,10 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     [SerializeField] float crashImpactForce = 20f;
     SCR_MeshDeformer deformer;
 
+    float[] groundStickTimer;
+    float[] smoothedDistances;
+    float[] previousCompression;
+
     #endregion
     
 
@@ -538,6 +544,10 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         rb.useGravity = false;
 
         groundSensors = new GroundSensor[rayPoints.Length];
+        smoothedNormals = new Vector3[rayPoints.Length];
+        groundStickTimer = new float[rayPoints.Length];
+        smoothedDistances = new float[rayPoints.Length];
+        previousCompression = new float[rayPoints.Length];
 
         SwitchToMode(carType);
     }
@@ -945,7 +955,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         for (int i = 0; i < rayPoints.Length; i++)
         {
-            if (!groundSensors[i].hit)
+            if (!groundSensors[i].hit && groundStickTimer[i] <= 0f)
             {
                 wheelsGrounded[i] = 0;
 
@@ -1012,18 +1022,51 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             // CLASSIC MODE
             // =========================
 
-            float currentSpringLength = hit.distance - wheelRadius;
+            float maxStep = 0.15f;
+
+            float delta = hit.distance - smoothedDistances[i];
+            delta = Mathf.Clamp(delta, -maxStep, maxStep);
+
+            float target = smoothedDistances[i] + delta;
+
+            float smoothing = 1f - Mathf.Exp(-10f * Time.fixedDeltaTime);
+            smoothedDistances[i] = Mathf.Lerp(smoothedDistances[i], target, smoothing);
+            float currentSpringLength = smoothedDistances[i];
+            currentSpringLength = Mathf.Max(currentSpringLength, 0.02f);
             float springCompressionRatio = (targetDistance - currentSpringLength) / springTravel;
+            springCompressionRatio = Mathf.Clamp(springCompressionRatio, -1f, 1f);
+
+            //Força progressiva no final do curso
+            if (springCompressionRatio > 0.8f) {
+                springCompressionRatio *= 1.5f; // Endurece a mola no final para não bater no fundo
+            }
+
+            if (!groundSensors[i].hit && groundStickTimer[i] <= 0f)
+            {
+                previousCompression[i] = 0f;
+                smoothedDistances[i] = targetDistance;
+            }
+
+            //SUAVIZA A COMPRESSÃO
+            springCompressionRatio = Mathf.Lerp(
+                previousCompression[i],
+                springCompressionRatio,
+                0.3f
+            );
+
+            springCompressionRatio = Mathf.Clamp(springCompressionRatio, -0.5f, 1f);
+
+            previousCompression[i] = springCompressionRatio;
 
             float springVelocity = Vector3.Dot(
                 rb.GetPointVelocity(rayPoints[i].position),
-                transform.up
+                hit.normal
             );
 
             float springForce = springStiffness * springCompressionRatio;
 
             float speedFactorClassic = rb.linearVelocity.magnitude * 0.1f;
-            float dynamicDamperClassic = damperStiffness * (1f + speedFactorClassic);
+            float dynamicDamperClassic = damperStiffness;
 
             float dampForceClassic = dynamicDamperClassic * springVelocity;
 
@@ -1031,12 +1074,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
             if (currentSpringLength > maxVisualLenght)
             {
-                float distanceGap = currentSpringLength - maxVisualLenght;
-                netForceClassic -= distanceGap * rb.mass;
-            }
-            else if (currentSpringLength < targetDistance * 0.5f)
-            {
-                netForceClassic *= 1.5f;
+                float excess = Mathf.Max(0f, currentSpringLength - maxVisualLenght);
+                netForceClassic -= excess * excess * rb.mass;
             }
 
             float maxUpForce = rb.mass * 5f;
@@ -1044,8 +1083,18 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
             netForceClassic = Mathf.Clamp(netForceClassic, -maxDownForce, maxUpForce);
 
+            //anti bounce
+            if (springCompressionRatio < 0f)
+            {
+                netForceClassic *= 0f; // reduz força quando esticando
+            }
+
             // normal do chão melhora estabilidade
-            rb.AddForceAtPosition(netForceClassic * cachedSurfaceNormal, rayPoints[i].position);
+            rb.AddForceAtPosition(netForceClassic * hit.normal, rayPoints[i].position);
+
+            float speed = Mathf.Clamp01(rb.linearVelocity.magnitude / maxSpeed);
+            float stickForce = rb.mass * Mathf.Lerp(1.5f, 4f, speed);
+            rb.AddForceAtPosition(-hit.normal * stickForce, rayPoints[i].position);
 
             // visual classic
             float visualSpringDistance = Mathf.Min(currentSpringLength, maxVisualLenght);
@@ -1064,7 +1113,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
         if(isGrounded)
         {
-            rb.AddForce(-_currentCarUp * rb.mass * gravityStrength * hoverGravityFactor);
+            rb.AddForce(-cachedSurfaceNormal * rb.mass * gravityStrength * hoverGravityFactor);
         }
         else
         {
@@ -1250,19 +1299,33 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     #region Physics - Stability
 
+    Vector3 _currentDownDir;
+
     public void ApplyDownforce()
     {
         float speed = rb.linearVelocity.magnitude;
 
         if (!isHover)
         {
-            float df = (speed * speed) * downforceAmount;
+            float speedRatio = speed / maxSpeed;
+            float df = speedRatio * speedRatio * downforceAmount;
             
             // Clamp de segurança para evitar que o carro atravesse o chão em velocidades extremas
-            float maxForce = rb.mass * Mathf.Abs(Physics.gravity.y) * 4f;
+            float maxForce = rb.mass * Mathf.Abs(Physics.gravity.y) * 10f;
             df = Mathf.Clamp(df, 0f, maxForce);
 
-            rb.AddForce(-_currentCarUp * df, ForceMode.Force);
+           // float alignment = Vector3.Dot(cachedSurfaceNormal, _currentCarUp);
+           // float alignmentFactor = Mathf.InverseLerp(0.5f, 1f, alignment);
+
+            //df *= Mathf.Lerp(0.85f, 1.15f, alignmentFactor);
+
+            Vector3 targetDir = isGrounded ? cachedSurfaceNormal : Vector3.up;
+            _currentDownDir = Vector3.Slerp(_currentDownDir, targetDir, 10f * Time.fixedDeltaTime);
+
+            rb.AddForce(-_currentDownDir * df, ForceMode.Force);
+
+            float extraStick = rb.mass * Mathf.Lerp(2f, 10f, speedRatio);
+            rb.AddForce(-_currentDownDir * extraStick, ForceMode.Force);
             return;
         }
 
@@ -1275,7 +1338,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             ? speed / (maxSpeed / 3.6f)
             : 1f;
 
-        rb.AddForce(-_currentCarUp * hoverDownforceAmount * speedFactor, ForceMode.Force);
+        Vector3 downDir = isGrounded ? cachedSurfaceNormal : Vector3.up;
+        rb.AddForce(-downDir * hoverDownforceAmount * speedFactor, ForceMode.Force);
     }
 
 
@@ -1328,73 +1392,99 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         rb.AddTorque(dampingTorque, ForceMode.Acceleration);
     }
 
+    // Última normal válida do chão (memória)
+    private Vector3 lastGroundNormal = Vector3.up;
+
+    // Normal prevista enquanto está no ar (suavizada)
+    private Vector3 predictedNormal = Vector3.up;
+
     private void AirControl()
     {
-        if (isGrounded) return; // Só aplica se não estiver no chão
+        if (isGrounded) return;
 
-        // 1. Controle Manual de Atitude (Pitch e Roll)
-        // O input de aceleração/freio (Pitch) e o input de direção (Roll)
-        
-        // Torque X (Pitch): Controle de nariz para cima/baixo
-        float pitchInput = _currentThrottleInput; 
-        
-        // Torque Z (Roll): Controle de inclinação lateral
-        float rollInput = _currentSteerInput; 
+        float speed = rb.linearVelocity.magnitude;
+        float speedRatio = Mathf.Clamp01(speed / maxSpeed);
 
-        // O Torque aplicado deve ser FORTE para o feeling arcade (airControlStrength deve ser alto, ex: 100-200)
+        // =========================
+        // 1. CONTROLE MANUAL
+        // =========================
+
+        float pitchInput = _currentThrottleInput;
+        float rollInput  = _currentSteerInput;
+
         Vector3 controlTorque = new Vector3(
-            pitchInput, 
-            0, // Deixamos o Yaw (Y) de lado no ar, ou aplicamos um pouco para virar o nariz
+            pitchInput,
+            0f,
             rollInput
         ) * airControlStrength;
-        
-        // Aplica o torque no espaço local do carro
+
         rb.AddRelativeTorque(controlTorque, ForceMode.Acceleration);
 
-        // 2. Força de Nivelamento (Auto-Leveling)
+        // =========================
+        // 2. PREDIÇÃO DE CHÃO (leve e estável)
+        // =========================
+
+        predictedNormal = lastGroundNormal;
+
+        RaycastHit hit;
+        if (Physics.Raycast(
+            transform.position,
+            -lastGroundNormal,
+            out hit,
+            10f,
+            drivable
+        ))
+        {
+            // mistura suave → evita jitter
+            predictedNormal = Vector3.Slerp(lastGroundNormal, hit.normal, 0.3f);
+        }
+
+        // =========================
+        // 3. AUTO LEVEL
+        // =========================
+
         ForceLeveling();
-        
-        rb.AddForce(-transform.up * 50f, ForceMode.Acceleration);
+
+        // =========================
+        // 4. "PSEUDO GRAVIDADE" ALINHADA
+        // =========================
+
+        Vector3 targetUp = predictedNormal;
+        rb.AddForce(-targetUp * 50f, ForceMode.Acceleration);
+
+        // =========================
+        // 5. LIMITADOR DE GIRO (evita caos)
+        // =========================
+
+        rb.angularVelocity = Vector3.ClampMagnitude(rb.angularVelocity, 8f);
     }
 
     private void ForceLeveling()
     {
-        // Apenas nivelar se não houver input de controle aéreo substancial
-        if (Mathf.Abs(_currentThrottleInput) > 0.1f || 
-            Mathf.Abs(_currentSteerInput) > 0.1f) 
-            return;
+        // quanto mais input → menos assistência
+        float inputFactor = Mathf.Clamp01(
+            Mathf.Abs(_currentThrottleInput) +
+            Mathf.Abs(_currentSteerInput)
+        );
 
-        // A força de correção deve ser menor do que a força de controle (airControlStrength)
-        float correctionStrength = airControlStrength * 0.1f; 
+        float assist = 1f - inputFactor;
 
-        // 1. Correção do Pitch (Eixo X)
-        // Alinha o vetor 'up' do carro com o 'up' do mundo
-        Vector3 torqueAxisX = Vector3.Cross(transform.up, Vector3.up);
-        float angleToLevelX = Vector3.SignedAngle(transform.up, Vector3.up, transform.right);
+        // alvo = chão atual ou previsto
+        Vector3 targetUp = predictedNormal;
 
-        // 2. Correção do Roll (Eixo Z)
-        Vector3 torqueAxisZ = Vector3.Cross(transform.up, Vector3.up);
-        float angleToLevelZ = Vector3.SignedAngle(transform.up, Vector3.up, transform.forward);
+        // calcula torque necessário pra alinhar
+        Vector3 torque = Vector3.Cross(transform.up, targetUp);
 
-        // Combinar Pitch e Roll Correction
-        // Nota: É mais fácil e mais comum usar quaternions para nivelamento
-        Quaternion targetRotation = Quaternion.LookRotation(transform.forward, Vector3.up);
-        Quaternion currentRotation = transform.rotation;
-        
-        Quaternion deltaRotation = targetRotation * Quaternion.Inverse(currentRotation);
-        
-        // Converte a diferença de rotação para um vetor angular (eixos X, Y, Z)
-        deltaRotation.ToAngleAxis(out float angle, out Vector3 axis);
-        
-        if (angle > 180f) angle -= 360f;
-        if (angle > 0.01f)
-        {
-            // Aplica torque corretivo suave, ignorando a correção Y (Yaw) para não interferir na direção de movimento
-            Vector3 correctionTorque = axis * angle * correctionStrength;
-            correctionTorque.y = 0; // Não corrija o Yaw
+        float angle = torque.magnitude;
 
-            rb.AddTorque(correctionTorque, ForceMode.Acceleration);
-        }
+        if (angle < 0.001f) return;
+
+        // força proporcional ao desalinhamento
+        float strength = airControlStrength * 0.1f;
+
+        Vector3 finalTorque = torque.normalized * angle * strength * assist;
+
+        rb.AddTorque(finalTorque, ForceMode.Acceleration);
     }
 
     private void UpdateGravityDirection()
@@ -2019,24 +2109,65 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         cachedAverageHeight = 0f;
         cachedGroundedCount = 0;
 
-        float rayLength = restLenght + wheelRadius;
+        Vector3 weightedNormalSum = Vector3.zero;
+        float totalWeight = 0f;
+
+        // No SphereCast, a distância percorrida + o raio da esfera = alcance total
+        float castDistance = restLenght; 
         Vector3 rayDir = -transform.up;
 
         for (int i = 0; i < rayPoints.Length; i++)
-        {
-            int hits = Physics.RaycastNonAlloc(
+    {
+            int hits = Physics.SphereCastNonAlloc(
                 rayPoints[i].position,
+                wheelRadius,
                 rayDir,
                 _raycastBuffer,
-                rayLength,
+                castDistance,
                 drivable
             );
 
             if (hits > 0)
             {
+                groundStickTimer[i] = Mathf.Max(groundStickTimer[i], 0.1f);
+
                 RaycastHit hit = _raycastBuffer[0];
+                
+                // 1. Calcular a compressão desta mola específica
+                // Quanto menor a distância (hit.distance), maior a compressão
+                float compression = Mathf.Clamp01((restLenght - hit.distance) / springTravel);
+                
+                // 2. Definir um peso baseado na compressão (ex: exponencial para dar destaque à roda mais firme)
+                // Somamos um valor pequeno (0.01f) para que rodas sem compressão ainda contribuam um pouco
+                float weight = Mathf.Pow(compression, 2) + 0.01f;
+
+                // 3. Acumular a normal ponderada
+                weightedNormalSum += hit.normal * weight;
+                totalWeight += weight;
+
+                float minDist = hit.distance;
+
+                for (int j = 1; j < hits; j++)
+                {
+                    if (_raycastBuffer[j].distance < minDist)
+                    {
+                        hit = _raycastBuffer[j];
+                        minDist = hit.distance;
+                    }
+                }
 
                 groundSensors[i].hit = true;
+                // inicialização segura
+                if (smoothedNormals[i] == Vector3.zero)
+                    smoothedNormals[i] = hit.normal;
+
+                // smoothing real (usa fixedDeltaTime!)
+                float smoothing = 1f - Mathf.Exp(-12f * Time.fixedDeltaTime);
+                smoothedNormals[i] = Vector3.Slerp(smoothedNormals[i], hit.normal, smoothing);
+
+                // SUBSTITUI a normal do hit
+                hit.normal = smoothedNormals[i];
+
                 groundSensors[i].hitInfo = hit;
 
                 cachedSurfaceNormal += hit.normal;
@@ -2046,11 +2177,34 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             else
             {
                 groundSensors[i].hit = false;
+
+                // reset leve da normal
+                smoothedNormals[i] = Vector3.Lerp(smoothedNormals[i], transform.up, 0.1f);
+
+                groundStickTimer[i] -= Time.deltaTime;
+
+                groundSensors[i].hit = false;
             }
+        }
+
+        if (totalWeight > 0)
+        {
+            // A média ponderada final
+            Vector3 targetNormal = weightedNormalSum / totalWeight;
+            
+            // Suavização para evitar mudanças bruscas entre triângulos da malha
+            float smoothing = 1f - Mathf.Exp(-15f * Time.fixedDeltaTime);
+            cachedSurfaceNormal = Vector3.Slerp(cachedSurfaceNormal, targetNormal.normalized, smoothing);
+        }
+        else
+        {
+            // Se estiver totalmente no ar, alinha com o "Up" do carro ou do mundo
+            cachedSurfaceNormal = Vector3.Slerp(cachedSurfaceNormal, transform.up, 5f * Time.fixedDeltaTime);
         }
 
         if (cachedGroundedCount > 0)
         {
+            cachedSurfaceNormal /= cachedGroundedCount;
             cachedSurfaceNormal.Normalize();
             cachedAverageHeight /= cachedGroundedCount;
         }
@@ -2059,6 +2213,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             cachedSurfaceNormal = transform.up;
         }
     }
+    
     #endregion
 }
 public enum CarType {classic, hover};
