@@ -886,6 +886,14 @@ private void ApplyClassicSuspension()
 
     private void StartDrift()
     {
+        if(_isDrifting)return;
+
+        if (_isRestoringDrag)
+        {
+            dragCoefficient = _originalDragCoefficient;
+            _isRestoringDrag = false;
+        }
+
         _isDrifting = true;
         dragCoefficient = _originalDragCoefficient * driftStability;
         OnDriftStart?.Invoke(Mathf.Abs(15f));
@@ -952,10 +960,10 @@ private void ApplyClassicSuspension()
 
     private void EndDrift(bool giveBoost)
     {
-        _isDrifting = false;
         OnDriftEnd?.Invoke();
         _isRestoringDrag = true;
         _dragRestoreTimer = 0f;
+        _isDrifting = false;
         if (giveBoost && Mathf.Abs(_currentDriftAngle) > 15f) ApplyDriftBoost();
     }
 
@@ -1035,7 +1043,7 @@ private void ApplyClassicSuspension()
         }
     }
 
-    bool ShouldAvoidCrashForSlowPlayers() => racerStatus.isPlayer && speedKMH <= 60f;
+    bool ShouldAvoidCrashForSlowPlayers() => racerStatus.isPlayer && speedKMH <= 120f;
 
     private bool IsFrontalOrRearCollision(Vector3 collisionDirection)
     {
@@ -1228,7 +1236,7 @@ private void ApplyClassicSuspension()
         cachedGroundedCount = 0;
         Vector3 weightedNormalSum = Vector3.zero;
         float totalWeight = 0f;
-        float castDistance = isHover ? hoverDistance : restLenght;
+        float castDistance = isHover ? hoverDistance + 1.25f : restLenght;
         Vector3 rayDir = -transform.up;
         for (int i = 0; i < rayPoints.Length; i++)
         {
