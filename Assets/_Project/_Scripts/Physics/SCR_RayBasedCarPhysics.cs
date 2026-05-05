@@ -569,85 +569,124 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     #region Suspension
     void ApplySuspension()
+{
+    if (isHover)
     {
-        float targetDistance = currentTargetSuspensionLength;
-        float damperStiffness = currentDamper;
-        float maxVisualLenght = .125f + .15f;
-        for (int i = 0; i < rayPoints.Length; i++)
-        {
-            if (!groundSensors[i].hit && groundStickTimer[i] <= 0f)
-            {
-                wheelsGrounded[i] = 0;
-                Vector3 airPos = isHover ? rayPoints[i].position : rayPoints[i].position - transform.up * maxVisualLenght;
-                SetTirePosition(tires[i], airPos);
-                continue;
-            }
-            wheelsGrounded[i] = 1;
-            RaycastHit hit = groundSensors[i].hitInfo;
-            if (isHover)
-            {
-                float heightError = targetDistance - hit.distance;
-                heightError = Mathf.Lerp(hoverHeightErrorCache[i], heightError, 0.25f);
-                hoverHeightErrorCache[i] = heightError;
-                float hoverSpringVelocity = Vector3.Dot(rb.GetPointVelocity(rayPoints[i].position), cachedSurfaceNormal);
-                float liftForce = heightError * springStiffness;
-                liftForce *= 1f + Mathf.Abs(heightError) * 0.5f;
-                float speedFactor = rb.linearVelocity.magnitude * 0.05f;
-                float dynamicDamper = damperStiffness * (1f + Mathf.Abs(hoverSpringVelocity) * 0.5f);
-                float dampForce = dynamicDamper * hoverSpringVelocity;
-                float netForce = liftForce - dampForce;
-                float maxHoverForce = rb.mass * 8f;
-                netForce = Mathf.Clamp(netForce, -maxHoverForce, maxHoverForce);
-                rb.AddForceAtPosition(netForce * cachedSurfaceNormal, rayPoints[i].position);
-                SetTirePosition(tires[i], rayPoints[i].position);
-                continue;
-            }
-            float maxStep = 0.15f;
-            float delta = hit.distance - smoothedDistances[i];
-            delta = Mathf.Clamp(delta, -maxStep, maxStep);
-            float target = smoothedDistances[i] + delta;
-            float smoothing = 1f - Mathf.Exp(-10f * Time.fixedDeltaTime);
-            smoothedDistances[i] = Mathf.Lerp(smoothedDistances[i], target, smoothing);
-            float currentSpringLength = smoothedDistances[i];
-            currentSpringLength = Mathf.Max(currentSpringLength, 0.02f);
-            float springCompressionRatio = (targetDistance - currentSpringLength) / springTravel;
-            springCompressionRatio = Mathf.Clamp(springCompressionRatio, -1f, 1f);
-            if (springCompressionRatio > 0.8f) springCompressionRatio *= 1.5f;
-            if (!groundSensors[i].hit && groundStickTimer[i] <= 0f)
-            {
-                previousCompression[i] = 0f;
-                smoothedDistances[i] = targetDistance;
-            }
-            springCompressionRatio = Mathf.Lerp(previousCompression[i], springCompressionRatio, 0.3f);
-            springCompressionRatio = Mathf.Clamp(springCompressionRatio, -0.5f, 1f);
-            previousCompression[i] = springCompressionRatio;
-            float springVelocity = Vector3.Dot(rb.GetPointVelocity(rayPoints[i].position), hit.normal);
-            float springForce = springStiffness * springCompressionRatio;
-            float speedFactorClassic = rb.linearVelocity.magnitude * 0.1f;
-            float dynamicDamperClassic = damperStiffness;
-            float dampForceClassic = dynamicDamperClassic * springVelocity;
-            float netForceClassic = springForce - dampForceClassic;
-            if (currentSpringLength > maxVisualLenght)
-            {
-                float excess = Mathf.Max(0f, currentSpringLength - maxVisualLenght);
-                netForceClassic -= excess * excess * rb.mass;
-            }
-            float maxUpForce = rb.mass * 5f;
-            float maxDownForce = rb.mass * 15f;
-            netForceClassic = Mathf.Clamp(netForceClassic, -maxDownForce, maxUpForce);
-            if (springCompressionRatio < 0f) netForceClassic *= 0f;
-            rb.AddForceAtPosition(netForceClassic * hit.normal, rayPoints[i].position);
-            float speed = Mathf.Clamp01(rb.linearVelocity.magnitude / maxSpeed);
-            float stickForce = rb.mass * Mathf.Lerp(1.5f, 4f, speed);
-            rb.AddForceAtPosition(-hit.normal * stickForce, rayPoints[i].position);
-            float visualSpringDistance = Mathf.Min(currentSpringLength, maxVisualLenght);
-            Vector3 visualPos = rayPoints[i].position - transform.up * visualSpringDistance;
-            SetTirePosition(tires[i], visualPos);
-        }
-        float hoverGravityFactor = isHover ? 0.6f : 1f;
-        if(isGrounded) rb.AddForce(-cachedSurfaceNormal * rb.mass * gravityStrength * hoverGravityFactor);
-        else rb.AddForce(-Vector3.up * rb.mass * gravityStrength * hoverGravityFactor);
+        ApplyHoverSuspension();
     }
+    else
+    {
+        ApplyClassicSuspension();
+    }
+}
+
+private void ApplyHoverSuspension()
+{
+    float targetDistance = currentTargetSuspensionLength;
+    float damperStiffness = currentDamper;
+    
+    for (int i = 0; i < rayPoints.Length; i++)
+    {
+        if (!groundSensors[i].hit && groundStickTimer[i] <= 0f)
+        {
+            wheelsGrounded[i] = 0;
+            SetTirePosition(tires[i], rayPoints[i].position);
+            continue;
+        }
+        
+        wheelsGrounded[i] = 1;
+        RaycastHit hit = groundSensors[i].hitInfo;
+        
+        // HOVER: força proporcional ao erro com feedback negativo forte
+        float heightError = targetDistance - hit.distance;
+        heightError = Mathf.Lerp(hoverHeightErrorCache[i], heightError, 0.25f);
+        hoverHeightErrorCache[i] = heightError;
+        
+        float hoverSpringVelocity = Vector3.Dot(rb.GetPointVelocity(rayPoints[i].position), cachedSurfaceNormal);
+        
+        // Lift force: empurra o carro para cima quando está baixo
+        float liftForce = heightError * springStiffness;
+        
+        // Efeito de solo (mais força quanto mais perto do chão)
+        float groundEffect = 1f + Mathf.Clamp01((targetDistance - hit.distance) / targetDistance) * 0.5f;
+        liftForce *= groundEffect;
+        
+        // Damping: resiste ao movimento vertical
+        float dynamicDamper = damperStiffness * (1f + Mathf.Abs(hoverSpringVelocity) * 0.5f);
+        float dampForce = dynamicDamper * hoverSpringVelocity;
+        
+        float netForce = liftForce - dampForce;
+        float maxHoverForce = rb.mass * 8f;
+        netForce = Mathf.Clamp(netForce, -maxHoverForce, maxHoverForce);
+        
+        rb.AddForceAtPosition(netForce * cachedSurfaceNormal, rayPoints[i].position);
+        SetTirePosition(tires[i], rayPoints[i].position);
+    }
+    
+    // Gravidade reduzida para hover
+    rb.AddForce(-cachedSurfaceNormal * rb.mass * gravityStrength * 0.3f);
+}
+
+private void ApplyClassicSuspension()
+{
+    float targetDistance = currentTargetSuspensionLength;
+    float damperStiffness = currentDamper;
+    float maxVisualLenght = 0.275f;
+    
+    for (int i = 0; i < rayPoints.Length; i++)
+    {
+        if (!groundSensors[i].hit && groundStickTimer[i] <= 0f)
+        {
+            wheelsGrounded[i] = 0;
+            Vector3 airPos = rayPoints[i].position - transform.up * maxVisualLenght;
+            SetTirePosition(tires[i], airPos);
+            continue;
+        }
+        
+        wheelsGrounded[i] = 1;
+        RaycastHit hit = groundSensors[i].hitInfo;
+        
+        float currentSpringLength = hit.distance;
+        float compression = (targetDistance - currentSpringLength) / springTravel;
+        compression = Mathf.Clamp(compression, -0.3f, 0.6f);
+        
+        // Força da mola normal
+        float springForce = compression * springStiffness;
+        float springVelocity = Vector3.Dot(rb.GetPointVelocity(rayPoints[i].position), hit.normal);
+        float dampForce = springVelocity * damperStiffness * 1.5f;
+        
+        float netForce = springForce - dampForce;
+        
+        // FORÇA DE STICK: puxa o carro PARA BAIXO quando a roda está no chão
+        // Isso elimina os pulos completamente
+        float stickForce = 0f;
+        if (compression > -0.1f) // Roda no chão
+        {
+            // Quanto mais rápida a velocidade vertical para CIMA, mais stick force
+            float upwardSpeed = Mathf.Max(0, springVelocity);
+            stickForce = -upwardSpeed * rb.mass * 3f;
+            stickForce = Mathf.Clamp(stickForce, -rb.mass * 10f, 0f);
+        }
+        
+        netForce += stickForce;
+        
+        // Limites
+        netForce = Mathf.Clamp(netForce, -rb.mass * 15f, rb.mass * 10f);
+        
+        if (Mathf.Abs(netForce) > 0.1f)
+        {
+            rb.AddForceAtPosition(netForce * hit.normal, rayPoints[i].position);
+        }
+        
+        // Visual
+        float visualCompression = Mathf.Clamp(compression, 0f, 0.35f);
+        float visualOffset = visualCompression * 0.2f;
+        Vector3 visualPos = rayPoints[i].position - transform.up * visualOffset;
+        SetTirePosition(tires[i], visualPos);
+    }
+    
+    rb.AddForce(-cachedSurfaceNormal * rb.mass * gravityStrength);
+}
     #endregion
 
     #region Visuals
