@@ -1185,6 +1185,8 @@ public class CameraController : MonoBehaviour
             return; // Nenhum shake para hover
         }
 
+        if(airTime < 1f)return;
+
         GenerateShake(
             jumpShake.amplitude * Mathf.Clamp(airtime, 0.5f, 2f),
             jumpShake.duration,

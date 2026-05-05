@@ -597,34 +597,41 @@ private void ApplyHoverSuspension()
         wheelsGrounded[i] = 1;
         RaycastHit hit = groundSensors[i].hitInfo;
         
-        // HOVER: força proporcional ao erro com feedback negativo forte
+        // Erro de altura
         float heightError = targetDistance - hit.distance;
+        
+        // Smoothing do erro (remove jitter)
         heightError = Mathf.Lerp(hoverHeightErrorCache[i], heightError, 0.25f);
         hoverHeightErrorCache[i] = heightError;
         
+        // Velocidade vertical da roda
         float hoverSpringVelocity = Vector3.Dot(rb.GetPointVelocity(rayPoints[i].position), cachedSurfaceNormal);
         
-        // Lift force: empurra o carro para cima quando está baixo
+        // Força base (controle de altura)
         float liftForce = heightError * springStiffness;
         
-        // Efeito de solo (mais força quanto mais perto do chão)
-        float groundEffect = 1f + Mathf.Clamp01((targetDistance - hit.distance) / targetDistance) * 0.5f;
-        liftForce *= groundEffect;
+        // Curva não-linear (seu estilo original)
+        liftForce *= 1f + Mathf.Abs(heightError) * 0.5f;
         
-        // Damping: resiste ao movimento vertical
+        // Damping dinâmico
         float dynamicDamper = damperStiffness * (1f + Mathf.Abs(hoverSpringVelocity) * 0.5f);
         float dampForce = dynamicDamper * hoverSpringVelocity;
         
         float netForce = liftForce - dampForce;
+        
+        // Clamp suave
         float maxHoverForce = rb.mass * 8f;
         netForce = Mathf.Clamp(netForce, -maxHoverForce, maxHoverForce);
         
+        // Aplica força na normal do chão
         rb.AddForceAtPosition(netForce * cachedSurfaceNormal, rayPoints[i].position);
+        
+        // Visual
         SetTirePosition(tires[i], rayPoints[i].position);
     }
     
     // Gravidade reduzida para hover
-    rb.AddForce(-cachedSurfaceNormal * rb.mass * gravityStrength * 0.3f);
+    rb.AddForce(-cachedSurfaceNormal * rb.mass * gravityStrength * 0.6f);
 }
 
 private void ApplyClassicSuspension()
@@ -1221,7 +1228,7 @@ private void ApplyClassicSuspension()
         cachedGroundedCount = 0;
         Vector3 weightedNormalSum = Vector3.zero;
         float totalWeight = 0f;
-        float castDistance = restLenght;
+        float castDistance = isHover ? hoverDistance : restLenght;
         Vector3 rayDir = -transform.up;
         for (int i = 0; i < rayPoints.Length; i++)
         {
