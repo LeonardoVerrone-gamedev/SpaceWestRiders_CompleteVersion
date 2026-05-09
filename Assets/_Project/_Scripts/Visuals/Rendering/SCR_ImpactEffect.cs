@@ -37,6 +37,15 @@ public class SCR_ImpactEffect : MonoBehaviour
         Invoke("Disable", effectDuration);
     }
 
+    public void PlayOnPlace()
+    {
+        foreach(ParticleSystem p in particles)
+        {
+            p.Clear(); // Limpa rastros anteriores
+            p.Play();
+        }
+    }
+
     void Update()
     {
         if (IsActive) timer -= Time.deltaTime;

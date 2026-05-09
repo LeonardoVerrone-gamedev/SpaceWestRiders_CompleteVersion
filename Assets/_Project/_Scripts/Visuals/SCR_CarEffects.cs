@@ -51,6 +51,9 @@ public class SCR_CarEffects : MonoBehaviour
     [SerializeField] private float collisionCooldown = 0.5f;
     private float lastCollisionTime = -999f;
 
+    [Header("Corte de giro")]
+    [SerializeField] SCR_ImpactEffect[] corteEffect;
+
 
     [Header("Heat distortion particles")]
     [SerializeField] private ParticleSystem HeatDistortionParticles;
@@ -74,6 +77,8 @@ public class SCR_CarEffects : MonoBehaviour
 
     void Start()
     {
+        carPhysics.OnUpGear += PlayCorteEffect;
+
         CacheAllParticles();
         if (HeatDistortionParticles != null)
         {
@@ -451,5 +456,23 @@ public class SCR_CarEffects : MonoBehaviour
         {
             bestEffect.Play(position, rotation, this.gameObject);
         }
+    }
+
+    private void PlayCorteEffect()
+    {
+        foreach(SCR_ImpactEffect effect in corteEffect)
+        {
+            effect.PlayOnPlace();
+        }
+    }
+
+    void OnDisable()
+    {
+        carPhysics.OnUpGear -= PlayCorteEffect;
+    }
+
+    void OnDestroy()
+    {
+        carPhysics.OnUpGear -= PlayCorteEffect;
     }
 }

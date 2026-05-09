@@ -281,6 +281,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     public event Action<bool> OnCrash;
     public event Action<float> OnJump;
     public event Action<float> OnLand;
+    public event Action OnUpGear;
     #endregion
 
     #region Gear Variables
@@ -405,6 +406,12 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         lastShiftTime = Time.time;
         float originalDrop = gearAccelerationDrop;
         gearAccelerationDrop = 0.4f;
+        
+        if(newGear > currentGear)
+        {
+            OnUpGear.Invoke();
+        }
+
         yield return new WaitForSeconds(gearShiftCooldown);
         currentGear = newGear;
         gearAccelerationDrop = originalDrop;
@@ -590,7 +597,7 @@ private void ApplyHoverSuspension()
         if (!groundSensors[i].hit && groundStickTimer[i] <= 0f)
         {
             wheelsGrounded[i] = 0;
-            SetTirePosition(tires[i], rayPoints[i].position);
+            if(tires != null && tires.Length > 0)  SetTirePosition(tires[i], rayPoints[i].position);
             continue;
         }
         
@@ -627,7 +634,7 @@ private void ApplyHoverSuspension()
         rb.AddForceAtPosition(netForce * cachedSurfaceNormal, rayPoints[i].position);
         
         // Visual
-        SetTirePosition(tires[i], rayPoints[i].position);
+        if(tires != null && tires.Length > 0) SetTirePosition(tires[i], rayPoints[i].position);
     }
     
     // Gravidade reduzida para hover
@@ -646,7 +653,7 @@ private void ApplyClassicSuspension()
         {
             wheelsGrounded[i] = 0;
             Vector3 airPos = rayPoints[i].position - transform.up * maxVisualLenght;
-            SetTirePosition(tires[i], airPos);
+            if(tires != null && tires.Length > 0) SetTirePosition(tires[i], airPos);
             continue;
         }
         
@@ -689,7 +696,7 @@ private void ApplyClassicSuspension()
         float visualCompression = Mathf.Clamp(compression, 0f, 0.35f);
         float visualOffset = visualCompression * 0.2f;
         Vector3 visualPos = rayPoints[i].position - transform.up * visualOffset;
-        SetTirePosition(tires[i], visualPos);
+        if(tires != null && tires.Length > 0) SetTirePosition(tires[i], visualPos);
     }
     
     rb.AddForce(-cachedSurfaceNormal * rb.mass * gravityStrength);
@@ -1209,6 +1216,10 @@ private void ApplyClassicSuspension()
         if (!wasGrounded && isGrounded && !isHover)
         {
             OnLand?.Invoke(airTime);
+            if (_currentHandbrakeInput)
+            {
+                TryStartDrift();
+            }
             airTime = 0f;
         }
         else if (!isGrounded) airTime += Time.deltaTime;
