@@ -31466,9 +31466,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 186711195}
     m_Modifications:
+    - target: {fileID: 754756485973492257, guid: 115ac48cc40664c43a57fb25ae5d42b9, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 084d27fb5aacaaa4d9e3388166981333, type: 2}
     - target: {fileID: 4140969641842061673, guid: 115ac48cc40664c43a57fb25ae5d42b9, type: 3}
       propertyPath: m_Name
-      value: Alien macoinheiro
+      value: "Z\xE4h"
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140969641842061673, guid: 115ac48cc40664c43a57fb25ae5d42b9, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7984253986020085038, guid: 115ac48cc40664c43a57fb25ae5d42b9, type: 3}
       propertyPath: m_LocalPosition.x
@@ -31751,38 +31759,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 186711195}
     m_Modifications:
-    - target: {fileID: 722905915966864843, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
-      propertyPath: carParts.Array.data[0].filter
+    - target: {fileID: 3025605759596953059, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 722905915966864843, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
-      propertyPath: carParts.Array.data[1].filter
+      objectReference: {fileID: 2100000, guid: 99945751d045df0478e338e6e55f1810, type: 2}
+    - target: {fileID: 5348538716965422828, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 722905915966864843, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
-      propertyPath: carParts.Array.data[2].filter
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 722905915966864843, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
-      propertyPath: carParts.Array.data[3].filter
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 722905915966864843, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
-      propertyPath: carParts.Array.data[4].filter
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 722905915966864843, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
-      propertyPath: carParts.Array.data[5].filter
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 722905915966864843, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
-      propertyPath: carParts.Array.data[6].filter
-      value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2100000, guid: 99945751d045df0478e338e6e55f1810, type: 2}
     - target: {fileID: 5902696011742139115, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
       propertyPath: m_Name
       value: "G\xF3tica"
       objectReference: {fileID: 0}
+    - target: {fileID: 6189710977896015160, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 99945751d045df0478e338e6e55f1810, type: 2}
     - target: {fileID: 6521436134801135628, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
       propertyPath: m_LocalPosition.x
       value: -118.3
@@ -70060,6 +70052,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: J. Cross
       objectReference: {fileID: 0}
+    - target: {fileID: 3721347728761754489, guid: f1dc6c4175455af45854d4c12d08373a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4460492775019604058, guid: f1dc6c4175455af45854d4c12d08373a, type: 3}
       propertyPath: m_Name
       value: Nitro Particles
@@ -71933,6 +71929,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: X Racer
       objectReference: {fileID: 0}
+    - target: {fileID: 8911016554528439290, guid: 1857e67441c6d5d44a67d4a1c4291728, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 1331655913586945301, guid: 1857e67441c6d5d44a67d4a1c4291728, type: 3}
@@ -72399,6 +72399,10 @@ PrefabInstance:
     - target: {fileID: 3618951823427800580, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
       propertyPath: m_Name
       value: Twink
+      objectReference: {fileID: 0}
+    - target: {fileID: 3618951823427800580, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4039176438622928146, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
       propertyPath: InitialModule.startSize.scalar
@@ -93357,6 +93361,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Danny Tongue
       objectReference: {fileID: 0}
+    - target: {fileID: 134413080898623409, guid: 4748fb71545a6784a9601a0e1fccc303, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 145044427260722722, guid: 4748fb71545a6784a9601a0e1fccc303, type: 3}
       propertyPath: restLenght
       value: 0.5
@@ -94498,6 +94506,10 @@ PrefabInstance:
     - target: {fileID: 4660778744560911697, guid: 01a35cfe2313f04489f8cb8da921b694, type: 3}
       propertyPath: m_Name
       value: XLR8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4660778744560911697, guid: 01a35cfe2313f04489f8cb8da921b694, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5594183372401804619, guid: 01a35cfe2313f04489f8cb8da921b694, type: 3}
       propertyPath: m_LocalPosition.x
@@ -100710,6 +100722,10 @@ PrefabInstance:
     - target: {fileID: 3820662635277455633, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
       propertyPath: m_Name
       value: Billy SIn
+      objectReference: {fileID: 0}
+    - target: {fileID: 3820662635277455633, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3949616800297683032, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
       propertyPath: InitialModule.startSize.scalar

@@ -35,7 +35,8 @@ public class SCR_CarEffects : MonoBehaviour
     [SerializeField] private ParticleSystem boostParticles;
     
     [Header("Turbo VFX")]
-    [SerializeField] private ParticleSystem[] turboParticles;
+    [SerializeField] private ParticleSystem[] nitroParticles;
+    [SerializeField] private TrailRenderer[] nitroTrails;
 
     [Header("Spark VFX (Collisions)")]
     [SerializeField] private ParticleSystem sparksLeft;
@@ -129,11 +130,16 @@ public class SCR_CarEffects : MonoBehaviour
 
         SetNitroParticles();
 
-        foreach(ParticleSystem particle in turboParticles)
+        foreach(ParticleSystem particle in nitroParticles)
         {
             var em = particle.emission;
             em.enabled = false;
             particle.Stop();
+        }
+
+        foreach(TrailRenderer nitroTrail in nitroTrails)
+        {
+            nitroTrail.gameObject.SetActive(false);
         }
     }
 
@@ -142,22 +148,32 @@ public class SCR_CarEffects : MonoBehaviour
         carPhysics.OnTurboStart += () =>
         {
 
-            foreach(ParticleSystem particle in turboParticles)
+            foreach(ParticleSystem particle in nitroParticles)
             {
                 var em = particle.emission;
                 em.enabled = true;
                 particle.Play();
+            }
+
+            foreach(TrailRenderer nitroTrail in nitroTrails)
+            {
+                nitroTrail.gameObject.SetActive(true);
             }
         };
 
         carPhysics.OnTurboEnd += () =>
         {
 
-            foreach(ParticleSystem particle in turboParticles)
+            foreach(ParticleSystem particle in nitroParticles)
             {
                 var em = particle.emission;
                 em.enabled = false;
                 particle.Stop();
+            }
+
+            foreach(TrailRenderer nitroTrail in nitroTrails)
+            {
+                nitroTrail.gameObject.SetActive(false);
             }
         };
     }
@@ -259,9 +275,9 @@ public class SCR_CarEffects : MonoBehaviour
 
         visualsWereDisabled = false;
 
-        if (turboParticles.Length > 0)
+        if (nitroParticles.Length > 0)
         {
-            foreach(ParticleSystem particle in turboParticles)
+            foreach(ParticleSystem particle in nitroParticles)
             {
                 var em = particle.emission;
                 em.enabled = false;
@@ -279,7 +295,7 @@ public class SCR_CarEffects : MonoBehaviour
 
         bool isSlipping = sideSlip > 5f && speedRatio > 0.15f; 
         bool isIntentionallyDrifting = carPhysics.IsDrifting();
-        bool showEffects = (isSlipping || isIntentionallyDrifting) && carPhysics.IsGrounded;
+        bool showEffects = (isIntentionallyDrifting) && carPhysics.IsGrounded;
 
         // Checa o tipo de carro no script de física
         bool isHoverMode = carPhysics.carType == CarType.hover;
