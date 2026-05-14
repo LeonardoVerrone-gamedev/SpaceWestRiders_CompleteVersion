@@ -10,7 +10,9 @@ public class SCR_CarVisualCulling : MonoBehaviour
     [SerializeField] private List<CinemachineBrain> brains = new List<CinemachineBrain>();
     [SerializeField] MeshRenderer[] meshes;
 
-    public bool visible => IsVisibleByAnyBrain();
+    public bool onRecordingMode;
+
+    public bool visible => IsVisibleByAnyBrain() || onRecordingMode;
 
     void Awake()
     {
@@ -25,10 +27,12 @@ public class SCR_CarVisualCulling : MonoBehaviour
 
     void LateUpdate()
     {
-        bool visible = IsVisibleByAnyBrain();
-        carPhysics.SetVisualState(visible);
+        bool visible = IsVisibleByAnyBrain() || onRecordingMode;
 
-        foreach(MeshRenderer mesh in meshes) mesh.enabled = IsVisibleByAnyBrain();
+        carPhysics.SetVisualState(visible);
+        
+
+        foreach(MeshRenderer mesh in meshes) mesh.enabled = visible;
     }
 
     public void AddCamera(CinemachineBrain brain)
