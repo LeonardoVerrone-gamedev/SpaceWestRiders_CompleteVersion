@@ -450,7 +450,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 50
+    FieldOfView: 130
     OrthographicSize: 5
     NearClipPlane: 0.1
     FarClipPlane: 5000
@@ -494,7 +494,7 @@ MonoBehaviour:
       Offset: {x: 0, y: -0.32}
   CenterOnActivate: 1
   TargetOffset: {x: 0, y: 2, z: 0}
-  Damping: {x: 0.2, y: 0.2, z: 0.6}
+  Damping: {x: 0.2, y: 0.2, z: 0.2}
   Lookahead:
     Enabled: 0
     Time: 0
@@ -869,8 +869,8 @@ MonoBehaviour:
   - {fileID: 5397743836950780649}
   minSpeedForEffects: 150
   maxSpeedForEffects: 360
-  minFOV: 30
-  maxFOV: 90
+  minFOV: 40
+  maxFOV: 120
   minCameraDistance: 4
   maxCameraDistance: 10
   minVignetteIntensity: 0.1
