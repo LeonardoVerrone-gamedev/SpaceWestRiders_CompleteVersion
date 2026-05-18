@@ -21,17 +21,16 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: texture
-  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 59714f430ab51b34fbdf2a569a85c6b0, type: 3}
   m_Parent: {fileID: 2100000, guid: 2fe883fbb1e7f96449d7f2850817b0c7, type: 2}
-  m_ModifiedSerializedProperties: 8
+  m_ModifiedSerializedProperties: 10
   m_ValidKeywords: []
   m_InvalidKeywords: []
-  m_LightmapFlags: 4
+  m_LightmapFlags: 6
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 1
   m_CustomRenderQueue: -1
-  stringTagMap:
-    RenderType: Opaque
+  stringTagMap: {}
   disabledShaderPasses:
   - MOTIONVECTORS
   m_LockedProperties: 
@@ -42,12 +41,38 @@ Material:
         m_Texture: {fileID: 2800000, guid: ba0fd3eb94538c54e9d3e875f6200457, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: cbd44d0f3edea7f4b92a5188f6dc3112, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DamageNormal:
+        m_Texture: {fileID: 2800000, guid: 57b4b70ac985e9d4985cfc4f18a09fc4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DamageTex:
+        m_Texture: {fileID: 2800000, guid: ffb828add43f22745afed5ec99f7e0d1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionTexture:
+        m_Texture: {fileID: 2800000, guid: ba0fd3eb94538c54e9d3e875f6200457, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: ba0fd3eb94538c54e9d3e875f6200457, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Perlim_Noise:
+        m_Texture: {fileID: 2800000, guid: aa6b8aed7130d4642bfc2984e8128cfb, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
-    m_Floats: []
-    m_Colors: []
+    m_Floats:
+    - _BumpScale: 1
+    - _DamageAmount: -0.048
+    - _Metallic: 0.575
+    - _Metallic_Reflection: 0.5
+    - _Smoothness: 0.25
+    m_Colors:
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

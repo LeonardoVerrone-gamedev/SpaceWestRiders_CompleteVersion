@@ -252,6 +252,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     [SerializeField] float spinTorqueForce = 18f;
     [SerializeField] float spinDuration = 0.6f;
     [SerializeField][Range(0,90)] float lateralMinAngle = 60f;
+    bool OnForceDrift;
     #endregion
 
     #region Input Handling
@@ -314,6 +315,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     float[] groundStickTimer;
     float[] smoothedDistances;
     float[] previousCompression;
+    DamageCar damageCar;
     #endregion
 
     #region Unity Lifecycle
@@ -340,6 +342,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         smoothedDistances = new float[rayPoints.Length];
         previousCompression = new float[rayPoints.Length];
         SwitchToMode(carType);
+        damageCar = GetComponent<DamageCar>();
+        if(damageCar != null) damageCar.ResetDamage();
     }
     
     void Update()
@@ -885,6 +889,12 @@ private void ApplyClassicSuspension()
     #region Physics - Drift System
     private void TryStartDrift()
     {
+        if (OnForceDrift)
+        {
+            if (!_isDrifting) StartDrift();
+            return;
+        }
+
         if ((!isHover && !isGrounded)) return;
         float minDriftSpeed = maxSpeed * driftEnterThreshold;
         if (rb.linearVelocity.magnitude < minDriftSpeed) return;
@@ -909,6 +919,13 @@ private void ApplyClassicSuspension()
     private void UpdateDriftState()
     {
         if (!_isDrifting) return;
+
+        if (OnForceDrift)
+        {
+            if (!isHover && !isGrounded) EndDrift(false);
+            return;
+        }
+
         float minDriftSpeed = maxSpeed * driftEnterThreshold * 0.3f;
         if ((!isHover && !isGrounded) || rb.linearVelocity.magnitude < minDriftSpeed) EndDrift(false);
     }
@@ -932,6 +949,8 @@ private void ApplyClassicSuspension()
 
     private void LimitDriftAngle()
     {
+        if (OnForceDrift) return;
+
         if (Mathf.Abs(_currentDriftAngle) > maxDriftAngle)
         {
             float correctionStrength = 0.5f;
@@ -967,6 +986,8 @@ private void ApplyClassicSuspension()
 
     private void EndDrift(bool giveBoost)
     {
+        if (OnForceDrift) return;
+
         OnDriftEnd?.Invoke();
         _isRestoringDrag = true;
         _dragRestoreTimer = 0f;
@@ -1025,29 +1046,64 @@ private void ApplyClassicSuspension()
         float currentSpeed = rb.linearVelocity.magnitude;
         Vector3 dir = -collision.contacts[0].normal;
         bool isCrashableObject = ((1 << collision.gameObject.layer) & crashable) != 0;
+        if(damageCar != null) damageCar.ApplyDamage(0.00625f);
+
+        Vector3 collisionNormal = collision.contacts[0].normal;
+        float speedMagnitude = collision.relativeVelocity.magnitude;
+
+        Vector3 forceDirection = -collisionNormal * speedMagnitude; 
+
+        deformer.Deform(collision.contacts[0].point, forceDirection);
+        
+        if (enableCollisionShake && impactForce >= minForceToShake && Time.time >= lastCollisionShakeTime + shakeCooldown)
+        {
+            float finalForce = Mathf.Clamp01(impactForce / 20f) * shakeIntensity;
+            OnCollision?.Invoke(finalForce, dir);
+            lastCollisionShakeTime = Time.time;
+        }
+
         if (isCrashableObject && impactForce > crashImpactForce && IsFrontalCollision(dir) && !_isTurboActive && (ShouldAvoidCrashForSlowPlayers() == false) && upDot > 0.6f)
         {
-            if (crashing) return;
-            OnCrash?.Invoke(true);
-            deformer.Deform(collision.contacts[0].point, collision.relativeVelocity);
-            carCrash.TriggerCrash();
-            Invoke("ResetCrashCam", carCrash.crashDuration);
-            return;
+            if (racerStatus.isPlayer)
+            {
+                StartForceDrift();
+                Invoke("EndForceDrift", 4f);
+            }
+            else
+            {
+                if (crashing) return;
+                OnCrash?.Invoke(true);
+                carCrash.TriggerCrash();
+                Invoke("ResetCrashCam", carCrash.crashDuration);
+            }
         }
         if (impactForce > spinMinForce && impactForce < spinMaxForceForCrash && currentSpeed > spinMinSpeed && IsLateralCollision(dir) && !_isTurboActive)
         {
-            TriggerSpin(dir, impactForce);
+            if(!racerStatus.isPlayer)
+            {
+                TriggerSpin(dir, impactForce);
+            }
+            else
+            {
+                float spinDirection = Mathf.Sign(Vector3.Dot(transform.right, dir));
+                StartForceDrift();
+                rb.AddTorque(transform.up * spinDirection * spinTorqueForce * ((impactForce / spinMinForce) / 2), ForceMode.VelocityChange);
+                Invoke(nameof(EndForceDrift), 4f);
+            }
             return;
         }
-        if (enableCollisionShake && impactForce >= minForceToShake && Time.time >= lastCollisionShakeTime + shakeCooldown)
-        {
-            if (IsFrontalOrRearCollision(dir))
-            {
-                float finalForce = Mathf.Clamp01(impactForce / 20f) * shakeIntensity;
-                OnCollision?.Invoke(finalForce, dir);
-                lastCollisionShakeTime = Time.time;
-            }
-        }
+    }
+
+    void StartForceDrift()
+    {
+        OnForceDrift = true;
+        TryStartDrift();
+    }
+
+    void EndForceDrift()
+    {
+        OnForceDrift = false;
+        if(!_currentHandbrakeInput) EndDrift(false);
     }
 
     bool ShouldAvoidCrashForSlowPlayers() => racerStatus.isPlayer && speedKMH <= 120f;
@@ -1123,6 +1179,9 @@ private void ApplyClassicSuspension()
         rb.angularVelocity = Vector3.zero;
         transform.position = _lastSafePosition;
         Transform target = GetRespawnTarget();
+        deformer?.RestoreMesh();
+        if(damageCar != null) damageCar.ResetDamage();
+        //Limpa o visual de damaged aqui
         if (target != null)
         {
             Vector3 direction = (target.position - _lastSafePosition).normalized;

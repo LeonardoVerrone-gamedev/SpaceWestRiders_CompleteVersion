@@ -17,13 +17,13 @@ public class DefaultCamSwitcher : MonoBehaviour
         {
             timer = 0;
             // Reseta a prioridade da câmera anterior
-            defaultCameras[currentIndex].Priority.Value = 11;
+            //defaultCameras[currentIndex].Priority.Value = 11;
             
             // Escolhe a próxima
             currentIndex = (currentIndex + 1) % defaultCameras.Count;
             
             // Aumenta a prioridade da nova (mas abaixo de 20, que é a prioridade de detecção)
-            defaultCameras[currentIndex].Priority.Value = 15;
+           // defaultCameras[currentIndex].Priority.Value = 15;
         }
     }
 }

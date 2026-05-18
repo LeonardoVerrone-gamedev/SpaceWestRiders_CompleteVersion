@@ -88,8 +88,6 @@ public class SCR_CarCrashPhysics : MonoBehaviour
         rb.angularDamping = originalAngularDrag;
         rb.angularVelocity = Vector3.zero;
 
-        deformer?.RestoreMesh();
-
         isCrashing = false;
         carPhysics.crashing = false;
     }

@@ -76,6 +76,11 @@ public class SCR_CarEffects : MonoBehaviour
 
     Rigidbody rb;
 
+    [SerializeField]private MeshRenderer[] brakeLightsMeshRenderer;
+    private List<Material> brakeLightsMaterials = new List<Material>();
+
+    private bool estaLigado = false;
+
     void Start()
     {
         carPhysics.OnUpGear += PlayCorteEffect;
@@ -141,6 +146,22 @@ public class SCR_CarEffects : MonoBehaviour
         {
             nitroTrail.gameObject.SetActive(false);
         }
+
+        foreach (MeshRenderer meshRenderer in brakeLightsMeshRenderer)
+        {
+            if (meshRenderer == null) continue;
+
+            // Pegamos a array de materiais uma única vez para não gerar clones infinitos
+            Material[] sharedMats = meshRenderer.materials; 
+            
+            foreach (Material mat in sharedMats)
+            {
+                if (mat != null)
+                {
+                    brakeLightsMaterials.Add(mat);
+                }
+            }
+        }
     }
 
     void SetNitroParticles()
@@ -192,6 +213,8 @@ public class SCR_CarEffects : MonoBehaviour
         HandleBoostVFX();
         //HandleTurboVFX();
         ResetSparkStates();
+
+        BrakeLights();
     }
 
     private void CacheAllParticles()
@@ -479,6 +502,16 @@ public class SCR_CarEffects : MonoBehaviour
         foreach(SCR_ImpactEffect effect in corteEffect)
         {
             effect.PlayOnPlace();
+        }
+    }
+
+    private void BrakeLights()
+    {
+        int valorShader = carPhysics.GetThrottleInput() < 0 || carPhysics.IsTurboActive() ? 1 : 0;
+
+        foreach(Material material in brakeLightsMaterials)
+        {
+            material.SetInt("_LanternOn", valorShader);
         }
     }
 

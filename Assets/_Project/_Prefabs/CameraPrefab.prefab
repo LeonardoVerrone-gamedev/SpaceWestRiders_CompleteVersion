@@ -873,20 +873,20 @@ MonoBehaviour:
   maxFOV: 90
   minCameraDistance: 4
   maxCameraDistance: 10
-  minVignetteIntensity: 0.2
-  maxVignetteIntensity: 0.5
-  minVignetteSmoothness: 0.1
-  maxVignetteSmoothness: 0.3
+  minVignetteIntensity: 0.1
+  maxVignetteIntensity: 0.25
+  minVignetteSmoothness: 0.2
+  maxVignetteSmoothness: 0.1
   minChromaticIntensity: 0
   maxChromaticIntensity: 0.1
-  minPostExposure: 0.25
-  maxPostExposure: 1
+  minPostExposure: 0.1
+  maxPostExposure: 0.5
   minSaturation: 0
   maxSaturation: 30
-  minMotionBlurIntensity: 0.1
-  maxMotionBlurIntensity: 0.5
+  minMotionBlurIntensity: 0
+  maxMotionBlurIntensity: 0.1
   minLensDistortionntensity: 0
-  maxLensDistortionntensity: 0.3
+  maxLensDistortionntensity: 0.1
   fovSmoothTime: 0
   distanceSmoothTime: 0
   volumeSmoothTime: 0.5

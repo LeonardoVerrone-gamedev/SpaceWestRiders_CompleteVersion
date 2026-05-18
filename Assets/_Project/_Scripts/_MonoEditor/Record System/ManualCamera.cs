@@ -1,5 +1,5 @@
 using UnityEngine;
-using Unity.Cinemachine; // Se estiver no Unity 6 / Cinemachine 3.0. Use 'using Cinemachine;' para versões antigas.
+using Unity.Cinemachine;
 
 public class ManualTrackCam : MonoBehaviour
 {
@@ -16,6 +16,8 @@ public class ManualTrackCam : MonoBehaviour
     private Quaternion initialRot;
     private int basePriority;
 
+    public bool rotateWithTarget = true;
+
     void Start()
     {
         vcam = GetComponent<CinemachineCamera>();
@@ -26,12 +28,12 @@ public class ManualTrackCam : MonoBehaviour
 
     void Update()
     {
-        FindBestCar();
+        if(currentTarget == null || Vector3.Distance(transform.position, currentTarget.position) < detectionRadius) FindBestCar();
 
-        if (currentTarget != null)
+        if (currentTarget != null && rotateWithTarget)
         {
             // Aumenta a prioridade para o Brain cortar para esta câmera
-            vcam.Priority.Value = 20; 
+            //vcam.Priority.Value = 20; 
             
             // Rotação manual via script (o seu controle total)
             Vector3 dir = (currentTarget.position - transform.position).normalized;
@@ -41,7 +43,7 @@ public class ManualTrackCam : MonoBehaviour
         else
         {
             // Reseta para a prioridade original para o Brain escolher outra câmera
-            vcam.Priority.Value = basePriority;
+            //vcam.Priority.Value = basePriority;
             transform.rotation = Quaternion.Slerp(transform.rotation, initialRot, Time.deltaTime * 2f);
         }
     }

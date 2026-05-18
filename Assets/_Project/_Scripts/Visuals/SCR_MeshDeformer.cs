@@ -12,9 +12,10 @@ public class SCR_MeshDeformer : MonoBehaviour
         [HideInInspector] public Vector3[] modifiedVertices;
     }
 
-    private SCR_CarVisualCulling culling;
-
     [SerializeField] private List<MeshData> carParts = new List<MeshData>();
+
+    SCR_RayBasedCarPhysics carPhysics;
+    DamageCar damageCar;
 
     [Header("Deformation Settings")]
     public float radius = 1.2f;
@@ -23,7 +24,8 @@ public class SCR_MeshDeformer : MonoBehaviour
 
     void Start()
     {
-        culling = GetComponent<SCR_CarVisualCulling>();
+        carPhysics = GetComponent<SCR_RayBasedCarPhysics>();
+        damageCar = GetComponent<DamageCar>();
 
         for (int i = 0; i < carParts.Count; i++)
         {
@@ -40,7 +42,7 @@ public class SCR_MeshDeformer : MonoBehaviour
 
     public void Deform(Vector3 worldPoint, Vector3 worldForce)
     {
-        if (culling != null && !culling.visible) return;
+        if(damageCar.publicCurrentDamage > 1f) return;
 
         float impactStrength = worldForce.magnitude;
         if (impactStrength < 0.1f) return;
@@ -51,9 +53,9 @@ public class SCR_MeshDeformer : MonoBehaviour
 
             Transform t = part.filter.transform;
 
+            // Ponto de impacto convertido para o espaço local da peça
             Vector3 localPoint = t.InverseTransformPoint(worldPoint);
-            Vector3 localForce = t.InverseTransformDirection(worldForce).normalized;
-
+            
             bool changed = false;
 
             for (int i = 0; i < part.modifiedVertices.Length; i++)
@@ -62,16 +64,33 @@ public class SCR_MeshDeformer : MonoBehaviour
                 if (sqrDist > radius * radius) continue;
 
                 float distance = Mathf.Sqrt(sqrDist);
+                
+                // Evita divisão por zero caso o ponto seja idêntico ao vértice
+                if (distance < 0.001f) continue; 
+
                 float falloff = Mathf.Pow((radius - distance) / radius, 2.5f);
 
-                Vector3 currentOffset = part.modifiedVertices[i] - part.originalVertices[i];
+                Vector3 vertexToImpactDirection = (part.modifiedVertices[i] - localPoint).normalized;
 
-                if (currentOffset.magnitude < maxDeformation)
+                // Multiplicamos pela força do impacto e direção calculada (com sinal invertido para afundar)
+                Vector3 deformAmount = -vertexToImpactDirection * impactStrength * deformationMultiplier * falloff;
+
+                // Calcula qual seria a nova posição e o novo deslocamento totalizado
+                Vector3 potentialNewVertex = part.modifiedVertices[i] + deformAmount;
+                Vector3 totalOffset = potentialNewVertex - part.originalVertices[i];
+                
+                // TRAVA TOTAL: Limita rigidamente o estrago por vértice para durar as 3 voltas
+                if (totalOffset.magnitude > maxDeformation)
                 {
-                    Vector3 deformAmount = localForce * impactStrength * deformationMultiplier * falloff;
-                    part.modifiedVertices[i] += deformAmount;
-                    changed = true;
+                    totalOffset = Vector3.ClampMagnitude(totalOffset, maxDeformation);
+                    part.modifiedVertices[i] = part.originalVertices[i] + totalOffset;
                 }
+                else
+                {
+                    part.modifiedVertices[i] = potentialNewVertex;
+                }
+
+                changed = true;
             }
 
             if (changed)
