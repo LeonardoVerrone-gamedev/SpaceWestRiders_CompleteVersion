@@ -166,11 +166,11 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
 
     #region Visual Variables
     [HideInInspector][SerializeField] private float tireRorationSpeed = 3000f;
-    [HideInInspector] [SerializeField] private float maxSteerAngle = 30f;
+    [SerializeField] private float maxSteerAngle = 30f;
     [Header("Hover Visual Transformation")]
     [HideInInspector][SerializeField] float transitionSpeed = 5f;
-    [HideInInspector][SerializeField] Vector3 wheelHoverRotation = new Vector3(0, 180, 90);
-    [HideInInspector][SerializeField] Vector3 wheelClassicRotation = new Vector3(0, 180, 0);
+    [SerializeField] Vector3 wheelHoverRotation = new Vector3(0, 180, 90);
+    [SerializeField] Vector3 wheelClassicRotation = new Vector3(0, 180, 0);
     private float _hoverTransitionAlpha = 0f;
     private float _rearWheelRotationAccumulator = 0f;
     private float _frontWheelRotationAccumulator = 0f;

@@ -42,7 +42,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: cbd44d0f3edea7f4b92a5188f6dc3112, type: 3}
+        m_Texture: {fileID: 2800000, guid: f04e24ae234e53c44941cdc6827548df, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DamageNormal:
@@ -69,9 +69,9 @@ Material:
     m_Floats:
     - _BumpScale: 1
     - _DamageAmount: -0.048
-    - _Metallic: 0.575
+    - _Metallic: 0.75
     - _Metallic_Reflection: 0.5
-    - _Smoothness: 0.25
+    - _Smoothness: 0.75
     m_Colors:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []

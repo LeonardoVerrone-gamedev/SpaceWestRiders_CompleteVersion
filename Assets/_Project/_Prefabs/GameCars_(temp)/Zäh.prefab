@@ -61356,38 +61356,20 @@ ParticleSystem:
         - serializedVersion: 3
           time: 0
           value: 0
-          inSlope: 3.3333333
-          outSlope: 3.3333333
-          tangentMode: 34
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
           weightedMode: 0
           inWeight: 0
-          outWeight: 0.33333334
-        - serializedVersion: 3
-          time: 0.3
-          value: 1
-          inSlope: -0.07309433
-          outSlope: -0.07309433
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.33333334
-          outWeight: 0.30068022
-        - serializedVersion: 3
-          time: 0.9244499
-          value: 0.802546
-          inSlope: -0.4602184
-          outSlope: -0.4602184
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.24810016
-          outWeight: 0.33333334
+          outWeight: 0
         - serializedVersion: 3
           time: 1
-          value: 0.101539016
-          inSlope: -9.278707
-          outSlope: -9.278707
-          tangentMode: 34
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
           weightedMode: 0
-          inWeight: 0.33333334
+          inWeight: 0
           outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -61694,9 +61676,9 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0.7454119, g: 1, b: 0, a: 0}
-        key1: {r: 0.420779, g: 1, b: 0, a: 1}
-        key2: {r: 0, g: 0.4867924, b: 0.0063956217, a: 1}
+        key0: {r: 1, g: 0, b: 0.94117653, a: 0}
+        key1: {r: 0.80392164, g: 0, b: 1, a: 1}
+        key2: {r: 0.49411768, g: 0, b: 1, a: 0.73333335}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
         key5: {r: 0, g: 0, b: 0, a: 0}
@@ -61704,7 +61686,7 @@ ParticleSystem:
         key7: {r: 0, g: 0, b: 0, a: 0}
         ctime0: 0
         ctime1: 3778
-        ctime2: 62837
+        ctime2: 57748
         ctime3: 65535
         ctime4: 0
         ctime5: 0
@@ -61712,7 +61694,7 @@ ParticleSystem:
         ctime7: 0
         atime0: 0
         atime1: 21627
-        atime2: 65535
+        atime2: 58056
         atime3: 65535
         atime4: 0
         atime5: 0
@@ -61721,7 +61703,7 @@ ParticleSystem:
         m_Mode: 0
         m_ColorSpace: 0
         m_NumColorKeys: 4
-        m_NumAlphaKeys: 3
+        m_NumAlphaKeys: 4
       minGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -73354,11 +73336,8 @@ MonoBehaviour:
   - {fileID: 754756485973492257}
   - {fileID: 7537230201984567368}
   shaderDamagePropertyName: _DamageAmount
-  smokeParticles:
-  - {fileID: 3366059870201120026}
-  fireParticles:
-  - {fileID: 3950866873662370186}
-  - {fileID: 9051021464020485990}
+  smokeParticles: []
+  fireParticles: []
   maxSmokeEmissionRate: 50
   maxFireEmissionRate: 30
   carPhysics: {fileID: 0}
@@ -73641,7 +73620,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.4136296, b: 0, a: 1}
+      maxColor: {r: 0.7912822, g: 0, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -89216,38 +89195,20 @@ ParticleSystem:
         - serializedVersion: 3
           time: 0
           value: 0
-          inSlope: 3.3333333
-          outSlope: 3.3333333
-          tangentMode: 34
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
           weightedMode: 0
           inWeight: 0
-          outWeight: 0.33333334
-        - serializedVersion: 3
-          time: 0.3
-          value: 1
-          inSlope: -0.07309433
-          outSlope: -0.07309433
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.33333334
-          outWeight: 0.30068022
-        - serializedVersion: 3
-          time: 0.9244499
-          value: 0.802546
-          inSlope: -0.4602184
-          outSlope: -0.4602184
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.24810016
-          outWeight: 0.33333334
+          outWeight: 0
         - serializedVersion: 3
           time: 1
-          value: 0.101539016
-          inSlope: -9.278707
-          outSlope: -9.278707
-          tangentMode: 34
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
           weightedMode: 0
-          inWeight: 0.33333334
+          inWeight: 0
           outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -89554,9 +89515,9 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0.7454119, g: 1, b: 0, a: 0}
-        key1: {r: 0.420779, g: 1, b: 0, a: 1}
-        key2: {r: 0, g: 0.4867924, b: 0.0063956217, a: 1}
+        key0: {r: 1, g: 0, b: 0.94117653, a: 0}
+        key1: {r: 0.80392164, g: 0, b: 1, a: 1}
+        key2: {r: 0.49411768, g: 0, b: 1, a: 0.73333335}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
         key5: {r: 0, g: 0, b: 0, a: 0}
@@ -89564,7 +89525,7 @@ ParticleSystem:
         key7: {r: 0, g: 0, b: 0, a: 0}
         ctime0: 0
         ctime1: 3778
-        ctime2: 62837
+        ctime2: 57748
         ctime3: 65535
         ctime4: 0
         ctime5: 0
@@ -89572,7 +89533,7 @@ ParticleSystem:
         ctime7: 0
         atime0: 0
         atime1: 21627
-        atime2: 65535
+        atime2: 58056
         atime3: 65535
         atime4: 0
         atime5: 0
@@ -89581,7 +89542,7 @@ ParticleSystem:
         m_Mode: 0
         m_ColorSpace: 0
         m_NumColorKeys: 4
-        m_NumAlphaKeys: 3
+        m_NumAlphaKeys: 4
       minGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -98293,7 +98254,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.4136296, b: 0, a: 1}
+      maxColor: {r: 0.7912822, g: 0, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -104385,8 +104346,8 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 1, g: 0.7858428, b: 0, a: 0}
-        key1: {r: 1, g: 0.8575664, b: 0, a: 1}
+        key0: {r: 0.6731167, g: 0, b: 1, a: 0}
+        key1: {r: 0.8113208, g: 0.0045923153, b: 0.20841171, a: 1}
         key2: {r: 0, g: 0, b: 0, a: 1}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -109046,38 +109007,20 @@ ParticleSystem:
         - serializedVersion: 3
           time: 0
           value: 0
-          inSlope: 3.3333333
-          outSlope: 3.3333333
-          tangentMode: 34
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
           weightedMode: 0
           inWeight: 0
-          outWeight: 0.33333334
-        - serializedVersion: 3
-          time: 0.3
-          value: 1
-          inSlope: -0.07309433
-          outSlope: -0.07309433
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.33333334
-          outWeight: 0.30068022
-        - serializedVersion: 3
-          time: 0.9244499
-          value: 0.802546
-          inSlope: -0.4602184
-          outSlope: -0.4602184
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.24810016
-          outWeight: 0.33333334
+          outWeight: 0
         - serializedVersion: 3
           time: 1
-          value: 0.101539016
-          inSlope: -9.278707
-          outSlope: -9.278707
-          tangentMode: 34
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
           weightedMode: 0
-          inWeight: 0.33333334
+          inWeight: 0
           outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -109384,9 +109327,9 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0.7454119, g: 1, b: 0, a: 0}
-        key1: {r: 0.420779, g: 1, b: 0, a: 1}
-        key2: {r: 0, g: 0.4867924, b: 0.0063956217, a: 1}
+        key0: {r: 1, g: 0, b: 0.94117653, a: 0}
+        key1: {r: 0.80392164, g: 0, b: 1, a: 1}
+        key2: {r: 0.49411768, g: 0, b: 1, a: 0.73333335}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
         key5: {r: 0, g: 0, b: 0, a: 0}
@@ -109394,7 +109337,7 @@ ParticleSystem:
         key7: {r: 0, g: 0, b: 0, a: 0}
         ctime0: 0
         ctime1: 3778
-        ctime2: 62837
+        ctime2: 57748
         ctime3: 65535
         ctime4: 0
         ctime5: 0
@@ -109402,7 +109345,7 @@ ParticleSystem:
         ctime7: 0
         atime0: 0
         atime1: 21627
-        atime2: 65535
+        atime2: 58056
         atime3: 65535
         atime4: 0
         atime5: 0
@@ -109411,7 +109354,7 @@ ParticleSystem:
         m_Mode: 0
         m_ColorSpace: 0
         m_NumColorKeys: 4
-        m_NumAlphaKeys: 3
+        m_NumAlphaKeys: 4
       minGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -113906,38 +113849,20 @@ ParticleSystem:
         - serializedVersion: 3
           time: 0
           value: 0
-          inSlope: 3.3333333
-          outSlope: 3.3333333
-          tangentMode: 34
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
           weightedMode: 0
           inWeight: 0
-          outWeight: 0.33333334
-        - serializedVersion: 3
-          time: 0.3
-          value: 1
-          inSlope: -0.07309433
-          outSlope: -0.07309433
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.33333334
-          outWeight: 0.30068022
-        - serializedVersion: 3
-          time: 0.9244499
-          value: 0.802546
-          inSlope: -0.4602184
-          outSlope: -0.4602184
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.24810016
-          outWeight: 0.33333334
+          outWeight: 0
         - serializedVersion: 3
           time: 1
-          value: 0.101539016
-          inSlope: -9.278707
-          outSlope: -9.278707
-          tangentMode: 34
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
           weightedMode: 0
-          inWeight: 0.33333334
+          inWeight: 0
           outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -114244,9 +114169,9 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0.7454119, g: 1, b: 0, a: 0}
-        key1: {r: 0.420779, g: 1, b: 0, a: 1}
-        key2: {r: 0, g: 0.4867924, b: 0.0063956217, a: 1}
+        key0: {r: 1, g: 0, b: 0.94117653, a: 0}
+        key1: {r: 0.80392164, g: 0, b: 1, a: 1}
+        key2: {r: 0.49411768, g: 0, b: 1, a: 0.73333335}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
         key5: {r: 0, g: 0, b: 0, a: 0}
@@ -114254,7 +114179,7 @@ ParticleSystem:
         key7: {r: 0, g: 0, b: 0, a: 0}
         ctime0: 0
         ctime1: 3778
-        ctime2: 62837
+        ctime2: 57748
         ctime3: 65535
         ctime4: 0
         ctime5: 0
@@ -114262,7 +114187,7 @@ ParticleSystem:
         ctime7: 0
         atime0: 0
         atime1: 21627
-        atime2: 65535
+        atime2: 58056
         atime3: 65535
         atime4: 0
         atime5: 0
@@ -114271,7 +114196,7 @@ ParticleSystem:
         m_Mode: 0
         m_ColorSpace: 0
         m_NumColorKeys: 4
-        m_NumAlphaKeys: 3
+        m_NumAlphaKeys: 4
       minGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -119191,8 +119116,8 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 1, g: 0.7858428, b: 0, a: 0}
-        key1: {r: 1, g: 0.8575664, b: 0, a: 1}
+        key0: {r: 0.6731167, g: 0, b: 1, a: 0}
+        key1: {r: 0.8113208, g: 0.0045923153, b: 0.20841171, a: 1}
         key2: {r: 0, g: 0, b: 0, a: 1}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -138526,38 +138451,20 @@ ParticleSystem:
         - serializedVersion: 3
           time: 0
           value: 0
-          inSlope: 3.3333333
-          outSlope: 3.3333333
-          tangentMode: 34
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
           weightedMode: 0
           inWeight: 0
-          outWeight: 0.33333334
-        - serializedVersion: 3
-          time: 0.3
-          value: 1
-          inSlope: -0.07309433
-          outSlope: -0.07309433
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.33333334
-          outWeight: 0.30068022
-        - serializedVersion: 3
-          time: 0.9244499
-          value: 0.802546
-          inSlope: -0.4602184
-          outSlope: -0.4602184
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.24810016
-          outWeight: 0.33333334
+          outWeight: 0
         - serializedVersion: 3
           time: 1
-          value: 0.101539016
-          inSlope: -9.278707
-          outSlope: -9.278707
-          tangentMode: 34
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
           weightedMode: 0
-          inWeight: 0.33333334
+          inWeight: 0
           outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -138864,9 +138771,9 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0.7454119, g: 1, b: 0, a: 0}
-        key1: {r: 0.420779, g: 1, b: 0, a: 1}
-        key2: {r: 0, g: 0.4867924, b: 0.0063956217, a: 1}
+        key0: {r: 1, g: 0, b: 0.94117653, a: 0}
+        key1: {r: 0.80392164, g: 0, b: 1, a: 1}
+        key2: {r: 0.49411768, g: 0, b: 1, a: 0.73333335}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
         key5: {r: 0, g: 0, b: 0, a: 0}
@@ -138874,7 +138781,7 @@ ParticleSystem:
         key7: {r: 0, g: 0, b: 0, a: 0}
         ctime0: 0
         ctime1: 3778
-        ctime2: 62837
+        ctime2: 57748
         ctime3: 65535
         ctime4: 0
         ctime5: 0
@@ -138882,7 +138789,7 @@ ParticleSystem:
         ctime7: 0
         atime0: 0
         atime1: 21627
-        atime2: 65535
+        atime2: 58056
         atime3: 65535
         atime4: 0
         atime5: 0
@@ -138891,7 +138798,7 @@ ParticleSystem:
         m_Mode: 0
         m_ColorSpace: 0
         m_NumColorKeys: 4
-        m_NumAlphaKeys: 3
+        m_NumAlphaKeys: 4
       minGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -152441,7 +152348,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 1, b: 1, a: 1}
+      maxColor: {r: 0, g: 0.6981132, b: 0.00073601166, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -152505,8 +152412,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 6
-      minScalar: 2
+      scalar: 3
+      minScalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -153198,7 +153105,7 @@ ParticleSystem:
       countCurve:
         serializedVersion: 2
         minMaxState: 0
-        scalar: 10
+        scalar: 3
         minScalar: 30
         maxCurve:
           serializedVersion: 2
@@ -157056,7 +156963,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1d068e86a28d1a042a4ebcc562e2856e, type: 2}
+  - {fileID: 2100000, guid: 51fe2c80cc8752448a5e12fefce19a11, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -173278,38 +173185,20 @@ ParticleSystem:
         - serializedVersion: 3
           time: 0
           value: 0
-          inSlope: 3.3333333
-          outSlope: 3.3333333
-          tangentMode: 34
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
           weightedMode: 0
           inWeight: 0
-          outWeight: 0.33333334
-        - serializedVersion: 3
-          time: 0.3
-          value: 1
-          inSlope: -0.07309433
-          outSlope: -0.07309433
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.33333334
-          outWeight: 0.30068022
-        - serializedVersion: 3
-          time: 0.9244499
-          value: 0.802546
-          inSlope: -0.4602184
-          outSlope: -0.4602184
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.24810016
-          outWeight: 0.33333334
+          outWeight: 0
         - serializedVersion: 3
           time: 1
-          value: 0.101539016
-          inSlope: -9.278707
-          outSlope: -9.278707
-          tangentMode: 34
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
           weightedMode: 0
-          inWeight: 0.33333334
+          inWeight: 0
           outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -173616,9 +173505,9 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0.7454119, g: 1, b: 0, a: 0}
-        key1: {r: 0.420779, g: 1, b: 0, a: 1}
-        key2: {r: 0, g: 0.4867924, b: 0.0063956217, a: 1}
+        key0: {r: 1, g: 0, b: 0.94117653, a: 0}
+        key1: {r: 0.80392164, g: 0, b: 1, a: 1}
+        key2: {r: 0.49411768, g: 0, b: 1, a: 0.73333335}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
         key5: {r: 0, g: 0, b: 0, a: 0}
@@ -173626,7 +173515,7 @@ ParticleSystem:
         key7: {r: 0, g: 0, b: 0, a: 0}
         ctime0: 0
         ctime1: 3778
-        ctime2: 62837
+        ctime2: 57748
         ctime3: 65535
         ctime4: 0
         ctime5: 0
@@ -173634,7 +173523,7 @@ ParticleSystem:
         ctime7: 0
         atime0: 0
         atime1: 21627
-        atime2: 65535
+        atime2: 58056
         atime3: 65535
         atime4: 0
         atime5: 0
@@ -173643,7 +173532,7 @@ ParticleSystem:
         m_Mode: 0
         m_ColorSpace: 0
         m_NumColorKeys: 4
-        m_NumAlphaKeys: 3
+        m_NumAlphaKeys: 4
       minGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -196788,7 +196677,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8317018272150625613
 Transform:
   m_ObjectHideFlags: 0
@@ -198164,8 +198053,8 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 1, g: 0.7858428, b: 0, a: 0}
-        key1: {r: 1, g: 0.8575664, b: 0, a: 1}
+        key0: {r: 0.6731167, g: 0, b: 1, a: 0}
+        key1: {r: 0.8113208, g: 0.0045923153, b: 0.20841171, a: 1}
         key2: {r: 0, g: 0, b: 0, a: 1}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -201985,8 +201874,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 6
-      minScalar: 2
+      scalar: 3
+      minScalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -202678,7 +202567,7 @@ ParticleSystem:
       countCurve:
         serializedVersion: 2
         minMaxState: 0
-        scalar: 10
+        scalar: 3
         minScalar: 30
         maxCurve:
           serializedVersion: 2
@@ -206536,7 +206425,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1d068e86a28d1a042a4ebcc562e2856e, type: 2}
+  - {fileID: 2100000, guid: 51fe2c80cc8752448a5e12fefce19a11, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
