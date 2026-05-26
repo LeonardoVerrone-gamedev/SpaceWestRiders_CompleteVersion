@@ -362,11 +362,11 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             UpdateGroundSensors();
             if (isGrounded)
             {
-                UpdateGravityDirection();
-                ApplyAngularDamping();
-                ApplyDownforce();
+             //   UpdateGravityDirection();
+              //  ApplyAngularDamping();
+              //  ApplyDownforce();
             }
-            AlignToTrack();
+           // AlignToTrack();
             ApplySuspension();
             GroundCheck();
             HandleMovement();
@@ -474,7 +474,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             SidewaysDrag();
             if(carType == CarType.hover) ApplyAirDrag();
         }
-        else AirControl();
+        //else AirControl();
         Turn();
     }
 
@@ -663,37 +663,38 @@ private void ApplyClassicSuspension()
         
         wheelsGrounded[i] = 1;
         RaycastHit hit = groundSensors[i].hitInfo;
-
+        
         float currentSpringLength = hit.distance;
-        // Proporção real da compressão da mola
-        float compression = (currentTargetSuspensionLength - currentSpringLength) / springTravel;
-
-        // Força linear da mola
+        float compression = (targetDistance - currentSpringLength) / springTravel;
+        compression = Mathf.Clamp(compression, -0.3f, 0.6f);
+        
+        // Força da mola normal
         float springForce = compression * springStiffness;
-
-        // Velocidade de oscilação do amortecedor
         float springVelocity = Vector3.Dot(rb.GetPointVelocity(rayPoints[i].position), hit.normal);
-        float dampForce = springVelocity * damperStiffness;
-
-        // Força resultante da mola + amortecedor
+        float dampForce = springVelocity * damperStiffness * 1.5f;
+        
         float netForce = springForce - dampForce;
-
-        // Sistema anti-quique (Prende a roda no chão de forma suave)
-        if (compression < 0f) // Mola expandindo demais (carro querendo pular)
+        
+        // FORÇA DE STICK: puxa o carro PARA BAIXO quando a roda está no chão
+        // Isso elimina os pulos completamente
+        float stickForce = 0f;
+        if (compression > -0.1f) // Roda no chão
         {
-            // Amortece agressivamente a expansão para evitar o salto
-            netForce *= 0.2f; 
+            // Quanto mais rápida a velocidade vertical para CIMA, mais stick force
+            float upwardSpeed = Mathf.Max(0, springVelocity);
+            stickForce = -upwardSpeed * rb.mass * 3f;
+            stickForce = Mathf.Clamp(stickForce, -rb.mass * 10f, 0f);
         }
-
-        // Força extra de sucção para impedir descolamento em cristas de ondulação
-        float trackAdhesion = -Vector3.Dot(Physics.gravity, hit.normal) * rb.mass * 0.25f;
-        netForce += Mathf.Max(0f, trackAdhesion);
-
-        // Limite absoluto por roda para evitar spikes de força (causa da tremedeira)
-        float maxForceLimit = (rb.mass * gravityStrength) * 2.5f;
-        netForce = Mathf.Clamp(netForce, -maxForceLimit, maxForceLimit);
-
-        rb.AddForceAtPosition(netForce * hit.normal, rayPoints[i].position);
+        
+        netForce += stickForce;
+        
+        // Limites
+        netForce = Mathf.Clamp(netForce, -rb.mass * 15f, rb.mass * 10f);
+        
+        if (Mathf.Abs(netForce) > 0.1f)
+        {
+            rb.AddForceAtPosition(netForce * hit.normal, rayPoints[i].position);
+        }
         
         // Visual
         float visualCompression = Mathf.Clamp(compression, 0f, 0.35f);
@@ -801,41 +802,25 @@ private void ApplyClassicSuspension()
     public void ApplyDownforce()
     {
         float speed = rb.linearVelocity.magnitude;
-        Vector3 forceDirection = -cachedSurfaceNormal; // Sempre empurra em direção ao chão da pista
-
         if (!isHover)
         {
             float speedRatio = speed / maxSpeed;
-            
-            // Downforce aerodinâmico clássico
             float df = speedRatio * speedRatio * downforceAmount;
-            
-            // Força de Grude Magnético (Crucial para Wall Ride e Tubos)
-            // Se o carro estiver no chão, aplicamos uma força constante que anula a gravidade real e o fixa na parede
-            float wallHugForce = rb.mass * gravityStrength; 
-            
-            // Aumenta o grude baseado na velocidade para loops rápidos
-            wallHugForce += rb.mass * speedRatio * 15f; 
-
-            if (isGrounded)
-            {
-                rb.AddForce(forceDirection * (df + wallHugForce), ForceMode.Force);
-            }
-            else
-            {
-                // Se estiver no ar próximo à parede, ainda tenta puxar levemente para garantir o contato
-                rb.AddForce(forceDirection * (downforceAmount * 0.5f), ForceMode.Force);
-            }
+            float maxForce = rb.mass * Mathf.Abs(Physics.gravity.y) * 10f;
+            df = Mathf.Clamp(df, 0f, maxForce);
+            Vector3 targetDir = isGrounded ? cachedSurfaceNormal : transform.up;
+            _currentDownDir = Vector3.Slerp(_currentDownDir, targetDir, 10f * Time.fixedDeltaTime);
+            rb.AddForce(-_currentDownDir * df, ForceMode.Force);
+            float extraStick = rb.mass * Mathf.Lerp(2f, 10f, speedRatio);
+            rb.AddForce(-_currentDownDir * extraStick, ForceMode.Force);
+            return;
         }
-        else // Modo HOVER
-        {
-            if (cachedGroundedCount == 0) return;
-            float speedFactor = useDynamicDownforce ? speed / (maxSpeed / 3.6f) : 1f;
-            
-            // O Hover precisa empurrar firme contra a pista para estabilizar a flutuação em curvas fechadas
-            float hoverSticky = rb.mass * gravityStrength * 0.8f;
-            rb.AddForce(forceDirection * ((hoverDownforceAmount * speedFactor) + hoverSticky), ForceMode.Force);
-        }
+        if (cachedGroundedCount == 0) return;
+        float heightRatio = cachedAverageHeight / restLenght;
+        if (heightRatio < minHeightThreshold) return;
+        float speedFactor = useDynamicDownforce ? speed / (maxSpeed / 3.6f) : 1f;
+        Vector3 downDir = isGrounded ? cachedSurfaceNormal : transform.up;
+        rb.AddForce(-downDir * hoverDownforceAmount * speedFactor, ForceMode.Force);
     }
 
     private void ApplyAirDrag()
@@ -873,7 +858,7 @@ private void ApplyClassicSuspension()
         predictedNormal = lastGroundNormal;
         RaycastHit hit;
         if (Physics.Raycast(transform.position, -lastGroundNormal, out hit, 10f, drivable)) predictedNormal = Vector3.Slerp(lastGroundNormal, hit.normal, 0.3f);
-        ForceLeveling();
+        //ForceLeveling();
         Vector3 targetUp = predictedNormal;
         rb.AddForce(-targetUp * 50f, ForceMode.Acceleration);
         rb.angularVelocity = Vector3.ClampMagnitude(rb.angularVelocity, 8f);
@@ -896,20 +881,8 @@ private void ApplyClassicSuspension()
 
     void AlignToTrack()
     {
-        // Em vez de MoveRotation (que causa jitter/tremedeira se bater com a física), usamos torque corretivo
-        Vector3 myUp = transform.up;
-        Vector3 targetUp = cachedSurfaceNormal;
-
-        // Calcula o vetor de rotação necessário
-        Vector3 rotationAxis = Vector3.Cross(myUp, targetUp);
-        float angleError = Mathf.Asin(Mathf.Clamp(rotationAxis.magnitude, -1f, 1f)) * Mathf.Rad2Deg;
-
-        if (cachedGroundedCount > 0 && angleError > 0.1f)
-        {
-            // Força proporcional ao erro de ângulo
-            float alignmentForce = surfaceAlignmentSpeed * 1.5f; 
-            rb.AddTorque(rotationAxis.normalized * angleError * alignmentForce, ForceMode.Acceleration);
-        }
+        Quaternion targetRotation = Quaternion.FromToRotation(transform.up, cachedSurfaceNormal) * transform.rotation;
+        rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, Time.fixedDeltaTime * surfaceAlignmentSpeed));
     }
     #endregion
 
@@ -1068,7 +1041,7 @@ private void ApplyClassicSuspension()
     {
         if (collision.gameObject == this.gameObject) return;
         if (((1 << collision.gameObject.layer) & drivable) != 0) return;
-        float upDot = Vector3.Dot(cachedSurfaceNormal, Vector3.up);
+        //float upDot = Vector3.Dot(cachedSurfaceNormal, Vector3.up);
         float impactForce = collision.relativeVelocity.magnitude;
         float currentSpeed = rb.linearVelocity.magnitude;
         Vector3 dir = -collision.contacts[0].normal;
@@ -1089,7 +1062,7 @@ private void ApplyClassicSuspension()
             lastCollisionShakeTime = Time.time;
         }
 
-        if (isCrashableObject && impactForce > crashImpactForce && IsFrontalCollision(dir) && !_isTurboActive && (ShouldAvoidCrashForSlowPlayers() == false) && upDot > 0.6f)
+        if (isCrashableObject && impactForce > crashImpactForce && IsFrontalCollision(dir) && !_isTurboActive && (ShouldAvoidCrashForSlowPlayers() == false))
         {
             if (racerStatus.isPlayer)
             {
@@ -1331,14 +1304,10 @@ private void ApplyClassicSuspension()
         cachedSurfaceNormal = Vector3.zero;
         cachedAverageHeight = 0f;
         cachedGroundedCount = 0;
-        
         Vector3 weightedNormalSum = Vector3.zero;
         float totalWeight = 0f;
-        float castDistance = isHover ? hoverDistance + 1.5f : restLenght + springTravel; // Aumentado para não perder contato em ondulações
-        
-        // ATENÇÃO: Em pistas curvas, o raio deve ir na direção "baixo" local do carro
-        Vector3 rayDir = -transform.up; 
-
+        float castDistance = isHover ? hoverDistance + 1.25f : restLenght;
+        Vector3 rayDir = -transform.up;
         for (int i = 0; i < rayPoints.Length; i++)
         {
             int hits = Physics.SphereCastNonAlloc(rayPoints[i].position, wheelRadius, rayDir, _raycastBuffer, castDistance, drivable);
@@ -1346,62 +1315,51 @@ private void ApplyClassicSuspension()
             {
                 groundStickTimer[i] = Mathf.Max(groundStickTimer[i], 0.1f);
                 RaycastHit hit = _raycastBuffer[0];
-                
-                // Peso baseado na compressão (rodas esmagadas contra a parede ganham prioridade de alinhamento)
-                float compression = Mathf.Clamp01((currentTargetSuspensionLength - hit.distance) / (isHover ? hoverDistance : springTravel));
-                float weight = (compression * compression) + 0.1f;
-                
+                float compression = Mathf.Clamp01((restLenght - hit.distance) / springTravel);
+                float weight = Mathf.Pow(compression, 2) + 0.01f;
                 weightedNormalSum += hit.normal * weight;
                 totalWeight += weight;
-                
+                float minDist = hit.distance;
+                for (int j = 1; j < hits; j++)
+                {
+                    if (_raycastBuffer[j].distance < minDist)
+                    {
+                        hit = _raycastBuffer[j];
+                        minDist = hit.distance;
+                    }
+                }
                 groundSensors[i].hit = true;
-                
                 if (smoothedNormals[i] == Vector3.zero) smoothedNormals[i] = hit.normal;
-                float smoothing = 1f - Mathf.Exp(-15f * Time.fixedDeltaTime);
+                float smoothing = 1f - Mathf.Exp(-12f * Time.fixedDeltaTime);
                 smoothedNormals[i] = Vector3.Slerp(smoothedNormals[i], hit.normal, smoothing);
-                
                 hit.normal = smoothedNormals[i];
                 groundSensors[i].hitInfo = hit;
+                cachedSurfaceNormal += hit.normal;
                 cachedAverageHeight += hit.distance;
                 cachedGroundedCount++;
             }
             else
             {
                 groundSensors[i].hit = false;
-                smoothedNormals[i] = Vector3.Slerp(smoothedNormals[i], transform.up, 5f * Time.fixedDeltaTime);
-                groundStickTimer[i] -= Time.fixedDeltaTime;
+                smoothedNormals[i] = Vector3.Lerp(smoothedNormals[i], transform.up, 0.1f);
+                groundStickTimer[i] -= Time.deltaTime;
+                groundSensors[i].hit = false;
             }
         }
-
-        // FALLBACK DE SEGURANÇA PARA WALL RIDE / TUBOS:
-        // Se as rodas perderem contato por frames rápidos, faz um raio central longo para prender o carro na parede
-        if (cachedGroundedCount == 0)
-        {
-            if (Physics.Raycast(transform.position, -transform.up, out RaycastHit centerHit, castDistance * 2f, drivable))
-            {
-                cachedSurfaceNormal = centerHit.normal;
-                cachedAverageHeight = centerHit.distance;
-                cachedGroundedCount = 1;
-                totalWeight = 1f;
-                weightedNormalSum = centerHit.normal;
-            }
-        }
-
         if (totalWeight > 0)
         {
             Vector3 targetNormal = weightedNormalSum / totalWeight;
-            float smoothing = 1f - Mathf.Exp(-20f * Time.fixedDeltaTime); // Maior velocidade de resposta
+            float smoothing = 1f - Mathf.Exp(-15f * Time.fixedDeltaTime);
             cachedSurfaceNormal = Vector3.Slerp(cachedSurfaceNormal, targetNormal.normalized, smoothing);
         }
-        else
-        {
-            cachedSurfaceNormal = Vector3.Slerp(cachedSurfaceNormal, Vector3.up, 2f * Time.fixedDeltaTime);
-        }
-
+        else cachedSurfaceNormal = Vector3.Slerp(cachedSurfaceNormal, transform.up, 5f * Time.fixedDeltaTime);
         if (cachedGroundedCount > 0)
         {
+            cachedSurfaceNormal /= cachedGroundedCount;
+            cachedSurfaceNormal.Normalize();
             cachedAverageHeight /= cachedGroundedCount;
         }
+        else cachedSurfaceNormal = transform.up;
     }
     #endregion
 }
