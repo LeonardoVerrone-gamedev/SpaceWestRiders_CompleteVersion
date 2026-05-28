@@ -25,7 +25,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     #endregion
 
     #region Basic Setup
-    private static int MIN_WHEELS_TO_CONSIDERE_GROUNDED = 1;
+    private int MIN_WHEELS_TO_CONSIDERE_GROUNDED = 3;
     #endregion
 
     #region Suspension System
@@ -56,7 +56,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     private Vector3 cachedSurfaceNormal = Vector3.up;
     private float cachedAverageHeight;
     private int cachedGroundedCount;
-    private RaycastHit[] _raycastBuffer = new RaycastHit[1];
+    private RaycastHit[] _raycastBuffer = new RaycastHit[8];
     #endregion
 
     #region Hover Downforce
@@ -362,11 +362,11 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             UpdateGroundSensors();
             if (isGrounded)
             {
-             //   UpdateGravityDirection();
-              //  ApplyAngularDamping();
-              //  ApplyDownforce();
+                UpdateGravityDirection();
+                ApplyAngularDamping();
+                ApplyDownforce();
+                AlignToTrack();
             }
-           // AlignToTrack();
             ApplySuspension();
             GroundCheck();
             HandleMovement();
@@ -449,6 +449,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     {
         carType = newMode;
         isHover = (carType == CarType.hover);
+        MIN_WHEELS_TO_CONSIDERE_GROUNDED = isHover ? 1 : 3;
         dragCoefficient = isHover ? hoverCarDragCoefficient : classicCarDragCoefficient;
         acceleration = isHover ? hoverCarAcceleration : classicCarAcceleration;
         maxSpeed = isHover ? hoverCarMaxSpeed : classicCarMaxSpeed;
@@ -474,7 +475,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             SidewaysDrag();
             if(carType == CarType.hover) ApplyAirDrag();
         }
-        //else AirControl();
+        else AirControl();
         Turn();
     }
 
@@ -485,7 +486,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         maxLimit *= rubberBandingFactor;
         float minLimit = -(maxSpeed / 3f);
         localVel.z = Mathf.Clamp(localVel.z, minLimit, maxLimit);
-        rb.linearVelocity = transform.TransformDirection(localVel);
+        //rb.linearVelocity = transform.TransformDirection(localVel);
     }
 
     private void Acceleration()
@@ -858,7 +859,7 @@ private void ApplyClassicSuspension()
         predictedNormal = lastGroundNormal;
         RaycastHit hit;
         if (Physics.Raycast(transform.position, -lastGroundNormal, out hit, 10f, drivable)) predictedNormal = Vector3.Slerp(lastGroundNormal, hit.normal, 0.3f);
-        //ForceLeveling();
+        ForceLeveling();
         Vector3 targetUp = predictedNormal;
         rb.AddForce(-targetUp * 50f, ForceMode.Acceleration);
         rb.angularVelocity = Vector3.ClampMagnitude(rb.angularVelocity, 8f);
@@ -1041,7 +1042,7 @@ private void ApplyClassicSuspension()
     {
         if (collision.gameObject == this.gameObject) return;
         if (((1 << collision.gameObject.layer) & drivable) != 0) return;
-        //float upDot = Vector3.Dot(cachedSurfaceNormal, Vector3.up);
+        float upDot = Vector3.Dot(cachedSurfaceNormal, Vector3.up);
         float impactForce = collision.relativeVelocity.magnitude;
         float currentSpeed = rb.linearVelocity.magnitude;
         Vector3 dir = -collision.contacts[0].normal;
@@ -1062,7 +1063,7 @@ private void ApplyClassicSuspension()
             lastCollisionShakeTime = Time.time;
         }
 
-        if (isCrashableObject && impactForce > crashImpactForce && IsFrontalCollision(dir) && !_isTurboActive && (ShouldAvoidCrashForSlowPlayers() == false))
+        if (isCrashableObject && impactForce > crashImpactForce && IsFrontalCollision(dir) && !_isTurboActive && (ShouldAvoidCrashForSlowPlayers() == false) && upDot > 0.6f)
         {
             if (racerStatus.isPlayer)
             {
@@ -1274,6 +1275,15 @@ private void ApplyClassicSuspension()
         }
         if (!wasGrounded && isGrounded && !isHover)
         {
+
+            Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
+
+            if (localVel.y < -5f)
+            {
+                localVel.y *= 0.35f;
+                rb.linearVelocity = transform.TransformDirection(localVel);
+            }
+
             OnLand?.Invoke(airTime);
             if (_currentHandbrakeInput)
             {
@@ -1315,19 +1325,37 @@ private void ApplyClassicSuspension()
             {
                 groundStickTimer[i] = Mathf.Max(groundStickTimer[i], 0.1f);
                 RaycastHit hit = _raycastBuffer[0];
+                float minDist = hit.distance;
+                
+
+                RaycastHit bestHit = default;
+                float bestScore = float.MinValue;
+
+                for(int j = 0; j < hits; j++)
+                {
+                    hit = _raycastBuffer[j];
+
+                    float upDot = Vector3.Dot(hit.normal, transform.up);
+
+                    // ignora paredes
+                    if(upDot < 0.3f)
+                        continue;
+
+                    float score =
+                        upDot * 2f
+                        - hit.distance * 0.25f;
+
+                    if(score > bestScore)
+                    {
+                        bestScore = score;
+                        bestHit = hit;
+                    }
+                }
+                hit = bestHit;
                 float compression = Mathf.Clamp01((restLenght - hit.distance) / springTravel);
                 float weight = Mathf.Pow(compression, 2) + 0.01f;
                 weightedNormalSum += hit.normal * weight;
                 totalWeight += weight;
-                float minDist = hit.distance;
-                for (int j = 1; j < hits; j++)
-                {
-                    if (_raycastBuffer[j].distance < minDist)
-                    {
-                        hit = _raycastBuffer[j];
-                        minDist = hit.distance;
-                    }
-                }
                 groundSensors[i].hit = true;
                 if (smoothedNormals[i] == Vector3.zero) smoothedNormals[i] = hit.normal;
                 float smoothing = 1f - Mathf.Exp(-12f * Time.fixedDeltaTime);
