@@ -159,7 +159,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     [HideInInspector][SerializeField] float surfaceAlignmentSpeed = 10f;
     [HideInInspector][SerializeField] float groundHugDistance = 1.5f;
     [HideInInspector] public float extraGripModifier = 1.0f;
-    private Vector3 _currentCarUp = Vector3.up;
+    public Vector3 _currentCarUp = Vector3.up;
     private Vector3 currentCarLocalVelocity = Vector3.zero;
     private float carVelocityRatio = 0;
     #endregion
@@ -449,7 +449,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     {
         carType = newMode;
         isHover = (carType == CarType.hover);
-        MIN_WHEELS_TO_CONSIDERE_GROUNDED = isHover ? 1 : 3;
+        MIN_WHEELS_TO_CONSIDERE_GROUNDED = isHover ? 3 : 3;
         dragCoefficient = isHover ? hoverCarDragCoefficient : classicCarDragCoefficient;
         acceleration = isHover ? hoverCarAcceleration : classicCarAcceleration;
         maxSpeed = isHover ? hoverCarMaxSpeed : classicCarMaxSpeed;
@@ -860,9 +860,32 @@ private void ApplyClassicSuspension()
         RaycastHit hit;
         if (Physics.Raycast(transform.position, -lastGroundNormal, out hit, 10f, drivable)) predictedNormal = Vector3.Slerp(lastGroundNormal, hit.normal, 0.3f);
         ForceLeveling();
-        Vector3 targetUp = predictedNormal;
-        rb.AddForce(-targetUp * 50f, ForceMode.Acceleration);
+        Vector3 targetUp = GetGravityDirection();
+        rb.AddForce(targetUp * 50f, ForceMode.Acceleration);
         rb.angularVelocity = Vector3.ClampMagnitude(rb.angularVelocity, 8f);
+    }
+
+    private Vector3 GetGravityDirection()
+    {
+        RaycastHit hit;
+
+        // procura pista abaixo do carro
+        bool hasTrackBelow = Physics.Raycast(
+            transform.position,
+            -transform.up,
+            out hit,
+            20f,
+            drivable
+        );
+
+        // se encontrou pista abaixo, continua usando gravidade local
+        if (hasTrackBelow)
+        {
+            return -transform.up;
+        }
+
+        // se não encontrou nada, volta para gravidade global
+        return -Vector3.up;
     }
 
     private void ForceLeveling()
@@ -1188,9 +1211,9 @@ private void ApplyClassicSuspension()
             Vector3 direction = (target.position - _lastSafePosition).normalized;
             Vector3 planarDir = Vector3.ProjectOnPlane(direction, cachedSurfaceNormal).normalized;
             if (planarDir.sqrMagnitude > 0.01f) transform.rotation = Quaternion.LookRotation(planarDir, cachedSurfaceNormal);
-            else transform.rotation = _lastSafeRotation;
+            else transform.rotation = Quaternion.Euler(new Vector3(0f, direction.y, 0f));
         }
-        else transform.rotation = _lastSafeRotation;
+        else transform.rotation = Quaternion.Euler(Vector3.zero);
         if(!AIControlled) { }
         else aiDriver.SetRecovering();
         Invoke(nameof(ResetRespawnFlag), 1f);
@@ -1335,14 +1358,13 @@ private void ApplyClassicSuspension()
                 {
                     hit = _raycastBuffer[j];
 
-                    float upDot = Vector3.Dot(hit.normal, transform.up);
+                    Vector3 suspensionDir = -rayDir;
 
-                    // ignora paredes
-                    if(upDot < 0.3f)
-                        continue;
+                    float alignment =
+                        Vector3.Dot(hit.normal, suspensionDir);
 
                     float score =
-                        upDot * 2f
+                        alignment * 2f
                         - hit.distance * 0.25f;
 
                     if(score > bestScore)
@@ -1350,6 +1372,16 @@ private void ApplyClassicSuspension()
                         bestScore = score;
                         bestHit = hit;
                     }
+                }
+
+                if(bestScore > -999f)
+                {
+                    hit = bestHit;
+                }
+                else
+                {
+                    groundSensors[i].hit = false;
+                    continue;
                 }
                 hit = bestHit;
                 float compression = Mathf.Clamp01((restLenght - hit.distance) / springTravel);
@@ -1387,7 +1419,19 @@ private void ApplyClassicSuspension()
             cachedSurfaceNormal.Normalize();
             cachedAverageHeight /= cachedGroundedCount;
         }
-        else cachedSurfaceNormal = transform.up;
+        else
+    {
+        cachedSurfaceNormal = Vector3.Slerp(
+            cachedSurfaceNormal,
+            lastGroundNormal,
+            5f * Time.fixedDeltaTime
+        );
+
+        if (cachedGroundedCount > 0)
+        {
+            lastGroundNormal = cachedSurfaceNormal;
+        }
+    }
     }
     #endregion
 }

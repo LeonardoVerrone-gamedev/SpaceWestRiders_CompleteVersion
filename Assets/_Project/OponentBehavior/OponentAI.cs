@@ -332,7 +332,7 @@ public class AIRacingController : MonoBehaviour
         
         int nextIndex = (currentTargetIndex + 1) % waypoints.Count;
         Vector3 trackDir = (waypoints[nextIndex].position - waypoints[currentTargetIndex].position).normalized;
-        Vector3 trackRight = Vector3.Cross(Vector3.up, trackDir).normalized;
+        Vector3 trackRight = Vector3.Cross(transform.up, trackDir).normalized;
         
         float avoidance = GetDifferentialAvoidance();
         float wallDanger = Mathf.Abs(avoidance);
@@ -380,7 +380,7 @@ public class AIRacingController : MonoBehaviour
         {
             Vector3 localDir = transform.InverseTransformDirection(predictedDirection.normalized);
             localDir.y = 0;
-            angleToTarget = Vector3.SignedAngle(Vector3.forward, localDir.normalized, Vector3.up);
+            angleToTarget = Vector3.SignedAngle(transform.forward, localDir.normalized, transform.up);
         }
         
         float currentSpeed = rb.linearVelocity.magnitude;
@@ -818,7 +818,7 @@ public class AIRacingController : MonoBehaviour
             localDirToWp.y = 0;
             localDirToWp.Normalize();
 
-            float angle = Vector3.Angle(Vector3.forward, localDirToWp);
+            float angle = Vector3.Angle(transform.forward, localDirToWp);
             if (angle > 5f) averageCurvature += angle;
 
             if (i == 1) targetDirection = worldDirToWp; 
@@ -837,7 +837,7 @@ public class AIRacingController : MonoBehaviour
         
         Vector3 localDirToNextPoint = transform.InverseTransformPoint(waypoints[currentTargetIndex].position);
         localDirToNextPoint.y = 0;
-        float angleToNextPointLocal = Vector3.Angle(Vector3.forward, localDirToNextPoint.normalized);
+        float angleToNextPointLocal = Vector3.Angle(transform.forward, localDirToNextPoint.normalized);
         float forwardSpeed = rb.linearVelocity.magnitude;
         
         bool shouldDrift = false;
@@ -870,11 +870,11 @@ public class AIRacingController : MonoBehaviour
             Vector3 velocityDir = rb.linearVelocity.normalized;
             Vector3 localVelocityDir = transform.InverseTransformDirection(velocityDir);
             localVelocityDir.y = 0;
-            float currentDriftAngle = Vector3.Angle(Vector3.forward, localVelocityDir);
+            float currentDriftAngle = Vector3.Angle(transform.forward, localVelocityDir);
             
             Vector3 localTargetTrackDir = transform.InverseTransformDirection(targetTrackDir);
             localTargetTrackDir.y = 0;
-            float angleToTargetDirLocal = Vector3.Angle(Vector3.forward, localTargetTrackDir.normalized);
+            float angleToTargetDirLocal = Vector3.Angle(transform.forward, localTargetTrackDir.normalized);
             
             bool isAlignedWithTrack = Mathf.Abs(currentDriftAngle - angleToTargetDirLocal) < exitAngleThreshold;
             
