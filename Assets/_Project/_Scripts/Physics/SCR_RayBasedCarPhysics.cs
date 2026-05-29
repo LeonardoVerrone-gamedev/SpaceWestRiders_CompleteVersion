@@ -874,7 +874,7 @@ private void ApplyClassicSuspension()
             transform.position,
             -transform.up,
             out hit,
-            20f,
+            50f,
             drivable
         );
 
