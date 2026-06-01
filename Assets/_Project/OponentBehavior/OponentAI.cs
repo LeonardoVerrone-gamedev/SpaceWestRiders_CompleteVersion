@@ -102,6 +102,25 @@ public class AIRacingController : MonoBehaviour
     [SerializeField] private float driftAngleCorrectionSpeed = 3f;
     private float driftDuration;
 
+    public enum RecoveryPhase
+    {
+        None,
+        ReverseBriefly,
+        RotateToTrack,
+        DriveForward
+    }
+
+    [Header("Recovery System")]
+    [SerializeField] float reverseRecoveryTime = 1.25f;
+    [SerializeField] float maxRecoveryTime = 6f;
+    [SerializeField] float recoveryRotationThrottle = 0.35f;
+    [SerializeField] float recoveryForwardThrottle = 0.7f;
+
+    private RecoveryPhase recoveryPhase = RecoveryPhase.None;
+
+    private float reverseRecoveryTimer;
+    private float totalRecoveryTimer;
+
     void OnEnable()
     {
         car = GetComponent<SCR_RayBasedCarPhysics>();
@@ -139,19 +158,9 @@ public class AIRacingController : MonoBehaviour
     {
         if (waypoints == null || waypoints.Count == 0) return;
 
-        if (isRecovering) 
-        {
-            if (carInputs != null)
-            {
-                carInputs.SetThrottleInput(0f);
-                carInputs.SetSteeringInput(0f);
-                carInputs.SetHandbrakeInput(false);
-            }
-            return; 
-        }
-
         CheckIfStuck();
         CheckDirection();
+        UpdateRecoveryState();
         UpdateTargetIndex();
 
         HandleAdvancedDriving();
@@ -161,7 +170,9 @@ public class AIRacingController : MonoBehaviour
         DetermineAIState();
 
         float steeringInput = (currentState == AIState.Recovering) ? CalculateRecoverySteer() : CalculateSteering();
-        float throttleInput = (currentState == AIState.Recovering) ? -0.5f : CalculateThrottle();
+        float throttleInput = (currentState == AIState.Recovering)
+            ? CalculateRecoveryThrottle()
+            : CalculateThrottle();
 
         if (carInputs != null)
         {
@@ -207,19 +218,102 @@ public class AIRacingController : MonoBehaviour
 
     public void SetRecovering()
     {
+        if (isRecovering) return;
+
         isRecovering = true;
+
         currentState = AIState.Recovering;
 
-        if (rb != null)
+        recoveryPhase = RecoveryPhase.ReverseBriefly;
+
+        reverseRecoveryTimer = 0f;
+        totalRecoveryTimer = 0f;
+    }
+
+    Vector3 GetTrackDirection()
+    {
+        int prevIndex =
+            currentTargetIndex == 0
+            ? waypoints.Count - 1
+            : currentTargetIndex - 1;
+
+        Vector3 dir =
+            (waypoints[currentTargetIndex].position
+            - waypoints[prevIndex].position);
+
+        dir.y = 0f;
+
+        return dir.normalized;
+    }
+
+    void UpdateRecoveryState()
+    {
+        if (!isRecovering) return;
+
+        totalRecoveryTimer += Time.fixedDeltaTime;
+
+        Vector3 trackDir = GetTrackDirection();
+
+        float alignment =
+            Vector3.Dot(transform.forward, trackDir);
+
+        float forwardSpeed =
+            Vector3.Dot(rb.linearVelocity, transform.forward);
+
+        switch (recoveryPhase)
         {
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
+            case RecoveryPhase.ReverseBriefly:
+
+                reverseRecoveryTimer += Time.fixedDeltaTime;
+
+                if (reverseRecoveryTimer >= reverseRecoveryTime)
+                {
+                    recoveryPhase = RecoveryPhase.RotateToTrack;
+                }
+
+            break;
+
+            case RecoveryPhase.RotateToTrack:
+
+                if (alignment > 0.75f)
+                {
+                    recoveryPhase = RecoveryPhase.DriveForward;
+                }
+
+            break;
+
+            case RecoveryPhase.DriveForward:
+
+                if (alignment > 0.9f && forwardSpeed > 8f)
+                {
+                    StopRecovery();
+                }
+
+            break;
         }
 
-        float recoveryTime = Random.Range(0.2f, 1f);
+        // failsafe
+        if (totalRecoveryTimer >= maxRecoveryTime)
+        {
+            StopRecovery();
+        }
+    }
 
-        CancelInvoke("StopRecovery");
-        Invoke("StopRecovery", recoveryTime);
+    float CalculateRecoveryThrottle()
+    {
+        switch (recoveryPhase)
+        {
+            case RecoveryPhase.ReverseBriefly:
+                return -1f;
+
+            case RecoveryPhase.RotateToTrack:
+                return recoveryRotationThrottle;
+
+            case RecoveryPhase.DriveForward:
+                return recoveryForwardThrottle;
+        }
+
+        return 0f;
     }
 
     void DetermineAIState()
@@ -641,7 +735,9 @@ public class AIRacingController : MonoBehaviour
             return;
         }
 
-        if (rb.linearVelocity.magnitude < 2f)
+        float forwardSpeed = Vector3.Dot(rb.linearVelocity, transform.forward);
+
+        if (Mathf.Abs(forwardSpeed) < 2f && car.IsGrounded)
         {
             float stuckThreshold = Random.Range(0.15f, 1f);
             stuckTimer += Time.fixedDeltaTime;
@@ -657,51 +753,105 @@ public class AIRacingController : MonoBehaviour
     {
         if (isRecovering) return;
 
-        if (Mathf.Abs(transform.up.y) < 0.5f) return;
+        if (Mathf.Abs(transform.up.y) < 0.5f)
+            return;
 
-        Vector3 wpPos = waypoints[currentTargetIndex].position;
-        int prevIndex = currentTargetIndex == 0 ? waypoints.Count - 1 : currentTargetIndex - 1;
-        Vector3 trackDirection = (wpPos - waypoints[prevIndex].position).normalized;
-        
-        float dot = Vector3.Dot(transform.forward, trackDirection);
+        Vector3 trackDirection = GetTrackDirection();
 
-        if (dot < -0.2f && rb.linearVelocity.magnitude > 2f)
+        float facingDot =
+            Vector3.Dot(transform.forward, trackDirection);
+
+        float movementDot = facingDot;
+
+        if (rb.linearVelocity.magnitude > 3f)
+        {
+            movementDot =
+                Vector3.Dot(
+                    rb.linearVelocity.normalized,
+                    trackDirection);
+        }
+
+        float speed =
+            rb.linearVelocity.magnitude;
+
+        float movementWeight =
+            Mathf.InverseLerp(5f, 25f, speed);
+
+        float finalDot =
+            Mathf.Lerp(
+                facingDot,
+                movementDot,
+                movementWeight);
+
+        if (finalDot < -0.25f && speed > 4f)
         {
             wrongWayTimer += Time.fixedDeltaTime;
-            if (wrongWayTimer > 1.2f) 
+
+            if (wrongWayTimer > 1.2f)
             {
-                isRecovering = true;
+                SetRecovering();
                 wrongWayTimer = 0f;
-                if(!IsInvoking("StopRecovery")) Invoke("StopRecovery", Random.Range(0.25f, 1.5f));
             }
         }
-        else 
+        else
         {
             wrongWayTimer = 0f;
         }
     }
 
-    void StopRecovery() 
+    void StopRecovery()
     {
         isRecovering = false;
-        recoveryGraceTimer = 3f;
-        SetNearestWaypointAsTarget();
 
-        Vector3 targetDir = (waypoints[currentTargetIndex].position - transform.position).normalized;
-        targetDir.y = 0;
-        transform.forward = targetDir;
+        recoveryPhase = RecoveryPhase.None;
+
+        reverseRecoveryTimer = 0f;
+        totalRecoveryTimer = 0f;
+
+        recoveryGraceTimer = 2f;
+
+        SetNearestWaypointAsTarget();
     }
 
     float CalculateRecoverySteer()
     {
-        Vector3 localTarget = transform.InverseTransformPoint(waypoints[currentTargetIndex].position);
-        
-        if (localTarget.z < 0)
+        Vector3 trackDir = GetTrackDirection();
+
+        float signedAngle =
+            Vector3.SignedAngle(
+                transform.forward,
+                trackDir,
+                Vector3.up);
+
+        float steer =
+            Mathf.Clamp(signedAngle / 45f, -1f, 1f);
+
+        switch (recoveryPhase)
         {
-            return localTarget.x > 0 ? 1f : -1f;
+            case RecoveryPhase.ReverseBriefly:
+
+                // invertido porque está de ré
+                steer = -steer;
+
+            break;
+
+            case RecoveryPhase.RotateToTrack:
+
+                steer *= 1.2f;
+
+            break;
+
+            case RecoveryPhase.DriveForward:
+
+                steer *= 0.8f;
+
+            break;
         }
 
-        return localTarget.x > 0 ? 1f : -1f;
+        // damping de rotação
+        steer -= rb.angularVelocity.y * 0.12f;
+
+        return Mathf.Clamp(steer, -1f, 1f);
     }
 
     private float CalculateFlowAvoidance()

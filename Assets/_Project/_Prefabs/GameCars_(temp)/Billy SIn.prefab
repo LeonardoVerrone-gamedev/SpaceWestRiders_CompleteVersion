@@ -70229,6 +70229,7 @@ MonoBehaviour:
   classicAirDrag: 0
   dragThreshold: 50
   downforceAmount: 1
+  forceLevelingDelay: 0.15
   classicCarAcceleration: 45
   hoverCarAcceleration: 50
   acceleration: 45
@@ -70437,6 +70438,7 @@ MonoBehaviour:
   surfaceAlignmentSpeed: 25
   groundHugDistance: 1.5
   extraGripModifier: 1
+  _currentCarUp: {x: 0, y: 1, z: 0}
   tireRorationSpeed: 3000
   maxSteerAngle: 12.5
   transitionSpeed: 5
@@ -70447,8 +70449,8 @@ MonoBehaviour:
   NOS_amount: 3
   max_NOS_amount: 5
   turboInitialImpulse: 10
-  turboMaxSpeedMultiplier: 1.3
-  turboAccelMultiplier: 2
+  turboMaxSpeedMultiplier: 1.5
+  turboAccelMultiplier: 4
   _turboCooldownTime: 3
   turboDuration: 4
   turboBurstForce: 1.15
@@ -70597,8 +70599,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3578ac2517995d440a09bd029a971343, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  recordingInterval: 1
-  racingLineName: OceanCircuit
+  recordingInterval: 3
+  racingLineName: OceanValley
 --- !u!114 &3187116834261055985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72857,6 +72859,10 @@ MonoBehaviour:
   stateTransitionTime: 0.5
   driftSteeringSensitivity: 0.6
   driftAngleCorrectionSpeed: 3
+  reverseRecoveryTime: 1.25
+  maxRecoveryTime: 6
+  recoveryRotationThrottle: 0.35
+  recoveryForwardThrottle: 0.7
 --- !u!114 &6599048026140945808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72886,7 +72892,7 @@ MonoBehaviour:
   viewportMargin: 0.2
   brains: []
   meshes: []
-  onRecordingMode: 0
+  onRecordingMode: 1
 --- !u!114 &6148750509402969109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72951,22 +72957,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b29b4f559225da4aaa535f86e9e2781, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lateralDecalOptions:
-  - {fileID: 2100000, guid: cab1f567c7881364ea9aa6ed0848820e, type: 2}
-  - {fileID: 2100000, guid: b6a7ad913b4d95d4297d1580c9e13347, type: 2}
-  frontalDecalOptions:
-  - {fileID: 2100000, guid: cab1f567c7881364ea9aa6ed0848820e, type: 2}
-  - {fileID: 2100000, guid: b6a7ad913b4d95d4297d1580c9e13347, type: 2}
-  topDecalOptions:
-  - {fileID: 2100000, guid: cab1f567c7881364ea9aa6ed0848820e, type: 2}
-  - {fileID: 2100000, guid: b6a7ad913b4d95d4297d1580c9e13347, type: 2}
-  backDecalOptions:
-  - {fileID: 2100000, guid: cab1f567c7881364ea9aa6ed0848820e, type: 2}
-  - {fileID: 2100000, guid: b6a7ad913b4d95d4297d1580c9e13347, type: 2}
-  lateralDecalProjector:
-  - {fileID: 8595472987117682086}
-  - {fileID: 0}
-  frontalDecalProjector: {fileID: 8925664559000551448}
+  lateralDecalOptions: []
+  frontalDecalOptions: []
+  topDecalOptions: []
+  backDecalOptions: []
+  lateralDecalProjector: []
+  frontalDecalProjector: {fileID: 0}
   topDecalProjector: {fileID: 0}
   backDecalProjector: {fileID: 0}
   currentDecalIndex: 0
@@ -117813,16 +117809,16 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 2.12
+  m_Height: 3
   m_Direction: 0
-  m_Center: {x: 0, y: 0.49, z: 1.8}
+  m_Center: {x: 0, y: 0.49000221, z: 1.8000026}
 --- !u!1 &6216559963091651236
 GameObject:
   m_ObjectHideFlags: 0

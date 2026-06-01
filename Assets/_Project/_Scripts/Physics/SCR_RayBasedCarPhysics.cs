@@ -76,6 +76,9 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     [SerializeField] private float downforceAmount = 500f;
     #endregion
 
+    [SerializeField] private float forceLevelingDelay = 0.15f;
+    private float airborneTimer = 0f;
+
     #region Car Settings
     [Header("Car Settings")]
     [SerializeField] float classicCarAcceleration = 25f;
@@ -364,9 +367,9 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             {
                 UpdateGravityDirection();
                 ApplyAngularDamping();
-                ApplyDownforce();
                 AlignToTrack();
             }
+            ApplyDownforce();
             ApplySuspension();
             GroundCheck();
             HandleMovement();
@@ -375,7 +378,6 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
             UpdateBodyTilt();
             if (_isDrifting) ApplyDriftForces();
             if (_isDrifting) LimitDriftAngle();
-            if (_isTurboActive) ApplyTurboPhysics();
             HandleRespawnSystem();
             LimitVelocity();
         }
@@ -809,10 +811,13 @@ private void ApplyClassicSuspension()
             float df = speedRatio * speedRatio * downforceAmount;
             float maxForce = rb.mass * Mathf.Abs(Physics.gravity.y) * 10f;
             df = Mathf.Clamp(df, 0f, maxForce);
-            Vector3 targetDir = isGrounded ? cachedSurfaceNormal : transform.up;
-            _currentDownDir = Vector3.Slerp(_currentDownDir, targetDir, 10f * Time.fixedDeltaTime);
+            Vector3 targetDir = cachedGroundedCount > 0
+                ? cachedSurfaceNormal
+                : lastGroundNormal;
+                
+            _currentDownDir = targetDir;
             rb.AddForce(-_currentDownDir * df, ForceMode.Force);
-            float extraStick = rb.mass * Mathf.Lerp(2f, 10f, speedRatio);
+            float extraStick = rb.mass * Mathf.Lerp(4f, 20f, speedRatio);
             rb.AddForce(-_currentDownDir * extraStick, ForceMode.Force);
             return;
         }
@@ -820,7 +825,10 @@ private void ApplyClassicSuspension()
         float heightRatio = cachedAverageHeight / restLenght;
         if (heightRatio < minHeightThreshold) return;
         float speedFactor = useDynamicDownforce ? speed / (maxSpeed / 3.6f) : 1f;
-        Vector3 downDir = isGrounded ? cachedSurfaceNormal : transform.up;
+        Vector3 downDir = cachedGroundedCount > 0
+                ? cachedSurfaceNormal
+                : lastGroundNormal;;
+
         rb.AddForce(-downDir * hoverDownforceAmount * speedFactor, ForceMode.Force);
     }
 
@@ -888,17 +896,92 @@ private void ApplyClassicSuspension()
         return -Vector3.up;
     }
 
+    private Vector3 GetPredictedGroundNormal()
+    {
+        Vector3 accumulatedNormal = Vector3.zero;
+        int hits = 0;
+
+        Vector3 gravityDir = GetGravityDirection();
+
+        float castDistance = 50f;
+
+        for (int i = 0; i < rayPoints.Length; i++)
+        {
+            RaycastHit hit;
+
+            if (Physics.Raycast(
+                rayPoints[i].position,
+                gravityDir,
+                out hit,
+                castDistance,
+                drivable))
+            {
+                accumulatedNormal += hit.normal;
+                hits++;
+            }
+        }
+
+        if (hits > 0)
+        {
+            return (accumulatedNormal / hits).normalized;
+        }
+
+        // fallback
+        return GetGravityDirection();
+    }
+
     private void ForceLeveling()
     {
-        float inputFactor = Mathf.Clamp01(Mathf.Abs(_currentThrottleInput) + Mathf.Abs(_currentSteerInput));
-        float assist = 1f - inputFactor;
-        Vector3 targetUp = predictedNormal;
-        Vector3 torque = Vector3.Cross(transform.up, targetUp);
-        float angle = torque.magnitude;
-        if (angle < 0.001f) return;
-        float strength = airControlStrength * 0.1f;
-        Vector3 finalTorque = torque.normalized * angle * strength * assist;
-        rb.AddTorque(finalTorque, ForceMode.Acceleration);
+        if (isGrounded) return;
+
+        if (airborneTimer < forceLevelingDelay) return;
+
+        Vector3 targetUp = GetPredictedGroundNormal();
+
+        Quaternion targetRotation =
+            Quaternion.FromToRotation(transform.up, targetUp);
+
+        targetRotation.ToAngleAxis(
+            out float angle,
+            out Vector3 axis
+        );
+
+        if (angle > 180f)
+            angle -= 360f;
+
+        if (Mathf.Abs(angle) < 1f)
+            return;
+
+        float autoRightStrength = 30f;
+
+        float dot = Vector3.Dot(transform.up, targetUp);
+
+        float inversion = Mathf.InverseLerp(1f, -1f, dot);
+
+        autoRightStrength *= Mathf.Lerp(
+            1f,
+            3f,
+            inversion
+        );
+
+        rb.AddTorque(
+            axis.normalized *
+            angle *
+            Mathf.Deg2Rad *
+            autoRightStrength,
+            ForceMode.Acceleration
+        );
+
+        Vector3 localAV =
+            transform.InverseTransformDirection(
+                rb.angularVelocity
+            );
+
+        localAV.x *= 0.96f;
+        localAV.z *= 0.96f;
+
+        rb.angularVelocity =
+            transform.TransformDirection(localAV);
     }
 
     private void UpdateGravityDirection() => _currentCarUp = cachedSurfaceNormal;
@@ -1264,17 +1347,6 @@ private void ApplyClassicSuspension()
         OnTurboEnd?.Invoke();
     }
 
-    private void ApplyTurboPhysics()
-    {
-        if (_isTurboActive)
-        {
-            turboTimer += Time.deltaTime;
-            float burst = (turboTimer < 0.8f) ? turboBurstForce : 1.0f;
-            Vector3 nosForce = transform.forward * (acceleration * burst * rubberBandingFactor);
-            rb.AddForce(nosForce, ForceMode.Acceleration);
-        }
-    }
-
     public void GainNOS(int qnt)
     {
         NOS_amount += qnt;
@@ -1317,6 +1389,15 @@ private void ApplyClassicSuspension()
         else if (!isGrounded) airTime += Time.deltaTime;
         if (wasGrounded && !isGrounded && !isHover) OnJump?.Invoke(0f);
         wasGrounded = isGrounded;
+
+        if (isGrounded)
+        {
+            airborneTimer = 0f;
+        }
+        else
+        {
+            airborneTimer += Time.fixedDeltaTime;
+        }
     }
 
     private void CalculateCarVelocity()
@@ -1339,7 +1420,10 @@ private void ApplyClassicSuspension()
         cachedGroundedCount = 0;
         Vector3 weightedNormalSum = Vector3.zero;
         float totalWeight = 0f;
-        float castDistance = isHover ? hoverDistance + 1.25f : restLenght;
+        float castDistance = Mathf.Max(
+            3f,
+            rb.linearVelocity.magnitude * Time.fixedDeltaTime * 3f
+        );
         Vector3 rayDir = -transform.up;
         for (int i = 0; i < rayPoints.Length; i++)
         {

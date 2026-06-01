@@ -50693,6 +50693,7 @@ MonoBehaviour:
   classicAirDrag: 0
   dragThreshold: 50
   downforceAmount: 1
+  forceLevelingDelay: 0.15
   classicCarAcceleration: 45
   hoverCarAcceleration: 50
   acceleration: 45
@@ -50901,6 +50902,7 @@ MonoBehaviour:
   surfaceAlignmentSpeed: 25
   groundHugDistance: 1.5
   extraGripModifier: 1
+  _currentCarUp: {x: 0, y: 1, z: 0}
   tireRorationSpeed: 3000
   maxSteerAngle: 20
   transitionSpeed: 5
@@ -50911,8 +50913,8 @@ MonoBehaviour:
   NOS_amount: 3
   max_NOS_amount: 5
   turboInitialImpulse: 10
-  turboMaxSpeedMultiplier: 1.3
-  turboAccelMultiplier: 2
+  turboMaxSpeedMultiplier: 1.5
+  turboAccelMultiplier: 4
   _turboCooldownTime: 3
   turboDuration: 4
   turboBurstForce: 1.15
@@ -53307,6 +53309,10 @@ MonoBehaviour:
   stateTransitionTime: 0.5
   driftSteeringSensitivity: 0.6
   driftAngleCorrectionSpeed: 3
+  reverseRecoveryTime: 1.25
+  maxRecoveryTime: 6
+  recoveryRotationThrottle: 0.35
+  recoveryForwardThrottle: 0.7
 --- !u!114 &4629268143739158130
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -53336,7 +53342,7 @@ MonoBehaviour:
   viewportMargin: 0.2
   brains: []
   meshes: []
-  onRecordingMode: 0
+  onRecordingMode: 1
 --- !u!114 &1008333762046395605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98638,16 +98644,16 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 2.12
+  m_Height: 3
   m_Direction: 0
-  m_Center: {x: 0, y: 0.49, z: 1.8}
+  m_Center: {x: 0, y: 0.49000221, z: 1.8000026}
 --- !u!1 &6771954849164307286
 GameObject:
   m_ObjectHideFlags: 0
