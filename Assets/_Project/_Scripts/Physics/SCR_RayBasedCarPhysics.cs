@@ -1118,6 +1118,8 @@ private void ApplyClassicSuspension()
 
     private void ApplyDriftBoost()
     {
+        if(_isTurboActive) return;
+        
         _isDriftBoostActive = true;
         _driftBoostTimer = driftBoostDuration;
         Vector3 carForward = transform.forward;
