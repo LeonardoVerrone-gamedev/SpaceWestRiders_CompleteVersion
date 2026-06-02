@@ -536,7 +536,6 @@ public class CameraController : MonoBehaviour
 
         Transform hudTransform = player.transform.Find("PlayerHUD");
 
-
         PlayerGameplayManager hud = hudTransform.GetComponent<PlayerGameplayManager>();
         hud.SetSplitScreen(cam.rect);
     }

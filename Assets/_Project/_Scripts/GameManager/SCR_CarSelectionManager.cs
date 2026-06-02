@@ -576,10 +576,18 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
     private void UpdatePlayerCamera(PlayerSessionData p)
     {
-        if (_carsByID != null && _carsByID.ContainsKey(p.selectedCharacterID) && 
+        if (_carsByID != null &&
+            _carsByID.ContainsKey(p.selectedCharacterID) &&
             p.playerIndex < _activeCameras.Count)
         {
-            _activeCameras[p.playerIndex].SetTarget(_carsByID[p.selectedCharacterID].transform);
+            var cam = _activeCameras[p.playerIndex];
+
+            cam.SetTarget(_carsByID[p.selectedCharacterID].transform);
+
+            cam.EnableSplitScreen(
+                SCR_PersistentData.Instance.players.Count > 1,
+                p.playerIndex == 0
+            );
         }
     }
 
