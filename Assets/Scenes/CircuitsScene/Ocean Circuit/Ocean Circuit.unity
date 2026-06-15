@@ -8117,7 +8117,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
+    m_Type: 0
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 0.3
@@ -10091,6 +10091,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Billy SIn
       objectReference: {fileID: 0}
+    - target: {fileID: 5215040185043188162, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 5b625b1cadfc2704881c18bccaa296ac, type: 2}
     - target: {fileID: 7233265701248866632, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
       propertyPath: m_LocalPosition.x
       value: -135.38747

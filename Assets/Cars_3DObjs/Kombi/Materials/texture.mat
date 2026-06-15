@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: texture
-  m_Shader: {fileID: -6465566751694194690, guid: 59714f430ab51b34fbdf2a569a85c6b0, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 8050f923fbf7f8a40ba18467d5aa4d20, type: 3}
   m_Parent: {fileID: 2100000, guid: 2fe883fbb1e7f96449d7f2850817b0c7, type: 2}
   m_ModifiedSerializedProperties: 10
   m_ValidKeywords: []
@@ -37,6 +37,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - MainTex:
+        m_Texture: {fileID: 2800000, guid: ba0fd3eb94538c54e9d3e875f6200457, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BaseMap:
         m_Texture: {fileID: 2800000, guid: ba0fd3eb94538c54e9d3e875f6200457, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -57,6 +61,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: ba0fd3eb94538c54e9d3e875f6200457, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _HatchTexture:
+        m_Texture: {fileID: 2800000, guid: ab08e8b03c8b19e4ebb732cdcfba18d1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: ba0fd3eb94538c54e9d3e875f6200457, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -69,10 +77,13 @@ Material:
     m_Floats:
     - _BumpScale: 1
     - _DamageAmount: -0.048
+    - _HatchScale: 0.1
     - _Metallic: 0.75
     - _Metallic_Reflection: 0.5
     - _Smoothness: 0.75
+    - _Tilled: 0
     m_Colors:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _HatchSize: {r: 50, g: 50, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
