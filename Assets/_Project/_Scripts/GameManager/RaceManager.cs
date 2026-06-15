@@ -441,6 +441,8 @@ public class RaceManager : MonoBehaviour
 
     public void AwakeRacers()
     {
+        carRBs.RemoveAll(rb => rb == null);
+        
         foreach(Rigidbody rb in carRBs)
         {
             rb.isKinematic = false;

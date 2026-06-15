@@ -70,8 +70,8 @@ public class QuickPlayManagement : MonoBehaviour
 
     public void StartRace()
     {
-        SceneManager.LoadScene(selectedCircuit.sceneName);
-    }
+        SceneTransitionAnimationManager.Instance.LoadScene(selectedCircuit.sceneName);
+    }//
 
     // ==========================
     // CHAMADOS PELO RANKING
@@ -80,18 +80,18 @@ public class QuickPlayManagement : MonoBehaviour
     public void ReturnToMenu()
     {
         KillPlayerData();
-        SceneManager.LoadScene("TitleScreen");
+        SceneTransitionAnimationManager.Instance.LoadScene("TitleScreen");
     }
 
     public void TryAgain()
     {
-        SceneManager.LoadScene(selectedCircuit.sceneName);
+        SceneTransitionAnimationManager.Instance.LoadScene(selectedCircuit.sceneName);
     }
 
     public void TryAnotherCircuit()
     {
         KillPlayerData();
-        SceneManager.LoadScene("QuickRaceSetupScene");
+        SceneTransitionAnimationManager.Instance.LoadScene("QuickRaceSetupScene");
     }
 
     void KillPlayerData()

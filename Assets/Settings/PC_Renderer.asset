@@ -1,5 +1,40 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-4159421881500560748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 578367433d1e14c469725e824e56b17c, type: 3}
+  m_Name: CurvedWorldRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  settings: {shader: {fileID: 4800000, guid: 901d919801233144ab55d2ff5da2b818, type: 3}, curvature: 0.1, horizontalInfluence: 1, verticalInfluence: 0, passEvent: 550}
+  material: {fileID: 0}
+--- !u!114 &-3550635183515080896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
+  m_Name: Outline
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  injectionPoint: 550
+  fetchColorBuffer: 1
+  requirements: 6
+  passMaterial: {fileID: 2100000, guid: ad94e951bd9a4ac4eb7e57a2da5dce3f, type: 2}
+  passIndex: 0
+  bindDepthStencilAttachment: 0
+  m_Version: 1
 --- !u!114 &-2698500593830080638
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -48,7 +83,8 @@ MonoBehaviour:
   m_RendererFeatures:
   - {fileID: 7833122117494664109}
   - {fileID: -2698500593830080638}
-  m_RendererFeatureMap: ad6b866f10d7b46c82cf93d601008dda
+  - {fileID: -3550635183515080896}
+  m_RendererFeatureMap: ad6b866f10d7b46c82cf93d601008dda406794d71c9cb9ce
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}

@@ -99,7 +99,7 @@ public class RankingUI : MonoBehaviour
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.AppendLine("<b>RANKING</b>\n");
+       // sb.AppendLine("<b>RANKING</b>\n");
 
         foreach (var r in results)
         {

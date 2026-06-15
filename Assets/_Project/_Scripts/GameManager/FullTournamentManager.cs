@@ -70,8 +70,8 @@ public class FullTournamentManager : MonoBehaviour
 
         Save();
 
-        SceneManager.LoadScene("TournamentMainMenu");
-    }
+        SceneTransitionAnimationManager.Instance.LoadScene("TournamentMainMenu");
+    }//
 
     public void LoadOldTournament()
     {
@@ -83,7 +83,7 @@ public class FullTournamentManager : MonoBehaviour
             CurrentState.eliminationHistory?.BuildRuntimeDictionaries();
         }
 
-        SceneManager.LoadScene("TournamentMainMenu");
+        SceneTransitionAnimationManager.Instance.LoadScene("TournamentMainMenu");
     }
 
     #endregion
@@ -101,7 +101,7 @@ public class FullTournamentManager : MonoBehaviour
         Save();
 
         var circuit = CurrentState.competition.circuits[raceIndex];
-        SceneManager.LoadScene(circuit.sceneName);
+        SceneTransitionAnimationManager.Instance.LoadScene(circuit.sceneName);
     }
 
     public bool HasNextRace()
@@ -479,13 +479,13 @@ public class FullTournamentManager : MonoBehaviour
     {
         DeleteSave();
         CurrentState = null;
-        SceneManager.LoadScene("TitleScreen");
+        SceneTransitionAnimationManager.Instance.LoadScene("TitleScreen");
     }
 
     public void SaveAndQuit()
     {
         Save();
-        SceneManager.LoadScene("TitleScreen");
+        SceneTransitionAnimationManager.Instance.LoadScene("TitleScreen");
     }
 
     #endregion

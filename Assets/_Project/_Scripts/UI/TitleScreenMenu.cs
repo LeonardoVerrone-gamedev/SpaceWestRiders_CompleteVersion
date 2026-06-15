@@ -20,21 +20,21 @@ public class TitleScreenMenu : MonoBehaviour
 
     public void StartQuickRaceMode()
     {
-        SceneManager.LoadScene(quickRaceSceneName);
+        SceneTransitionAnimationManager.Instance.LoadScene(quickRaceSceneName);
     }
 
     public void StartMiniTournament()
     {
-        SceneManager.LoadScene(miniTournamentSceneName);
+        SceneTransitionAnimationManager.Instance.LoadScene(miniTournamentSceneName);
     }
 
     public void StartTournament()
     {
-        SceneManager.LoadScene(TournamentScene);
+        SceneTransitionAnimationManager.Instance.LoadScene(TournamentScene);
     }
     
     public void StartStoryMode()
     {
-        SceneManager.LoadScene(StoryModeScene);
+        SceneTransitionAnimationManager.Instance.LoadScene(StoryModeScene);
     }
 }

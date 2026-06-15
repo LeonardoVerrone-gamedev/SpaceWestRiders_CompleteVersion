@@ -305,7 +305,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     [SerializeField] private float downshiftRPM = 3500f;
     [SerializeField] private float engineInertia = 8f;
     public float engineRPM { get; private set; }
-    [SerializeField] private int currentGear = 1;
+    [SerializeField] public int currentGear { get; private set; } = 1;
     private float lastGearShiftTime = -999f;
     #endregion
 
@@ -401,8 +401,19 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         if (!isGrounded || isShifting) return;
         if (Time.time < lastShiftTime + minTimeBetweenShifts) return;
         int targetGear = currentGear;
-        if (currentGear < totalGears && engineRPM >= upshiftRPM) targetGear = currentGear + 1;
-        else if (currentGear > 1 && engineRPM <= downshiftRPM) targetGear = currentGear - 1;
+        if (_isTurboActive)
+        {
+            targetGear = 7;
+        }
+        else if(Mathf.Round(speedKMH) == 0)
+        {
+            targetGear = 0;
+        }
+        else
+        {
+            if (currentGear < totalGears && engineRPM >= upshiftRPM) targetGear = currentGear + 1;
+            else if (currentGear > 1 && engineRPM <= downshiftRPM) targetGear = currentGear - 1;
+        }
         if (targetGear != currentGear) StartCoroutine(GearShiftCoroutine(targetGear));
     }
 

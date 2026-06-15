@@ -167,8 +167,8 @@ public class MiniTournamentMenu : MonoBehaviour
     public void OnBackToMenu()
     {
         // Volta para o menu principal do torneio (cena de seleção)
-        SceneManager.LoadScene("MiniTournamentMenu"); // Ajuste o nome da cena
-    }
+         SceneTransitionAnimationManager.Instance.LoadScene("MiniTournamentMenu"); // Ajuste o nome da cena
+    }//
 
     public void OnGiveUp()
     {

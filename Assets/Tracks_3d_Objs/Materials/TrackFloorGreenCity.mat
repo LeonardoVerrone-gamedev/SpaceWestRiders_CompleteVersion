@@ -25,7 +25,6 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _NORMALMAP
   - _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
   m_InvalidKeywords: []
   m_LightmapFlags: 6
@@ -45,7 +44,7 @@ Material:
         m_Scale: {x: 0.05, y: 0.5}
         m_Offset: {x: 0, y: 0.5}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 486e04d88ae8c2840a74e0fcf5b4ac26, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:

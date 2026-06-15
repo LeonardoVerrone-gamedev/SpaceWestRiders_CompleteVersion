@@ -88,8 +88,8 @@ public class StoryModeManager : MonoBehaviour
     void EndStoryMode()
     {
         DeleteSave();
-        SceneManager.LoadScene("TitleScreen");
-    }
+        SceneTransitionAnimationManager.Instance.LoadScene("TitleScreen");
+    }//
 
     // ---------------------------------------------------
 

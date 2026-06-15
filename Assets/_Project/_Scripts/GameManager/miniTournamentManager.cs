@@ -52,7 +52,7 @@ public class MiniTournamentManager : MonoBehaviour
             CurrentState.teamPoints[team] = 0;
         }
 
-        SceneManager.LoadScene("MiniTournamentMainMenu");
+        SceneTransitionAnimationManager.Instance.LoadScene("MiniTournamentMainMenu");
     }
 
     #endregion
@@ -72,7 +72,7 @@ public class MiniTournamentManager : MonoBehaviour
         CurrentState.currentRaceIndex = raceIndex;
 
         var circuit = CurrentState.competition.circuits[raceIndex];
-        SceneManager.LoadScene(circuit.sceneName);
+        SceneTransitionAnimationManager.Instance.LoadScene(circuit.sceneName);
     }
 
     public bool HasNextRace()
@@ -131,7 +131,7 @@ public class MiniTournamentManager : MonoBehaviour
             {
                 Debug.Log("MINI TORNEIO CONCLUIDO! Vencedor: {firstPlace.racerName}");
             }
-        }
+        }//
     }
 
     private void RevertRacePoints(int raceIndex)
@@ -301,7 +301,7 @@ public class MiniTournamentManager : MonoBehaviour
     public void EndTournament()
     {
         CurrentState = null;
-        SceneManager.LoadScene("TitleScreen");
+        SceneTransitionAnimationManager.Instance.LoadScene("TitleScreen");
     }
 
     #endregion

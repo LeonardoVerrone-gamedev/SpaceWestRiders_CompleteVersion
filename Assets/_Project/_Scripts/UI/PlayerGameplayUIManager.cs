@@ -16,6 +16,8 @@ public class PlayerGameplayManager : MonoBehaviour
     [SerializeField] public Canvas hudCanvas;
     [SerializeField] Image returnSymbol;
 
+    [SerializeField] bool useNeedle;
+
     [Header("RPM Gauge")]
     [SerializeField] RectTransform rpmNeedle;
 
@@ -24,6 +26,8 @@ public class PlayerGameplayManager : MonoBehaviour
     [SerializeField] float maxNeedleAngleWhenNotInNitro = -22.5f;
 
     [SerializeField] float maxRPM = 9000f;
+
+    [SerializeField] Animator gearLightPanel;
 
     [Header("NOS Gauge")]
     [SerializeField] RectTransform nosNeedle;
@@ -35,6 +39,8 @@ public class PlayerGameplayManager : MonoBehaviour
 
     [SerializeField] RacerStatus racerStatus;
     [SerializeField] SCR_RayBasedCarPhysics carPhysics;
+
+    [SerializeField] Animator NOSLightDisplay;
 
     [Header("Proximity Settings")]
     [SerializeField] GameObject opponentIndicatorPrefab; // Imagem UI com OpponentUIIndicator
@@ -91,29 +97,42 @@ public class PlayerGameplayManager : MonoBehaviour
 
     void UpdateRPMGauge()
     {
-        playerRPM = carPhysics.engineRPM;
+        if(useNeedle){
+            playerRPM = carPhysics.engineRPM;
 
-        float effective_maxNeedleAngle = carPhysics.IsTurboActive() ? maxNeedleAngle : maxNeedleAngleWhenNotInNitro;
+            float effective_maxNeedleAngle = carPhysics.IsTurboActive() ? maxNeedleAngle : maxNeedleAngleWhenNotInNitro;
 
-        float normalizedRPM = Mathf.Clamp01(playerRPM / maxRPM);
+            float normalizedRPM = Mathf.Clamp01(playerRPM / maxRPM);
 
-        float needleAngle = Mathf.Lerp(minNeedleAngle, effective_maxNeedleAngle, normalizedRPM);
+            float needleAngle = Mathf.Lerp(minNeedleAngle, effective_maxNeedleAngle, normalizedRPM);
 
-        rpmNeedle.localRotation = Quaternion.Euler(0f, 0f, needleAngle);
+            rpmNeedle.localRotation = Quaternion.Euler(0f, 0f, needleAngle);
+        }
+        else
+        {
+            int currentGear = carPhysics.currentGear;
+            gearLightPanel.SetInteger("Current Gear", currentGear);
+        }
     }
 
     void UpdateNOSGauge()
     {
         int nos = carPhysics.GetNOSAmount();
-        int maxNos = carPhysics.GetMaxNOSAmount();
+        if(useNeedle){
+            int maxNos = carPhysics.GetMaxNOSAmount();
 
-        float normalizedNOS = Mathf.Clamp01((float)nos / maxNos);
+            float normalizedNOS = Mathf.Clamp01((float)nos / maxNos);
 
-        float targetAngle = Mathf.Lerp(minNOSAngle, maxNOSAngle, normalizedNOS);
+            float targetAngle = Mathf.Lerp(minNOSAngle, maxNOSAngle, normalizedNOS);
 
-        currentNOSAngle = Mathf.Lerp(currentNOSAngle, targetAngle, Time.deltaTime * nosNeedleSmoothSpeed);
+            currentNOSAngle = Mathf.Lerp(currentNOSAngle, targetAngle, Time.deltaTime * nosNeedleSmoothSpeed);
 
-        nosNeedle.localRotation = Quaternion.Euler(0f, 0f, currentNOSAngle);
+            nosNeedle.localRotation = Quaternion.Euler(0f, 0f, currentNOSAngle);
+        }
+        else
+        {
+            NOSLightDisplay.SetInteger("NOS Amount", nos);
+        }
     }
 
     void UpdateNitroAmountText()

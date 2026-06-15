@@ -70,7 +70,7 @@ public class RankingManager : MonoBehaviour
     public void BackToTournamentMenu()
     {
         if (GameManagerInstance.Instance?.currentGameMode != GameMode.MiniTournament) return;
-        SceneManager.LoadScene("MiniTournamentMainMenu");
+        SceneTransitionAnimationManager.Instance.LoadScene("MiniTournamentMainMenu");
     }
 
     public void GiveUp()
@@ -92,7 +92,7 @@ public class RankingManager : MonoBehaviour
     public void BackToFullTournamentMenu()
     {
         if (GameManagerInstance.Instance?.currentGameMode != GameMode.Tournament && GameManagerInstance.Instance?.currentGameMode != GameMode.StoryMode) return;
-        SceneManager.LoadScene("TournamentMainMenu");
+        SceneTransitionAnimationManager.Instance.LoadScene("TournamentMainMenu");
     }
 
     public void SaveAndQuitFullTournament()
