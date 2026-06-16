@@ -92,6 +92,26 @@ Material:
         m_Texture: {fileID: 2800000, guid: ab08e8b03c8b19e4ebb732cdcfba18d1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2DLOD_2c603735989c44938edc3750484b2f89_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 105c95e23cd2b314985c3dd825c792c5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2DLOD_39835079a76f4c9d98b9238c4d172911_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: a4c0ca075d4cf414ca4cb69bb65fd5d0, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2DLOD_8968d7bbeeea41899ddbb3320570d253_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: ab08e8b03c8b19e4ebb732cdcfba18d1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2DLOD_8ec77dfd71eb4022a4e8e6bf9d9da03e_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: c511e1349eb9eb54cb79fbb1cc10fb59, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2DLOD_f4577fc69ea64791921e23334837ccde_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 77c79eeeb35a2224d8cb25c32ee4a60f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_aeb27c6eb3814534ba6b8c776d3bab27_Texture_1_Texture2D:
         m_Texture: {fileID: 2800000, guid: ab08e8b03c8b19e4ebb732cdcfba18d1, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -158,12 +178,14 @@ Material:
     - _UVSec: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
+    - _hatch_size_: 25
     m_Colors:
     - Toon_Ramp_Tint: {r: 0.49056596, g: 0.49056596, b: 0.49056596, a: 1}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _HatchSize: {r: 10, g: 10, b: 0, a: 0}
+    - _HatchTextureSize: {r: 25, g: 25, b: 0, a: 0}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _ShadowColor: {r: 0.22745097, g: 0, b: 0.38823527, a: 0.5019608}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
