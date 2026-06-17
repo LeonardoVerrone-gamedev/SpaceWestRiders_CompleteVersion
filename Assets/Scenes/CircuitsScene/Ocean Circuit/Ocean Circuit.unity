@@ -8110,7 +8110,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 11
   m_Type: 1
-  m_Color: {r: 1, g: 0.8773585, b: 0.6320754, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
@@ -8174,7 +8174,7 @@ Transform:
   m_GameObject: {fileID: 1667017600}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 28, y: 69.8, z: -48.6}
+  m_LocalPosition: {x: 0, y: 60, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10094,7 +10094,7 @@ PrefabInstance:
     - target: {fileID: 5215040185043188162, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 5b625b1cadfc2704881c18bccaa296ac, type: 2}
+      objectReference: {fileID: 2100000, guid: 7c71c4e2e3aec55409916d17a5003227, type: 2}
     - target: {fileID: 7233265701248866632, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
       propertyPath: m_LocalPosition.x
       value: -135.38747

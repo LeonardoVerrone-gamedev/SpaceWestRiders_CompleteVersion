@@ -1,12 +1,22 @@
-﻿void ToonShading_float(in float3 Normal, in float ToonRampSmoothness, in float4 ClipSpacePos, in float3 WorldPos, in float3 ToonRampTinting,
-in float ToonRampOffset, in float ToonRampOffsetPoint, in float Ambient, out float3 ToonRampOutput, out float3 Direction, out float ShadowMask)
+﻿void ToonShading_float(
+    in float3 Normal, 
+    in float ToonRampSmoothness, 
+    in float4 ClipSpacePos, 
+    in float3 WorldPos, 
+    in float3 ToonRampTinting, // Mantido para alinhar com o seu Shader Graph
+    in float ToonRampOffset, 
+    in float ToonRampOffsetPoint, 
+    in float Ambient, 
+    out float3 ToonRampOutput, 
+    out float3 Direction, 
+    out float ShadowMask)
 {
 
-	// set the shader graph node previews
+    // set the shader graph node previews
 #ifdef SHADERGRAPH_PREVIEW
     ToonRampOutput = float3(0.5,0.5,0);
     Direction = float3(0.5,0.5,0);
-    ShadowMask = 0.0; // Preview padrão
+    ShadowMask = 0.0; 
 #else
 
     // grab the shadow coordinates
@@ -32,19 +42,11 @@ in float ToonRampOffset, in float ToonRampOffsetPoint, in float Ambient, out flo
     // multiply with main light shadows;
     toonRamp *= light.shadowAttenuation;
 
-    // --- VARIÁVEL NOVA PARA A MÁSCARA ---
-    // Começa guardando o fator de iluminação do Sol (0 no escuro/sombra, 1 no sol pleno)
+    // Guarda a intensidade do Sol (0 na sombra, 1 no sol)
     float lightIntensity = toonRamp;
 
+    // Inicializa o acumulador de cor das luzes adicionais
     float3 extraLights = float3(0,0,0);
-
-    // create inputdata struct to use in LIGHT_LOOP
-    InputData inputData = (InputData)0;
-    inputData.positionWS = WorldPos;
-    inputData.normalWS = Normal;
-    inputData.viewDirectionWS = GetWorldSpaceNormalizeViewDir(WorldPos);
-    float4 screenPos = float4(ClipSpacePos.x, (_ScaledScreenParams.y - ClipSpacePos.y), 0, 0);
-    inputData.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(screenPos);
 
     // forward and forward+ lights loop
     uint lightsCount = GetAdditionalLightsCount();
@@ -55,23 +57,23 @@ in float ToonRampOffset, in float ToonRampOffsetPoint, in float Ambient, out flo
         float shadowAtten = aLight.distanceAttenuation * aLight.shadowAttenuation;
         half toonRampExtra = smoothstep(ToonRampOffsetPoint, ToonRampOffsetPoint + ToonRampSmoothness, dExtra);
         
-        // Soma a cor das luzes extras
-        extraLights += (toonRampExtra * aLight.color * shadowAtten);
+        float lightContribution = toonRampExtra * shadowAtten;
+
+        // 1. SOMA A COR DA LUZ EXTRA (Multiplicada pela cor real da point light)
+        extraLights += (aLight.color * lightContribution);
         
-        // --- ADICIONA AS LUZES EXTRAS NA INTENSIDADE ---
-        // Se uma point light bater aqui, essa região ganha luz (sobe o valor)
-        lightIntensity += (toonRampExtra * shadowAtten);
+        // 2. ACUMULA NA INTENSIDADE DA MÁSCARA (A point light clareia a região da hachura)
+        lightIntensity += lightContribution;
                 
     LIGHT_LOOP_END
     
-    // Saídas padrão de cor que você já usava
+    // Saída de cor total combinada (Sol + Point Lights)
     ToonRampOutput = light.color * (toonRamp + ToonRampTinting) + Ambient + extraLights;
+    
+    // Direção da luz principal
     Direction = normalize(light.direction);
     
-    // --- O PULO DO GATO: A SAÍDA DA MÁSCARA DE SOMBRA ---
-    // Trava o valor entre 0 e 1. 
-    // 0 = Escuro total (Sombra absoluta de todas as luzes)
-    // 1 = Iluminado (Seja pelo sol ou por um poste)
+    // Máscara final tratada para os seus nós Step (0 = Sombra total, 1 = Iluminado por algo)
     ShadowMask = saturate(lightIntensity);
 
 #endif
