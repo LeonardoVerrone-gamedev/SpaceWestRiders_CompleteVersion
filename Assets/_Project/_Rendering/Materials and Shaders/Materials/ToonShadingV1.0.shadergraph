@@ -2121,7 +2121,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Texture2DMaterialSlot",
     "m_ObjectId": "36c5e47e8ecf49dba94215ffcb9d2092",
     "m_Id": 0,
-    "m_DisplayName": "BaseTexture",
+    "m_DisplayName": "BaseMap",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -2494,7 +2494,7 @@
     "m_ZTestMode": 4,
     "m_ZWriteControl": 0,
     "m_AlphaMode": 0,
-    "m_RenderFace": 2,
+    "m_RenderFace": 0,
     "m_AlphaClip": false,
     "m_CastShadows": true,
     "m_ReceiveShadows": true,
@@ -3104,8 +3104,8 @@
     "m_ObjectId": "5a7e033a1f674e04ab30bc8669193ca8",
     "m_Title": "Hatch texture",
     "m_Position": {
-        "x": -2131.2001953125,
-        "y": -2080.80029296875
+        "x": -2131.199951171875,
+        "y": -2080.7998046875
     }
 }
 
@@ -3270,7 +3270,7 @@
     "m_ObjectId": "5f5ffa6827314517bcb976180e41efce",
     "m_Title": "Toon SHader Basica",
     "m_Position": {
-        "x": -3784.0,
+        "x": -3784.000244140625,
         "y": -179.199951171875
     }
 }
@@ -6134,10 +6134,10 @@
     "m_Guid": {
         "m_GuidSerialized": "4fdf1777-0abc-4fd5-b9e6-afc4c4d94e34"
     },
-    "m_Name": "BaseTexture",
+    "m_Name": "BaseMap",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "BaseTexture",
-    "m_DefaultReferenceName": "_BaseTexture",
+    "m_RefNameGeneratedByDisplayName": "BaseMap",
+    "m_DefaultReferenceName": "_BaseMap",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,

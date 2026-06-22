@@ -319,6 +319,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     float[] smoothedDistances;
     float[] previousCompression;
     DamageCar damageCar;
+
+    private Vector3[] wheelOffsets;
     #endregion
 
     #region Unity Lifecycle
@@ -347,6 +349,15 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         SwitchToMode(carType);
         damageCar = GetComponent<DamageCar>();
         if(damageCar != null) damageCar.ResetDamage();
+
+        wheelOffsets = new Vector3[tires.Length];
+
+        for(int i = 0; i < tires.Length; i++)
+        {
+            wheelOffsets[i] =
+                tires[i].transform.position -
+                rayPoints[i].position;
+        }
     }
     
     void Update()
@@ -744,7 +755,7 @@ private void ApplyClassicSuspension()
             else
             {
                 tires[i].transform.localRotation = _currentBaseWheelRot * Quaternion.Euler(_frontWheelRotationAccumulator, 0, 0);
-                if (frontTiresParent[i] != null) frontTiresParent[i].transform.localRotation = _currentBaseWheelRot * Quaternion.Euler(0, steeringAngle, 0);
+                if (frontTiresParent[i] != null) frontTiresParent[i].transform.localRotation = Quaternion.Euler(0, steeringAngle, 0);
             }
         }
     }
