@@ -323,6 +323,22 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     private Vector3[] wheelOffsets;
     #endregion
 
+    #region Slam & Squash
+
+    [Header("Slam & Squash")]
+    [SerializeField] float slamDuration = 0.08f;
+    [SerializeField] float recoverDuration = 0.15f;
+
+    [SerializeField] float landSquashMultiplier = 0.015f;
+    [SerializeField] float collisionSquashMultiplier = 0.025f;
+
+    [SerializeField] float maxSquash = 0.25f;
+
+    private Coroutine squashRoutine;
+    private Vector3 originalBodyScale;
+
+    #endregion
+
     #region Unity Lifecycle
     void Awake()
     {
@@ -358,6 +374,11 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
                 tires[i].transform.position -
                 rayPoints[i].position;
         }
+
+        originalBodyScale = carBody.localScale;
+
+        OnLand += SlamFromLanding;
+        OnCollision += SlamFromCollision;
     }
     
     void Update()
@@ -700,19 +721,6 @@ private void ApplyClassicSuspension()
         
         float netForce = springForce - dampForce;
         
-        // FORÇA DE STICK: puxa o carro PARA BAIXO quando a roda está no chão
-        // Isso elimina os pulos completamente
-        float stickForce = 0f;
-        if (compression > -0.1f) // Roda no chão
-        {
-            // Quanto mais rápida a velocidade vertical para CIMA, mais stick force
-            float upwardSpeed = Mathf.Max(0, springVelocity);
-            stickForce = -upwardSpeed * rb.mass * 3f;
-            stickForce = Mathf.Clamp(stickForce, -rb.mass * 10f, 0f);
-        }
-        
-        netForce += stickForce;
-        
         // Limites
         netForce = Mathf.Clamp(netForce, -rb.mass * 15f, rb.mass * 10f);
         
@@ -819,6 +827,80 @@ private void ApplyClassicSuspension()
     {
         if(!CanUpdateVisuals) return;
         tire.transform.position = targetPosition;
+    }
+
+    private void SlamFromLanding(float airTime)
+    {
+        rb.AddForce(
+            -transform.up * 5f,
+            ForceMode.Impulse
+        );
+
+        float intensity = Mathf.Clamp01(airTime * landSquashMultiplier);
+
+        if (intensity > 0.01f)
+            SlamSquash(intensity);
+    }
+
+    private void SlamFromCollision(float force, Vector3 dir)
+    {
+        float intensity = Mathf.Clamp01(force * collisionSquashMultiplier);
+
+        if (intensity > 0.01f)
+            SlamSquash(intensity);
+    }
+
+    public void SlamSquash(float intensity)
+    {
+        if (carBody == null) return;
+
+        intensity = Mathf.Clamp(intensity, 0f, maxSquash);
+
+        if (squashRoutine != null)
+            StopCoroutine(squashRoutine);
+
+        squashRoutine = StartCoroutine(SlamSquashRoutine(intensity));
+    }
+
+    private IEnumerator SlamSquashRoutine(float intensity)
+    {
+        Vector3 squashScale = new Vector3(
+            originalBodyScale.x + intensity * 0.4f,
+            originalBodyScale.y - intensity,
+            originalBodyScale.z + intensity * 0.4f
+        );
+
+        float t = 0f;
+
+        while (t < slamDuration)
+        {
+            t += Time.deltaTime;
+
+            carBody.localScale = Vector3.Lerp(
+                originalBodyScale,
+                squashScale,
+                t / slamDuration
+            );
+
+            yield return null;
+        }
+
+        t = 0f;
+
+        while (t < recoverDuration)
+        {
+            t += Time.deltaTime;
+
+            carBody.localScale = Vector3.Lerp(
+                squashScale,
+                originalBodyScale,
+                t / recoverDuration
+            );
+
+            yield return null;
+        }
+
+        carBody.localScale = originalBodyScale;
     }
     #endregion
 
@@ -1397,11 +1479,11 @@ private void ApplyClassicSuspension()
 
             Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
 
-            if (localVel.y < -5f)
-            {
-                localVel.y *= 0.35f;
-                rb.linearVelocity = transform.TransformDirection(localVel);
-            }
+           // if (localVel.y < -5f)
+           // {
+                //localVel.y *= 0.35f;
+                //rb.linearVelocity = transform.TransformDirection(localVel);
+           // }
 
             OnLand?.Invoke(airTime);
             if (_currentHandbrakeInput)
