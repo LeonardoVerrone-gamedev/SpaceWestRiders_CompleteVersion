@@ -1474,7 +1474,7 @@ private void ApplyClassicSuspension()
             _lastSafeRotation = transform.rotation;
             _saveTimer = 0;
         }
-        if (!wasGrounded && isGrounded && !isHover)
+        if (!wasGrounded && isGrounded)
         {
 
             Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
@@ -1493,7 +1493,7 @@ private void ApplyClassicSuspension()
             airTime = 0f;
         }
         else if (!isGrounded) airTime += Time.deltaTime;
-        if (wasGrounded && !isGrounded && !isHover) OnJump?.Invoke(0f);
+        if (wasGrounded && !isGrounded) OnJump?.Invoke(0f);
         wasGrounded = isGrounded;
 
         if (isGrounded)

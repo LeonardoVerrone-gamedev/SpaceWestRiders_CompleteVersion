@@ -55057,7 +55057,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6476415874853427780
 Transform:
   m_ObjectHideFlags: 0
@@ -79663,7 +79663,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3046775365992334179
 Transform:
   m_ObjectHideFlags: 0
@@ -125100,8 +125100,8 @@ MonoBehaviour:
   springTravel: 0.5
   springStiffness: 6000
   wheelRadius: 0.33
-  hoverDamper: 8000
-  classicDamper: 4000
+  hoverDamper: 3200
+  classicDamper: 1800
   wheelsGrounded: 00000000000000000000000000000000
   isGrounded: 0
   hoverDownforceAmount: 2500
@@ -125375,6 +125375,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   crashImpactForce: 20
+  slamDuration: 0.08
+  recoverDuration: 0.15
+  landSquashMultiplier: 0.015
+  collisionSquashMultiplier: 0.025
+  maxSquash: 0.25
 --- !u!114 &4114259976808285671
 MonoBehaviour:
   m_ObjectHideFlags: 0

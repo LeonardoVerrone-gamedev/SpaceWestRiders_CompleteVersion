@@ -25,7 +25,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 19dcb95641cd73c478999446b5752a8c, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -65,15 +65,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2DLOD_2dc5e5de94dd46c28f48197d6aee6c51_Texture_1_Texture2D:
-        m_Texture: {fileID: 2800000, guid: 105c95e23cd2b314985c3dd825c792c5, type: 3}
+        m_Texture: {fileID: 2800000, guid: 46acc3d1e19599241b04db74ad1beaf4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2DLOD_31b45b743d1e403e861bb060b30d0438_Texture_1_Texture2D:
-        m_Texture: {fileID: 2800000, guid: a4c0ca075d4cf414ca4cb69bb65fd5d0, type: 3}
+        m_Texture: {fileID: 2800000, guid: d3aaf1e9bae21d74782e1943602b996b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2DLOD_43731588297a496eaeb0410db7efb40a_Texture_1_Texture2D:
-        m_Texture: {fileID: 2800000, guid: c511e1349eb9eb54cb79fbb1cc10fb59, type: 3}
+        m_Texture: {fileID: 2800000, guid: 016e8f9987bff3d40bbbc6ca2e33bd33, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
@@ -132,7 +132,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BaseColor: {r: 0.5849056, g: 0.5849056, b: 0.5849056, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _HatchTillingSize: {r: 12, g: 12, b: 0, a: 0}
