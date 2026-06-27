@@ -66,7 +66,7 @@ public class RacerStatus : MonoBehaviour
             holder.FetchWaypoints(); 
             
             // Retorna a lista exata
-            waypoints = holder.waypoints;
+            waypoints = new List<Transform>(holder.waypoints);
         }
 
         if (isPlayer && RaceManager.Instance != null)

@@ -262,6 +262,18 @@ private bool PassesFilter(AssetEntry asset)
     }
 }
 
+static readonly string[] ProtectedFolders =
+{
+    "Assets/Settings",
+    "Assets/Plugins",
+    "Assets/Resources",
+    "Assets/StreamingAssets",
+    "Assets/AddressableAssetsData",
+    "Assets/TextMesh Pro",
+    "Assets/Localization",
+    "Assets/URP"
+};
+
 private void Scan()
 {
     unusedAssets.Clear();
@@ -324,6 +336,36 @@ private void Scan()
             continue;
 
         if (buildScenes.Contains(assetPath))
+            continue;
+
+        if (assetPath.EndsWith(".cs"))
+    continue;
+
+    if (assetPath.EndsWith(".asset"))
+        continue;
+
+    if (assetPath.EndsWith(".shader"))
+        continue;
+
+    if (assetPath.EndsWith(".shadergraph"))
+        continue;
+
+    if (assetPath.EndsWith(".shadersubgraph"))
+        continue;
+
+    if (assetPath.EndsWith(".asmdef"))
+        continue;
+
+    if (assetPath.EndsWith(".dll"))
+        continue;
+
+    if (assetPath.EndsWith(".inputactions"))
+        continue;
+
+        bool isProtected =
+            ProtectedFolders.Any(assetPath.StartsWith);
+
+        if (isProtected)
             continue;
 
         if (!referencedAssets.Contains(assetPath))

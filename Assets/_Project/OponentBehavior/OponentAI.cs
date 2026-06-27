@@ -105,10 +105,15 @@ public class AIRacingController : MonoBehaviour
     public enum RecoveryPhase
     {
         None,
-        ReverseBriefly,
-        RotateToTrack,
-        DriveForward
+        Reverse,
+        Rotate,
+        ResumeRace
     }
+
+    [SerializeField] float rotateAlignmentDot = 0.85f;
+    [SerializeField] float resumeDistance = 25f;
+
+    private int recoveryTargetIndex;
 
     [Header("Recovery System")]
     [SerializeField] float reverseRecoveryTime = 1.25f;
@@ -132,12 +137,11 @@ public class AIRacingController : MonoBehaviour
 
         SetAI();
 
-        waypoints.Clear();
         SCR_WaypointHolder holder = FindFirstObjectByType<SCR_WaypointHolder>();
 
         if (holder != null)
         {
-            waypoints = holder.waypoints;
+            waypoints = new List<Transform>(holder.waypoints);
         }
     }
 
@@ -218,17 +222,35 @@ public class AIRacingController : MonoBehaviour
 
     public void SetRecovering()
     {
-        if (isRecovering) return;
+        if (isRecovering)
+            return;
 
         isRecovering = true;
 
         currentState = AIState.Recovering;
 
-        recoveryPhase = RecoveryPhase.ReverseBriefly;
+        recoveryPhase = RecoveryPhase.Reverse;
 
         reverseRecoveryTimer = 0f;
         totalRecoveryTimer = 0f;
+
+        FindRecoveryTarget();
     }
+
+        private void FindRecoveryTarget()
+        {
+            SnapToNearestTrackSegment();
+
+            int lookAhead =
+                Mathf.Clamp(
+                    Mathf.RoundToInt(rb.linearVelocity.magnitude / 20f),
+                    3,
+                    8);
+
+            recoveryTargetIndex =
+                (currentTargetIndex + lookAhead) % waypoints.Count;
+        }
+
 
     Vector3 GetTrackDirection()
     {
@@ -248,54 +270,61 @@ public class AIRacingController : MonoBehaviour
 
     void UpdateRecoveryState()
     {
-        if (!isRecovering) return;
+        if (!isRecovering)
+            return;
 
         totalRecoveryTimer += Time.fixedDeltaTime;
 
-        Vector3 trackDir = GetTrackDirection();
-
-        float alignment =
-            Vector3.Dot(transform.forward, trackDir);
-
-        float forwardSpeed =
-            Vector3.Dot(rb.linearVelocity, transform.forward);
+        if (totalRecoveryTimer > maxRecoveryTime)
+        {
+            StopRecovery();
+            return;
+        }
 
         switch (recoveryPhase)
         {
-            case RecoveryPhase.ReverseBriefly:
+            case RecoveryPhase.Reverse:
 
                 reverseRecoveryTimer += Time.fixedDeltaTime;
 
                 if (reverseRecoveryTimer >= reverseRecoveryTime)
                 {
-                    recoveryPhase = RecoveryPhase.RotateToTrack;
+                    recoveryPhase = RecoveryPhase.Rotate;
                 }
 
-            break;
+                break;
 
-            case RecoveryPhase.RotateToTrack:
+            case RecoveryPhase.Rotate:
 
-                if (alignment > 0.75f)
+                Vector3 dir =
+                (
+                    waypoints[recoveryTargetIndex].position
+                    - transform.position
+                ).normalized;
+
+                float dot =
+                    Vector3.Dot(transform.forward, dir);
+
+                if (dot > rotateAlignmentDot)
                 {
-                    recoveryPhase = RecoveryPhase.DriveForward;
+                    recoveryPhase = RecoveryPhase.ResumeRace;
                 }
 
-            break;
+                break;
 
-            case RecoveryPhase.DriveForward:
+            case RecoveryPhase.ResumeRace:
 
-                if (alignment > 0.9f && forwardSpeed > 8f)
+                float dist =
+                    Vector3.Distance(
+                        transform.position,
+                        waypoints[recoveryTargetIndex].position);
+
+                if (dist < resumeDistance)
                 {
                     StopRecovery();
                 }
 
-            break;
-        }
-
-        // failsafe
-        if (totalRecoveryTimer >= maxRecoveryTime)
-        {
-            StopRecovery();
+                break;
         }
     }
 
@@ -303,14 +332,14 @@ public class AIRacingController : MonoBehaviour
     {
         switch (recoveryPhase)
         {
-            case RecoveryPhase.ReverseBriefly:
+            case RecoveryPhase.Reverse:
                 return -1f;
 
-            case RecoveryPhase.RotateToTrack:
-                return recoveryRotationThrottle;
+            case RecoveryPhase.Rotate:
+                return 0.25f;
 
-            case RecoveryPhase.DriveForward:
-                return recoveryForwardThrottle;
+            case RecoveryPhase.ResumeRace:
+                return 0.75f;
         }
 
         return 0f;
@@ -627,22 +656,54 @@ public class AIRacingController : MonoBehaviour
         return currentWp + (segmentDir * targetProgress);
     }
 
-    private void SetNearestWaypointAsTarget()
+    private Vector3 ClosestPointOnSegment(
+        Vector3 a,
+        Vector3 b,
+        Vector3 p)
     {
-        float closestDistance = Mathf.Infinity;
-        int closestIndex = 0;
+        Vector3 ab = b - a;
+        ab.y = 0f;
 
-        for (int i = 0; i < waypoints.Count; i++)
+        float abSqrMag = ab.sqrMagnitude;
+
+        if (abSqrMag < 0.0001f)
+            return a;
+
+        Vector3 ap = p - a;
+        ap.y = 0f;
+
+        float t = Vector3.Dot(ap, ab) / abSqrMag;
+        t = Mathf.Clamp01(t);
+
+        return a + ab * t;
+    }
+
+    private void SnapToNearestTrackSegment()
+    {
+        float bestDistance = float.MaxValue;
+        int bestSegment = 0;
+
+        for(int i = 0; i < waypoints.Count; i++)
         {
-            float distance = Vector3.Distance(transform.position, waypoints[i].position);
-            if (distance < closestDistance)
+            int next = (i + 1) % waypoints.Count;
+
+            Vector3 closest =
+                ClosestPointOnSegment(
+                    waypoints[i].position,
+                    waypoints[next].position,
+                    transform.position);
+
+            float dist =
+                (transform.position - closest).sqrMagnitude;
+
+            if(dist < bestDistance)
             {
-                closestDistance = distance;
-                closestIndex = i;
+                bestDistance = dist;
+                bestSegment = i;
             }
         }
 
-        currentTargetIndex = (closestIndex + 1) % waypoints.Count;
+        currentTargetIndex = bestSegment;
     }
 
     float CalculateThrottle()
@@ -720,6 +781,9 @@ public class AIRacingController : MonoBehaviour
 
     void UpdateTargetIndex()
     {
+        if (isRecovering)
+            return;
+
         float dynamicRadius = waypointPassRadius + (rb.linearVelocity.magnitude * 0.8f);
         if (Vector3.Distance(transform.position, waypoints[currentTargetIndex].position) < dynamicRadius)
             currentTargetIndex = (currentTargetIndex + 1) % waypoints.Count;
@@ -739,9 +803,8 @@ public class AIRacingController : MonoBehaviour
 
         if (Mathf.Abs(forwardSpeed) < 2f && car.IsGrounded)
         {
-            float stuckThreshold = Random.Range(0.15f, 1f);
             stuckTimer += Time.fixedDeltaTime;
-            if (stuckTimer > stuckThreshold) 
+            if (stuckTimer > 2f) 
             { 
                 SetRecovering();
             }
@@ -803,6 +866,8 @@ public class AIRacingController : MonoBehaviour
     {
         isRecovering = false;
 
+        currentState = AIState.Racing;
+
         recoveryPhase = RecoveryPhase.None;
 
         reverseRecoveryTimer = 0f;
@@ -810,48 +875,24 @@ public class AIRacingController : MonoBehaviour
 
         recoveryGraceTimer = 2f;
 
-        SetNearestWaypointAsTarget();
+        currentTargetIndex = recoveryTargetIndex;
     }
 
     float CalculateRecoverySteer()
     {
-        Vector3 trackDir = GetTrackDirection();
+        Vector3 targetDir =
+        (
+            waypoints[recoveryTargetIndex].position
+            - transform.position
+        ).normalized;
 
-        float signedAngle =
+        float angle =
             Vector3.SignedAngle(
                 transform.forward,
-                trackDir,
+                targetDir,
                 Vector3.up);
 
-        float steer =
-            Mathf.Clamp(signedAngle / 45f, -1f, 1f);
-
-        switch (recoveryPhase)
-        {
-            case RecoveryPhase.ReverseBriefly:
-
-                // invertido porque está de ré
-                steer = -steer;
-
-            break;
-
-            case RecoveryPhase.RotateToTrack:
-
-                steer *= 1.2f;
-
-            break;
-
-            case RecoveryPhase.DriveForward:
-
-                steer *= 0.8f;
-
-            break;
-        }
-
-        // damping de rotação
-        steer -= rb.angularVelocity.y * 0.12f;
-
-        return Mathf.Clamp(steer, -1f, 1f);
+        return Mathf.Clamp(angle / 45f, -1f, 1f);
     }
 
     private float CalculateFlowAvoidance()
