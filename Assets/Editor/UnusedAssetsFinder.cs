@@ -274,12 +274,20 @@ private void Scan()
     HashSet<string> referencedAssets =
         new HashSet<string>();
 
+    foreach (var scene in EditorBuildSettings.scenes)
+    {
+        if (scene.enabled)
+        {
+            referencedAssets.Add(scene.path);
+        }
+    }
+
     foreach (string asset in allAssets)
     {
         string[] dependencies =
             AssetDatabase.GetDependencies(
                 asset,
-                false);
+                true);
 
         foreach (string dependency in dependencies)
         {
@@ -295,6 +303,12 @@ private void Scan()
             "",
             new[] { folderPath });
 
+    var buildScenes =
+            EditorBuildSettings.scenes
+            .Where(s => s.enabled)
+            .Select(s => s.path)
+            .ToHashSet();
+
     foreach (string guid in guids)
     {
         string assetPath =
@@ -307,6 +321,9 @@ private void Scan()
             continue;
 
         if (assetPath.Contains("/Editor/"))
+            continue;
+
+        if (buildScenes.Contains(assetPath))
             continue;
 
         if (!referencedAssets.Contains(assetPath))
