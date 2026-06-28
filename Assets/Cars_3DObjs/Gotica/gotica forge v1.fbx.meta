@@ -3,7 +3,182 @@ guid: dae5b69ebc4e57c408d1df62a391d545
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Back turbinas texture.png
+    second: {fileID: 2100000, guid: 770fa1a4eea01c44a809cf828d34dd02, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Blower texture.png
+    second: {fileID: 2100000, guid: b5c95a512c06e8f419bbc69e10630dbd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BodyFrontTexture.png
+    second: {fileID: 2100000, guid: 587322816c2fc9c4cb1f374362d67c8c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Farol texture.png
+    second: {fileID: 2100000, guid: b11ffdd2e5ecc514484b477931753ed8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Glass texture.png
+    second: {fileID: 2100000, guid: 5f0aa60c0606bd5429452593296eb3a0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Roda voadora texture.png
+    second: {fileID: 2100000, guid: 9a16154491f135449852357447a6b008, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: asa central texture.png
+    second: {fileID: 2100000, guid: 73009654ae975c54d96def1eb553002d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: asa texture.png
+    second: {fileID: 2100000, guid: c0b2d2443385caa44bfb6cecf9ad98e3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: backlights texture.png
+    second: {fileID: 2100000, guid: ead77a4acc5d40645bde5e3e352d32ce, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: barbvatana 2 texture.png
+    second: {fileID: 2100000, guid: 1a7362ddd873b354fbac3460b188cc56, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: body back texture.png
+    second: {fileID: 2100000, guid: f981b0cd32000e74aa9c1d7bd0d9878e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: body central texture.png
+    second: {fileID: 2100000, guid: 1b294d13b5f22de40b40bc2e63122910, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: bumper texture.png
+    second: {fileID: 2100000, guid: ea4ce8b36f236b24484ed7b5a484a617, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: grate texture.png
+    second: {fileID: 2100000, guid: c6db7ff446faa9d45b1ee8dc023fed17, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lateral engine texture.png
+    second: {fileID: 2100000, guid: 20c829b686d5d45408d48d9808258ec0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: retrovisores texture.png
+    second: {fileID: 2100000, guid: 2ad21947e62ad2045821eeb203c26616, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Back turbinas texture
+    second: {fileID: 2800000, guid: 75f24388e9efdf54f9838d1ce464a2ba, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Blower texture
+    second: {fileID: 2800000, guid: 907a040c801256645b7e17c67e0da569, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: BodyFrontTexture
+    second: {fileID: 2800000, guid: 8db19759ac73a614db3532e4befe2e1d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Cabin Back texture
+    second: {fileID: 2800000, guid: 9898125ae8a92ec44976d793591b474b, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Farol texture
+    second: {fileID: 2800000, guid: a58aee076fb16d84daf6d2a2bb1aaae0, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Glass texture
+    second: {fileID: 2800000, guid: 404e4af0029ae3942b22f03b6521e5cd, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Roda voadora texture
+    second: {fileID: 2800000, guid: cd1fb167f091b02478ce825aec39c94a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: asa central texture
+    second: {fileID: 2800000, guid: 3a088f47a8a62084bb021c6c25e4c896, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: asa texture
+    second: {fileID: 2800000, guid: 2fdfa6dc2b8df7a45a31b2416c590108, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: backlights texture
+    second: {fileID: 2800000, guid: f952383baf180a54095772ca36fa2dfe, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: barbvatana 2 texture
+    second: {fileID: 2800000, guid: f3668f30cb6c30c46ae6f5cd8c0fc6f9, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: body back texture
+    second: {fileID: 2800000, guid: 407cacc6bacaed540884288c182020f7, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: body central texture
+    second: {fileID: 2800000, guid: a711aa5496ff6de4e8c65e8131af0d99, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: bumper texture
+    second: {fileID: 2800000, guid: a118c084cf4f5cc40986e9ee34433215, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: cabin front tex
+    second: {fileID: 2800000, guid: 40097f04dcf46d949a3cec7ba24efe99, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: grate texture
+    second: {fileID: 2800000, guid: 3ed3fa18babbbc84ab3fdeffff18f24c, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: grid 2 texture
+    second: {fileID: 2800000, guid: 94d6f4e01abd74d4391932ee5e100fc4, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: lateral engine texture
+    second: {fileID: 2800000, guid: 8aa0296cd1ccb73449b46b6007e324dc, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: retrovisores texture
+    second: {fileID: 2800000, guid: 2558840e2566890428925c016fcb21f4, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0
