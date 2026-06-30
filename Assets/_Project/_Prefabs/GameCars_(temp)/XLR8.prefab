@@ -60272,7 +60272,8 @@ MonoBehaviour:
   collisionCooldown: 0.5
   corteEffect: []
   HeatDistortionParticles: {fileID: 1261128901156936222}
-  brakeLightsMeshRenderer: []
+  brakeLightsMeshRenderer:
+  - {fileID: 1965523474440976183}
 --- !u!114 &7292512966722966301
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -118442,6 +118443,11 @@ PrefabInstance:
 --- !u!4 &1610981608720260805 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8f810245667c6e54eb4e758cf8deb329, type: 3}
+  m_PrefabInstance: {fileID: 1284056140292307246}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &1965523474440976183 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 763100025205476889, guid: 8f810245667c6e54eb4e758cf8deb329, type: 3}
   m_PrefabInstance: {fileID: 1284056140292307246}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &3146731508617420232 stripped
