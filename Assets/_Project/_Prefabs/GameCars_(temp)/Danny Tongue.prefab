@@ -2790,6 +2790,8 @@ MonoBehaviour:
   stateTransitionTime: 0.5
   driftSteeringSensitivity: 0.6
   driftAngleCorrectionSpeed: 3
+  rotateAlignmentDot: 0.85
+  resumeDistance: 25
   reverseRecoveryTime: 1.25
   maxRecoveryTime: 6
   recoveryRotationThrottle: 0.35

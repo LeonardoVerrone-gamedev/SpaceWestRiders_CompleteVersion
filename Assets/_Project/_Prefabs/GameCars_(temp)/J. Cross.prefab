@@ -57827,6 +57827,8 @@ MonoBehaviour:
   stateTransitionTime: 0.5
   driftSteeringSensitivity: 0.6
   driftAngleCorrectionSpeed: 3
+  rotateAlignmentDot: 0.85
+  resumeDistance: 25
   reverseRecoveryTime: 1.25
   maxRecoveryTime: 6
   recoveryRotationThrottle: 0.35
@@ -119065,7 +119067,7 @@ PrefabInstance:
     - target: {fileID: -4171781297986559379, guid: 7a7f6bbe948091244b1ee30abf9abd32, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 260410d7bef80af44bae0279d203de3f, type: 2}
+      objectReference: {fileID: 2100000, guid: 0f032cb3e6d3c744d86816220855c42a, type: 2}
     - target: {fileID: -3095799262553998289, guid: 7a7f6bbe948091244b1ee30abf9abd32, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -119121,7 +119123,7 @@ PrefabInstance:
     - target: {fileID: 7484613266865550742, guid: 7a7f6bbe948091244b1ee30abf9abd32, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 260410d7bef80af44bae0279d203de3f, type: 2}
+      objectReference: {fileID: 2100000, guid: 0f032cb3e6d3c744d86816220855c42a, type: 2}
     - target: {fileID: 7580261252871043154, guid: 7a7f6bbe948091244b1ee30abf9abd32, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -119133,7 +119135,7 @@ PrefabInstance:
     - target: {fileID: 8437048135631372183, guid: 7a7f6bbe948091244b1ee30abf9abd32, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: e12ea149905a5b34891203ab187f8e3b, type: 2}
+      objectReference: {fileID: 2100000, guid: 1afec671dac38594ca566c420b92c52c, type: 2}
     - target: {fileID: 9063611199060029382, guid: 7a7f6bbe948091244b1ee30abf9abd32, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
