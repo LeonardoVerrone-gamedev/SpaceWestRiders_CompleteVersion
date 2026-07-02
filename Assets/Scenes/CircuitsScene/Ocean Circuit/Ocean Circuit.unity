@@ -5603,11 +5603,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5061730903275766774, guid: b0fbd000218ddcf4094abc0412452718, type: 3}
   m_PrefabInstance: {fileID: 936557269}
   m_PrefabAsset: {fileID: 0}
---- !u!23 &945554601 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 3469829187667779725, guid: 01a35cfe2313f04489f8cb8da921b694, type: 3}
-  m_PrefabInstance: {fileID: 1741886281}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &965457484
 GameObject:
   m_ObjectHideFlags: 0
@@ -6755,10 +6750,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 186711195}
     m_Modifications:
-    - target: {fileID: 5243632688277877611, guid: 1857e67441c6d5d44a67d4a1c4291728, type: 3}
-      propertyPath: 'brakeLightsMeshRenderer.Array.data[0]'
-      value: 
-      objectReference: {fileID: 945554601}
     - target: {fileID: 8811395454165776735, guid: 1857e67441c6d5d44a67d4a1c4291728, type: 3}
       propertyPath: m_LocalPosition.x
       value: -161.34618
@@ -7114,10 +7105,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 186711195}
     m_Modifications:
-    - target: {fileID: 1455604485417427849, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
-      propertyPath: onRecordingMode
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2912654939174078175, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
       propertyPath: m_LocalPosition.x
       value: -161.34
