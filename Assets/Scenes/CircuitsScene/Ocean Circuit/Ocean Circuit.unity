@@ -2806,6 +2806,14 @@ PrefabInstance:
       propertyPath: onRecordingMode
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4587397758693832447, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 8a29306d4d8486d468227f3fadf6ef42, type: 2}
+    - target: {fileID: 4847749982535609917, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 8a29306d4d8486d468227f3fadf6ef42, type: 2}
     - target: {fileID: 5902696011742139115, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
       propertyPath: m_Name
       value: "G\xF3tica"
@@ -5346,10 +5354,6 @@ PrefabInstance:
     - target: {fileID: 3721347728761754489, guid: f1dc6c4175455af45854d4c12d08373a, type: 3}
       propertyPath: m_Name
       value: J. Cross
-      objectReference: {fileID: 0}
-    - target: {fileID: 7193262918607088994, guid: f1dc6c4175455af45854d4c12d08373a, type: 3}
-      propertyPath: onRecordingMode
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
