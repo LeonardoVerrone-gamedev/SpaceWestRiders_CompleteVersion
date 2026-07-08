@@ -2363,10 +2363,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 186711195}
     m_Modifications:
-    - target: {fileID: 1378075228911838654, guid: 115ac48cc40664c43a57fb25ae5d42b9, type: 3}
-      propertyPath: onRecordingMode
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4140969641842061673, guid: 115ac48cc40664c43a57fb25ae5d42b9, type: 3}
       propertyPath: m_Name
       value: "Z\xE4h"
@@ -2786,34 +2782,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 186711195}
     m_Modifications:
-    - target: {fileID: 722905915966864843, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
-      propertyPath: carParts.Array.data[0].filter
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 722905915966864843, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
-      propertyPath: carParts.Array.data[1].filter
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 722905915966864843, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
-      propertyPath: carParts.Array.data[2].filter
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 722905915966864843, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
-      propertyPath: carParts.Array.data[3].filter
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4247235855957448054, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
-      propertyPath: onRecordingMode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4587397758693832447, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 8a29306d4d8486d468227f3fadf6ef42, type: 2}
-    - target: {fileID: 4847749982535609917, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 8a29306d4d8486d468227f3fadf6ef42, type: 2}
     - target: {fileID: 5902696011742139115, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
       propertyPath: m_Name
       value: "G\xF3tica"
@@ -2857,14 +2825,6 @@ PrefabInstance:
     - target: {fileID: 6521436134801135628, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -0.771
-      objectReference: {fileID: 0}
-    - target: {fileID: 7300365341638657202, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
-      propertyPath: 'carRenderers.Array.data[0]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 7300365341638657202, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
-      propertyPath: 'carRenderers.Array.data[1]'
-      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8517,10 +8477,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Danny Tongue
       objectReference: {fileID: 0}
-    - target: {fileID: 2738986194392757825, guid: 4748fb71545a6784a9601a0e1fccc303, type: 3}
-      propertyPath: onRecordingMode
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 8819039255336965610, guid: 4748fb71545a6784a9601a0e1fccc303, type: 3}
       propertyPath: m_LocalPosition.x
       value: -135.38747
@@ -9453,7 +9409,7 @@ Light:
   serializedVersion: 11
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1
+  m_Intensity: 5
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -11871,14 +11827,6 @@ PrefabInstance:
     - target: {fileID: 3820662635277455633, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
       propertyPath: m_Name
       value: Billy SIn
-      objectReference: {fileID: 0}
-    - target: {fileID: 6480251186376375117, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
-      propertyPath: 'carRenderers.Array.data[0]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6578365122509948746, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
-      propertyPath: onRecordingMode
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7233265701248866632, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
       propertyPath: m_LocalPosition.x

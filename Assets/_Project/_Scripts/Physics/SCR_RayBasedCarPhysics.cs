@@ -1259,7 +1259,7 @@ private void ApplyClassicSuspension()
         float currentSpeed = rb.linearVelocity.magnitude;
         Vector3 dir = -collision.contacts[0].normal;
         bool isCrashableObject = ((1 << collision.gameObject.layer) & crashable) != 0;
-        if(damageCar != null) damageCar.ApplyDamage(0.00625f);
+        if(damageCar != null) damageCar.ApplyDamage(0.05f);
 
         Vector3 collisionNormal = collision.contacts[0].normal;
         float speedMagnitude = collision.relativeVelocity.magnitude;
