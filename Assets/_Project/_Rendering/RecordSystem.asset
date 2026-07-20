@@ -27,23 +27,7 @@ MonoBehaviour:
     m_Value: 0
   saturation:
     m_OverrideState: 1
-    m_Value: 20
---- !u!114 &-1410642428640694857
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81180773991d8724ab7f2d216912b564, type: 3}
-  m_Name: ChromaticAberration
-  m_EditorClassIdentifier: 
-  active: 1
-  intensity:
-    m_OverrideState: 1
-    m_Value: 0.3
+    m_Value: 30
 --- !u!114 &-731319851894858984
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -112,11 +96,9 @@ MonoBehaviour:
   components:
   - {fileID: -731319851894858984}
   - {fileID: -554696266508627985}
-  - {fileID: -1410642428640694857}
-  - {fileID: 5285980274602458610}
   - {fileID: -1792791258452765364}
-  - {fileID: 8390741471602138667}
---- !u!114 &5285980274602458610
+  - {fileID: 4792555194658110243}
+--- !u!114 &4792555194658110243
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -125,41 +107,41 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb60a22f311433c4c962b888d1393f88, type: 3}
-  m_Name: PaniniProjection
+  m_Script: {fileID: 11500000, guid: 0b2db86121404754db890f4c8dfe81b2, type: 3}
+  m_Name: Bloom
   m_EditorClassIdentifier: 
   active: 1
-  distance:
-    m_OverrideState: 1
-    m_Value: 0.15
-  cropToFit:
-    m_OverrideState: 1
+  skipIterations:
+    m_OverrideState: 0
     m_Value: 1
---- !u!114 &8390741471602138667
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5e1dc532bcb41949b58bc4f2abfbb7e, type: 3}
-  m_Name: LensDistortion
-  m_EditorClassIdentifier: 
-  active: 1
+  threshold:
+    m_OverrideState: 1
+    m_Value: 0.1
   intensity:
     m_OverrideState: 1
+    m_Value: 0.15
+  scatter:
+    m_OverrideState: 0
+    m_Value: 0.7
+  clamp:
+    m_OverrideState: 0
+    m_Value: 65472
+  tint:
+    m_OverrideState: 1
+    m_Value: {r: 0.9103153, g: 0.7377358, b: 1, a: 1}
+  highQualityFiltering:
+    m_OverrideState: 0
     m_Value: 0
-  xMultiplier:
-    m_OverrideState: 1
-    m_Value: 0.75
-  yMultiplier:
-    m_OverrideState: 1
-    m_Value: 0.75
-  center:
+  downscale:
     m_OverrideState: 0
-    m_Value: {x: 0.5, y: 0.5}
-  scale:
+    m_Value: 0
+  maxIterations:
     m_OverrideState: 0
-    m_Value: 1
+    m_Value: 6
+  dirtTexture:
+    m_OverrideState: 0
+    m_Value: {fileID: 0}
+    dimension: 1
+  dirtIntensity:
+    m_OverrideState: 0
+    m_Value: 0
