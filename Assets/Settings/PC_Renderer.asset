@@ -35,6 +35,26 @@ MonoBehaviour:
   passIndex: 0
   bindDepthStencilAttachment: 0
   m_Version: 1
+--- !u!114 &-2858213858254085615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
+  m_Name: Fog
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  injectionPoint: 550
+  fetchColorBuffer: 1
+  requirements: 0
+  passMaterial: {fileID: 2100000, guid: 7ca648053676f5649af16e7ac806ec1d, type: 2}
+  passIndex: 0
+  bindDepthStencilAttachment: 0
+  m_Version: 1
 --- !u!114 &-2698500593830080638
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85,7 +105,8 @@ MonoBehaviour:
   - {fileID: -2698500593830080638}
   - {fileID: -3550635183515080896}
   - {fileID: 1320451612137455115}
-  m_RendererFeatureMap: ad6b866f10d7b46c82cf93d601008dda406794d71c9cb9ce0b7e8bc4be2f5312
+  - {fileID: -2858213858254085615}
+  m_RendererFeatureMap: ad6b866f10d7b46c82cf93d601008dda406794d71c9cb9ce0b7e8bc4be2f531211a2aaaea39555d8
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -121,7 +142,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
-  m_Name: FullScreenPassRendererFeature
+  m_Name: CRT
   m_EditorClassIdentifier: 
   m_Active: 1
   injectionPoint: 600
