@@ -15,17 +15,17 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
   m_Fog: 1
-  m_FogColor: {r: 0.41940188, g: 0.9622642, b: 0.6335899, a: 1}
+  m_FogColor: {r: 0.77254903, g: 0.77254903, b: 0.77254903, a: 1}
   m_FogMode: 1
   m_FogDensity: 0.009
   m_LinearFogStart: 200
   m_LinearFogEnd: 1510.01
   m_AmbientSkyColor: {r: 0, g: 0.7137255, b: 0.14639382, a: 1}
-  m_AmbientEquatorColor: {r: 0, g: 0.27450982, b: 0.17716879, a: 1}
+  m_AmbientEquatorColor: {r: 0.041042723, g: 0, b: 0.27450982, a: 1}
   m_AmbientGroundColor: {r: 0.025522038, g: 0.003111415, b: 0.07169801, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 1
-  m_SubtractiveShadowColor: {r: 0.029113548, g: 0.3283019, b: 0.17356525, a: 0.5}
+  m_SubtractiveShadowColor: {r: 0.1569243, g: 0.027450975, b: 0.32941177, a: 0.5}
   m_SkyboxMaterial: {fileID: 2100000, guid: 5894b29a6d232914fb69ea5fd986441e, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
@@ -14984,7 +14984,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: d697423a0a6111a42a7620591e9ff7b3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -29292,7 +29292,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 30
+      scalar: 20
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -29463,8 +29463,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 550
-      minScalar: 425
+      scalar: 275
+      minScalar: 212.5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -31865,7 +31865,7 @@ ParticleSystem:
     strength:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.5
       minScalar: 1
       maxCurve:
         serializedVersion: 2
