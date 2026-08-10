@@ -14,13 +14,13 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
-  m_Fog: 1
+  m_Fog: 0
   m_FogColor: {r: 0.77254903, g: 0.77254903, b: 0.77254903, a: 1}
   m_FogMode: 1
   m_FogDensity: 0.009
   m_LinearFogStart: 200
   m_LinearFogEnd: 1510.01
-  m_AmbientSkyColor: {r: 0, g: 0.7137255, b: 0.14639382, a: 1}
+  m_AmbientSkyColor: {r: 0.53396225, g: 1, b: 0.7837458, a: 1}
   m_AmbientEquatorColor: {r: 0.041042723, g: 0, b: 0.27450982, a: 1}
   m_AmbientGroundColor: {r: 0.025522038, g: 0.003111415, b: 0.07169801, a: 1}
   m_AmbientIntensity: 1
@@ -12016,7 +12016,7 @@ Transform:
   m_GameObject: {fileID: 704443089}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: -0.00078882}
+  m_LocalPosition: {x: -0, y: -0.03, z: -0.00078882}
   m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -17095,7 +17095,7 @@ Transform:
   m_GameObject: {fileID: 967163677}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: -0.00078882}
+  m_LocalPosition: {x: -0, y: -0.029, z: -0.00078882}
   m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -34120,7 +34120,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 7042b36e95ff3b545b3c83e0554ddf6e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -41153,7 +41153,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 7042b36e95ff3b545b3c83e0554ddf6e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

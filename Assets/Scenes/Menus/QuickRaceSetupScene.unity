@@ -379,6 +379,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 34a9f92a973e18f4abaf8d47baf55c2a, type: 2}
   - {fileID: 11400000, guid: cf2e23e246b505e4198da91649054abb, type: 2}
   - {fileID: 11400000, guid: a923d3cf6bd31784a8e7e2b788d1a596, type: 2}
+  - {fileID: 11400000, guid: 3e46540b4dada9043a3bcbbbd49e6981, type: 2}
   backupRacerProfiles: []
   Planet1Layout: {fileID: 1291353041}
   Planet2Layout: {fileID: 1640098396}
@@ -3565,6 +3566,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 34a9f92a973e18f4abaf8d47baf55c2a, type: 2}
   - {fileID: 11400000, guid: cf2e23e246b505e4198da91649054abb, type: 2}
   - {fileID: 11400000, guid: a923d3cf6bd31784a8e7e2b788d1a596, type: 2}
+  - {fileID: 11400000, guid: 3e46540b4dada9043a3bcbbbd49e6981, type: 2}
 --- !u!1 &955635890
 GameObject:
   m_ObjectHideFlags: 0
@@ -4125,7 +4127,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 1077014063}
   m_OnClick:
     m_PersistentCalls:
@@ -4139,7 +4141,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Ocean Circuit
+          m_StringArgument: Cave Circuit
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1077014063
@@ -4192,7 +4194,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cdfe41d9359a3141bd6f1384208df4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  circuitID: Green City
+  circuitID: Cave Circuit
 --- !u!1 &1111619461
 GameObject:
   m_ObjectHideFlags: 0
