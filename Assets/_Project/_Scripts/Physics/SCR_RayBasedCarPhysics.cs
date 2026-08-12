@@ -753,9 +753,9 @@ private void ApplyClassicSuspension()
     {
         if (isHover) return;
         float steeringAngle = maxSteerAngle * _currentSteerInput;
-        if(Mathf.Abs(_currentThrottleInput ) > 0.1f) _rearWheelRotationAccumulator += tireRorationSpeed * _currentThrottleInput * Time.deltaTime;
-        else _rearWheelRotationAccumulator += tireRorationSpeed * carVelocityRatio * Time.deltaTime;
-        _frontWheelRotationAccumulator += tireRorationSpeed * carVelocityRatio * Time.deltaTime;
+        if(Mathf.Abs(_currentThrottleInput ) > 0.1f) _rearWheelRotationAccumulator += tireRorationSpeed * _currentThrottleInput * Time.fixedDeltaTime;
+        else _rearWheelRotationAccumulator += tireRorationSpeed * carVelocityRatio * Time.fixedDeltaTime;
+        _frontWheelRotationAccumulator += tireRorationSpeed * carVelocityRatio * Time.fixedDeltaTime;
         for (int i = 0; i < tires.Length; i++)
         {
             if (tires[i] == null) continue;
@@ -817,8 +817,8 @@ private void ApplyClassicSuspension()
             else _targetRoll = 0f;
         }
         float currentResponseSpeed = (Mathf.Abs(_targetPitch) > Mathf.Abs(_currentBodyPitch) || Mathf.Abs(_targetRoll) > Mathf.Abs(_currentBodyRoll)) ? tiltResponseSpeed : tiltReturnSpeed;
-        _currentBodyPitch = Mathf.Lerp(_currentBodyPitch, _targetPitch, Time.fixedDeltaTime * currentResponseSpeed);
-        _currentBodyRoll = Mathf.Lerp(_currentBodyRoll, _targetRoll, Time.fixedDeltaTime * currentResponseSpeed);
+        _currentBodyPitch = Mathf.Lerp(_currentBodyPitch, _targetPitch, Time.deltaTime * currentResponseSpeed);
+        _currentBodyRoll = Mathf.Lerp(_currentBodyRoll, _targetRoll, Time.deltaTime * currentResponseSpeed);
         float currentYaw = carBody.localEulerAngles.y;
         carBody.localEulerAngles = new Vector3(_currentBodyPitch, currentYaw, _currentBodyRoll);
     }
@@ -1492,7 +1492,7 @@ private void ApplyClassicSuspension()
             }
             airTime = 0f;
         }
-        else if (!isGrounded) airTime += Time.deltaTime;
+        else if (!isGrounded) airTime += Time.fixedDeltaTime;
         if (wasGrounded && !isGrounded) OnJump?.Invoke(0f);
         wasGrounded = isGrounded;
 
@@ -1592,7 +1592,7 @@ private void ApplyClassicSuspension()
             {
                 groundSensors[i].hit = false;
                 smoothedNormals[i] = Vector3.Lerp(smoothedNormals[i], transform.up, 0.1f);
-                groundStickTimer[i] -= Time.deltaTime;
+                groundStickTimer[i] -= Time.fixedDeltaTime;
                 groundSensors[i].hit = false;
             }
         }

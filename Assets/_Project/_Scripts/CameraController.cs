@@ -322,7 +322,7 @@ public class CameraController : MonoBehaviour
         lastVelocity = Vector3.zero;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         HandlePhysicsBasedEffects();
         UpdateContinuousNoise();
@@ -614,7 +614,7 @@ public class CameraController : MonoBehaviour
         smoothedSpeedFactor = Mathf.MoveTowards(
             smoothedSpeedFactor,
             rawSpeedFactor,
-            responseTime * Time.deltaTime
+            responseTime * Time.fixedDeltaTime
         );
 
 
@@ -766,7 +766,7 @@ public class CameraController : MonoBehaviour
         // HARD RESET se estiver parado por tempo suficiente
         if (currentSpeedKmh < idleSpeedThreshold)
         {
-            idleTimer += Time.deltaTime;
+            idleTimer += Time.fixedDeltaTime;
 
             if (idleTimer >= idleThresholdTime)
             {
@@ -1234,7 +1234,7 @@ public class CameraController : MonoBehaviour
         float currentSpeed = playerRB.linearVelocity.magnitude * 3.6f;
         
         // Calcular aceleração (m/s²)
-        currentAcceleration = (currentSpeed - lastSpeed) / Time.deltaTime;
+        currentAcceleration = (currentSpeed - lastSpeed) / Time.fixedDeltaTime;
         lastSpeed = currentSpeed;
         
         // Determinar qual noise está ativo
