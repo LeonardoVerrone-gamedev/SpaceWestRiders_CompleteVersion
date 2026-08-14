@@ -6695,16 +6695,7 @@ ParticleSystem:
     uvChannelMask: -1
     rowMode: 1
     sprites:
-    - sprite: {fileID: 1358675084, guid: c1cf2c0f38eb0f440bea1a4f4a83bdb5, type: 3}
-    - sprite: {fileID: 165936248, guid: c1cf2c0f38eb0f440bea1a4f4a83bdb5, type: 3}
-    - sprite: {fileID: 274407785, guid: c1cf2c0f38eb0f440bea1a4f4a83bdb5, type: 3}
-    - sprite: {fileID: 531767323, guid: c1cf2c0f38eb0f440bea1a4f4a83bdb5, type: 3}
-    - sprite: {fileID: 1813586843, guid: c1cf2c0f38eb0f440bea1a4f4a83bdb5, type: 3}
-    - sprite: {fileID: -955554469, guid: c1cf2c0f38eb0f440bea1a4f4a83bdb5, type: 3}
-    - sprite: {fileID: -1379272224, guid: c1cf2c0f38eb0f440bea1a4f4a83bdb5, type: 3}
-    - sprite: {fileID: 943805986, guid: c1cf2c0f38eb0f440bea1a4f4a83bdb5, type: 3}
-    - sprite: {fileID: -1749707882, guid: c1cf2c0f38eb0f440bea1a4f4a83bdb5, type: 3}
-    - sprite: {fileID: -1992673975, guid: c1cf2c0f38eb0f440bea1a4f4a83bdb5, type: 3}
+    - sprite: {fileID: 21300000, guid: f686e6758d0d8a54796f91dba11a4809, type: 3}
     flipU: 0
     flipV: 0
   VelocityModule:
@@ -36308,16 +36299,7 @@ ParticleSystem:
     uvChannelMask: -1
     rowMode: 1
     sprites:
-    - sprite: {fileID: 1358675084, guid: c1cf2c0f38eb0f440bea1a4f4a83bdb5, type: 3}
-    - sprite: {fileID: 165936248, guid: c1cf2c0f38eb0f440bea1a4f4a83bdb5, type: 3}
-    - sprite: {fileID: 274407785, guid: c1cf2c0f38eb0f440bea1a4f4a83bdb5, type: 3}
-    - sprite: {fileID: 531767323, guid: c1cf2c0f38eb0f440bea1a4f4a83bdb5, type: 3}
-    - sprite: {fileID: 1813586843, guid: c1cf2c0f38eb0f440bea1a4f4a83bdb5, type: 3}
-    - sprite: {fileID: -955554469, guid: c1cf2c0f38eb0f440bea1a4f4a83bdb5, type: 3}
-    - sprite: {fileID: -1379272224, guid: c1cf2c0f38eb0f440bea1a4f4a83bdb5, type: 3}
-    - sprite: {fileID: 943805986, guid: c1cf2c0f38eb0f440bea1a4f4a83bdb5, type: 3}
-    - sprite: {fileID: -1749707882, guid: c1cf2c0f38eb0f440bea1a4f4a83bdb5, type: 3}
-    - sprite: {fileID: -1992673975, guid: c1cf2c0f38eb0f440bea1a4f4a83bdb5, type: 3}
+    - sprite: {fileID: 21300000, guid: f686e6758d0d8a54796f91dba11a4809, type: 3}
     flipU: 0
     flipV: 0
   VelocityModule:
@@ -85010,10 +84992,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carPhysics: {fileID: 8305923673772685573}
   classicDriftParticles: []
-  minEmissionRate: 100
-  maxEmissionRate: 120
-  minStartSize: 15
-  maxStartSize: 20
+  minEmissionRate: 50
+  maxEmissionRate: 75
+  minStartSize: 3
+  maxStartSize: 6
   hoverDriftParticles:
   - {fileID: 5172604748100731660}
   - {fileID: 8228556096255350645}
@@ -87392,21 +87374,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b29b4f559225da4aaa535f86e9e2781, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lateralDecalOptions:
-  - {fileID: 2100000, guid: cab1f567c7881364ea9aa6ed0848820e, type: 2}
-  - {fileID: 2100000, guid: b6a7ad913b4d95d4297d1580c9e13347, type: 2}
-  frontalDecalOptions:
-  - {fileID: 2100000, guid: cab1f567c7881364ea9aa6ed0848820e, type: 2}
-  - {fileID: 2100000, guid: b6a7ad913b4d95d4297d1580c9e13347, type: 2}
-  topDecalOptions:
-  - {fileID: 2100000, guid: cab1f567c7881364ea9aa6ed0848820e, type: 2}
-  - {fileID: 2100000, guid: b6a7ad913b4d95d4297d1580c9e13347, type: 2}
-  backDecalOptions:
-  - {fileID: 2100000, guid: cab1f567c7881364ea9aa6ed0848820e, type: 2}
-  - {fileID: 2100000, guid: b6a7ad913b4d95d4297d1580c9e13347, type: 2}
-  lateralDecalProjector:
-  - {fileID: 8635285215426868097}
-  - {fileID: 0}
+  lateralDecalOptions: []
+  frontalDecalOptions: []
+  topDecalOptions: []
+  backDecalOptions: []
+  lateralDecalProjector: []
   frontalDecalProjector: {fileID: 0}
   topDecalProjector: {fileID: 0}
   backDecalProjector: {fileID: 0}
