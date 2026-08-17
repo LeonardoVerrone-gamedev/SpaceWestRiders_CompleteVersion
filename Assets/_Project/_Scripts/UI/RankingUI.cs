@@ -7,6 +7,8 @@ using System;
 
 public class RankingUI : MonoBehaviour
 {
+    public static RankingUI Instance { get; private set; }
+
     [Header("UI References")]
     [SerializeField] private GameObject rootPanel;
     [SerializeField] private TextMeshProUGUI rankText;
@@ -26,6 +28,11 @@ public class RankingUI : MonoBehaviour
     [SerializeField] private Button backToTitleFullButton;
     [SerializeField] private Button continueFullTournamentButton;
 
+    public bool OnRanking()
+    {
+        return rootPanel.activeInHierarchy;
+    } 
+
 
     [Header("Button Labels")]
     [SerializeField] private TextMeshProUGUI continueToNextRaceLabel;
@@ -34,6 +41,14 @@ public class RankingUI : MonoBehaviour
 
     void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+
         // Configura botões baseado no modo de jogo
         ConfigureButtonsForGameMode();
     }
@@ -41,6 +56,15 @@ public class RankingUI : MonoBehaviour
     void Start()
     {
         rootPanel.SetActive(false);
+    }
+
+    private void OnDestroy()
+    {
+        // Limpa a referência quando a cena for descarregada ou o objeto destruído
+        if (Instance == this)
+        {
+            Instance = null;
+        }
     }
 
     private void ConfigureButtonsForGameMode()

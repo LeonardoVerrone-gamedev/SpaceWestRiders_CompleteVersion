@@ -1383,6 +1383,17 @@ private void ApplyClassicSuspension()
         }
     }
 
+    Vector3 respawnPosition = new Vector3(0,0,0);
+    Quaternion respawnRotation = new Quaternion(0f,0f,0f, 0f);
+    bool respawnPositionManualSeted = false;
+
+    public void SetRespawnPosition(Vector3 newPos, Quaternion newRot)
+    {
+        respawnPosition = newPos;
+        respawnRotation = newRot;
+        respawnPositionManualSeted = true;
+    }
+
     bool IsAreaSafe() => cachedGroundedCount >= 4 && Vector3.Dot(cachedSurfaceNormal, Vector3.up) > 0.75f;
 
     private void ExecuteRespawn()
@@ -1390,19 +1401,27 @@ private void ApplyClassicSuspension()
         _isRespawning = true;
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-        transform.position = _lastSafePosition;
-        Transform target = GetRespawnTarget();
-        deformer?.RestoreMesh();
-        if(damageCar != null) damageCar.ResetDamage();
-        //Limpa o visual de damaged aqui
-        if (target != null)
-        {
-            Vector3 direction = (target.position - _lastSafePosition).normalized;
-            Vector3 planarDir = Vector3.ProjectOnPlane(direction, cachedSurfaceNormal).normalized;
-            if (planarDir.sqrMagnitude > 0.01f) transform.rotation = Quaternion.LookRotation(planarDir, cachedSurfaceNormal);
-            else transform.rotation = Quaternion.Euler(new Vector3(0f, direction.y, 0f));
+
+        if(!respawnPositionManualSeted){
+            transform.position = _lastSafePosition;
+            Transform target = GetRespawnTarget();
+            deformer?.RestoreMesh();
+            if(damageCar != null) damageCar.ResetDamage();
+            //Limpa o visual de damaged aqui
+            if (target != null)
+            {
+                Vector3 direction = (target.position - _lastSafePosition).normalized;
+                Vector3 planarDir = Vector3.ProjectOnPlane(direction, cachedSurfaceNormal).normalized;
+                if (planarDir.sqrMagnitude > 0.01f) transform.rotation = Quaternion.LookRotation(planarDir, cachedSurfaceNormal);
+                else transform.rotation = Quaternion.Euler(new Vector3(0f, direction.y, 0f));
+            }
+            else transform.rotation = Quaternion.Euler(Vector3.zero);
         }
-        else transform.rotation = Quaternion.Euler(Vector3.zero);
+        else
+        {
+            transform.position = respawnPosition;
+            transform.rotation = respawnRotation;
+        }
         if(!AIControlled) { }
         else aiDriver.SetRecovering();
         Invoke(nameof(ResetRespawnFlag), 1f);
