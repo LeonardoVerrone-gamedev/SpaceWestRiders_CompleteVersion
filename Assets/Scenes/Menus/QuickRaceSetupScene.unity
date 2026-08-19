@@ -664,6 +664,7 @@ GameObject:
   - component: {fileID: 325761945}
   - component: {fileID: 325761944}
   - component: {fileID: 325761943}
+  - component: {fileID: 325761946}
   m_Layer: 5
   m_Name: Ocean Valley
   m_TagString: Untagged
@@ -710,7 +711,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.5673892, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.21703795, b: 0, a: 1}
@@ -785,6 +786,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 325761941}
   m_CullTransparentMesh: 1
+--- !u!95 &325761946
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 325761941}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d1ee7d6522efac84cb5e5a30a800121d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &331516189
 GameObject:
   m_ObjectHideFlags: 0
@@ -797,6 +820,7 @@ GameObject:
   - component: {fileID: 331516193}
   - component: {fileID: 331516192}
   - component: {fileID: 331516191}
+  - component: {fileID: 331516194}
   m_Layer: 5
   m_Name: Desert Circuit
   m_TagString: Untagged
@@ -843,7 +867,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.5673892, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.21703795, b: 0, a: 1}
@@ -918,6 +942,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 331516189}
   m_CullTransparentMesh: 1
+--- !u!95 &331516194
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 331516189}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d1ee7d6522efac84cb5e5a30a800121d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &389840895
 GameObject:
   m_ObjectHideFlags: 0
@@ -1080,6 +1126,7 @@ GameObject:
   - component: {fileID: 393308562}
   - component: {fileID: 393308561}
   - component: {fileID: 393308560}
+  - component: {fileID: 393308563}
   m_Layer: 5
   m_Name: Other 1
   m_TagString: Untagged
@@ -1127,7 +1174,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.5673892, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.21703795, b: 0, a: 1}
@@ -1202,6 +1249,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 393308558}
   m_CullTransparentMesh: 1
+--- !u!95 &393308563
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 393308558}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bfea9ab2a9b54e743900219d1c62153f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &433014685
 GameObject:
   m_ObjectHideFlags: 0
@@ -1350,6 +1419,7 @@ GameObject:
   - component: {fileID: 448641356}
   - component: {fileID: 448641355}
   - component: {fileID: 448641354}
+  - component: {fileID: 448641357}
   m_Layer: 5
   m_Name: Desert Circuit
   m_TagString: Untagged
@@ -1396,7 +1466,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.5673892, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.21703795, b: 0, a: 1}
@@ -1471,6 +1541,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 448641352}
   m_CullTransparentMesh: 1
+--- !u!95 &448641357
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 448641352}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d1ee7d6522efac84cb5e5a30a800121d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &505109698
 GameObject:
   m_ObjectHideFlags: 0
@@ -1483,6 +1575,7 @@ GameObject:
   - component: {fileID: 505109702}
   - component: {fileID: 505109701}
   - component: {fileID: 505109700}
+  - component: {fileID: 505109703}
   m_Layer: 5
   m_Name: Random
   m_TagString: Untagged
@@ -1529,7 +1622,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.9659713, b: 0, a: 1}
     m_HighlightedColor: {r: 0, g: 1, b: 0.2627451, a: 1}
@@ -1604,6 +1697,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 505109698}
   m_CullTransparentMesh: 1
+--- !u!95 &505109703
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 505109698}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bfea9ab2a9b54e743900219d1c62153f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &650159046
 GameObject:
   m_ObjectHideFlags: 0
@@ -1888,6 +2003,7 @@ GameObject:
   - component: {fileID: 696142338}
   - component: {fileID: 696142337}
   - component: {fileID: 696142340}
+  - component: {fileID: 696142341}
   m_Layer: 5
   m_Name: City Circuit
   m_TagString: Untagged
@@ -1934,7 +2050,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.5673892, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.21703795, b: 0, a: 1}
@@ -2022,6 +2138,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   circuitID: Green City
+--- !u!95 &696142341
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 696142335}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bfea9ab2a9b54e743900219d1c62153f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &697449733
 GameObject:
   m_ObjectHideFlags: 0
@@ -2102,7 +2240,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278241535
+    rgba: 4294967295
   m_fontColor: {r: 1, g: 0.7858428, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -2547,6 +2685,7 @@ GameObject:
   - component: {fileID: 845525131}
   - component: {fileID: 845525130}
   - component: {fileID: 845525129}
+  - component: {fileID: 845525132}
   m_Layer: 5
   m_Name: Other Planets
   m_TagString: Untagged
@@ -2594,7 +2733,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.5673892, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.21703795, b: 0, a: 1}
@@ -2669,6 +2808,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 845525127}
   m_CullTransparentMesh: 1
+--- !u!95 &845525132
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 845525127}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bfea9ab2a9b54e743900219d1c62153f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &846890123
 GameObject:
   m_ObjectHideFlags: 0
@@ -2682,6 +2843,7 @@ GameObject:
   - component: {fileID: 846890126}
   - component: {fileID: 846890125}
   - component: {fileID: 846890128}
+  - component: {fileID: 846890129}
   m_Layer: 5
   m_Name: Jungle
   m_TagString: Untagged
@@ -2728,7 +2890,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.5673892, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.21703795, b: 0, a: 1}
@@ -2816,6 +2978,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   circuitID: Green City
+--- !u!95 &846890129
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 846890123}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d1ee7d6522efac84cb5e5a30a800121d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &872203713
 GameObject:
   m_ObjectHideFlags: 0
@@ -2828,6 +3012,7 @@ GameObject:
   - component: {fileID: 872203717}
   - component: {fileID: 872203716}
   - component: {fileID: 872203715}
+  - component: {fileID: 872203718}
   m_Layer: 5
   m_Name: Tooine Circuits
   m_TagString: Untagged
@@ -2875,7 +3060,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.5673892, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.21703795, b: 0, a: 1}
@@ -2950,6 +3135,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 872203713}
   m_CullTransparentMesh: 1
+--- !u!95 &872203718
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 872203713}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bfea9ab2a9b54e743900219d1c62153f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &897155206
 GameObject:
   m_ObjectHideFlags: 0
@@ -3099,6 +3306,7 @@ GameObject:
   - component: {fileID: 902210888}
   - component: {fileID: 902210887}
   - component: {fileID: 902210890}
+  - component: {fileID: 902210891}
   m_Layer: 5
   m_Name: Desert Circuit
   m_TagString: Untagged
@@ -3145,7 +3353,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.5673892, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.21703795, b: 0, a: 1}
@@ -3233,6 +3441,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   circuitID: Green City
+--- !u!95 &902210891
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 902210885}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bfea9ab2a9b54e743900219d1c62153f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &937533214
 GameObject:
   m_ObjectHideFlags: 0
@@ -3245,6 +3475,7 @@ GameObject:
   - component: {fileID: 937533218}
   - component: {fileID: 937533217}
   - component: {fileID: 937533216}
+  - component: {fileID: 937533219}
   m_Layer: 5
   m_Name: Jungle
   m_TagString: Untagged
@@ -3291,7 +3522,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.5673892, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.21703795, b: 0, a: 1}
@@ -3366,6 +3597,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 937533214}
   m_CullTransparentMesh: 1
+--- !u!95 &937533219
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 937533214}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d1ee7d6522efac84cb5e5a30a800121d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &943662883
 GameObject:
   m_ObjectHideFlags: 0
@@ -3626,6 +3879,7 @@ GameObject:
   - component: {fileID: 1018301480}
   - component: {fileID: 1018301479}
   - component: {fileID: 1018301482}
+  - component: {fileID: 1018301483}
   m_Layer: 5
   m_Name: Ocean Valley
   m_TagString: Untagged
@@ -3672,7 +3926,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.5673892, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.21703795, b: 0, a: 1}
@@ -3760,6 +4014,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   circuitID: Ocean Circuit
+--- !u!95 &1018301483
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1018301477}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bfea9ab2a9b54e743900219d1c62153f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1025275575
 GameObject:
   m_ObjectHideFlags: 0
@@ -4061,6 +4337,7 @@ GameObject:
   - component: {fileID: 1077014063}
   - component: {fileID: 1077014062}
   - component: {fileID: 1077014065}
+  - component: {fileID: 1077014066}
   m_Layer: 5
   m_Name: Jungle
   m_TagString: Untagged
@@ -4107,7 +4384,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.5673892, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.21703795, b: 0, a: 1}
@@ -4195,6 +4472,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   circuitID: Cave Circuit
+--- !u!95 &1077014066
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1077014060}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bfea9ab2a9b54e743900219d1c62153f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1111619461
 GameObject:
   m_ObjectHideFlags: 0
@@ -4709,7 +5008,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1291353042
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4784,6 +5083,7 @@ GameObject:
   - component: {fileID: 1372379297}
   - component: {fileID: 1372379296}
   - component: {fileID: 1372379299}
+  - component: {fileID: 1372379300}
   m_Layer: 5
   m_Name: Desert Circuit
   m_TagString: Untagged
@@ -4830,7 +5130,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.5673892, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.21703795, b: 0, a: 1}
@@ -4918,6 +5218,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   circuitID: Green City
+--- !u!95 &1372379300
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1372379294}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d1ee7d6522efac84cb5e5a30a800121d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1428046935
 GameObject:
   m_ObjectHideFlags: 0
@@ -5067,6 +5389,7 @@ GameObject:
   - component: {fileID: 1506000958}
   - component: {fileID: 1506000957}
   - component: {fileID: 1506000960}
+  - component: {fileID: 1506000961}
   m_Layer: 5
   m_Name: Ocean Valley
   m_TagString: Untagged
@@ -5113,7 +5436,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.5673892, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.21703795, b: 0, a: 1}
@@ -5201,6 +5524,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   circuitID: Green City
+--- !u!95 &1506000961
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1506000955}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d1ee7d6522efac84cb5e5a30a800121d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1512914294
 GameObject:
   m_ObjectHideFlags: 0
@@ -5213,6 +5558,7 @@ GameObject:
   - component: {fileID: 1512914298}
   - component: {fileID: 1512914297}
   - component: {fileID: 1512914296}
+  - component: {fileID: 1512914299}
   m_Layer: 5
   m_Name: Ocean Valley
   m_TagString: Untagged
@@ -5259,7 +5605,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.5673892, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.21703795, b: 0, a: 1}
@@ -5334,6 +5680,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1512914294}
   m_CullTransparentMesh: 1
+--- !u!95 &1512914299
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1512914294}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d1ee7d6522efac84cb5e5a30a800121d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1538543410
 GameObject:
   m_ObjectHideFlags: 0
@@ -5707,6 +6075,7 @@ GameObject:
   - component: {fileID: 1617199536}
   - component: {fileID: 1617199535}
   - component: {fileID: 1617199534}
+  - component: {fileID: 1617199537}
   m_Layer: 5
   m_Name: Other Planets
   m_TagString: Untagged
@@ -5754,7 +6123,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.5673892, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.21703795, b: 0, a: 1}
@@ -5829,6 +6198,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1617199532}
   m_CullTransparentMesh: 1
+--- !u!95 &1617199537
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1617199532}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bfea9ab2a9b54e743900219d1c62153f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1628391206
 GameObject:
   m_ObjectHideFlags: 0
@@ -6287,6 +6678,7 @@ GameObject:
   - component: {fileID: 1725141019}
   - component: {fileID: 1725141018}
   - component: {fileID: 1725141017}
+  - component: {fileID: 1725141020}
   m_Layer: 5
   m_Name: Jungle
   m_TagString: Untagged
@@ -6333,7 +6725,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.5673892, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.21703795, b: 0, a: 1}
@@ -6408,6 +6800,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1725141015}
   m_CullTransparentMesh: 1
+--- !u!95 &1725141020
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1725141015}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d1ee7d6522efac84cb5e5a30a800121d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1766051202
 GameObject:
   m_ObjectHideFlags: 0
@@ -6866,6 +7280,7 @@ GameObject:
   - component: {fileID: 1898665290}
   - component: {fileID: 1898665289}
   - component: {fileID: 1898665288}
+  - component: {fileID: 1898665291}
   m_Layer: 5
   m_Name: City Circuit
   m_TagString: Untagged
@@ -6912,7 +7327,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.5673892, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.21703795, b: 0, a: 1}
@@ -6987,6 +7402,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1898665286}
   m_CullTransparentMesh: 1
+--- !u!95 &1898665291
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898665286}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d1ee7d6522efac84cb5e5a30a800121d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1903361731
 GameObject:
   m_ObjectHideFlags: 0
@@ -7000,6 +7437,7 @@ GameObject:
   - component: {fileID: 1903361734}
   - component: {fileID: 1903361733}
   - component: {fileID: 1903361736}
+  - component: {fileID: 1903361737}
   m_Layer: 5
   m_Name: City Circuit
   m_TagString: Untagged
@@ -7046,7 +7484,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.5673892, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.21703795, b: 0, a: 1}
@@ -7134,6 +7572,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   circuitID: Green City
+--- !u!95 &1903361737
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1903361731}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d1ee7d6522efac84cb5e5a30a800121d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1917022510
 GameObject:
   m_ObjectHideFlags: 0
@@ -8381,6 +8841,7 @@ GameObject:
   - component: {fileID: 2135507164}
   - component: {fileID: 2135507163}
   - component: {fileID: 2135507162}
+  - component: {fileID: 2135507165}
   m_Layer: 5
   m_Name: City Circuit
   m_TagString: Untagged
@@ -8427,7 +8888,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 1, g: 0.5673892, b: 0, a: 1}
     m_HighlightedColor: {r: 1, g: 0.21703795, b: 0, a: 1}
@@ -8502,6 +8963,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2135507160}
   m_CullTransparentMesh: 1
+--- !u!95 &2135507165
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2135507160}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d1ee7d6522efac84cb5e5a30a800121d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
