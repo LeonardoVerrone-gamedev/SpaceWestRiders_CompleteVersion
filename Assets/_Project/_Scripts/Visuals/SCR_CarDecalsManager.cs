@@ -45,6 +45,7 @@ public class SCR_CarDecalsManager : MonoBehaviour
     {
         if(GetComponent<RacerStatus>().isPlayer== false)return;
        inDecalSelection = true; 
+       EndSelection();
        Debug.Log($"{transform.gameObject} na seleção de decal");
     }
 
