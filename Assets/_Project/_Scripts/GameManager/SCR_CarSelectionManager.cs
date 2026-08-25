@@ -335,6 +335,8 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
         if(!_isStoryMode)
             SCR_PersistentData.Instance.isSequenceRace = true;
+
+        CarSelectionManagerScript.Instance.ShowSelectionHud(true, false);
     }
 
     private void StartRaceWithJoinWindow()
@@ -343,6 +345,8 @@ public class SCR_TrackSelectionManager : MonoBehaviour
             return;
         
         _inSelectionMode = true;
+
+        CarSelectionManagerScript.Instance.ShowP2JoinInstruction();
 
         BuildCarsDictionary();
 
@@ -457,6 +461,17 @@ public class SCR_TrackSelectionManager : MonoBehaviour
         SCR_PersistentData.Instance.players.Add(newPlayer);
         _playerJoinTimes[newIndex] = Time.time;
 
+        // === ATUALIZA HUD PARA MULTIPLAYER ===
+        // === ATUALIZA HUD DA SELEÇÃO ===
+        if (SCR_PersistentData.Instance.players.Count == 1)
+        {
+            CarSelectionManagerScript.Instance.ShowSelectionHud(true, false);
+        }
+        else if (SCR_PersistentData.Instance.players.Count >= 2)
+        {
+            CarSelectionManagerScript.Instance.ShowSelectionHud(true, true);
+        }
+
         BuildCarsDictionary();
 
         GameObject camObj = Instantiate(cameraPrefab);
@@ -564,6 +579,20 @@ public class SCR_TrackSelectionManager : MonoBehaviour
             else
             {
                 isValid = true;
+
+                // === ANIMAÇÃO DA SETA ===
+                bool isSingleplayer =
+                    SCR_PersistentData.Instance.players.Count == 1;
+
+                bool isP1 = p.playerIndex == 0;
+
+                bool isRight = direction > 0;
+
+                CarSelectionManagerScript.Instance.OnSideSelectionPressed(
+                    isSingleplayer,
+                    isP1,
+                    isRight
+                );
             }
         }
 
@@ -594,6 +623,15 @@ public class SCR_TrackSelectionManager : MonoBehaviour
     private void ConfirmSelection(PlayerSessionData p)
     {
         p.hasConfirmed = true;
+
+        CarSelectionManagerScript.Instance.HidePlayerSelectionHud(p.playerIndex == 1);
+
+        if (SCR_PersistentData.Instance.players.Count == 1 &&
+        p.playerIndex == 0)
+        {
+            CarSelectionManagerScript.Instance.Show3SecondsCountdown();
+        }
+
         CheckAllReady();
     }
 
@@ -642,6 +680,8 @@ public class SCR_TrackSelectionManager : MonoBehaviour
     private void FinalizeSetupAndStartRace()
     {
         _inSelectionMode = false;
+
+        CarSelectionManagerScript.Instance.ShowSelectionHud(false, false);
 
         BuildCarsDictionary();
 
