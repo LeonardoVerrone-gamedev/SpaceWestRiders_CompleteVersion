@@ -904,22 +904,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 256572424}
     m_Modifications:
-    - target: {fileID: 31636419831932043, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 161033219, guid: d2e6246d4ced0dc468fbb82cc8710269, type: 3}
-    - target: {fileID: 1347034708259184634, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
-      propertyPath: maxStartSize
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1347034708259184634, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
-      propertyPath: minStartSize
-      value: 0.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 2380337928829520196, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: -367407934, guid: d2e6246d4ced0dc468fbb82cc8710269, type: 3}
     - target: {fileID: 2912654939174078175, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
       propertyPath: m_LocalPosition.x
       value: -163.37
@@ -960,57 +944,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 2.815
       objectReference: {fileID: 0}
+    - target: {fileID: 2947374379444582962, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
+      propertyPath: nitroAmountCount
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 3618951823427800580, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
       propertyPath: m_Name
       value: Twink
-      objectReference: {fileID: 0}
-    - target: {fileID: 3636550144646000169, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7241933172296856773, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 626.59
-      objectReference: {fileID: 0}
-    - target: {fileID: 7241933172296856773, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 120.064
-      objectReference: {fileID: 0}
-    - target: {fileID: 7241933172296856773, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.000000013958
-      objectReference: {fileID: 0}
-    - target: {fileID: 7241933172296856773, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -347.64
-      objectReference: {fileID: 0}
-    - target: {fileID: 7241933172296856773, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 108
-      objectReference: {fileID: 0}
-    - target: {fileID: 8521565861903719409, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 330.561
-      objectReference: {fileID: 0}
-    - target: {fileID: 8521565861903719409, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 330.561
-      objectReference: {fileID: 0}
-    - target: {fileID: 8521565861903719409, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.00000037231
-      objectReference: {fileID: 0}
-    - target: {fileID: 8521565861903719409, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -329.19
-      objectReference: {fileID: 0}
-    - target: {fileID: 8521565861903719409, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 333.31
-      objectReference: {fileID: 0}
-    - target: {fileID: 8578503990521325442, guid: 9d51124dc36cc9944bada0b119d25def, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8283,21 +8223,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: J. Cross
       objectReference: {fileID: 0}
-    - target: {fileID: 5836554516649933170, guid: f1dc6c4175455af45854d4c12d08373a, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6263563368783230655, guid: f1dc6c4175455af45854d4c12d08373a, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6504930036104927277, guid: f1dc6c4175455af45854d4c12d08373a, type: 3}
-      propertyPath: maxStartSize
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6504930036104927277, guid: f1dc6c4175455af45854d4c12d08373a, type: 3}
-      propertyPath: minStartSize
-      value: 0.75
+    - target: {fileID: 7297714812865986092, guid: f1dc6c4175455af45854d4c12d08373a, type: 3}
+      propertyPath: nitroAmountCount
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8686,21 +8614,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 256572424}
     m_Modifications:
-    - target: {fileID: 1741256679721508340, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
-      propertyPath: maxStartSize
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1741256679721508340, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
-      propertyPath: minStartSize
-      value: 0.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 3038349762562316104, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4410213833932022013, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
-      propertyPath: m_IsActive
-      value: 0
+    - target: {fileID: 4742494786979100548, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
+      propertyPath: nitroAmountCount
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5902696011742139115, guid: 9eb1eecf73050ef478f0deb090acd17e, type: 3}
       propertyPath: m_Name
@@ -9189,21 +9105,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Danny Tongue
       objectReference: {fileID: 0}
-    - target: {fileID: 3863820107524747016, guid: 4748fb71545a6784a9601a0e1fccc303, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5314641501953556236, guid: 4748fb71545a6784a9601a0e1fccc303, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7675861339435167368, guid: 4748fb71545a6784a9601a0e1fccc303, type: 3}
-      propertyPath: maxStartSize
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7675861339435167368, guid: 4748fb71545a6784a9601a0e1fccc303, type: 3}
-      propertyPath: minStartSize
-      value: 0.75
+    - target: {fileID: 3920313557546781879, guid: 4748fb71545a6784a9601a0e1fccc303, type: 3}
+      propertyPath: nitroAmountCount
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8819039255336965610, guid: 4748fb71545a6784a9601a0e1fccc303, type: 3}
       propertyPath: m_LocalPosition.x
@@ -23340,25 +23244,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 256572424}
     m_Modifications:
-    - target: {fileID: 2824034334214197133, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187116834261055985, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
-      propertyPath: maxStartSize
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3187116834261055985, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
-      propertyPath: minStartSize
-      value: 0.75
-      objectReference: {fileID: 0}
     - target: {fileID: 3820662635277455633, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
       propertyPath: m_Name
       value: Billy SIn
       objectReference: {fileID: 0}
-    - target: {fileID: 4815692821873721161, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
-      propertyPath: m_IsActive
-      value: 0
+    - target: {fileID: 5547816023780333362, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
+      propertyPath: nitroAmountCount
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7233265701248866632, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
       propertyPath: m_LocalPosition.x
@@ -35024,22 +34916,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 256572424}
     m_Modifications:
-    - target: {fileID: 1284793729159900727, guid: 115ac48cc40664c43a57fb25ae5d42b9, type: 3}
-      propertyPath: maxStartSize
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1284793729159900727, guid: 115ac48cc40664c43a57fb25ae5d42b9, type: 3}
-      propertyPath: minStartSize
-      value: 0.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 1385321779526663127, guid: 115ac48cc40664c43a57fb25ae5d42b9, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1985667271803089424, guid: 115ac48cc40664c43a57fb25ae5d42b9, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4140969641842061673, guid: 115ac48cc40664c43a57fb25ae5d42b9, type: 3}
       propertyPath: m_Name
       value: "Z\xE4h"
@@ -35083,6 +34959,10 @@ PrefabInstance:
     - target: {fileID: 7984253986020085038, guid: 115ac48cc40664c43a57fb25ae5d42b9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0.499
+      objectReference: {fileID: 0}
+    - target: {fileID: 8466308431684277156, guid: 115ac48cc40664c43a57fb25ae5d42b9, type: 3}
+      propertyPath: nitroAmountCount
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -39746,21 +39626,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 256572424}
     m_Modifications:
-    - target: {fileID: 2760516295451734716, guid: 1857e67441c6d5d44a67d4a1c4291728, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5243632688277877611, guid: 1857e67441c6d5d44a67d4a1c4291728, type: 3}
-      propertyPath: maxStartSize
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5243632688277877611, guid: 1857e67441c6d5d44a67d4a1c4291728, type: 3}
-      propertyPath: minStartSize
-      value: 0.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 7075856800761772731, guid: 1857e67441c6d5d44a67d4a1c4291728, type: 3}
-      propertyPath: m_IsActive
-      value: 0
+    - target: {fileID: 2025748887589253324, guid: 1857e67441c6d5d44a67d4a1c4291728, type: 3}
+      propertyPath: nitroAmountCount
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8811395454165776735, guid: 1857e67441c6d5d44a67d4a1c4291728, type: 3}
       propertyPath: m_LocalPosition.x
@@ -42793,21 +42661,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 256572424}
     m_Modifications:
-    - target: {fileID: 1496710959040859490, guid: 01a35cfe2313f04489f8cb8da921b694, type: 3}
-      propertyPath: maxStartSize
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1496710959040859490, guid: 01a35cfe2313f04489f8cb8da921b694, type: 3}
-      propertyPath: minStartSize
-      value: 0.75
-      objectReference: {fileID: 0}
     - target: {fileID: 4660778744560911697, guid: 01a35cfe2313f04489f8cb8da921b694, type: 3}
       propertyPath: m_Name
       value: XLR8
-      objectReference: {fileID: 0}
-    - target: {fileID: 5008046642723613961, guid: 01a35cfe2313f04489f8cb8da921b694, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5594183372401804619, guid: 01a35cfe2313f04489f8cb8da921b694, type: 3}
       propertyPath: m_LocalPosition.x
@@ -42849,9 +42705,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -0.785
       objectReference: {fileID: 0}
-    - target: {fileID: 6642527125570087498, guid: 01a35cfe2313f04489f8cb8da921b694, type: 3}
-      propertyPath: m_IsActive
-      value: 0
+    - target: {fileID: 6495025950511268184, guid: 01a35cfe2313f04489f8cb8da921b694, type: 3}
+      propertyPath: nitroAmountCount
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

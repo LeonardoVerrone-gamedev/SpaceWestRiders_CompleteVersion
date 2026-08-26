@@ -12,7 +12,6 @@ public class PlayerGameplayManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI bestLapTimeText;
     [SerializeField] TextMeshProUGUI currentLapTimeText;
     [SerializeField] TextMeshProUGUI speedKMH;
-    [SerializeField] TextMeshProUGUI nitroAmountCount;
     [SerializeField] public Canvas hudCanvas;
     [SerializeField] Image returnSymbol;
 
@@ -90,7 +89,7 @@ public class PlayerGameplayManager : MonoBehaviour
         UpdatePosition();
         UpdateLapTimes();
         UpdateNOSGauge();
-        UpdateNitroAmountText();
+        //UpdateNitroAmountText();
         UpdateWrongWay();
         UpdateProximityIndicators();
     }
@@ -133,12 +132,6 @@ public class PlayerGameplayManager : MonoBehaviour
         {
             NOSLightDisplay.SetInteger("NOS Amount", nos);
         }
-    }
-
-    void UpdateNitroAmountText()
-    {
-        int nos = carPhysics.GetNOSAmount();
-        nitroAmountCount.text = $"0{nos.ToString()} left";
     }
 
     void UpdateSpeedKMH()

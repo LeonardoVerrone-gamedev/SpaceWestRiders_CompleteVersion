@@ -335,8 +335,6 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
         if(!_isStoryMode)
             SCR_PersistentData.Instance.isSequenceRace = true;
-
-        CarSelectionManagerScript.Instance.ShowSelectionHud(true, false);
     }
 
     private void StartRaceWithJoinWindow()
@@ -403,6 +401,11 @@ public class SCR_TrackSelectionManager : MonoBehaviour
         }
 
         int newIndex = SCR_PersistentData.Instance.players.Count;
+
+        if(newIndex == 0)
+        {
+            CarSelectionManagerScript.Instance.ShowSelectionHud(true, false);
+        }
 
         PlayerSessionData newPlayer = new PlayerSessionData
         {
