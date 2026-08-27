@@ -97533,7 +97533,6 @@ MonoBehaviour:
   bestLapTimeText: {fileID: 4080307243505659130}
   currentLapTimeText: {fileID: 1651035498701616864}
   speedKMH: {fileID: 2583141244272453438}
-  nitroAmountCount: {fileID: 0}
   hudCanvas: {fileID: 260573575018683551}
   returnSymbol: {fileID: 6816636864698898260}
   useNeedle: 0
@@ -142699,7 +142698,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8559179572046660982}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.000020535193}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -142707,8 +142706,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -42.343, y: -148.699}
-  m_SizeDelta: {x: 297.368, y: 297.376}
+  m_AnchoredPosition: {x: 13.99999, y: -139.99979}
+  m_SizeDelta: {x: 640.048, y: 281.703}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4367753375215351517
 CanvasRenderer:
@@ -142738,7 +142737,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2d96b7e6d32a88449adaa60a4fb7a36a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6b915d879ce9af3479d8bdf46a00aac6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

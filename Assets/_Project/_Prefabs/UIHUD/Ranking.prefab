@@ -793,7 +793,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &4808910049928000609
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1615,7 +1615,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 67.96962, y: -3.5612793}
+  m_AnchoredPosition: {x: 48, y: 0.00048804}
   m_SizeDelta: {x: 631.16, y: 504.494}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9200158027924529618
@@ -1646,21 +1646,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '1
-
-    2
-
-    3
-
-    4
-
-    5
-
-    6
-
-    7
-
-    8'
+  m_text: "<line-height=26,1px><pos=23,6>1<pos=99,4>Danny Tongue<pos=443,8>12300\r\n<pos=23,6>2<pos=99,4>Viper
+    <color=yellow>(YOU)</color><pos=443,8>9500\r\n<pos=23,6>3<pos=99,4>J. Cross<pos=443,8>8100\r\n<pos=23,6>4<pos=99,4>Capitain
+    Bee<pos=443,8>6400\r\n<pos=23,6>5<pos=99,4>T'wink<pos=443,8>5000\r\n<pos=23,6>6<pos=99,4>Viper<pos=443,8>3200\r\n<pos=23,6>7<pos=99,4>Billy
+    Sin<pos=443,8>1800\r\n<pos=23,6>8<pos=99,4>Z\xE4h<pos=443,8>0500\r\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3a9d94a68d6798042805ec3b77295cc8, type: 2}
   m_sharedMaterial: {fileID: 6043882306353293368, guid: 3a9d94a68d6798042805ec3b77295cc8, type: 2}
@@ -3168,3 +3157,8 @@ MonoBehaviour:
   backToTitleFullButton: {fileID: 2126541212967030210}
   continueFullTournamentButton: {fileID: 8629898027606169446}
   continueToNextRaceLabel: {fileID: 0}
+  posColumnX: 23.6
+  nameColumnX: 99.4
+  pointsColumnX: 443.8
+  customLineHeight: 26.1
+  totalGridRows: 8

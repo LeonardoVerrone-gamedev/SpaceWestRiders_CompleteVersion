@@ -104,6 +104,13 @@ public class RankingUI : MonoBehaviour
             continueFullTournamentButton.gameObject.SetActive(isFull);
     }
 
+    [Header("Grid Layout Settings")]
+    [SerializeField] private float posColumnX = 30f;      // Posição X da 1ª coluna (Posição: 1, 2, 3...)
+    [SerializeField] private float nameColumnX = 140f;    // Posição X da 2ª coluna (Nome do piloto)
+    [SerializeField] private float pointsColumnX = 380f;  // Posição X da 3ª coluna (Pontuação)
+    [SerializeField] private float customLineHeight = 32f; // Altura em pixels de cada linha da tabela
+    [SerializeField] private int totalGridRows = 8;        // Quantidade fixa de linhas da tabela UI
+
     public void Open(List<RaceResultData> results)
     {
         currentResults = results;
@@ -123,12 +130,26 @@ public class RankingUI : MonoBehaviour
         }
 
         StringBuilder sb = new StringBuilder();
-       // sb.AppendLine("<b>RANKING</b>\n");
 
-        foreach (var r in results)
+        // Aplica a altura fixa de linha para casar com a grade
+        sb.Append($"<line-height={customLineHeight}px>");
+
+        for (int i = 0; i < totalGridRows; i++)
         {
-            string playerTag = r.isPlayer ? " <color=yellow>(PLAYER)</color>" : "";
-            sb.AppendLine($"{r.position}º  -  {r.racerName}{playerTag}  -  {Math.Round(r.points)} pts");
+            if (i < results.Count)
+            {
+                var r = results[i];
+                string playerTag = r.isPlayer ? " <color=yellow>(YOU)</color>" : "";
+                string pointsStr = Math.Round(r.points).ToString("0000"); // Formata com zeros à esquerda se desejar
+
+                // Posiciona cada elemento no eixo X exato da sua caixa na UI
+                sb.AppendLine($"<pos={posColumnX}>{r.position}<pos={nameColumnX}>{r.racerName}{playerTag}<pos={pointsColumnX}>{pointsStr}");
+            }
+            else
+            {
+                // Linhas vazias para manter o alinhamento da grade
+                sb.AppendLine($"<pos={posColumnX}>{i + 1}<pos={nameColumnX}>-<pos={pointsColumnX}>-");
+            }
         }
 
         rankText.text = sb.ToString();
@@ -219,5 +240,56 @@ public class RankingUI : MonoBehaviour
     {
         RankingManager.Instance.SaveAndQuitFullTournament();
 }
+
+#if UNITY_EDITOR
+[ContextMenu("Testar Layout no Inspector (Editor)")]
+public void TestLayoutInEditor()
+{
+    // Dados mockados com 8 pilotos, posições e pontuações variadas
+    List<RaceResultData> mockResults = new List<RaceResultData>
+    {
+        new RaceResultData { position = 1, racerName = "Danny Tongue", points = 12300, isPlayer = false },
+        new RaceResultData { position = 2, racerName = "Viper",         points = 9500,  isPlayer = true  },
+        new RaceResultData { position = 3, racerName = "J. Cross",      points = 8100,  isPlayer = false },
+        new RaceResultData { position = 4, racerName = "Capitain Bee",  points = 6400,  isPlayer = false },
+        new RaceResultData { position = 5, racerName = "T'wink",   points = 5000,  isPlayer = false },
+        new RaceResultData { position = 6, racerName = "Viper",         points = 3200,  isPlayer = false },
+        new RaceResultData { position = 7, racerName = "Billy Sin",         points = 1800,  isPlayer = false },
+        new RaceResultData { position = 8, racerName = "Zäh",        points = 500,   isPlayer = false }
+    };
+
+    // Monta a string formatada usando as configurações de coluna e altura de linha
+    System.Text.StringBuilder sb = new System.Text.StringBuilder();
+    sb.Append($"<line-height={customLineHeight}px>");
+
+    for (int i = 0; i < totalGridRows; i++)
+    {
+        if (i < mockResults.Count)
+        {
+            var r = mockResults[i];
+            string playerTag = r.isPlayer ? " <color=yellow>(YOU)</color>" : "";
+            string pointsStr = System.Math.Round(r.points).ToString("0000");
+
+            sb.AppendLine($"<pos={posColumnX}>{r.position}<pos={nameColumnX}>{r.racerName}{playerTag}<pos={pointsColumnX}>{pointsStr}");
+        }
+    }
+
+    if (rankText != null)
+    {
+        rankText.text = sb.ToString();
+        // Força a atualização do canvas na Scene/Game View fora do Play Mode
+        UnityEditor.EditorUtility.SetDirty(rankText);
+    }
+}
+
+// Atualiza o texto automaticamente no Editor sempre que você alterar um valor no Inspector
+private void OnValidate()
+{
+    if (!Application.isPlaying && rankText != null)
+    {
+        TestLayoutInEditor();
+    }
+}
+#endif
 
 }

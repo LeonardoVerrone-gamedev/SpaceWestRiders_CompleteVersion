@@ -40501,7 +40501,6 @@ MonoBehaviour:
   bestLapTimeText: {fileID: 1260843433802608893}
   currentLapTimeText: {fileID: 1348621329458058115}
   speedKMH: {fileID: 1661048111532740787}
-  nitroAmountCount: {fileID: 0}
   hudCanvas: {fileID: 6623301828813161798}
   returnSymbol: {fileID: 2669809606730590407}
   useNeedle: 0
@@ -216781,7 +216780,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9169192535953965363}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.000023061984}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -216789,8 +216788,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -42.343, y: -148.699}
-  m_SizeDelta: {x: 297.368, y: 297.376}
+  m_AnchoredPosition: {x: 13.99999, y: -139.99875}
+  m_SizeDelta: {x: 640.048, y: 281.703}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8710524867896556673
 CanvasRenderer:
@@ -216813,14 +216812,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.9882353, g: 1, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2d96b7e6d32a88449adaa60a4fb7a36a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6b915d879ce9af3479d8bdf46a00aac6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

@@ -227,32 +227,42 @@ public class RacerStatus : MonoBehaviour
         int prevIdx = (currentIdx - 1 + waypoints.Count) % waypoints.Count;
         int nextIdx = (currentIdx + 1) % waypoints.Count;
         
-        // Calcula direção da pista usando média ponderada baseada na posição do jogador
+        // Calcula direção da pista no segmento atual
         Vector3 toPrev = (waypoints[currentIdx].position - waypoints[prevIdx].position).normalized;
         Vector3 toNext = (waypoints[nextIdx].position - waypoints[currentIdx].position).normalized;
         
-        // Descobre em qual parte do segmento o jogador está
         float distToCurrent = Vector3.Distance(transform.position, waypoints[currentIdx].position);
         float segmentLength = Vector3.Distance(waypoints[currentIdx].position, waypoints[nextIdx].position);
         float progress = Mathf.Clamp01(distToCurrent / segmentLength);
         
-        // Interpola entre a direção do segmento anterior e próximo
         Vector3 trackDir = Vector3.Lerp(toPrev, toNext, progress).normalized;
-        
-        // Direção do jogador
+        trackDir.y = 0; // Garante cálculo num plano 2D horizontal
+
+        // 1. Direção do movimento (vetor velocidade)
         Vector3 velocityDir = rb.linearVelocity.normalized;
         velocityDir.y = 0;
         
-        // Produto escalar
-        float dot = Vector3.Dot(velocityDir, trackDir);
+        // 2. Direção para onde o carro está apontado (vetor forward)
+        Vector3 carFacingDir = transform.forward;
+        carFacingDir.y = 0;
+        carFacingDir.Normalize();
         
-        // Lógica do timer
-        if (dot < -0.2f)
+        // Produtos escalares contra a direção da pista
+        float velocityDot = Vector3.Dot(velocityDir, trackDir);
+        float facingDot = Vector3.Dot(carFacingDir, trackDir);
+
+        // O carro está em contramão REAL apenas se estiver se movendo para trás E virado para trás.
+        // Se estiver virado para a frente (facingDot > 0), não é contramão mesmo deslizando em drift.
+        bool isMovingWrongWay = velocityDot < -0.2f;
+        bool isFacingWrongWay = facingDot < 0f;
+
+        if (isMovingWrongWay && isFacingWrongWay)
         {
             wrongWayTimer += Time.deltaTime;
         }
         else
         {
+            // Recuperação rápida quando o jogador corrige a rotação
             wrongWayTimer = Mathf.Max(0, wrongWayTimer - Time.deltaTime * 2f);
         }
         
