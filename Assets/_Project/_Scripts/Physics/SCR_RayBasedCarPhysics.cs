@@ -594,7 +594,30 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         }
         float accelerationSteerBoost = 1f + (_currentThrottleInput * 0.3f);
         float speedFactor = turningCurve.Evaluate(Mathf.Abs(carVelocityRatio));
-        if (Mathf.Abs(steerInput) < 0.1f && isGrounded && !_isDrifting)
+
+        float damage01 = GetDamage01();
+
+        // Converte o dano em intensidade de instabilidade.
+        //
+        // 0–20%  = praticamente normal
+        // 20–100% = instabilidade progressiva
+        float damageInstability =
+            Mathf.InverseLerp(0.20f, 1f, damage01);
+
+        damageInstability =
+            Mathf.SmoothStep(0f, 1f, damageInstability);
+
+        // Wobble proporcional ao dano.
+        float damageWobble =
+            GetDamageSteeringWobble(damageInstability);
+
+        // Aplica o wobble na direção do jogador.
+        float unstableSteerInput =
+            steerInput + damageWobble;
+
+        unstableSteerInput = Mathf.Clamp(unstableSteerInput, -1f, 1f);
+
+        if (Mathf.Abs(unstableSteerInput) < 0.1f && isGrounded && !_isDrifting)
         {
             Vector3 localAngularVel = transform.InverseTransformDirection(rb.angularVelocity);
             localAngularVel.y *= 0.9f;
@@ -602,24 +625,93 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         }
         Vector3 turnAxis = cachedSurfaceNormal;
         if(carType == CarType.classic && !_isDrifting)
-            rb.AddTorque(turnAxis * steerPower * steerInput * speedFactor * accelerationSteerBoost, ForceMode.VelocityChange);
+            rb.AddTorque(turnAxis * steerPower * unstableSteerInput * speedFactor * accelerationSteerBoost, ForceMode.VelocityChange);
         else
-            rb.AddTorque(turnAxis * steerPower * steerInput * speedFactor * accelerationSteerBoost, ForceMode.Acceleration);
+            rb.AddTorque(turnAxis * steerPower * unstableSteerInput * speedFactor * accelerationSteerBoost, ForceMode.Acceleration);
+    }
+
+    [Header("Damage Instability")]
+    [SerializeField, Range(0f, 1f)]
+    private float maxDamageInstability = 1f;
+
+    [SerializeField]
+    private float damageWobbleFrequency = 3.5f;
+
+    [SerializeField]
+    private float damageWobbleStrength = 0.18f;
+
+    private float GetDamage01()
+    {
+        if (damageCar == null)
+            return 0f;
+
+        return damageCar.Damage01;
+    }
+
+    private float GetDamageSteeringWobble(float damageInstability)
+    {
+        if (damageInstability <= 0f)
+            return 0f;
+
+        float wobble =
+            Mathf.Sin(Time.time * damageWobbleFrequency)
+            * damageWobbleStrength;
+
+        return wobble * damageInstability * maxDamageInstability;
     }
 
     private void SidewaysDrag()
     {
-        Vector3 planarVelocity = Vector3.ProjectOnPlane(rb.linearVelocity, cachedSurfaceNormal);
-        Vector3 lateralDir = Vector3.Cross(cachedSurfaceNormal, transform.forward).normalized;
-        float lateralSpeed = Vector3.Dot(planarVelocity, lateralDir);
-        float dragForceAmount = -lateralSpeed * dragCoefficient;
-        Vector3 dragForce = lateralDir * dragForceAmount;
-        rb.AddForce(dragForce, ForceMode.Acceleration);
-        if (carType == CarType.classic && isGrounded && Mathf.Abs(_currentSteerInput) > 0.1f)
+        Vector3 planarVelocity =
+            Vector3.ProjectOnPlane(rb.linearVelocity, cachedSurfaceNormal);
+
+        Vector3 lateralDir =
+            Vector3.Cross(cachedSurfaceNormal, transform.forward).normalized;
+
+        float lateralSpeed =
+            Vector3.Dot(planarVelocity, lateralDir);
+
+        float damage01 = GetDamage01();
+
+        float damageInstability =
+            Mathf.InverseLerp(0.20f, 1f, damage01);
+
+        damageInstability =
+            Mathf.SmoothStep(0f, 1f, damageInstability);
+
+        float gripMultiplier =
+            Mathf.Lerp(1f, 0.45f, damageInstability);
+
+        float dragForceAmount =
+            -lateralSpeed *
+            dragCoefficient *
+            gripMultiplier;
+
+        Vector3 dragForce =
+            lateralDir * dragForceAmount;
+
+        rb.AddForce(
+            dragForce,
+            ForceMode.Acceleration
+        );
+
+        if (carType == CarType.classic &&
+            isGrounded &&
+            Mathf.Abs(_currentSteerInput) > 0.1f)
         {
-            float speedFactor = planarVelocity.magnitude / maxSpeed;
-            Vector3 gripForce = lateralDir * _currentSteerInput * speedFactor;
-            rb.AddForce(gripForce, ForceMode.Acceleration);
+            float speedFactor =
+                planarVelocity.magnitude / maxSpeed;
+
+            Vector3 gripForce =
+                lateralDir *
+                _currentSteerInput *
+                speedFactor *
+                gripMultiplier;
+
+            rb.AddForce(
+                gripForce,
+                ForceMode.Acceleration
+            );
         }
     }
     #endregion
@@ -1259,7 +1351,7 @@ private void ApplyClassicSuspension()
         float currentSpeed = rb.linearVelocity.magnitude;
         Vector3 dir = -collision.contacts[0].normal;
         bool isCrashableObject = ((1 << collision.gameObject.layer) & crashable) != 0;
-        if(damageCar != null) damageCar.ApplyDamage(0.05f);
+        if(damageCar != null) damageCar.ApplyDamage(0.025f);
 
         Vector3 collisionNormal = collision.contacts[0].normal;
         float speedMagnitude = collision.relativeVelocity.magnitude;

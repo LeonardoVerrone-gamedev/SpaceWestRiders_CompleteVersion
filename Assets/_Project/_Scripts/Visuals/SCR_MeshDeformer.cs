@@ -12,6 +12,10 @@ public class SCR_MeshDeformer : MonoBehaviour
         [HideInInspector] public Vector3[] modifiedVertices;
     }
 
+    [Header("Setup Automático")]
+    [Tooltip("Arraste aqui o objeto Pai que contém todas as malhas (filhos e netos). Se deixar vazio, usará este próprio objeto.")]
+    [SerializeField] private Transform meshParent;
+
     [SerializeField] private List<MeshData> carParts = new List<MeshData>();
 
     SCR_RayBasedCarPhysics carPhysics;
@@ -27,16 +31,43 @@ public class SCR_MeshDeformer : MonoBehaviour
         carPhysics = GetComponent<SCR_RayBasedCarPhysics>();
         damageCar = GetComponent<DamageCar>();
 
-        for (int i = 0; i < carParts.Count; i++)
+        // Se não arrastou nada no Inspector, assume o próprio GameObject do script como raiz
+        if (meshParent == null)
         {
-            var part = carParts[i];
-            if (part.filter == null) continue;
+            meshParent = transform;
+        }
 
-            part.mesh = part.filter.mesh;
-            part.originalVertices = part.mesh.vertices;
-            part.modifiedVertices = (Vector3[])part.originalVertices.Clone();
+        // Limpa a lista por precaução antes de popular recursivamente
+        carParts.Clear();
 
-            carParts[i] = part;
+        // Varre recursivamente a partir do objeto pai e inicializa os vértices
+        CollectMeshesRecursive(meshParent);
+    }
+
+    // Método recursivo que pega MeshFilters em todos os níveis de hierarquia abaixo do pai
+    private void CollectMeshesRecursive(Transform current)
+    {
+        if (current == null) return;
+
+        // Tenta pegar o MeshFilter no objeto atual
+        MeshFilter meshFilter = current.GetComponent<MeshFilter>();
+        if (meshFilter != null)
+        {
+            MeshData newPart = new MeshData();
+            newPart.filter = meshFilter;
+            
+            // Instancia/pega a mesh e inicializa os dados de vértices
+            newPart.mesh = meshFilter.mesh;
+            newPart.originalVertices = newPart.mesh.vertices;
+            newPart.modifiedVertices = (Vector3[])newPart.originalVertices.Clone();
+
+            carParts.Add(newPart);
+        }
+
+        // Percorre todos os filhos diretos e chama a função para cada um (recursão)
+        foreach (Transform child in current)
+        {
+            CollectMeshesRecursive(child);
         }
     }
 

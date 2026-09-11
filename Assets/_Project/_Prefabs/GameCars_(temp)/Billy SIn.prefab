@@ -75767,6 +75767,7 @@ MonoBehaviour:
   landSquashMultiplier: 0.015
   collisionSquashMultiplier: 0.025
   maxSquash: 0.25
+  maxDamageInstability: 0.7
 --- !u!114 &7730737362171069699
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78193,10 +78194,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171db711019ac8246816f1ec94a35e5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  meshParent: {fileID: 6689930466216859792}
   carParts: []
-  radius: 1
+  radius: 0.5
   deformationMultiplier: 0.02
-  maxDeformation: 0.8
+  maxDeformation: 0.3
 --- !u!114 &3304831637479829647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78280,6 +78282,7 @@ MonoBehaviour:
   fireParticles: []
   maxSmokeEmissionRate: 50
   maxFireEmissionRate: 30
+  maxInstability: 0.3
   carPhysics: {fileID: 0}
 --- !u!1 &4005503332884063163
 GameObject:

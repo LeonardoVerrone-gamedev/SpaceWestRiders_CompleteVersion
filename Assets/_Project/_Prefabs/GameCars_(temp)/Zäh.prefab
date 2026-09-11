@@ -84218,6 +84218,7 @@ MonoBehaviour:
   landSquashMultiplier: 0.015
   collisionSquashMultiplier: 0.025
   maxSquash: 0.25
+  maxDamageInstability: 0.7
 --- !u!114 &7148155403298662901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86652,34 +86653,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171db711019ac8246816f1ec94a35e5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  carParts:
-  - filter: {fileID: 7480176199400418884}
-    mesh: {fileID: 0}
-    originalVertices: []
-    modifiedVertices: []
-  - filter: {fileID: 1572247968973067056}
-    mesh: {fileID: 0}
-    originalVertices: []
-    modifiedVertices: []
-  - filter: {fileID: 8814212319386729971}
-    mesh: {fileID: 0}
-    originalVertices: []
-    modifiedVertices: []
-  - filter: {fileID: 7770265048941743497}
-    mesh: {fileID: 0}
-    originalVertices: []
-    modifiedVertices: []
-  - filter: {fileID: 9026909731995191794}
-    mesh: {fileID: 0}
-    originalVertices: []
-    modifiedVertices: []
-  - filter: {fileID: 7164996188425960808}
-    mesh: {fileID: 0}
-    originalVertices: []
-    modifiedVertices: []
+  meshParent: {fileID: 4076079585546381088}
+  carParts: []
   radius: 0.5
-  deformationMultiplier: 0.005
-  maxDeformation: 0.35
+  deformationMultiplier: 0.02
+  maxDeformation: 0.3
 --- !u!114 &6075512634488789539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86775,6 +86753,7 @@ MonoBehaviour:
   fireParticles: []
   maxSmokeEmissionRate: 50
   maxFireEmissionRate: 30
+  maxInstability: 0.3
   carPhysics: {fileID: 0}
 --- !u!1 &4142603008786392873
 GameObject:
@@ -225868,39 +225847,9 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 85143af2f0e10a044be858eaa6afffae, type: 3}
---- !u!33 &1572247968973067056 stripped
-MeshFilter:
-  m_CorrespondingSourceObject: {fileID: 4306142438199868902, guid: 85143af2f0e10a044be858eaa6afffae, type: 3}
-  m_PrefabInstance: {fileID: 3320211244310015702}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2997563316687489341 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 85143af2f0e10a044be858eaa6afffae, type: 3}
-  m_PrefabInstance: {fileID: 3320211244310015702}
-  m_PrefabAsset: {fileID: 0}
---- !u!33 &7164996188425960808 stripped
-MeshFilter:
-  m_CorrespondingSourceObject: {fileID: 5583597789577941950, guid: 85143af2f0e10a044be858eaa6afffae, type: 3}
-  m_PrefabInstance: {fileID: 3320211244310015702}
-  m_PrefabAsset: {fileID: 0}
---- !u!33 &7480176199400418884 stripped
-MeshFilter:
-  m_CorrespondingSourceObject: {fileID: 5322461007498231954, guid: 85143af2f0e10a044be858eaa6afffae, type: 3}
-  m_PrefabInstance: {fileID: 3320211244310015702}
-  m_PrefabAsset: {fileID: 0}
---- !u!33 &7770265048941743497 stripped
-MeshFilter:
-  m_CorrespondingSourceObject: {fileID: 5027781271642006367, guid: 85143af2f0e10a044be858eaa6afffae, type: 3}
-  m_PrefabInstance: {fileID: 3320211244310015702}
-  m_PrefabAsset: {fileID: 0}
---- !u!33 &8814212319386729971 stripped
-MeshFilter:
-  m_CorrespondingSourceObject: {fileID: -3152064616311172315, guid: 85143af2f0e10a044be858eaa6afffae, type: 3}
-  m_PrefabInstance: {fileID: 3320211244310015702}
-  m_PrefabAsset: {fileID: 0}
---- !u!33 &9026909731995191794 stripped
-MeshFilter:
-  m_CorrespondingSourceObject: {fileID: 6004921294373267236, guid: 85143af2f0e10a044be858eaa6afffae, type: 3}
   m_PrefabInstance: {fileID: 3320211244310015702}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4547401645214646475

@@ -7,6 +7,7 @@ public class DamageCar : MonoBehaviour
     [Range(-0.5f, 1f)]
     [SerializeField] private float currentDamage = -0.5f; // -0.5 = Totalmente Limpo, 1 = Destruído
     public float publicCurrentDamage => currentDamage;
+
     [SerializeField] private List<Renderer> carRenderers;
     [SerializeField] private string shaderDamagePropertyName = "_DamageAmount";
 
@@ -17,8 +18,13 @@ public class DamageCar : MonoBehaviour
     [Header("Configurações de Emissão Máxima")]
     [Tooltip("Multiplicador de emissão base para fumaça quando o dano estiver no máximo.")]
     [SerializeField] private float maxSmokeEmissionRate = 50f;
+
     [Tooltip("Multiplicador de emissão base para fogo quando o dano estiver no máximo.")]
     [SerializeField] private float maxFireEmissionRate = 30f;
+
+    [Header("Configurações de Instabilidade")]
+    [Tooltip("Aumento máximo da instabilidade quando o carro está destruído.")]
+    [SerializeField, Range(0f, 1f)] private float maxInstability = 0.30f;
 
     [Header("Referências Externas (Culling)")]
     [SerializeField] private SCR_RayBasedCarPhysics carPhysics;
@@ -33,14 +39,17 @@ public class DamageCar : MonoBehaviour
     {
         _propBlock = new MaterialPropertyBlock();
 
-        // Filtra e armazena apenas os sistemas válidos para evitar checagem nula no Update
+        // Filtra e armazena apenas os sistemas válidos
         foreach (var ps in smokeParticles)
         {
-            if (ps != null) _activeSmokeSystems.Add(ps);
+            if (ps != null)
+                _activeSmokeSystems.Add(ps);
         }
+
         foreach (var ps in fireParticles)
         {
-            if (ps != null) _activeFireSystems.Add(ps);
+            if (ps != null)
+                _activeFireSystems.Add(ps);
         }
 
         if (carPhysics == null)
@@ -65,9 +74,10 @@ public class DamageCar : MonoBehaviour
                     StopAllVisualEffects();
                     _wasVisualsEnabledLastFrame = false;
                 }
-                return; 
+
+                return;
             }
-            
+
             _wasVisualsEnabledLastFrame = true;
         }
 
@@ -79,10 +89,11 @@ public class DamageCar : MonoBehaviour
         // 1. Atualiza os Shaders via MaterialPropertyBlock
         if (carRenderers != null)
         {
-            foreach(Renderer carRenderer in carRenderers)
+            foreach (Renderer carRenderer in carRenderers)
             {
-                if (carRenderer == null) continue;
-                
+                if (carRenderer == null)
+                    continue;
+
                 carRenderer.GetPropertyBlock(_propBlock);
                 _propBlock.SetFloat(shaderDamagePropertyName, currentDamage);
                 carRenderer.SetPropertyBlock(_propBlock);
@@ -95,7 +106,6 @@ public class DamageCar : MonoBehaviour
 
         foreach (var ps in _activeSmokeSystems)
         {
-            // O truque do C#: Copia a struct para uma variável local, modifica, e joga de volta
             var emission = ps.emission;
             emission.rateOverTime = currentSmokeRate;
         }
@@ -118,12 +128,43 @@ public class DamageCar : MonoBehaviour
             var emission = ps.emission;
             emission.rateOverTime = 0f;
         }
+
         foreach (var ps in _activeFireSystems)
         {
             var emission = ps.emission;
             emission.rateOverTime = 0f;
         }
     }
+
+    #region Sistema de Instabilidade
+
+    /// <summary>
+    /// Retorna o dano normalizado de 0 a 1.
+    /// 0 = carro intacto
+    /// 1 = carro destruído
+    /// </summary>
+    public float Damage01
+    {
+        get
+        {
+            return Mathf.InverseLerp(-0.5f, 1f, currentDamage);
+        }
+    }
+
+    /// <summary>
+    /// Retorna a energia restante do carro.
+    /// 1 = energia cheia
+    /// 0 = sem energia
+    /// </summary>
+    public float Health01
+    {
+        get
+        {
+            return 1f - Damage01;
+        }
+    }
+
+    #endregion
 
     #region Métodos Públicos (Gatilhos)
 
