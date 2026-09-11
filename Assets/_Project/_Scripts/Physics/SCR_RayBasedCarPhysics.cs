@@ -1342,62 +1342,160 @@ private void ApplyClassicSuspension()
     #endregion
 
     #region Collision
-    void OnCollisionEnter(Collision collision)
+
+    private bool IsDestroyed()
     {
-        if (collision.gameObject == this.gameObject) return;
-        if (((1 << collision.gameObject.layer) & drivable) != 0) return;
-        float upDot = Vector3.Dot(cachedSurfaceNormal, Vector3.up);
-        float impactForce = collision.relativeVelocity.magnitude;
-        float currentSpeed = rb.linearVelocity.magnitude;
-        Vector3 dir = -collision.contacts[0].normal;
-        bool isCrashableObject = ((1 << collision.gameObject.layer) & crashable) != 0;
-        if(damageCar != null) damageCar.ApplyDamage(0.025f);
+        return damageCar != null && damageCar.Damage01 >= 1f;
+    }
 
-        Vector3 collisionNormal = collision.contacts[0].normal;
-        float speedMagnitude = collision.relativeVelocity.magnitude;
+    void OnCollisionEnter(Collision collision)
+{
+    if (collision.gameObject == this.gameObject) return;
+    if (((1 << collision.gameObject.layer) & drivable) != 0) return;
 
-        Vector3 forceDirection = -collisionNormal * speedMagnitude; 
+    float upDot = Vector3.Dot(cachedSurfaceNormal, Vector3.up);
+    float impactForce = collision.relativeVelocity.magnitude;
+    float currentSpeed = rb.linearVelocity.magnitude;
 
-        deformer.Deform(collision.contacts[0].point, forceDirection);
-        
-        if (enableCollisionShake && impactForce >= minForceToShake && Time.time >= lastCollisionShakeTime + shakeCooldown)
+    Vector3 dir = -collision.contacts[0].normal;
+
+    bool isCrashableObject =
+        ((1 << collision.gameObject.layer) & crashable) != 0;
+
+    // Aplica dano da colisão
+    if (damageCar != null)
+        damageCar.ApplyDamage(0.025f);
+
+    // Verifica se essa colisão destruiu o carro
+    bool isDestroyed = IsDestroyed();
+
+    Vector3 collisionNormal = collision.contacts[0].normal;
+    float speedMagnitude = collision.relativeVelocity.magnitude;
+
+    Vector3 forceDirection =
+        -collisionNormal * speedMagnitude;
+
+    deformer.Deform(
+        collision.contacts[0].point,
+        forceDirection
+    );
+
+    // =========================================================
+    // COLLISION SHAKE
+    // =========================================================
+
+    if (enableCollisionShake &&
+        impactForce >= minForceToShake &&
+        Time.time >= lastCollisionShakeTime + shakeCooldown)
+    {
+        float finalForce =
+            Mathf.Clamp01(impactForce / 20f) * shakeIntensity;
+
+        OnCollision?.Invoke(finalForce, dir);
+
+        lastCollisionShakeTime = Time.time;
+    }
+
+    // =========================================================
+    // PLAYER DESTRUÍDO → CAPOTA
+    // =========================================================
+
+    if (racerStatus.isPlayer &&
+        isDestroyed &&
+        impactForce > crashImpactForce &&
+        !_isTurboActive &&
+        upDot > 0.6f)
+    {
+        float rollDirection =
+            Mathf.Sign(Vector3.Dot(transform.right, dir));
+
+        if (Mathf.Abs(rollDirection) < 0.1f)
+            rollDirection = 1f;
+
+        StartForceDrift();
+        Invoke(nameof(EndForceDrift), 4f);
+
+        if (crashing) return;
+
+            OnCrash?.Invoke(true);
+            carCrash.TriggerCrash();
+
+            Invoke(
+                nameof(ResetCrashCam),
+                carCrash.crashDuration
+            );
+
+        return;
+    }
+
+    // =========================================================
+    // CRASH NORMAL
+    // =========================================================
+
+    if (isCrashableObject &&
+        impactForce > crashImpactForce &&
+        IsFrontalCollision(dir) &&
+        !_isTurboActive &&
+        (ShouldAvoidCrashForSlowPlayers() == false) &&
+        upDot > 0.6f)
+    {
+        if (racerStatus.isPlayer)
         {
-            float finalForce = Mathf.Clamp01(impactForce / 20f) * shakeIntensity;
-            OnCollision?.Invoke(finalForce, dir);
-            lastCollisionShakeTime = Time.time;
+            StartForceDrift();
+            Invoke(nameof(EndForceDrift), 4f);
         }
+        else
+        {
+            if (crashing) return;
 
-        if (isCrashableObject && impactForce > crashImpactForce && IsFrontalCollision(dir) && !_isTurboActive && (ShouldAvoidCrashForSlowPlayers() == false) && upDot > 0.6f)
-        {
-            if (racerStatus.isPlayer)
-            {
-                StartForceDrift();
-                Invoke("EndForceDrift", 4f);
-            }
-            else
-            {
-                if (crashing) return;
-                OnCrash?.Invoke(true);
-                carCrash.TriggerCrash();
-                Invoke("ResetCrashCam", carCrash.crashDuration);
-            }
-        }
-        if (impactForce > spinMinForce && impactForce < spinMaxForceForCrash && currentSpeed > spinMinSpeed && IsLateralCollision(dir) && !_isTurboActive)
-        {
-            if(!racerStatus.isPlayer)
-            {
-                TriggerSpin(dir, impactForce);
-            }
-            else
-            {
-                float spinDirection = Mathf.Sign(Vector3.Dot(transform.right, dir));
-                StartForceDrift();
-                rb.AddTorque(transform.up * spinDirection * spinTorqueForce * ((impactForce / spinMinForce) / 2), ForceMode.VelocityChange);
-                Invoke(nameof(EndForceDrift), 4f);
-            }
-            return;
+            OnCrash?.Invoke(true);
+            carCrash.TriggerCrash();
+
+            Invoke(
+                nameof(ResetCrashCam),
+                carCrash.crashDuration
+            );
         }
     }
+
+    // =========================================================
+    // SPIN
+    // =========================================================
+
+    if (impactForce > spinMinForce &&
+        impactForce < spinMaxForceForCrash &&
+        currentSpeed > spinMinSpeed &&
+        IsLateralCollision(dir) &&
+        !_isTurboActive)
+    {
+        if (!racerStatus.isPlayer)
+        {
+            TriggerSpin(dir, impactForce);
+        }
+        else
+        {
+            float spinDirection =
+                Mathf.Sign(Vector3.Dot(transform.right, dir));
+
+            StartForceDrift();
+
+            rb.AddTorque(
+                transform.up *
+                spinDirection *
+                spinTorqueForce *
+                ((impactForce / spinMinForce) / 2),
+                ForceMode.VelocityChange
+            );
+
+            Invoke(
+                nameof(EndForceDrift),
+                4f
+            );
+        }
+
+        return;
+    }
+}
 
     void StartForceDrift()
     {
