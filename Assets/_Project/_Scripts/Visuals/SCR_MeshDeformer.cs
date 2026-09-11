@@ -127,8 +127,8 @@ public class SCR_MeshDeformer : MonoBehaviour
             if (changed)
             {
                 part.mesh.vertices = part.modifiedVertices;
-                part.mesh.RecalculateNormals();
-                part.mesh.RecalculateBounds();
+                //part.mesh.RecalculateNormals();
+                //part.mesh.RecalculateBounds();
             }
         }
     }
@@ -141,8 +141,8 @@ public class SCR_MeshDeformer : MonoBehaviour
 
             System.Array.Copy(part.originalVertices, part.modifiedVertices, part.originalVertices.Length);
             part.mesh.vertices = part.modifiedVertices;
-            part.mesh.RecalculateNormals();
-            part.mesh.RecalculateBounds();
+            //part.mesh.RecalculateNormals();
+            //part.mesh.RecalculateBounds();
         }
     }
 }
