@@ -351,10 +351,22 @@ public class RaceManager : MonoBehaviour
     {
         if (raceFinished) return;
 
-        var humanRacers = allRacers.Where(r => r.isPlayer).ToList();
+        var humanRacers = allRacers
+            .Where(r => r.isPlayer)
+            .ToList();
 
         if (humanRacers.Count == 0) return;
 
+        // Se todos os players estiverem retired, encerra a corrida
+        bool allHumansRetired = humanRacers.All(r => r.isRetired);
+
+        if (allHumansRetired)
+        {
+            EndRaceByRetire();
+            return;
+        }
+
+        // Caso normal: todos os players completaram a corrida
         bool allHumansFinished = humanRacers.All(r => r.lapsCompleted >= totalLaps);
 
         if (allHumansFinished)
@@ -363,21 +375,48 @@ public class RaceManager : MonoBehaviour
         }
     }
 
+    void EndRaceByRetire()
+    {
+        if (raceFinished) return;
+
+        raceFinished = true;
+
+        CancelInvoke(nameof(UpdateRacePositions));
+
+        Debug.Log("Todos os players estão RETIRED. Corrida encerrada.");
+    }
+
     void FinishRace()
     {
         raceFinished = true;
 
         CancelInvoke(nameof(UpdateRacePositions));
 
+        // Corredores que terminaram normalmente
+        var finished = finishedRacers
+            .Where(r => !r.isRetired)
+            .ToList();
+
+        // Corredores que ainda estavam na pista
         var unfinished = allRacers
-            .Where(r => !finishedRacers.Contains(r))
+            .Where(r =>
+                !finishedRacers.Contains(r) &&
+                !r.isRetired)
             .OrderByDescending(r => r.TrackProgress)
             .ToList();
 
+        // Primeiro quem terminou, depois quem não terminou
         var finalOrder = new List<RacerStatus>();
 
-        finalOrder.AddRange(finishedRacers);
+        finalOrder.AddRange(finished);
         finalOrder.AddRange(unfinished);
+
+        // Retired ficam por último
+        var retired = allRacers
+            .Where(r => r.isRetired)
+            .ToList();
+
+        finalOrder.AddRange(retired);
 
         List<RaceResultData> results = new List<RaceResultData>();
 
@@ -387,16 +426,22 @@ public class RaceManager : MonoBehaviour
 
             var identity = racerStatus.GetComponent<SCR_CarIdentity>();
 
-            string racerName = identity != null && identity.racerData != null
+            string racerName =
+                identity != null && identity.racerData != null
                 ? identity.racerData.racerName
                 : racerStatus.name;
+
+            bool isRetired = racerStatus.isRetired;
 
             results.Add(new RaceResultData
             {
                 racerName = racerName,
-                position = i + 1,
-                points = GetPoints(i + 1, finalOrder[i].gridPosition, racerStatus),
-                isPlayer = racerStatus.isPlayer
+                position = isRetired ? 0 : i + 1,
+                points = isRetired
+                    ? 0f
+                    : GetPoints(i + 1, racerStatus.gridPosition, racerStatus),
+                isPlayer = racerStatus.isPlayer,
+                isRetired = isRetired
             });
         }
 
@@ -496,5 +541,6 @@ public class RaceResultData
     public int position;
     public float points;
     public bool isPlayer;
+    public bool isRetired;
 }
 

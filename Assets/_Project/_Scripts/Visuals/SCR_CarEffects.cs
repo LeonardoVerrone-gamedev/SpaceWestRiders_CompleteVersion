@@ -81,6 +81,8 @@ public class SCR_CarEffects : MonoBehaviour
 
     private bool estaLigado = false;
 
+    [SerializeField]SCR_ImpactEffect BigBoom;
+
     void Start()
     {
         carPhysics.OnUpGear += PlayCorteEffect;
@@ -513,6 +515,11 @@ public class SCR_CarEffects : MonoBehaviour
         {
             material.SetInt("_LanternOn", valorShader);
         }
+    }
+
+    public void PlayBigBoom()
+    {
+        BigBoom.Play(transform.position, transform.rotation, this.gameObject);
     }
 
     void OnDisable()

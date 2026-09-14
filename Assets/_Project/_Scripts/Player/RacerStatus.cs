@@ -7,6 +7,8 @@ public class RacerStatus : MonoBehaviour
     public int position{get; private set;}
     public bool isPlayer{get; private set;}
 
+    public bool isRetired{get; private set;}
+
     public int currentWaypointIndex;
     public int lapsCompleted = 0;
     public float distanceToNextWaypoint;
@@ -274,6 +276,11 @@ public class RacerStatus : MonoBehaviour
     public void SetGameplayManager(PlayerGameplayManager manager) 
     {
         myManager = manager;
+    }
+
+    public void RetirePlayer()
+    {
+        isRetired = true;
     }
 
     public PlayerGameplayManager GetGameplayManager() => myManager;

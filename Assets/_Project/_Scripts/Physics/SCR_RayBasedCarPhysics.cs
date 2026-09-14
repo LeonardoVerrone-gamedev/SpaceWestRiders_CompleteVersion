@@ -1400,7 +1400,7 @@ private void ApplyClassicSuspension()
     // PLAYER DESTRUÍDO → CAPOTA
     // =========================================================
 
-    if (racerStatus.isPlayer &&
+    if (
         isDestroyed &&
         impactForce > crashImpactForce &&
         !_isTurboActive &&
@@ -1424,6 +1424,8 @@ private void ApplyClassicSuspension()
                 nameof(ResetCrashCam),
                 carCrash.crashDuration
             );
+
+            Invoke(nameof(GameOver), carCrash.crashDuration + 1f);
 
         return;
     }
@@ -1496,6 +1498,70 @@ private void ApplyClassicSuspension()
         return;
     }
 }
+
+    public void GameOver()
+    {
+        // Evita executar o GameOver mais de uma vez
+        if (!crashing)
+            crashing = true;
+
+        // =========================================================
+        // EXPLOSÃO
+        // =========================================================
+
+        SCR_CarEffects carEffects = GetComponent<SCR_CarEffects>();
+
+        if (carEffects != null)
+            carEffects.PlayBigBoom();
+
+        Invoke(nameof(Retire), 1f);
+    }
+
+    void Retire(){
+        // =========================================================
+        // RETIRA O PLAYER DA CORRIDA
+        // =========================================================
+
+        if (racerStatus != null)
+            racerStatus.RetirePlayer();
+
+        // =========================================================
+        // DESTRÓI TODOS OS FILHOS
+        // =========================================================
+
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            if (transform.GetChild(i).gameObject.name.Equals("PlayerHUD"))
+                continue;
+
+            Destroy(transform.GetChild(i).gameObject);
+        }
+        // =========================================================
+        // DESTRÓI TODOS OS COMPONENTES
+        // EXCETO Transform e RacerStatus e HUD
+        // =========================================================
+
+        Component[] components = GetComponents<Component>();
+
+        foreach (Component component in components)
+        {
+            if (component == null)
+                continue;
+
+            // Transform não pode ser destruído
+            if (component is Transform)
+                continue;
+
+            // RacerStatus deve permanecer
+            if (component is RacerStatus)
+                continue;
+
+            if(component is PlayerGameplayManager)
+                continue;
+
+            Destroy(component);
+        }
+    }
 
     void StartForceDrift()
     {
@@ -1595,8 +1661,8 @@ private void ApplyClassicSuspension()
         if(!respawnPositionManualSeted){
             transform.position = _lastSafePosition;
             Transform target = GetRespawnTarget();
-            deformer?.RestoreMesh();
-            if(damageCar != null) damageCar.ResetDamage();
+            //deformer?.RestoreMesh();
+           // if(damageCar != null) damageCar.ResetDamage();
             //Limpa o visual de damaged aqui
             if (target != null)
             {
