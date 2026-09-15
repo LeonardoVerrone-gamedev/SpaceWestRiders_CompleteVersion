@@ -12,7 +12,7 @@ public class SCR_ImpactEffect : MonoBehaviour
 
     public float TimeRemaining => timer;
 
-    public void Play(Vector3 position, Quaternion rotation, GameObject owner)
+    public void Play(Vector3 position, Quaternion rotation, GameObject owner, bool setParentToNull = true)
     {
 
         if(originalOwner == null)
@@ -20,7 +20,7 @@ public class SCR_ImpactEffect : MonoBehaviour
             originalOwner = owner;
         }
 
-        transform.SetParent(null);
+        if(setParentToNull) transform.SetParent(null);
 
         transform.position = position;
         transform.rotation = rotation;

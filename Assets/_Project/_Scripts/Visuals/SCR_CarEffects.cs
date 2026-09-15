@@ -519,7 +519,7 @@ public class SCR_CarEffects : MonoBehaviour
 
     public void PlayBigBoom()
     {
-        BigBoom.Play(transform.position, transform.rotation, this.gameObject);
+        BigBoom.Play(transform.position, transform.rotation, this.gameObject, false);
     }
 
     void OnDisable()
