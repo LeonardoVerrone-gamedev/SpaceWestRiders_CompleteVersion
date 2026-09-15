@@ -41,10 +41,15 @@ public class PlayerGameplayManager : MonoBehaviour
 
     [SerializeField] Animator NOSLightDisplay;
 
+    [Header("Retired")]
+    [SerializeField] TextMeshProUGUI RetiredText;
+
+    private bool retiredUIActive = false;
+
     [Header("Proximity Settings")]
-    [SerializeField] GameObject opponentIndicatorPrefab; // Imagem UI com OpponentUIIndicator
-    [SerializeField] float detectionTrackDistance = 5.0f; // Distância em unidades de waypoint (ex: 5 segmentos)
-    [SerializeField] float maxVisualDistance = 100f; // Distância em metros para escala mínima
+    [SerializeField] GameObject opponentIndicatorPrefab;
+    [SerializeField] float detectionTrackDistance = 5.0f;
+    [SerializeField] float maxVisualDistance = 100f;
     private List<OpponentUIIndicator> indicators = new List<OpponentUIIndicator>();
     private List<RacerStatus> allRacers = new List<RacerStatus>();
 
@@ -73,15 +78,25 @@ public class PlayerGameplayManager : MonoBehaviour
         {
             racerStatus.SetGameplayManager(this);
         }
+
         carPhysics = transform.parent.gameObject.GetComponent<SCR_RayBasedCarPhysics>();
+
         InitializeProximityIndicators();
 
         HideDialogue();
+
+        if (RetiredText != null)
+            RetiredText.gameObject.SetActive(false);
     }
-    
 
     void Update()
     {
+        if (racerStatus.isRetired)
+        {
+            ShowRetiredUI();
+            return;
+        }
+
         hudCanvas.gameObject.SetActive(racerStatus.isPlayer);
 
         UpdateRPMGauge();
@@ -89,23 +104,79 @@ public class PlayerGameplayManager : MonoBehaviour
         UpdatePosition();
         UpdateLapTimes();
         UpdateNOSGauge();
-        //UpdateNitroAmountText();
         UpdateWrongWay();
         UpdateProximityIndicators();
     }
 
+    void ShowRetiredUI()
+    {
+        if (retiredUIActive)
+            return;
+
+        retiredUIActive = true;
+
+        // Desativa os elementos normais da HUD
+
+        if (playerPositionText != null)
+            playerPositionText.gameObject.SetActive(false);
+
+        if (bestLapTimeText != null)
+            bestLapTimeText.gameObject.SetActive(false);
+
+        if (currentLapTimeText != null)
+            currentLapTimeText.gameObject.SetActive(false);
+
+        if (speedKMH != null)
+            speedKMH.gameObject.SetActive(false);
+
+        if (returnSymbol != null)
+            returnSymbol.gameObject.SetActive(false);
+
+        if (rpmNeedle != null)
+            rpmNeedle.gameObject.SetActive(false);
+
+        if (gearLightPanel != null)
+            gearLightPanel.gameObject.SetActive(false);
+
+        if (nosNeedle != null)
+            nosNeedle.gameObject.SetActive(false);
+
+        if (NOSLightDisplay != null)
+            NOSLightDisplay.gameObject.SetActive(false);
+
+        // Desativa os indicadores dos outros carros
+        foreach (var indicator in indicators)
+        {
+            if (indicator != null)
+                indicator.gameObject.SetActive(false);
+        }
+
+        // Desativa diálogo
+        HideDialogue();
+
+        // Ativa SOMENTE o RetiredText
+        if (RetiredText != null)
+            RetiredText.gameObject.SetActive(true);
+    }
+
     void UpdateRPMGauge()
     {
-        if(useNeedle){
+        if (useNeedle)
+        {
             playerRPM = carPhysics.engineRPM;
 
-            float effective_maxNeedleAngle = carPhysics.IsTurboActive() ? maxNeedleAngle : maxNeedleAngleWhenNotInNitro;
+            float effective_maxNeedleAngle =
+                carPhysics.IsTurboActive()
+                    ? maxNeedleAngle
+                    : maxNeedleAngleWhenNotInNitro;
 
             float normalizedRPM = Mathf.Clamp01(playerRPM / maxRPM);
 
-            float needleAngle = Mathf.Lerp(minNeedleAngle, effective_maxNeedleAngle, normalizedRPM);
+            float needleAngle =
+                Mathf.Lerp(minNeedleAngle, effective_maxNeedleAngle, normalizedRPM);
 
-            rpmNeedle.localRotation = Quaternion.Euler(0f, 0f, needleAngle);
+            rpmNeedle.localRotation =
+                Quaternion.Euler(0f, 0f, needleAngle);
         }
         else
         {
@@ -117,16 +188,26 @@ public class PlayerGameplayManager : MonoBehaviour
     void UpdateNOSGauge()
     {
         int nos = carPhysics.GetNOSAmount();
-        if(useNeedle){
+
+        if (useNeedle)
+        {
             int maxNos = carPhysics.GetMaxNOSAmount();
 
-            float normalizedNOS = Mathf.Clamp01((float)nos / maxNos);
+            float normalizedNOS =
+                Mathf.Clamp01((float)nos / maxNos);
 
-            float targetAngle = Mathf.Lerp(minNOSAngle, maxNOSAngle, normalizedNOS);
+            float targetAngle =
+                Mathf.Lerp(minNOSAngle, maxNOSAngle, normalizedNOS);
 
-            currentNOSAngle = Mathf.Lerp(currentNOSAngle, targetAngle, Time.deltaTime * nosNeedleSmoothSpeed);
+            currentNOSAngle =
+                Mathf.Lerp(
+                    currentNOSAngle,
+                    targetAngle,
+                    Time.deltaTime * nosNeedleSmoothSpeed
+                );
 
-            nosNeedle.localRotation = Quaternion.Euler(0f, 0f, currentNOSAngle);
+            nosNeedle.localRotation =
+                Quaternion.Euler(0f, 0f, currentNOSAngle);
         }
         else
         {
@@ -136,12 +217,14 @@ public class PlayerGameplayManager : MonoBehaviour
 
     void UpdateSpeedKMH()
     {
-        speedKMH.text = $"{Mathf.RoundToInt(carPhysics.speedKMH).ToString()}KM/h";
+        speedKMH.text =
+            $"{Mathf.RoundToInt(carPhysics.speedKMH)}KM/h";
     }
 
     void UpdatePosition()
     {
-        playerPositionText.text = $"{racerStatus.gridPosition.ToString()}st";
+        playerPositionText.text =
+            $"{racerStatus.gridPosition}st";
     }
 
     public void SetSplitScreen(Rect cameraRect)
@@ -150,8 +233,11 @@ public class PlayerGameplayManager : MonoBehaviour
 
         RectTransform panelRect = panel.rectTransform;
 
-        panelRect.anchorMin = new Vector2(cameraRect.xMin, cameraRect.yMin);
-        panelRect.anchorMax = new Vector2(cameraRect.xMax, cameraRect.yMax);
+        panelRect.anchorMin =
+            new Vector2(cameraRect.xMin, cameraRect.yMin);
+
+        panelRect.anchorMax =
+            new Vector2(cameraRect.xMax, cameraRect.yMax);
 
         panelRect.offsetMin = Vector2.zero;
         panelRect.offsetMax = Vector2.zero;
@@ -159,15 +245,20 @@ public class PlayerGameplayManager : MonoBehaviour
 
     void UpdateLapTimes()
     {
-        currentLapTimeText.text = FormatTime(racerStatus.currentLapTime);
+        currentLapTimeText.text =
+            FormatTime(racerStatus.currentLapTime);
 
         if (racerStatus.personalRecord < float.MaxValue)
-            bestLapTimeText.text = FormatTime(racerStatus.personalRecord);
+            bestLapTimeText.text =
+                FormatTime(racerStatus.personalRecord);
     }
 
     void UpdateWrongWay()
     {
-        returnSymbol.gameObject.SetActive(racerStatus.isDrivingWrongWay && (carPhysics.GetThrottleInput() > 0.1f));
+        returnSymbol.gameObject.SetActive(
+            racerStatus.isDrivingWrongWay &&
+            (carPhysics.GetThrottleInput() > 0.1f)
+        );
     }
 
     string FormatTime(float time)
@@ -181,19 +272,31 @@ public class PlayerGameplayManager : MonoBehaviour
 
     void InitializeProximityIndicators()
     {
-        // Limpa se já houver
-        foreach(var ind in indicators) Destroy(ind.gameObject);
+        foreach (var ind in indicators)
+            Destroy(ind.gameObject);
+
         indicators.Clear();
 
-        // Encontra todos os competidores na cena
-        allRacers.AddRange(FindObjectsByType<RacerStatus>(FindObjectsSortMode.None));
-        
-        foreach(var racer in allRacers)
-        {
-            if(racer == racerStatus) continue; // Pula o próprio jogador
+        allRacers.AddRange(
+            FindObjectsByType<RacerStatus>(
+                FindObjectsSortMode.None
+            )
+        );
 
-            GameObject go = Instantiate(opponentIndicatorPrefab, panel.transform);
-            var indicator = go.GetComponent<OpponentUIIndicator>();
+        foreach (var racer in allRacers)
+        {
+            if (racer == racerStatus)
+                continue;
+
+            GameObject go =
+                Instantiate(
+                    opponentIndicatorPrefab,
+                    panel.transform
+                );
+
+            var indicator =
+                go.GetComponent<OpponentUIIndicator>();
+
             indicator.targetRacer = racer;
             indicators.Add(indicator);
         }
@@ -201,31 +304,54 @@ public class PlayerGameplayManager : MonoBehaviour
 
     void UpdateProximityIndicators()
     {
-        foreach(var ind in indicators)
+        foreach (var ind in indicators)
         {
             RacerStatus target = ind.targetRacer;
-            
-            // 1. Cálculo de Distância via TrackProgress
-            float distDiff = racerStatus.TrackProgress - target.TrackProgress;
 
-            // Se o valor for negativo, o alvo está na frente. 
-            // Se for muito grande, está longe demais atrás.
-            if(distDiff > 0 && distDiff < detectionTrackDistance)
+            float distDiff =
+                racerStatus.TrackProgress -
+                target.TrackProgress;
+
+            if (distDiff > 0 &&
+                distDiff < detectionTrackDistance)
             {
-                // 2. Cálculo de Escala (0.25f a 2f)
-                // Usamos a distância real para a escala parecer natural em 3D
-                float realDist = Vector3.Distance(transform.position, target.transform.position);
-                float scale = Mathf.Lerp(2f, 0.25f, realDist / maxVisualDistance);
-                scale = Mathf.Clamp(scale, 0.25f, 2f);
+                float realDist =
+                    Vector3.Distance(
+                        transform.position,
+                        target.transform.position
+                    );
 
-                // 3. Cálculo de Posição Lateral (Esquerda/Direita)
-                // Transformamos a posição do oponente para o espaço local do jogador
-                Vector3 relativePos = transform.InverseTransformPoint(target.transform.position);
-                
-                // Normalizamos o X (largura da pista aproximada de 10-15 unidades)
-                float screenX = Mathf.Clamp(relativePos.x / 10f, -1f, 1f);
+                float scale =
+                    Mathf.Lerp(
+                        2f,
+                        0.25f,
+                        realDist / maxVisualDistance
+                    );
 
-                ind.UpdateUI(screenX, scale, true);
+                scale =
+                    Mathf.Clamp(
+                        scale,
+                        0.25f,
+                        2f
+                    );
+
+                Vector3 relativePos =
+                    transform.InverseTransformPoint(
+                        target.transform.position
+                    );
+
+                float screenX =
+                    Mathf.Clamp(
+                        relativePos.x / 10f,
+                        -1f,
+                        1f
+                    );
+
+                ind.UpdateUI(
+                    screenX,
+                    scale,
+                    true
+                );
             }
             else
             {
@@ -238,11 +364,11 @@ public class PlayerGameplayManager : MonoBehaviour
 
     public void ShowDialogue(string name, string text)
     {
-        if (activeTypewriter != null) StopCoroutine(activeTypewriter);
+        if (activeTypewriter != null)
+            StopCoroutine(activeTypewriter);
 
         isDialogueActive = true;
-        
-        // Ativa os elementos de UI
+
         TextBox.gameObject.SetActive(true);
         Portrait.gameObject.SetActive(true);
         racerNameText.gameObject.SetActive(true);
@@ -250,24 +376,29 @@ public class PlayerGameplayManager : MonoBehaviour
         TRacerNameTextBox.gameObject.SetActive(true);
 
         racerNameText.text = name;
-        activeTypewriter = StartCoroutine(Typewrite(text));
+
+        activeTypewriter =
+            StartCoroutine(Typewrite(text));
     }
 
     private System.Collections.IEnumerator Typewrite(string text)
     {
         DialogueLine.text = "";
+
         foreach (char c in text.ToCharArray())
         {
             DialogueLine.text += c;
-            // 0.01s a 0.02s
-            yield return new WaitForSeconds(0.008f); 
+            yield return new WaitForSeconds(0.008f);
         }
+
         activeTypewriter = null;
     }
 
     public void HideDialogue()
     {
-        if (activeTypewriter != null) StopCoroutine(activeTypewriter);
+        if (activeTypewriter != null)
+            StopCoroutine(activeTypewriter);
+
         TextBox.gameObject.SetActive(false);
         Portrait.gameObject.SetActive(false);
         racerNameText.gameObject.SetActive(false);
@@ -275,5 +406,5 @@ public class PlayerGameplayManager : MonoBehaviour
         TRacerNameTextBox.gameObject.SetActive(false);
 
         isDialogueActive = false;
-    }    
+    }
 }

@@ -1514,7 +1514,7 @@ private void ApplyClassicSuspension()
         if (carEffects != null)
             carEffects.PlayBigBoom();
 
-        Invoke(nameof(Retire), 1f);
+        Invoke(nameof(Retire), 1.5f);
     }
 
     void Retire(){

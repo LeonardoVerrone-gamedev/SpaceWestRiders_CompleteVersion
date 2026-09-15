@@ -357,7 +357,7 @@ public class RaceManager : MonoBehaviour
 
         if (humanRacers.Count == 0) return;
 
-        // Se todos os players estiverem retired, encerra a corrida
+        // Se TODOS os players estiverem retired
         bool allHumansRetired = humanRacers.All(r => r.isRetired);
 
         if (allHumansRetired)
@@ -384,6 +384,8 @@ public class RaceManager : MonoBehaviour
         CancelInvoke(nameof(UpdateRacePositions));
 
         Debug.Log("Todos os players estão RETIRED. Corrida encerrada.");
+
+        RetireScreenUIManager.Instance?.Open();
     }
 
     void FinishRace()
