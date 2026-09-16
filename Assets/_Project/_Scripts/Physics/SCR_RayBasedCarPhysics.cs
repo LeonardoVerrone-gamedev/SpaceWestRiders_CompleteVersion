@@ -1364,7 +1364,11 @@ private void ApplyClassicSuspension()
 
     // Aplica dano da colisão
     if (damageCar != null)
-        damageCar.ApplyDamage(0.025f);
+    {
+        damageCar.ApplyDamage((0.00003f * impactForce));
+        //if(racerStatus.isPlayer) damageCar.ApplyDamage((0.00002f * impactForce));
+        //else damageCar.ApplyDamage((0.0000002f * impactForce));
+    }
 
     // Verifica se essa colisão destruiu o carro
     bool isDestroyed = IsDestroyed();
