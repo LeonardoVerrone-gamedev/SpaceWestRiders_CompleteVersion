@@ -404,6 +404,11 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
         if(newIndex == 0)
         {
+            if (SCR_CameramanAI.Instance != null)
+            {
+                SCR_CameramanAI.Instance.killCameraman();
+            }
+
             CarSelectionManagerScript.Instance.ShowSelectionHud(true, false);
         }
 

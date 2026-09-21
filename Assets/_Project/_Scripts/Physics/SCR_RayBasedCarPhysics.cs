@@ -346,6 +346,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         _originalMaxSpeed = maxSpeed;
         carCrash = GetComponent<SCR_CarCrashPhysics>();
         deformer = GetComponent<SCR_MeshDeformer>();
+
+        isCameraman = GetComponent<SCR_CameramanAI>();
     }
 
     void Start()
@@ -458,7 +460,7 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
         
         if(newGear > currentGear)
         {
-            OnUpGear.Invoke();
+            OnUpGear?.Invoke();
         }
 
         yield return new WaitForSeconds(gearShiftCooldown);
@@ -1379,7 +1381,7 @@ private void ApplyClassicSuspension()
     Vector3 forceDirection =
         -collisionNormal * speedMagnitude;
 
-    deformer.Deform(
+    deformer?.Deform(
         collision.contacts[0].point,
         forceDirection
     );
@@ -1651,14 +1653,16 @@ private void ApplyClassicSuspension()
     void ResetCrashCam() => OnCrash?.Invoke(false);
     #endregion
 
+    bool isCameraman;
+
     #region Respawn
     private void HandleRespawnSystem()
     {
         if (!isGrounded)
         {
             _airTimer += Time.fixedDeltaTime;
-            //if (_airTimer >= airTimeThreshold && !_isRespawning) ExecuteRespawn();
-            if (_airTimer >= airTimeThreshold && !_isRespawning) GameOver();
+            if (_airTimer >= airTimeThreshold && !_isRespawning && isCameraman) ExecuteRespawn();
+            if (_airTimer >= airTimeThreshold && !_isRespawning && !isCameraman) GameOver();
         }
     }
 
