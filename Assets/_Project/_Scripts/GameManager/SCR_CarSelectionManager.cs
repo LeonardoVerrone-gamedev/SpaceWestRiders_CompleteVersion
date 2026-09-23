@@ -182,6 +182,11 @@ public class SCR_TrackSelectionManager : MonoBehaviour
     {
         if (SCR_PersistentData.Instance == null) return;
 
+        if (SCR_CameramanAI.Instance != null)
+        {
+            SCR_CameramanAI.Instance.killCameraman();
+        }
+
         // Já existe alguém usando esse device?
         if (SCR_PersistentData.Instance.players.Any(p => p.device == device))
             return;
@@ -692,6 +697,11 @@ public class SCR_TrackSelectionManager : MonoBehaviour
         CarSelectionManagerScript.Instance.ShowSelectionHud(false, false);
 
         BuildCarsDictionary();
+
+        if (SCR_CameramanAI.Instance != null)
+        {
+            SCR_CameramanAI.Instance.killCameraman();
+        }
 
         // Remove da grid os carros que não existem mais
         var carsToRemove = new List<SCR_CarInput>();
