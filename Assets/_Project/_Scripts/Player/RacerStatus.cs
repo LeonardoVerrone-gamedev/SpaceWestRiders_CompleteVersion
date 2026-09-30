@@ -37,6 +37,16 @@ public class RacerStatus : MonoBehaviour
 
     Rigidbody rb;
 
+    private bool hasFinishedRace = false;
+    private bool hasConfirmedFinish = false;
+
+    public bool HasFinishedRace => hasFinishedRace;
+    public bool HasConfirmedFinish => hasConfirmedFinish;
+
+    private int finalRacePosition = 0;
+
+    public int FinalRacePosition => finalRacePosition;
+
     void OnEnable()
     {
         SCR_TrackSelectionManager.OnRaceSetupCompleted += StartRace;
@@ -281,6 +291,40 @@ public class RacerStatus : MonoBehaviour
     public void RetirePlayer()
     {
         isRetired = true;
+    }
+
+    public void SetFinishedPosition(int position)
+    {
+        if (hasFinishedRace)
+            return;
+
+        hasFinishedRace = true;
+        finalRacePosition = position;
+
+        // Avisa a HUD desse player
+        if (myManager != null)
+            myManager.ShowFinishPosition(position);
+    }
+
+    public void ConfirmFinish()
+    {
+        if (!hasFinishedRace)
+            return;
+
+        if (hasConfirmedFinish)
+            return;
+
+        hasConfirmedFinish = true;
+
+        if (myManager != null)
+            myManager.HideFinishPrompt();
+    }
+
+    public void ResetFinishConfirmation()
+    {
+        hasFinishedRace = false;
+        hasConfirmedFinish = false;
+        finalRacePosition = 0;
     }
 
     public PlayerGameplayManager GetGameplayManager() => myManager;

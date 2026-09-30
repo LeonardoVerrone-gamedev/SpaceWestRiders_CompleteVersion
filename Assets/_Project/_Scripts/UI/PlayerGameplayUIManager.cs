@@ -69,6 +69,9 @@ public class PlayerGameplayManager : MonoBehaviour
     float currentLapTime;
     float bestLapTime;
     int currentLap;
+    [Header("Race Finish")]
+    [SerializeField] private TextMeshProUGUI finishPositionText;
+    [SerializeField] private TextMeshProUGUI finishAdvanceText;
 
     void Start()
     {
@@ -87,6 +90,12 @@ public class PlayerGameplayManager : MonoBehaviour
 
         if (RetiredText != null)
             RetiredText.gameObject.SetActive(false);
+
+        if (finishPositionText != null)
+            finishPositionText.gameObject.SetActive(false);
+
+        if (finishAdvanceText != null)
+            finishAdvanceText.gameObject.SetActive(false);
     }
 
     void Update()
@@ -106,6 +115,30 @@ public class PlayerGameplayManager : MonoBehaviour
         UpdateNOSGauge();
         UpdateWrongWay();
         UpdateProximityIndicators();
+    }
+
+    public void HideFinishPrompt()
+    {
+        if (finishAdvanceText != null)
+            finishAdvanceText.gameObject.SetActive(false);
+    }
+
+    public void ShowFinishPosition(int position)
+    {
+        if (!racerStatus.isPlayer)
+            return;
+
+        if (finishPositionText != null)
+        {
+            finishPositionText.text = $"{position}ª Pst";
+            finishPositionText.gameObject.SetActive(true);
+        }
+
+        if (finishAdvanceText != null)
+        {
+            finishAdvanceText.text = "PRESSIONE AVANÇAR";
+            finishAdvanceText.gameObject.SetActive(true);
+        }
     }
 
     void ShowRetiredUI()

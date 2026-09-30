@@ -88,6 +88,12 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
     void Start()
     {
+
+        if (SCR_PersistentData.Instance != null)
+        {
+            SCR_PersistentData.Instance.ClearRuntimeDevices();
+        }
+
         camManager = UnityEngine.Object.FindFirstObjectByType<CameraController>();
 
         _isStoryMode = GameManagerInstance.Instance.currentGameMode == GameMode.StoryMode;

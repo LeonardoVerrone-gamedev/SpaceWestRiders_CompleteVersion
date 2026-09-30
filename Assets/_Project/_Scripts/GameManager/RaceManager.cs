@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using UnityEngine.InputSystem;
+using System.Collections;
 
 public class RaceManager : MonoBehaviour
 {
@@ -91,6 +93,11 @@ public class RaceManager : MonoBehaviour
 
     private Dictionary<RacerStatus, float> lapStartTimes = new Dictionary<RacerStatus, float>();
 
+    private bool waitingForFinishConfirmations = false;
+    private List<RaceResultData> pendingRankingResults = null;
+
+    private bool waitingForAllRetiredRanking = false;
+
     void Awake()
     {
         Instance = this;
@@ -127,6 +134,63 @@ public class RaceManager : MonoBehaviour
     void OnDisable()
     {
         SCR_TrackSelectionManager.OnRaceSetupCompleted -= StartRace;
+    }
+
+    void Update()
+    {
+        if (!waitingForFinishConfirmations)
+            return;
+
+        MonitorFinishConfirmations();
+    }
+
+    void MonitorFinishConfirmations()
+    {
+        if (SCR_PersistentData.Instance == null)
+            return;
+
+        var humanRacers = allRacers
+            .Where(r => r.isPlayer)
+            .ToList();
+
+        foreach (var player in SCR_PersistentData.Instance.players)
+        {
+            RacerStatus racer = FindRacerForPlayer(player);
+
+            if (racer == null)
+                continue;
+
+            // Retired não precisa apertar Avançar.
+            if (racer.isRetired)
+                continue;
+
+            // Ainda não terminou.
+            if (!racer.HasFinishedRace)
+                continue;
+
+            // Já confirmou.
+            if (racer.HasConfirmedFinish)
+                continue;
+
+            if (IsAdvancePressed(player.device))
+            {
+                racer.ConfirmFinish();
+
+                Debug.Log(
+                    $"Player {player.playerIndex} confirmou o fim da corrida."
+                );
+            }
+        }
+
+        bool allHumansConfirmed = humanRacers.All(
+            r => r.isRetired ||
+                (r.HasFinishedRace && r.HasConfirmedFinish)
+        );
+
+        if (allHumansConfirmed)
+        {
+            OpenPendingRanking();
+        }
     }
 
     void StartRace()
@@ -201,9 +265,19 @@ public class RaceManager : MonoBehaviour
 
     void RegisterFinish(RacerStatus racer)
     {
-        if (finishedRacers.Contains(racer)) return;
+        if (finishedRacers.Contains(racer))
+            return;
 
         finishedRacers.Add(racer);
+
+        // A posição de chegada é definitiva.
+        int finalPosition = finishedRacers.Count;
+
+        racer.SetFinishedPosition(finalPosition);
+
+        Debug.Log(
+            $"{racer.name} terminou a corrida em {finalPosition}º lugar."
+        );
     }
 
    void AssignAIGroups()
@@ -355,25 +429,55 @@ public class RaceManager : MonoBehaviour
             .Where(r => r.isPlayer)
             .ToList();
 
-        if (humanRacers.Count == 0) return;
+        if (humanRacers.Count == 0)
+            return;
 
-        // Se TODOS os players estiverem retired
+        // =========================================================
+        // TODOS OS PLAYERS ESTÃO RETIRED
+        // =========================================================
+
         bool allHumansRetired = humanRacers.All(r => r.isRetired);
 
         if (allHumansRetired)
         {
-            EndRaceByRetire();
+            if (!waitingForAllRetiredRanking)
+            {
+                waitingForAllRetiredRanking = true;
+
+                StartCoroutine(OpenRankingAfterAllRetiredDelay());
+            }
+
             return;
         }
 
-        // Caso normal: todos os players completaram a corrida
-        bool allHumansFinished = humanRacers.All(r => r.lapsCompleted >= totalLaps);
+        // =========================================================
+        // CASO NORMAL:
+        // TODOS OS PLAYERS PARTICIPARAM E ENCERRARAM A CORRIDA
+        // =========================================================
+
+        bool allHumansFinished = humanRacers.All(
+            r => r.isRetired || r.lapsCompleted >= totalLaps
+        );
 
         if (allHumansFinished)
         {
             FinishRace();
         }
     }
+
+    IEnumerator OpenRankingAfterAllRetiredDelay()
+    {
+        Debug.Log(
+            "Todos os jogadores estão retired. " +
+            "Abrindo ranking em 3 segundos."
+        );
+
+        yield return new WaitForSeconds(3f);
+
+        waitingForAllRetiredRanking = false;
+
+        FinishRace();
+}
 
     void EndRaceByRetire()
     {
@@ -390,16 +494,25 @@ public class RaceManager : MonoBehaviour
 
     void FinishRace()
     {
+        if (raceFinished)
+            return;
+
         raceFinished = true;
 
         CancelInvoke(nameof(UpdateRacePositions));
 
-        // Corredores que terminaram normalmente
+        // ============================================
+        // CORREDORES QUE TERMINARAM NORMALMENTE
+        // ============================================
+
         var finished = finishedRacers
             .Where(r => !r.isRetired)
             .ToList();
 
-        // Corredores que ainda estavam na pista
+        // ============================================
+        // CORREDORES QUE AINDA ESTAVAM NA PISTA
+        // ============================================
+
         var unfinished = allRacers
             .Where(r =>
                 !finishedRacers.Contains(r) &&
@@ -407,7 +520,10 @@ public class RaceManager : MonoBehaviour
             .OrderByDescending(r => r.TrackProgress)
             .ToList();
 
-        // Primeiro quem terminou, depois quem não terminou
+        // ============================================
+        // ORDEM FINAL
+        // ============================================
+
         var finalOrder = new List<RacerStatus>();
 
         finalOrder.AddRange(finished);
@@ -420,18 +536,24 @@ public class RaceManager : MonoBehaviour
 
         finalOrder.AddRange(retired);
 
+        // ============================================
+        // GERA RESULTADOS
+        // ============================================
+
         List<RaceResultData> results = new List<RaceResultData>();
 
         for (int i = 0; i < finalOrder.Count; i++)
         {
             var racerStatus = finalOrder[i];
 
-            var identity = racerStatus.GetComponent<SCR_CarIdentity>();
+            var identity =
+                racerStatus.GetComponent<SCR_CarIdentity>();
 
             string racerName =
-                identity != null && identity.racerData != null
-                ? identity.racerData.racerName
-                : racerStatus.name;
+                identity != null &&
+                identity.racerData != null
+                    ? identity.racerData.racerName
+                    : racerStatus.name;
 
             bool isRetired = racerStatus.isRetired;
 
@@ -441,13 +563,45 @@ public class RaceManager : MonoBehaviour
                 position = isRetired ? 0 : i + 1,
                 points = isRetired
                     ? 0f
-                    : GetPoints(i + 1, racerStatus.gridPosition, racerStatus),
+                    : GetPoints(
+                        i + 1,
+                        racerStatus.gridPosition,
+                        racerStatus
+                    ),
                 isPlayer = racerStatus.isPlayer,
                 isRetired = isRetired
             });
         }
 
-        RankingManager.Instance?.OpenRanking(results);
+        // ============================================
+        // NÃO ABRE MAIS O RANKING AQUI
+        // ============================================
+
+        pendingRankingResults = results;
+
+        waitingForFinishConfirmations = true;
+
+        bool allHumansRetired = allRacers
+            .Where(r => r.isPlayer)
+            .All(r => r.isRetired);
+
+        if (allHumansRetired)
+        {
+            waitingForFinishConfirmations = false;
+
+            RankingManager.Instance?.OpenRanking(
+                pendingRankingResults
+            );
+
+            pendingRankingResults = null;
+
+            return;
+        }
+
+        Debug.Log(
+            "Todos os jogadores humanos terminaram. " +
+            "Aguardando confirmação para abrir o ranking."
+        );
     }
 
     float GetPoints(int position, int raceIndex, RacerStatus racer)
@@ -533,6 +687,66 @@ public class RaceManager : MonoBehaviour
     public string GetCurrentCircuitName()
     {
         return currentCircuit != null ? currentCircuit.circuitName : "UNKNOWN";
+    }
+
+    bool IsAdvancePressed(InputDevice device)
+    {
+        if (device == null)
+            return false;
+
+        if (device is Keyboard keyboard)
+        {
+            return
+                keyboard.enterKey.wasPressedThisFrame ||
+                keyboard.spaceKey.wasPressedThisFrame;
+        }
+
+        if (device is Gamepad gamepad)
+        {
+            return gamepad.buttonSouth.wasPressedThisFrame;
+        }
+
+        return false;
+    }
+
+    RacerStatus FindRacerForPlayer(PlayerSessionData player)
+    {
+        if (player == null)
+            return null;
+
+        foreach (var racer in allRacers)
+        {
+            var identity =
+                racer.GetComponent<SCR_CarIdentity>();
+
+            if (identity == null ||
+                identity.racerData == null)
+                continue;
+
+            if (identity.racerData.characterID ==
+                player.selectedCharacterID)
+            {
+                return racer;
+            }
+        }
+
+        return null;
+    }
+
+    void OpenPendingRanking()
+    {
+        if (!waitingForFinishConfirmations)
+            return;
+
+        waitingForFinishConfirmations = false;
+
+        Debug.Log("Todos os jogadores confirmaram. Abrindo ranking.");
+
+        RankingManager.Instance?.OpenRanking(
+            pendingRankingResults
+        );
+
+        pendingRankingResults = null;
     }
 }
 

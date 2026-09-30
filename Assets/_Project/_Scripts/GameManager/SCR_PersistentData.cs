@@ -32,18 +32,19 @@ public class SCR_PersistentData : MonoBehaviour {
 
     public void ResetSession()
     {
-        // Despareia devices corretamente
         foreach (var p in players)
         {
             if (p.device != null)
             {
                 var user = InputUser.FindUserPairedToDevice(p.device);
+
                 if (user.HasValue && user.Value.valid)
                 {
                     user.Value.UnpairDevices();
                 }
-
             }
+
+            p.device = null;
         }
 
         players.Clear();
@@ -55,6 +56,14 @@ public class SCR_PersistentData : MonoBehaviour {
     {
         ResetSession();
         Destroy(gameObject);
+    }
+
+    public void ClearRuntimeDevices()
+    {
+        foreach (var player in players)
+        {
+            player.device = null;
+        }
     }
 
 }

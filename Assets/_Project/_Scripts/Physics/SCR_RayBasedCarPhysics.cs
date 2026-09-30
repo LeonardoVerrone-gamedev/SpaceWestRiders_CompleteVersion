@@ -1525,8 +1525,16 @@ private void ApplyClassicSuspension()
 
     void Retire()
     {
-        if (racerStatus != null)
-            racerStatus.RetirePlayer();
+        if (racerStatus != null){
+            if (racerStatus.HasFinishedRace)
+            {
+                return;
+            }
+            else
+            {
+                racerStatus.RetirePlayer();
+            }
+        }
 
         Transform bigExplosion = null;
 
