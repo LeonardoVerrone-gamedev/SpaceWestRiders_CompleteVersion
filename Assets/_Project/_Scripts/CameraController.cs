@@ -274,6 +274,11 @@ public class CameraController : MonoBehaviour
 
     private List<Transform> crashCamPoints = new List<Transform>(4);
 
+    private bool externalCameraControl = false;
+
+    public bool IsExternallyControlled => externalCameraControl;
+
+
 
     void Start()
     {
@@ -324,6 +329,8 @@ public class CameraController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (externalCameraControl) return;
+
         HandlePhysicsBasedEffects();
         UpdateContinuousNoise();
         HandleRotateDamping();
@@ -405,6 +412,7 @@ public class CameraController : MonoBehaviour
         playerRB = player?.GetComponent<Rigidbody>();
 
         racerStatus = player.gameObject.GetComponent<RacerStatus>();
+        racerStatus.SetCamera(this);
 
         // ATUALIZAÇÃO DO CACHE DE FÍSICA SEMPRE QUE O PLAYER MUDA
         if (player != null)
@@ -1207,6 +1215,36 @@ public class CameraController : MonoBehaviour
         carPhysics.OnLand       -= HandleLanding;
         carPhysics.OnCrash -= SetCrashCam;
     }
+
+    public OutputChannels GetOutputChannel()
+    {
+        if (vCam != null)
+            return vCam.OutputChannel;
+
+        return OutputChannels.Default;
+    }
+
+    public void DisableStandardCameraControl()
+    {
+        externalCameraControl = true;
+
+        if (selectionVcam != null)
+            selectionVcam.Priority = 0;
+
+        if (vCam != null)
+            vCam.Priority = 0;
+
+        if (turbo_VCam != null)
+            turbo_VCam.Priority = 0;
+
+        foreach (CinemachineCamera crashCam in crashCams)
+        {
+            if (crashCam != null)
+                crashCam.Priority = 0;
+        }
+    }
+
+
 
     private void UpdateContinuousNoise()
     {

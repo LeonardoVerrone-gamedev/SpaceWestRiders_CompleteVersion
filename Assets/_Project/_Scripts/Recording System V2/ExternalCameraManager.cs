@@ -8,7 +8,8 @@ public class F1ExternalCameraManager : MonoBehaviour
     public enum FollowMode
     {
         FollowFirst,
-        FollowSelected
+        FollowSelected,
+        FinishedRace
     }
 
     [Header("Cameras")]
@@ -41,6 +42,11 @@ public class F1ExternalCameraManager : MonoBehaviour
 
     private RacerStatus currentTarget;
     private CinemachineCamera currentCamera;
+
+    [SerializeField]private bool isInUse = false;
+
+    public bool IsInUse => isInUse;
+
 
     private void Awake()
     {
@@ -180,7 +186,15 @@ public class F1ExternalCameraManager : MonoBehaviour
 
     private void UpdateCameraTarget()
     {
-        if (currentTarget == null)
+        if (!isInUse)
+        {
+            foreach (CinemachineCamera cam in cameras)
+            {
+                cam.Priority = -1;
+            }
+        }
+
+        if (currentTarget == null || !isInUse)
             return;
 
         Transform target = currentTarget.transform;
@@ -325,5 +339,41 @@ public class F1ExternalCameraManager : MonoBehaviour
 
         if (currentTarget != null)
             UpdateCameraTarget();
+    }
+
+    public bool TryTakeControl(
+    RacerStatus racer,
+    CameraController playerCameraController)
+    {
+        if (racer == null || playerCameraController == null)
+            return false;
+
+        if (isInUse)
+            return false;
+
+        isInUse = true;
+
+        currentTarget = racer;
+        followMode = FollowMode.FinishedRace;
+
+        OutputChannels playerChannel =
+            playerCameraController.GetOutputChannel();
+
+        foreach (CinemachineCamera cam in cameras)
+        {
+            if (cam == null)
+                continue;
+
+            cam.OutputChannel = playerChannel;
+        }
+
+        UpdateCameraTarget();
+
+        if (cameras != null && cameras.Count > 0)
+        {
+            SetActiveCamera(cameras[0]);
+        }
+
+        return true;
     }
 }

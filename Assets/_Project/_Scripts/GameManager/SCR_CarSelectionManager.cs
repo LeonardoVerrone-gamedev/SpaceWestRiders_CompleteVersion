@@ -746,7 +746,7 @@ public class SCR_TrackSelectionManager : MonoBehaviour
 
                 // Remove AI
                 if (car.TryGetComponent<AIRacingController>(out var ai))
-                    Destroy(ai);
+                    ai.enabled = false;
 
                 // Define modo lógico do carro
                 InputMode mode = owner.device is Keyboard ? InputMode.Keyboard : InputMode.Gamepad;

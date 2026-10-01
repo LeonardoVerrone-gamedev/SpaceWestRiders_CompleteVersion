@@ -7,6 +7,7 @@ public class AIRacingController : MonoBehaviour
 {
     [Header("Perfil do Piloto")]
     [SerializeField] private SO_AIOponentProfile profile;
+    public SO_AIOponentProfile Profile => profile;
 
     [Header("Targeting")]
     [SerializeField] private List<Transform> waypoints = new List<Transform>();
@@ -156,6 +157,11 @@ public class AIRacingController : MonoBehaviour
         {
             rayBasedPhysics.SetAI(true, this);
         }
+    }
+
+    public void SetBehaviour(SO_AIOponentProfile newProfile)
+    {
+        profile = newProfile;
     }
 
     void FixedUpdate()

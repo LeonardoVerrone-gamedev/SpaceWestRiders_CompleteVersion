@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.InputSystem;
 
 public class RacerStatus : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class RacerStatus : MonoBehaviour
     public float distanceToNextWaypoint;
 
     [SerializeField] public int gridPosition{ get; private set; }
+
+    [SerializeField] SO_AIOponentProfile originalProfile;
 
     public float TrackProgress { get; private set; }
 
@@ -62,6 +65,7 @@ public class RacerStatus : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        originalProfile = GetComponent<AIRacingController>().Profile;
     }
 
     void StartRace()
@@ -301,9 +305,67 @@ public class RacerStatus : MonoBehaviour
         hasFinishedRace = true;
         finalRacePosition = position;
 
+        if (isPlayer)
+        {
+            PlayerInput thisInput = gameObject.GetComponent<PlayerInput>();
+
+            thisInput.enabled = false;
+            Destroy(thisInput);
+
+            TryGetComponent<AIRacingController>(out var ai);
+            AIRacingController victoryRoadAI = ai;
+            victoryRoadAI.enabled = true;
+            victoryRoadAI.SetBehaviour(originalProfile);
+            SCR_CarInput carinput = GetComponent<SCR_CarInput>();
+            carinput.SetInputMode(InputMode.AI_Controlled);
+
+            F1ExternalCameraManager[] externalCameras =
+                FindObjectsByType<F1ExternalCameraManager>(
+                    FindObjectsInactive.Include,
+                    FindObjectsSortMode.None
+                );
+
+            F1ExternalCameraManager freeCamera = null;
+
+            foreach (F1ExternalCameraManager externalCamera in externalCameras)
+            {
+                if (externalCamera == null)
+                    continue;
+
+                if (!externalCamera.IsInUse)
+                {
+                    freeCamera = externalCamera;
+                    break;
+                }
+            }
+
+            CameraController playerCameraController = thisCamera;
+
+            if (freeCamera != null && playerCameraController != null)
+            {
+                bool success = freeCamera.TryTakeControl(
+                    this,
+                    playerCameraController
+                );
+
+                if (success)
+                {
+                    playerCameraController.DisableStandardCameraControl();
+                }
+            }
+
+        }
+
         // Avisa a HUD desse player
         if (myManager != null)
             myManager.ShowFinishPosition(position);
+    }
+
+    CameraController thisCamera;
+
+    public void SetCamera(CameraController _cam)
+    {
+        thisCamera = _cam;
     }
 
     public void ConfirmFinish()
