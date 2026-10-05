@@ -1,4 +1,3 @@
-//using //Cinemachine;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -11,21 +10,28 @@ public class F1CameraWaypointRegion : MonoBehaviour
     [Min(0)]
     public int maxWaypoint = 0;
 
+    private CinemachineCamera cachedVirtualCamera;
+
     public CinemachineCamera VirtualCamera
     {
         get
         {
-            return GetComponent<CinemachineCamera>();
+            if (cachedVirtualCamera == null)
+            {
+                cachedVirtualCamera = GetComponent<CinemachineCamera>();
+            }
+            return cachedVirtualCamera;
         }
+    }
+
+    private void Awake()
+    {
+        cachedVirtualCamera = GetComponent<CinemachineCamera>();
     }
 
     /// <summary>
     /// Verifica se um waypoint está dentro da região desta câmera.
     /// Também suporta regiões que atravessam o final da pista.
-    /// Exemplo:
-    /// min = 90
-    /// max = 10
-    /// significa 90 -> final da pista -> 0 -> 10
     /// </summary>
     public bool ContainsWaypoint(int waypointIndex, int totalWaypoints)
     {
