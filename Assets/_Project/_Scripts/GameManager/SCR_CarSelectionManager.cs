@@ -94,6 +94,12 @@ public class SCR_TrackSelectionManager : MonoBehaviour
             SCR_PersistentData.Instance.ClearRuntimeDevices();
         }
 
+        foreach (var player in SCR_PersistentData.Instance.players)
+        {
+            player.device = null;
+            player.hasConfirmed = false;
+        }
+
         camManager = UnityEngine.Object.FindFirstObjectByType<CameraController>();
 
         _isStoryMode = GameManagerInstance.Instance.currentGameMode == GameMode.StoryMode;
