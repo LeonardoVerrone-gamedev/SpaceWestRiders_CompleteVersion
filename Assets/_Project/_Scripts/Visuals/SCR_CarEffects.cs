@@ -79,6 +79,8 @@ public class SCR_CarEffects : MonoBehaviour
     [SerializeField]private MeshRenderer[] brakeLightsMeshRenderer;
     private List<Material> brakeLightsMaterials = new List<Material>();
 
+    [SerializeField] TrailRenderer[] backLightTrails;
+
     private bool estaLigado = false;
 
     [SerializeField]SCR_ImpactEffect BigBoom;
@@ -514,6 +516,11 @@ public class SCR_CarEffects : MonoBehaviour
         foreach(Material material in brakeLightsMaterials)
         {
             material.SetInt("_LanternOn", valorShader);
+        }
+
+        foreach(TrailRenderer trail in backLightTrails)
+        {
+            trail.gameObject.SetActive(valorShader == 1);
         }
     }
 

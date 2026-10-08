@@ -26301,30 +26301,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 256572424}
     m_Modifications:
-    - target: {fileID: 490242089604946396, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
-      propertyPath: playOnAwake
-      value: 0
+    - target: {fileID: 2334173156372398840, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
+      propertyPath: m_Time
+      value: 0.035
+      objectReference: {fileID: 0}
+    - target: {fileID: 2543540789436922903, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
+      propertyPath: m_Time
+      value: 0.035
       objectReference: {fileID: 0}
     - target: {fileID: 3820662635277455633, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
       propertyPath: m_Name
       value: Billy SIn
       objectReference: {fileID: 0}
-    - target: {fileID: 3820662635277455633, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4948551910585691549, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
-      propertyPath: playOnAwake
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5547816023780333362, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
-      propertyPath: finishAdvanceText
-      value: 
-      objectReference: {fileID: 1363458290}
-    - target: {fileID: 5547816023780333362, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
-      propertyPath: finishPositionText
-      value: 
-      objectReference: {fileID: 1363458291}
     - target: {fileID: 7233265701248866632, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
       propertyPath: m_LocalPosition.x
       value: -138.39375
@@ -26365,41 +26353,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -0.77
       objectReference: {fileID: 0}
-    - target: {fileID: 7858032834413200289, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
-      propertyPath: playOnAwake
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8174940240513765122, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
-      propertyPath: playOnAwake
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
---- !u!114 &1363458290 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5287472144094087189, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
-  m_PrefabInstance: {fileID: 1363458289}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1363458291 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7418029737320196482, guid: f2fd7e217595a4841af6da363f0de299, type: 3}
-  m_PrefabInstance: {fileID: 1363458289}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1365700299
 GameObject:
   m_ObjectHideFlags: 0
