@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f49063cb4f5efa4fb54f839f43f0be0, type: 3}
+  m_Name: Desert Circuit
+  m_EditorClassIdentifier: 
+  sceneName: Desert Track
+  circuitID: Desert Track
+  circuitName: Desert Rallye
+  circuitImage: {fileID: 0}
+  circuitVideo: {fileID: 32900000, guid: 2be8a13ff65eb6a4db7187b6d4f7867b, type: 3}
+  lapCount: 1
+  allowRubberBanding: 0
+  rivals: []
+  DifficultyLevel: 0.1
