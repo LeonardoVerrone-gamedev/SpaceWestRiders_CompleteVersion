@@ -486,8 +486,6 @@ public class SCR_TrackSelectionManager : MonoBehaviour
         SCR_PersistentData.Instance.players.Add(newPlayer);
         _playerJoinTimes[newIndex] = Time.time;
 
-        // === ATUALIZA HUD PARA MULTIPLAYER ===
-        // === ATUALIZA HUD DA SELEÇÃO ===
         if (SCR_PersistentData.Instance.players.Count == 1)
         {
             CarSelectionManagerScript.Instance.ShowSelectionHud(true, false);
