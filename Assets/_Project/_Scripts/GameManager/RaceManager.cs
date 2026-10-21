@@ -200,6 +200,7 @@ public class RaceManager : MonoBehaviour
         allRacers = GameObject.FindObjectsByType<RacerStatus>(FindObjectsSortMode.None).ToList();
 
         AssignAIGroups();
+
         InvokeRepeating(nameof(UpdateRacePositions), 0.5f, 0.2f);
     }
 
@@ -671,7 +672,9 @@ public class RaceManager : MonoBehaviour
 
         var humanPlayers = allRacers.Where(r => r.isPlayer).ToList();
 
-        if(playersReady >= humanPlayers.Count)
+        SCR_ArcadeRaceAudioManager.Instance.InitializeAudioSystem();
+
+        if (playersReady >= humanPlayers.Count)
         {
             List<CameraController> _cams = GameObject.FindObjectsByType<CameraController>(FindObjectsSortMode.None).ToList();
             //Debug.Log($"Finded {_cams.Count} cameras");

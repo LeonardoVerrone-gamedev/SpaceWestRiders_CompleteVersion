@@ -791,7 +791,6 @@ public class SCR_TrackSelectionManager : MonoBehaviour
             }
             car.enabled = true;
         }
-
         OnRaceSetupCompleted.Invoke();
         Debug.Log("TODOS PRONTOS! 3... 2... 1... GO!");
     }
