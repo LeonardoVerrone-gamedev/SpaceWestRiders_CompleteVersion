@@ -10402,81 +10402,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &615760786
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 615760788}
-  - component: {fileID: 615760787}
-  m_Layer: 0
-  m_Name: Audio System
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &615760787
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 615760786}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4936db9aa62262e46bca30e14c424fd9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hoverClips:
-    engineLoop: {fileID: 8300000, guid: ca3f43a659949354db71c436c65c16aa, type: 3}
-    engineVolume: 0.15
-    minPitch: 0.7
-    maxPitch: 1.6
-    driftLoop: {fileID: 8300000, guid: a0be0a36ed00c174ba9a210b93395659, type: 3}
-    driftVolume: 0.15
-    gearShift: {fileID: 8300000, guid: 413f889f71fd99a479c1cd84d77d67f8, type: 3}
-    turboStart: {fileID: 8300000, guid: 5b04445173313c54c939e90f523cf5e7, type: 3}
-    collision: {fileID: 8300000, guid: 47f3f618cd7dee342aa2b7e705eff3c5, type: 3}
-    heavyCollision: {fileID: 8300000, guid: 0fe9f5d740c34214c8bbe12c06784c33, type: 3}
-    landing: {fileID: 0}
-  classicClips:
-    engineLoop: {fileID: 8300000, guid: 26b22ac0281d3494082496577fb38945, type: 3}
-    engineVolume: 0.15
-    minPitch: 0.7
-    maxPitch: 1.6
-    driftLoop: {fileID: 8300000, guid: c23cd09b0c3e6a140a962cde5b69a8fa, type: 3}
-    driftVolume: 0.15
-    gearShift: {fileID: 8300000, guid: 413f889f71fd99a479c1cd84d77d67f8, type: 3}
-    turboStart: {fileID: 8300000, guid: 5b04445173313c54c939e90f523cf5e7, type: 3}
-    collision: {fileID: 8300000, guid: 47f3f618cd7dee342aa2b7e705eff3c5, type: 3}
-    heavyCollision: {fileID: 8300000, guid: 0fe9f5d740c34214c8bbe12c06784c33, type: 3}
-    landing: {fileID: 8300000, guid: 0af686416677c8b49a8d00198d7bcae9, type: 3}
-  secondaryEngineVolume: 0.09
-  dominantSwitchThreshold: 0.12
-  volumeTransitionSpeed: 3
-  pitchTransitionSpeed: 5
-  effectVoiceCount: 6
-  effectsMasterVolume: 0.25
-  collisionHeavyThreshold: 0.325
---- !u!4 &615760788
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 615760786}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 69.989746, y: 182.15237, z: -200.55072}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &621739425 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2928805609866735885, guid: 4684ba43522a1a94196918b2ad1a659c, type: 3}
@@ -27928,6 +27853,10 @@ MonoBehaviour:
   totalLaps: 3
   playersReady: 0
   hasActuallyStarted: 0
+  countdownFont: {fileID: 12800000, guid: 7c521372884c3d54b8fd4239e0427f54, type: 3}
+  countdownFontSize: 100
+  showRaceCountdown: 1
+  countdownDuration: 4
 --- !u!4 &1464796353
 Transform:
   m_ObjectHideFlags: 0
@@ -58781,6 +58710,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 351d53bdd3f57494c919502cb293c9de, type: 3}
+--- !u!1001 &8215062587695616392
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1501758898129668384, guid: 7e2f7f7f40ae814418999d2d06908b71, type: 3}
+      propertyPath: m_Name
+      value: Audio System
+      objectReference: {fileID: 0}
+    - target: {fileID: 2391384497468005563, guid: 7e2f7f7f40ae814418999d2d06908b71, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 69.989746
+      objectReference: {fileID: 0}
+    - target: {fileID: 2391384497468005563, guid: 7e2f7f7f40ae814418999d2d06908b71, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 182.15237
+      objectReference: {fileID: 0}
+    - target: {fileID: 2391384497468005563, guid: 7e2f7f7f40ae814418999d2d06908b71, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -200.55072
+      objectReference: {fileID: 0}
+    - target: {fileID: 2391384497468005563, guid: 7e2f7f7f40ae814418999d2d06908b71, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2391384497468005563, guid: 7e2f7f7f40ae814418999d2d06908b71, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2391384497468005563, guid: 7e2f7f7f40ae814418999d2d06908b71, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2391384497468005563, guid: 7e2f7f7f40ae814418999d2d06908b71, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2391384497468005563, guid: 7e2f7f7f40ae814418999d2d06908b71, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2391384497468005563, guid: 7e2f7f7f40ae814418999d2d06908b71, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2391384497468005563, guid: 7e2f7f7f40ae814418999d2d06908b71, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7e2f7f7f40ae814418999d2d06908b71, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -58813,4 +58799,4 @@ SceneRoots:
   - {fileID: 111668083}
   - {fileID: 1858869156}
   - {fileID: 1859267525}
-  - {fileID: 615760788}
+  - {fileID: 8215062587695616392}

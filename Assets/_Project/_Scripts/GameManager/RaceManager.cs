@@ -39,6 +39,9 @@ public class RaceManager : MonoBehaviour
 
     public bool hasActuallyStarted;
 
+    [SerializeField] private Font countdownFont;
+    [SerializeField] private int countdownFontSize = 100;
+
     private enum AISettingGroup
     {
         Rival,
@@ -97,6 +100,18 @@ public class RaceManager : MonoBehaviour
     private List<RaceResultData> pendingRankingResults = null;
 
     private bool waitingForAllRetiredRanking = false;
+
+    [Header("Race Countdown")]
+    [SerializeField] private bool showRaceCountdown = true;
+    [SerializeField] private int countdownDuration = 4;
+
+    private bool countdownVisible = false;
+    private string countdownText = "";
+    private float countdownScale = 1f;
+    private float countdownAlpha = 1f;
+    private Color countdownColor = Color.white;
+    private GUIStyle countdownStyle;
+    private Coroutine countdownCoroutine;
 
     void Awake()
     {
@@ -668,23 +683,170 @@ public class RaceManager : MonoBehaviour
 
     public void EndSelectionAndGoToStart()
     {
-        playersReady ++;
+        playersReady++;
 
-        var humanPlayers = allRacers.Where(r => r.isPlayer).ToList();
+        var humanPlayers = allRacers
+            .Where(r => r.isPlayer)
+            .ToList();
 
         SCR_ArcadeRaceAudioManager.Instance?.InitializeAudioSystem();
 
         if (playersReady >= humanPlayers.Count)
         {
-            List<CameraController> _cams = GameObject.FindObjectsByType<CameraController>(FindObjectsSortMode.None).ToList();
-            //Debug.Log($"Finded {_cams.Count} cameras");
-            foreach(CameraController cam in _cams)
+            List<CameraController> cams =
+                GameObject.FindObjectsByType<CameraController>(
+                    FindObjectsSortMode.None
+                ).ToList();
+
+            foreach (CameraController cam in cams)
             {
-                //Debug.Log($"{cam.gameObject} removendo a selection cam");
                 cam.ExitSelectionCam();
             }
-            Invoke("AwakeRacers", 3f);
+
+            if (showRaceCountdown)
+            {
+                if (countdownCoroutine != null)
+                    StopCoroutine(countdownCoroutine);
+
+                countdownCoroutine = StartCoroutine(
+                    RaceCountdownCoroutine()
+                );
+            }
+            else
+            {
+                Invoke(nameof(AwakeRacers), 3f);
+            }
         }
+    }
+
+    private IEnumerator RaceCountdownCoroutine()
+    {
+        countdownVisible = true;
+
+        float elapsed = 0f;
+        float totalDuration = Mathf.Max(1, countdownDuration);
+
+        string[] sequence = { "3", "2", "1", "GO!" };
+
+        while (elapsed < totalDuration)
+        {
+            elapsed += Time.deltaTime;
+
+            float progress = Mathf.Min(
+                elapsed / totalDuration, 0.9999f
+            );
+
+            // Divide os 4 segundos em 4 etapas.
+            int step = Mathf.Min(
+                Mathf.FloorToInt(progress * 4f), 3
+            );
+
+            float stepProgress = progress * 4f - step;
+
+            countdownText = sequence[step];
+
+            // Cada número entra com um impacto e depois estabiliza.
+            float punch = 1f + 0.65f *
+                Mathf.Exp(-stepProgress * 10f) *
+                Mathf.Sin(stepProgress * 18f);
+
+            countdownScale = Mathf.Lerp(
+                0.65f, 1f,
+                Mathf.SmoothStep(0f, 1f,
+                    Mathf.Clamp01(stepProgress * 5f))
+            ) * punch;
+
+            // Fade curto no início e no final de cada etapa.
+            float fadeIn = Mathf.Clamp01(stepProgress * 8f);
+            float fadeOut = Mathf.Clamp01(
+                (1f - stepProgress) * 7f
+            );
+
+            countdownAlpha = Mathf.Min(fadeIn, fadeOut);
+
+            // GO! ganha uma cor especial.
+            countdownColor = step == 3
+                ? new Color(0.2f, 1f, 0.45f)
+                : new Color(1f, 0.82f, 0.25f);
+
+            yield return null;
+        }
+
+        countdownVisible = false;
+        countdownCoroutine = null;
+
+        // A corrida começa exatamente ao terminar a contagem.
+        AwakeRacers();
+    }
+
+    private void OnGUI()
+    {
+        if (!countdownVisible)
+            return;
+
+        if (countdownStyle == null)
+        {
+            countdownStyle = new GUIStyle(GUI.skin.label)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                fontStyle = FontStyle.Bold,
+                fontSize = 100,
+                richText = false
+            };
+        }
+
+        countdownStyle.font = countdownFont;
+        countdownStyle.fontSize = countdownFontSize;
+
+        Matrix4x4 previousMatrix = GUI.matrix;
+        Color previousColor = GUI.color;
+
+        Vector2 center = new Vector2(
+            Screen.width * 0.5f,
+            Screen.height * 0.5f
+        );
+
+        // Aumenta e diminui o texto sem mover seu centro.
+        GUI.matrix = Matrix4x4.TRS(
+            center,
+            Quaternion.identity,
+            Vector3.one * countdownScale
+        );
+
+        countdownStyle.fontSize = 100;
+
+        GUI.color = new Color(
+            0f, 0f, 0f, countdownAlpha
+        );
+
+        // Sombra para destacar o texto.
+        GUI.Label(
+            new Rect(-298f, -48f, 600f, 100f),
+            countdownText,
+            countdownStyle
+        );
+
+        GUI.Label(
+            new Rect(-302f, -52f, 600f, 100f),
+            countdownText,
+            countdownStyle
+        );
+
+        GUI.color = new Color(
+            countdownColor.r,
+            countdownColor.g,
+            countdownColor.b,
+            countdownAlpha
+        );
+
+        GUI.Label(
+            new Rect(-300f, -50f, 600f, 100f),
+            countdownText,
+            countdownStyle
+        );
+
+        GUI.matrix = previousMatrix;
+        GUI.color = previousColor;
     }
 
     public string GetCurrentCircuitName()

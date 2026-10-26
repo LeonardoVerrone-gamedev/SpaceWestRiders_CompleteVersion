@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1501758898129668384
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2391384497468005563}
+  - component: {fileID: 7639192002226216143}
+  m_Layer: 0
+  m_Name: Audio System
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2391384497468005563
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1501758898129668384}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 69.989746, y: 182.15237, z: -200.55072}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7639192002226216143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1501758898129668384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4936db9aa62262e46bca30e14c424fd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoverClips:
+    engineLoop: {fileID: 8300000, guid: 5f1d4c6e7b0f3d747849604be551bd03, type: 3}
+    engineVolume: 0.15
+    minPitch: 0.7
+    maxPitch: 1.6
+    driftLoop: {fileID: 8300000, guid: 8add8a37bae0f334892fca07ad4c6e84, type: 3}
+    driftVolume: 0.15
+    gearShift: {fileID: 8300000, guid: 413f889f71fd99a479c1cd84d77d67f8, type: 3}
+    turboStart: {fileID: 8300000, guid: 5b04445173313c54c939e90f523cf5e7, type: 3}
+    collision: {fileID: 8300000, guid: 47f3f618cd7dee342aa2b7e705eff3c5, type: 3}
+    heavyCollision: {fileID: 8300000, guid: 0fe9f5d740c34214c8bbe12c06784c33, type: 3}
+    landing: {fileID: 0}
+  classicClips:
+    engineLoop: {fileID: 8300000, guid: cc4267c70c6435047865f065fd9fabc9, type: 3}
+    engineVolume: 0.15
+    minPitch: 0.7
+    maxPitch: 1.6
+    driftLoop: {fileID: 8300000, guid: c23cd09b0c3e6a140a962cde5b69a8fa, type: 3}
+    driftVolume: 0.15
+    gearShift: {fileID: 8300000, guid: 413f889f71fd99a479c1cd84d77d67f8, type: 3}
+    turboStart: {fileID: 8300000, guid: 5b04445173313c54c939e90f523cf5e7, type: 3}
+    collision: {fileID: 8300000, guid: 47f3f618cd7dee342aa2b7e705eff3c5, type: 3}
+    heavyCollision: {fileID: 8300000, guid: 0fe9f5d740c34214c8bbe12c06784c33, type: 3}
+    landing: {fileID: 8300000, guid: 0af686416677c8b49a8d00198d7bcae9, type: 3}
+  secondaryEngineVolume: 0.09
+  dominantSwitchThreshold: 0.12
+  volumeTransitionSpeed: 3
+  pitchTransitionSpeed: 5
+  effectVoiceCount: 6
+  effectsMasterVolume: 0.03125
+  collisionHeavyThreshold: 0.325
