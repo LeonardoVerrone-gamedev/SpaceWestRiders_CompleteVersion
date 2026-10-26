@@ -672,7 +672,7 @@ public class RaceManager : MonoBehaviour
 
         var humanPlayers = allRacers.Where(r => r.isPlayer).ToList();
 
-        SCR_ArcadeRaceAudioManager.Instance.InitializeAudioSystem();
+        SCR_ArcadeRaceAudioManager.Instance?.InitializeAudioSystem();
 
         if (playersReady >= humanPlayers.Count)
         {
