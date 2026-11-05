@@ -7,7 +7,6 @@ public class SCR_ArcadeRaceAudioManager : MonoBehaviour
 {
     // =========================================================
     // PERFIS DE ÁUDIO
-    // Configurados no Inspector e compartilhados por tipo de carro.
     // =========================================================
 
     [Serializable]
@@ -69,6 +68,13 @@ public class SCR_ArcadeRaceAudioManager : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float collisionHeavyThreshold = 0.8f;
 
+    [Header("Cooldown dos sons de colisão")]
+    [Min(0f)]
+    [SerializeField] private float collisionSoundCooldown = 2.5f;
+
+    // Cooldown compartilhado entre todos os jogadores.
+    private float lastCollisionTime = float.NegativeInfinity;
+
     private CarAudioSetup[] players = Array.Empty<CarAudioSetup>();
 
     private AudioSource[] engineSources = Array.Empty<AudioSource>();
@@ -90,7 +96,6 @@ public class SCR_ArcadeRaceAudioManager : MonoBehaviour
     private const int PRIORITY_TURBO = 5;
     private const int PRIORITY_COLLISION = 1;
     private const int PRIORITY_HEAVY_COLLISION = 3;
-
 
     public static SCR_ArcadeRaceAudioManager Instance { get; private set; }
 
@@ -156,7 +161,6 @@ public class SCR_ArcadeRaceAudioManager : MonoBehaviour
             $"{players.Length} jogador(es) humano(s).",
             this);
     }
-
 
     private void DetectHumanPlayerCars()
     {
@@ -358,6 +362,9 @@ public class SCR_ArcadeRaceAudioManager : MonoBehaviour
         eventsSubscribed = false;
     }
 
+    // =========================================================
+    // COOLDOWN DE COLISÃO
+    // =========================================================
 
     private void HandleCollision(CarAudioSetup setup, float force)
     {
@@ -367,7 +374,24 @@ public class SCR_ArcadeRaceAudioManager : MonoBehaviour
         CarAudioClips clips = setup.activeClips;
         bool heavy = force >= collisionHeavyThreshold;
 
-        if(force < 0.3f) return;
+        // Ignora colisões muito fracas.
+        if (force < 0.3f)
+            return;
+
+        // Verifica se já houve 5 segundos sem colisões.
+        float currentTime = Time.time;
+
+        bool canPlayCollisionSound =
+            currentTime - lastCollisionTime >= collisionSoundCooldown;
+
+        // IMPORTANTE:
+        // Toda colisão válida reinicia o timer,
+        // mesmo quando o som não pode ser reproduzido.
+        lastCollisionTime = currentTime;
+
+        // Ainda estamos dentro do período de silêncio.
+        if (!canPlayCollisionSound)
+            return;
 
         AudioClip clip = heavy
             ? (clips.heavyCollision != null
@@ -381,7 +405,6 @@ public class SCR_ArcadeRaceAudioManager : MonoBehaviour
             heavy ? 1f : 0.75f);
     }
 
-
     private void Update()
     {
         if (!isInitialized)
@@ -392,7 +415,6 @@ public class SCR_ArcadeRaceAudioManager : MonoBehaviour
         UpdateDriftSources();
         CleanupEffectVoices();
     }
-
 
     private void UpdateDominantEngine()
     {
@@ -436,8 +458,6 @@ public class SCR_ArcadeRaceAudioManager : MonoBehaviour
 
         return score;
     }
-
-   
 
     private void UpdateEngineSources()
     {
@@ -503,7 +523,6 @@ public class SCR_ArcadeRaceAudioManager : MonoBehaviour
         }
     }
 
-
     private void UpdateDriftSources()
     {
         for (int i = 0; i < players.Length; i++)
@@ -564,7 +583,6 @@ public class SCR_ArcadeRaceAudioManager : MonoBehaviour
                 Time.deltaTime * volumeTransitionSpeed);
         }
     }
-
 
     private void PlayEffect(
         AudioClip clip,
