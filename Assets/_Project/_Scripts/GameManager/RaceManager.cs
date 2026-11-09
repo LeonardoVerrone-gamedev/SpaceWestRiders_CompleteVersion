@@ -37,10 +37,19 @@ public class RaceManager : MonoBehaviour
     public static event Action OnDecalSelectionStart;
     public static event Action OnRaceEffectiveStart;
 
+    public static event Action<RacerStatus, float> OnPlayerRacerFinished;
+
+    private float raceStartTime;
+
     public bool hasActuallyStarted;
 
     [SerializeField] private Font countdownFont;
     [SerializeField] private int countdownFontSize = 100;
+
+    private BestRaceRecordResult bestGlobalRecord;
+
+    private bool ghostLookupCompleted = false;
+    private bool raceStartRequested = false;
 
     private enum AISettingGroup
     {
@@ -217,7 +226,85 @@ public class RaceManager : MonoBehaviour
         AssignAIGroups();
 
         InvokeRepeating(nameof(UpdateRacePositions), 0.5f, 0.2f);
+
+        LoadGlobalRecordAndGhost();
     }
+
+    
+private void LoadGlobalRecordAndGhost()
+{
+    ghostLookupCompleted = false;
+    raceStartRequested = false;
+    bestGlobalRecord = null;
+
+    if (currentCircuit == null)
+    {
+        Debug.LogError("[GLOBAL RECORD] CircuitSO não encontrado.");
+        ghostLookupCompleted = true;
+        return;
+    }
+
+    if (SupabaseGhostService.Instance == null)
+    {
+        Debug.LogError("[GLOBAL RECORD] SupabaseGhostService não encontrado.");
+        ghostLookupCompleted = true;
+        return;
+    }
+
+    Debug.Log(
+        $"[GLOBAL RECORD] Buscando recorde de " +
+        $"{currentCircuit.circuitName} ({currentCircuit.circuitID})"
+    );
+
+    SupabaseGhostService.Instance.GetBestRaceRecord(
+        currentCircuit.circuitID,
+        OnGlobalRecordLoaded
+    );
+}
+
+private void OnGlobalRecordLoaded(BestRaceRecordResult result)
+{
+    bestGlobalRecord = result;
+    ghostLookupCompleted = true;
+
+    if (result == null || result.record == null)
+    {
+        Debug.Log(
+            "[GLOBAL RECORD] Nenhum recorde global encontrado."
+        );
+    }
+    else
+    {
+        Debug.Log(
+            "[GLOBAL RECORD] RECORD ENCONTRADO!\n" +
+            $"Circuito: {result.record.circuit_name}\n" +
+            $"Jogador: {result.record.player_name}\n" +
+            $"Tempo: {FormatRaceTime(result.record.total_time)}\n" +
+            $"Player ID: {result.record.player_id}\n" +
+            $"Carro: {result.record.car_character_id}\n" +
+            $"Data: {result.record.created_at}\n" +
+            $"Record ID: {result.record.id}\n" +
+            $"Ghost: {(result.ghost != null ? "OK" : "INDISPONÍVEL")}"
+        );
+    }
+
+    // Se a contagem regressiva terminou enquanto aguardávamos,
+    // retoma a largada.
+    if (raceStartRequested)
+    {
+        AwakeRacers();
+    }
+}
+
+private string FormatRaceTime(float time)
+{
+    int minutes = Mathf.FloorToInt(time / 60f);
+    int seconds = Mathf.FloorToInt(time % 60f);
+    int milliseconds = Mathf.FloorToInt((time * 1000f) % 1000f);
+
+    return $"{minutes:00}:{seconds:00}.{milliseconds:000}";
+}
+
 
     // Este método será chamado pelos Checkpoints ou pelo próprio Trigger do Manager
     public void NotifyCheckpoint(RacerStatus racer, BoxCollider checkpointHit)
@@ -249,6 +336,8 @@ public class RaceManager : MonoBehaviour
 
                     racer.RegisterLapTime(lapTime, currentCircuit.circuitName, racerName);
 
+                    //Chama verificação supabase: melhor volta?
+
                     racer.CountLap();
 
                     if (racer.lapsCompleted >= totalLaps)
@@ -279,6 +368,7 @@ public class RaceManager : MonoBehaviour
         }
     }
 
+
     void RegisterFinish(RacerStatus racer)
     {
         if (finishedRacers.Contains(racer))
@@ -286,17 +376,17 @@ public class RaceManager : MonoBehaviour
 
         finishedRacers.Add(racer);
 
-        // A posição de chegada é definitiva.
-        int finalPosition = finishedRacers.Count;
+        // Somente jogadores locais geram recordes globais.
+        if (racer.isPlayer)
+        {
+            float totalTime = Time.time - raceStartTime;
 
-        racer.SetFinishedPosition(finalPosition);
-
-        Debug.Log(
-            $"{racer.name} terminou a corrida em {finalPosition}º lugar."
-        );
+            OnPlayerRacerFinished?.Invoke(racer, totalTime);
+        }
     }
 
-   void AssignAIGroups()
+
+    void AssignAIGroups()
     {
         var allAIs = allRacers.Where(r => !r.isPlayer).ToList();
         var humanPlayers = allRacers.Where(r => r.isPlayer).ToList();
@@ -373,9 +463,6 @@ public class RaceManager : MonoBehaviour
             neutralAIs.Add(aiStatus);
         }
 
-        // --------------------------------------------------
-        // EASY = mesmo número de Rivals
-        // --------------------------------------------------
 
         int easyCount = Mathf.Min(rivalCount, neutralAIs.Count);
 
@@ -589,10 +676,6 @@ public class RaceManager : MonoBehaviour
             });
         }
 
-        // ============================================
-        // NÃO ABRE MAIS O RANKING AQUI
-        // ============================================
-
         pendingRankingResults = results;
 
         waitingForFinishConfirmations = true;
@@ -656,30 +739,88 @@ public class RaceManager : MonoBehaviour
         }
     }
 
+
     public void AwakeRacers()
     {
+        // Evita iniciar a corrida mais de uma vez.
+        if (hasActuallyStarted)
+            return;
+
+        // Aguarda a consulta ao Supabase antes de liberar a largada.
+        if (!ghostLookupCompleted)
+        {
+            raceStartRequested = true;
+
+            Debug.Log(
+                "[GLOBAL GHOST] Aguardando consulta ao Supabase..."
+            );
+
+            return;
+        }
+
+        raceStartRequested = false;
+
+        // Remove referências inválidas.
         carRBs.RemoveAll(rb => rb == null);
-        
-        foreach(Rigidbody rb in carRBs)
+
+        // Libera a física dos veículos.
+        foreach (Rigidbody rb in carRBs)
         {
             rb.isKinematic = false;
-           // Debug.Log($"RB {rb.gameObject} disparado");
             rb.WakeUp();
         }
-        hasActuallyStarted = true;
-        OnRaceEffectiveStart.Invoke();
 
+        // Limpa os dados anteriores de checkpoint e volta.
         racerCheckpointProgress.Clear();
         hasStartedFirstLap.Clear();
         lapStartTimes.Clear();
 
+        // Inicializa o acompanhamento de todos os corredores.
         foreach (var racer in allRacers)
         {
-            racerCheckpointProgress.Add(racer, 0);
-            hasStartedFirstLap.Add(racer, false);
-            lapStartTimes.Add(racer, Time.time);
+            if (racer == null)
+                continue;
+
+            racerCheckpointProgress[racer] = 0;
+            hasStartedFirstLap[racer] = false;
+            lapStartTimes[racer] = Time.time;
         }
+
+        // Marca o início oficial da corrida.
+        raceStartTime = Time.time;
+        hasActuallyStarted = true;
+
+        // Inicia a gravação dos Ghost Cars.
+        // O evento deve ser disparado somente uma vez.
+        // Instancia e inicia o Ghost Car do recorde global.
+        if (bestGlobalRecord != null && bestGlobalRecord.ghost != null)
+        {
+            if (GhostPrefabDatabase.Instance != null)
+            {
+                GhostPrefabDatabase.Instance.SpawnAndPlay(
+                    bestGlobalRecord.ghost
+                );
+
+                Debug.Log("[GLOBAL GHOST] Ghost Car instanciado!");
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "[GLOBAL GHOST] GhostPrefabDatabase não encontrado."
+                );
+            }
+        }
+        else
+        {
+            Debug.Log("[GLOBAL GHOST] Nenhum ghost disponível para esta pista.");
+        }
+
+        // Inicia a gravação dos jogadores.
+        OnRaceEffectiveStart?.Invoke();
+
+        Debug.Log("[RACE] Corrida iniciada! Gravação dos Ghost Cars ativada.");
     }
+
 
     public void EndSelectionAndGoToStart()
     {

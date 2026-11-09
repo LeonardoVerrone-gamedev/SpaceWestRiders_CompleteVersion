@@ -862,6 +862,57 @@ private void ApplyClassicSuspension()
         }
     }
 
+
+    public GhostFrameData CaptureGhostFrame(float elapsedTime)
+    {
+        GhostFrameData frame = new GhostFrameData();
+
+        // Tempo relativo ao início da corrida
+        frame.time = elapsedTime;
+
+        // Transform principal
+        frame.position = transform.position;
+        frame.rotation = transform.rotation;
+
+        // Carroceria: inclui pitch, roll e yaw visual
+        if (carBody != null)
+        {
+            frame.bodyLocalPosition = carBody.localPosition;
+            frame.bodyLocalRotation = carBody.localRotation;
+        }
+
+        // Rodas
+        int wheelCount = tires != null ? tires.Length : 0;
+
+        frame.wheelLocalPositions = new Vector3[wheelCount];
+        frame.wheelLocalRotations = new Quaternion[wheelCount];
+        frame.wheelValid = new bool[wheelCount];
+
+        for (int i = 0; i < wheelCount; i++)
+        {
+            if (tires[i] == null)
+            {
+                frame.wheelValid[i] = false;
+                continue;
+            }
+
+            Transform wheel = tires[i].transform;
+
+            // Posição relativa ao transform principal do carro.
+            frame.wheelLocalPositions[i] =
+                transform.InverseTransformPoint(wheel.position);
+
+            // Rotação relativa ao transform principal do carro.
+            frame.wheelLocalRotations[i] =
+                Quaternion.Inverse(transform.rotation) * wheel.rotation;
+
+            frame.wheelValid[i] = true;
+        }
+
+        return frame;
+    }
+
+
     private IEnumerator AnimateWheelTransition()
     {
         float targetAlpha = (carType == CarType.hover) ? 1f : 0f;
