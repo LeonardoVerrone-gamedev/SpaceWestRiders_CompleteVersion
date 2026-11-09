@@ -49907,6 +49907,7 @@ GameObject:
   - component: {fileID: 6363244718577324343}
   - component: {fileID: -8263569587973500133}
   - component: {fileID: 2511275314812602659}
+  - component: {fileID: 1872230678516970855}
   m_Layer: 8
   m_Name: "Z\xE4h"
   m_TagString: Player
@@ -52859,6 +52860,19 @@ MonoBehaviour:
   maxFireEmissionRate: 30
   maxInstability: 0.3
   carPhysics: {fileID: 0}
+--- !u!114 &1872230678516970855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4140969641842061673}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69b1d6b9ca0b08b4192c9a36ebef6839, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sampleInterval: 0.05
 --- !u!1 &4142603008786392873
 GameObject:
   m_ObjectHideFlags: 0

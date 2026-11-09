@@ -69997,6 +69997,7 @@ GameObject:
   - component: {fileID: -7391737292772689977}
   - component: {fileID: 3665942712262991220}
   - component: {fileID: 2697474728448458559}
+  - component: {fileID: 1226750430120792657}
   m_Layer: 8
   m_Name: XLR8
   m_TagString: Player
@@ -72957,6 +72958,19 @@ MonoBehaviour:
   maxFireEmissionRate: 30
   maxInstability: 0.3
   carPhysics: {fileID: 0}
+--- !u!114 &1226750430120792657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4660778744560911697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69b1d6b9ca0b08b4192c9a36ebef6839, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sampleInterval: 0.05
 --- !u!1 &4832990728899310696
 GameObject:
   m_ObjectHideFlags: 0

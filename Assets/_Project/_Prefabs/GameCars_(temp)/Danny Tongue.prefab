@@ -4906,6 +4906,7 @@ GameObject:
   - component: {fileID: -8924434163404839318}
   - component: {fileID: -100594030190518012}
   - component: {fileID: 8006122796874947818}
+  - component: {fileID: 2705779288733912698}
   m_Layer: 8
   m_Name: Danny Tongue
   m_TagString: Player
@@ -7859,6 +7860,19 @@ MonoBehaviour:
   maxFireEmissionRate: 30
   maxInstability: 0.3
   carPhysics: {fileID: 145044427260722722}
+--- !u!114 &2705779288733912698
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 134413080898623409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69b1d6b9ca0b08b4192c9a36ebef6839, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sampleInterval: 0.05
 --- !u!1 &154450185186096534
 GameObject:
   m_ObjectHideFlags: 0

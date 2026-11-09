@@ -56,6 +56,8 @@ public class GhostRecorder : MonoBehaviour
 
     public GhostRecordingData Recording => recording;
 
+    private bool hasSubmittedRaceRecord;
+
     private void Awake()
     {
         racerStatus = GetComponent<RacerStatus>();
@@ -106,6 +108,7 @@ public class GhostRecorder : MonoBehaviour
 
         isRecording = true;
         hasFinished = false;
+        hasSubmittedRaceRecord = false;
 
         // Captura o estado inicial do carro.
         CaptureFrame(0f);
@@ -144,7 +147,7 @@ public class GhostRecorder : MonoBehaviour
         if (racer != racerStatus || !isRecording)
             return;
 
-        // Captura o último estado exatamente no encerramento.
+        // Captura o último estado do veículo.
         CaptureFrame(totalTime);
 
         recording.totalTime = totalTime;
@@ -159,7 +162,36 @@ public class GhostRecorder : MonoBehaviour
             $"Frames: {recording.frames.Count}"
         );
 
-        //Debug.Log($"Ghost JSON: {GetRecordingJson()}");
+        // Evita submissões duplicadas.
+        if (hasSubmittedRaceRecord)
+            return;
+
+        hasSubmittedRaceRecord = true;
+
+        if (RaceManager.Instance == null)
+        {
+            Debug.LogError(
+                "[GHOST UPLOAD] RaceManager não encontrado."
+            );
+            return;
+        }
+
+        if (SupabaseGhostService.Instance == null)
+        {
+            Debug.LogError(
+                "[GHOST UPLOAD] SupabaseGhostService não encontrado."
+            );
+            return;
+        }
+
+        string playerName = carIdentity.racerData.racerName;
+
+        SupabaseGhostService.Instance.SubmitRaceRecord(
+            recording,
+            RaceManager.Instance.GetCurrentCircuitID(),
+            RaceManager.Instance.GetCurrentCircuitName(),
+            playerName
+        );
     }
 
     public string GetRecordingJson()

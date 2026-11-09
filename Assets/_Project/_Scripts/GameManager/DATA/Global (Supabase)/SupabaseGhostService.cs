@@ -4,6 +4,7 @@ using UnityEngine.Networking;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 
 public class SupabaseGhostService : MonoBehaviour
 {
@@ -228,6 +229,211 @@ public class SupabaseGhostService : MonoBehaviour
 
         request.SetRequestHeader("Accept", "application/json");
     }
+
+    // =====================================================
+    // ENVIAR RECORD DE CORRIDA + GHOST
+    // =====================================================
+
+    public void SubmitRaceRecord(
+        GhostRecordingData ghostData,
+        string circuitID,
+        string circuitName,
+        string playerName)
+    {
+        if (ghostData == null || ghostData.frames == null ||
+            ghostData.frames.Count < 2)
+        {
+            Debug.LogWarning("[SUPABASE] Ghost inválido. Envio cancelado.");
+            return;
+        }
+
+        string playerID = GameManagerInstance.Instance != null
+            ? GameManagerInstance.Instance.PlayerId
+            : "";
+
+        if (!Guid.TryParse(playerID, out _))
+        {
+            Debug.LogError(
+                "[SUPABASE] PlayerId ausente ou inválido. " +
+                "Não foi possível enviar o recorde."
+            );
+            return;
+        }
+
+        var body = new RaceRecordRpcRequest
+        {
+            p_circuit_id = circuitID,
+            p_circuit_name = circuitName,
+            p_player_id = playerID,
+            p_player_name = playerName,
+            p_car_character_id = ghostData.characterID,
+            p_total_time = ghostData.totalTime,
+            p_ghost_data = ghostData
+        };
+
+        string json = JsonUtility.ToJson(body);
+
+        Debug.Log(
+            $"[SUPABASE] Enviando recorde e Ghost: " +
+            $"{playerName} - {ghostData.totalTime:F3}s"
+        );
+
+        StartCoroutine(
+            PostRpc("submit_race_record", json, response =>
+            {
+                string recordID = ParseRpcUUID(response);
+
+                if (recordID == null)
+                {
+                    Debug.Log(
+                        "[SUPABASE] Corrida enviada, mas não entrou no Top 10."
+                    );
+                    return;
+                }
+
+                Debug.Log(
+                    $"[SUPABASE] Recorde e Ghost salvos! ID: {recordID}"
+                );
+            })
+        );
+    }
+
+
+    // =====================================================
+    // ENVIAR MELHOR VOLTA
+    // =====================================================
+
+    public void SubmitLapRecord(
+        string circuitID,
+        string circuitName,
+        string playerName,
+        float lapTime)
+    {
+        string playerID = GameManagerInstance.Instance != null
+            ? GameManagerInstance.Instance.PlayerId
+            : "";
+
+        if (!Guid.TryParse(playerID, out _))
+        {
+            Debug.LogError(
+                "[SUPABASE] PlayerId ausente ou inválido. " +
+                "Não foi possível enviar a volta."
+            );
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(circuitID) || lapTime <= 0f)
+            return;
+
+        var body = new LapRecordRpcRequest
+        {
+            p_circuit_id = circuitID,
+            p_circuit_name = circuitName,
+            p_player_id = playerID,
+            p_player_name = playerName,
+            p_lap_time = lapTime
+        };
+
+        string json = JsonUtility.ToJson(body);
+
+        StartCoroutine(
+            PostRpc("submit_lap_record", json, response =>
+            {
+                string lapRecordID = ParseRpcUUID(response);
+
+                if (lapRecordID == null)
+                {
+                    Debug.Log(
+                        "[SUPABASE] Volta enviada, mas não permaneceu no Top 10."
+                    );
+                    return;
+                }
+
+                Debug.Log(
+                    $"[SUPABASE] Volta registrada no Top 10! " +
+                    $"Tempo: {lapTime:F3}s | ID: {lapRecordID}"
+                );
+            })
+        );
+    }
+
+
+    // =====================================================
+    // REQUISIÇÃO RPC
+    // =====================================================
+
+    private IEnumerator PostRpc(
+        string functionName,
+        string jsonBody,
+        Action<string> onComplete)
+    {
+        string baseURL = supabaseUrl.TrimEnd('/');
+
+        string url =
+            $"{baseURL}/rest/v1/rpc/{functionName}";
+
+        using (UnityWebRequest request =
+            new UnityWebRequest(url, "POST"))
+        {
+            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonBody);
+
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+
+            ConfigureRequest(request);
+
+            request.SetRequestHeader(
+                "Content-Type",
+                "application/json"
+            );
+
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(
+                    $"[SUPABASE] Erro na RPC {functionName}:\n" +
+                    $"HTTP: {request.responseCode}\n" +
+                    $"Erro: {request.error}\n" +
+                    $"Resposta: {request.downloadHandler.text}"
+                );
+
+                onComplete?.Invoke(null);
+                yield break;
+            }
+
+            string response = request.downloadHandler.text;
+
+            Debug.Log(
+                $"[SUPABASE] RPC {functionName} concluída. " +
+                $"Resposta: {response}"
+            );
+
+            onComplete?.Invoke(response);
+        }
+    }
+
+
+    // =====================================================
+    // INTERPRETAR UUID RETORNADO PELA RPC
+    // =====================================================
+
+    private string ParseRpcUUID(string response)
+    {
+        if (string.IsNullOrWhiteSpace(response))
+            return null;
+
+        string value = response.Trim();
+
+        if (value == "null")
+            return null;
+
+        value = value.Trim('"');
+
+        return Guid.TryParse(value, out _)
+            ? value
+            : null;
+    }
 }
 
 // =========================================================
@@ -264,4 +470,26 @@ public class BestRaceRecordResult
 public class SupabaseArrayResponse<T>
 {
     public List<T> items;
+}
+
+[Serializable]
+public class RaceRecordRpcRequest
+{
+    public string p_circuit_id;
+    public string p_circuit_name;
+    public string p_player_id;
+    public string p_player_name;
+    public string p_car_character_id;
+    public float p_total_time;
+    public GhostRecordingData p_ghost_data;
+}
+
+[Serializable]
+public class LapRecordRpcRequest
+{
+    public string p_circuit_id;
+    public string p_circuit_name;
+    public string p_player_id;
+    public string p_player_name;
+    public float p_lap_time;
 }

@@ -334,7 +334,22 @@ private string FormatRaceTime(float time)
                         ? identity.racerData.racerName
                         : racer.name;
 
-                    racer.RegisterLapTime(lapTime, currentCircuit.circuitName, racerName);
+                    racer.RegisterLapTime(
+                        lapTime,
+                        currentCircuit.circuitName,
+                        racerName
+                    );
+
+                    // Envia a volta concluída para o ranking global.
+                    if (SupabaseGhostService.Instance != null && racer.isPlayer)
+                    {
+                        SupabaseGhostService.Instance.SubmitLapRecord(
+                            currentCircuit.circuitID,
+                            currentCircuit.circuitName,
+                            racerName,
+                            lapTime
+                        );
+                    }
 
                     //Chama verificação supabase: melhor volta?
 
@@ -1003,6 +1018,13 @@ private string FormatRaceTime(float time)
     public string GetCurrentCircuitName()
     {
         return currentCircuit != null ? currentCircuit.circuitName : "UNKNOWN";
+    }
+
+    public string GetCurrentCircuitID()
+    {
+        return currentCircuit != null
+            ? currentCircuit.circuitID
+            : "";
     }
 
     bool IsAdvancePressed(InputDevice device)
