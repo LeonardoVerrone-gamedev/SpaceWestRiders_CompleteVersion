@@ -369,12 +369,21 @@ private string FormatRaceTime(float time)
     }
 
 
+
     void RegisterFinish(RacerStatus racer)
     {
         if (finishedRacers.Contains(racer))
             return;
 
         finishedRacers.Add(racer);
+
+        // Restaura o registro da posição e o estado de conclusão.
+        int finalPosition = finishedRacers.Count;
+        racer.SetFinishedPosition(finalPosition);
+
+        Debug.Log(
+            $"{racer.name} terminou a corrida em {finalPosition}º lugar."
+        );
 
         // Somente jogadores locais geram recordes globais.
         if (racer.isPlayer)
@@ -384,6 +393,7 @@ private string FormatRaceTime(float time)
             OnPlayerRacerFinished?.Invoke(racer, totalTime);
         }
     }
+
 
 
     void AssignAIGroups()

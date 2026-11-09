@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1421830226086687243
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8661238231070498419}
+  - component: {fileID: 7230269618949421634}
+  m_Layer: 0
+  m_Name: GhostPrefabDatabase
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8661238231070498419
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421830226086687243}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7230269618949421634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421830226086687243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4becaab435085894884221cc33dd0b8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ghostPrefabs:
+  - {fileID: 296610731769699575, guid: c140e7e2455c1ad4dabae1c32448e377, type: 3}
+  - {fileID: 6583282348512268468, guid: e8c9afe345050a54e9c2795a9f334f6d, type: 3}
+  - {fileID: 6666170198767843797, guid: 64059bc45fe74c34db7a6ad1a57dd6ab, type: 3}
+  - {fileID: 7930575224725370435, guid: 040cf0dd0b3e38a4184d38924d43179e, type: 3}
+  - {fileID: 6567555276951898411, guid: 177542a01376f454b8f136663b71a8fe, type: 3}
+  - {fileID: 5798892634854485145, guid: 9e5fee4b5785b4f42bfc99df12b779f1, type: 3}
+  - {fileID: 3587793075117647694, guid: 8e2e6d5cacd347148a5925fda181af24, type: 3}
+  - {fileID: 7661048682273956591, guid: 3c6ab8f5922497c49afea172fad6fcd6, type: 3}
+  ghostContainer: {fileID: 8661238231070498419}
