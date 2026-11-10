@@ -122,6 +122,67 @@ public class RaceManager : MonoBehaviour
     private GUIStyle countdownStyle;
     private Coroutine countdownCoroutine;
 
+    // =====================================================
+    // RECORDES DE VOLTA
+    // =====================================================
+
+    private float bestGlobalLapTime = float.MaxValue;
+    private float fastestLapThisRace = float.MaxValue;
+
+    private bool globalRaceLookupCompleted = false;
+    private bool globalLapLookupCompleted = false;
+    private bool globalLapLookupSucceeded = false;
+
+    // =====================================================
+    // NOTIFICAÇÕES
+    // =====================================================
+
+    private enum NotificationPriority
+    {
+        Global = 0,
+        Local = 1,
+        Temporary = 2
+    }
+
+    private struct RaceNotification
+    {
+        public string message;
+        public Color backgroundColor;
+        public NotificationPriority priority;
+
+        public RaceNotification(
+            string message,
+            Color backgroundColor,
+            NotificationPriority priority)
+        {
+            this.message = message;
+            this.backgroundColor = backgroundColor;
+            this.priority = priority;
+        }
+    }
+
+    [Header("Race Notifications")]
+    private Font notificationFont;
+    private int notificationFontSize = 16;
+    private float notificationWidth = 370f;
+    private float notificationHeight = 50f;
+    private float notificationTopOffset = 26f;
+
+    private Queue<RaceNotification> notificationQueue =
+        new Queue<RaceNotification>();
+
+    private bool notificationVisible = false;
+    private bool isShowingNotification = false;
+
+    private string currentNotificationText = "";
+    private Color currentNotificationColor = Color.blue;
+
+    private float notificationAlpha = 0f;
+    private float notificationScale = 0.8f;
+
+    private GUIStyle notificationStyle;
+    private Coroutine notificationCoroutine;
+
     void Awake()
     {
         Instance = this;
@@ -230,73 +291,118 @@ public class RaceManager : MonoBehaviour
         LoadGlobalRecordAndGhost();
     }
 
-    
-private void LoadGlobalRecordAndGhost()
-{
-    ghostLookupCompleted = false;
-    raceStartRequested = false;
-    bestGlobalRecord = null;
 
-    if (currentCircuit == null)
+    private void LoadGlobalRecordAndGhost()
     {
-        Debug.LogError("[GLOBAL RECORD] CircuitSO não encontrado.");
-        ghostLookupCompleted = true;
-        return;
-    }
+        ghostLookupCompleted = false;
+        raceStartRequested = false;
 
-    if (SupabaseGhostService.Instance == null)
-    {
-        Debug.LogError("[GLOBAL RECORD] SupabaseGhostService não encontrado.");
-        ghostLookupCompleted = true;
-        return;
-    }
+        bestGlobalRecord = null;
+        bestGlobalLapTime = float.MaxValue;
 
-    Debug.Log(
-        $"[GLOBAL RECORD] Buscando recorde de " +
-        $"{currentCircuit.circuitName} ({currentCircuit.circuitID})"
-    );
+        globalRaceLookupCompleted = false;
+        globalLapLookupCompleted = false;
+        globalLapLookupSucceeded = false;
 
-    SupabaseGhostService.Instance.GetBestRaceRecord(
-        currentCircuit.circuitID,
-        OnGlobalRecordLoaded
-    );
-}
+        if (currentCircuit == null)
+        {
+            Debug.LogError("[GLOBAL RECORD] CircuitSO não encontrado.");
 
-private void OnGlobalRecordLoaded(BestRaceRecordResult result)
-{
-    bestGlobalRecord = result;
-    ghostLookupCompleted = true;
+            globalRaceLookupCompleted = true;
+            globalLapLookupCompleted = true;
 
-    if (result == null || result.record == null)
-    {
+            TryCompleteGlobalLookups();
+            return;
+        }
+
+        if (SupabaseGhostService.Instance == null)
+        {
+            Debug.LogError("[GLOBAL RECORD] SupabaseGhostService não encontrado.");
+
+            globalRaceLookupCompleted = true;
+            globalLapLookupCompleted = true;
+
+            TryCompleteGlobalLookups();
+            return;
+        }
+
         Debug.Log(
-            "[GLOBAL RECORD] Nenhum recorde global encontrado."
+            $"[GLOBAL RECORD] Buscando recordes de " +
+            $"{currentCircuit.circuitName}"
         );
-    }
-    else
-    {
-        Debug.Log(
-            "[GLOBAL RECORD] RECORD ENCONTRADO!\n" +
-            $"Circuito: {result.record.circuit_name}\n" +
-            $"Jogador: {result.record.player_name}\n" +
-            $"Tempo: {FormatRaceTime(result.record.total_time)}\n" +
-            $"Player ID: {result.record.player_id}\n" +
-            $"Carro: {result.record.car_character_id}\n" +
-            $"Data: {result.record.created_at}\n" +
-            $"Record ID: {result.record.id}\n" +
-            $"Ghost: {(result.ghost != null ? "OK" : "INDISPONÍVEL")}"
+
+        SupabaseGhostService.Instance.GetBestRaceRecord(
+            currentCircuit.circuitID,
+            OnGlobalRecordLoaded
+        );
+
+        SupabaseGhostService.Instance.GetBestLapRecord(
+            currentCircuit.circuitID,
+            OnGlobalLapLoaded
         );
     }
 
-    // Se a contagem regressiva terminou enquanto aguardávamos,
-    // retoma a largada.
-    if (raceStartRequested)
+    private void OnGlobalRecordLoaded(BestRaceRecordResult result)
     {
-        AwakeRacers();
-    }
-}
+        bestGlobalRecord = result;
 
-private string FormatRaceTime(float time)
+        if (result == null || result.record == null)
+        {
+            Debug.Log(
+                "[GLOBAL RECORD] Nenhum recorde global encontrado."
+            );
+        }
+        else
+        {
+            Debug.Log(
+                "[GLOBAL RECORD] RECORD ENCONTRADO!\n" +
+                $"Circuito: {result.record.circuit_name}\n" +
+                $"Jogador: {result.record.player_name}\n" +
+                $"Tempo: {FormatRaceTime(result.record.total_time)}\n" +
+                $"Ghost: {(result.ghost != null ? "OK" : "INDISPONÍVEL")}"
+            );
+        }
+
+        globalRaceLookupCompleted = true;
+        TryCompleteGlobalLookups();
+    }
+
+    private void OnGlobalLapLoaded(float lapTime, bool success)
+    {
+        globalLapLookupSucceeded = success;
+        bestGlobalLapTime = success ? lapTime : float.MaxValue;
+
+        if (success)
+        {
+            Debug.Log(
+                $"[GLOBAL LAP RECORD] Melhor volta: " +
+                $"{(lapTime == float.MaxValue ? "NENHUMA" : FormatRaceTime(lapTime))}"
+            );
+        }
+        else
+        {
+            Debug.LogWarning(
+                "[GLOBAL LAP RECORD] Não foi possível consultar o recorde."
+            );
+        }
+
+        globalLapLookupCompleted = true;
+        TryCompleteGlobalLookups();
+    }
+
+    private void TryCompleteGlobalLookups()
+    {
+        ghostLookupCompleted =
+            globalRaceLookupCompleted &&
+            globalLapLookupCompleted;
+
+        if (ghostLookupCompleted && raceStartRequested)
+        {
+            AwakeRacers();
+        }
+    }
+
+    private string FormatRaceTime(float time)
 {
     int minutes = Mathf.FloorToInt(time / 60f);
     int seconds = Mathf.FloorToInt(time % 60f);
@@ -339,6 +445,8 @@ private string FormatRaceTime(float time)
                         currentCircuit.circuitName,
                         racerName
                     );
+
+                    CheckLapRecords(racer, lapTime);
 
                     // Envia a volta concluída para o ranking global.
                     if (SupabaseGhostService.Instance != null && racer.isPlayer)
@@ -383,7 +491,79 @@ private string FormatRaceTime(float time)
         }
     }
 
+    private void CheckLapRecords(RacerStatus racer, float lapTime)
+    {
+        if (racer == null ||
+            lapTime <= 0f ||
+            float.IsNaN(lapTime) ||
+            float.IsInfinity(lapTime))
+            return;
 
+        // =====================================================
+        // 1. RECORD E TEMPORÁRIO DA CORRIDA
+        // Inclui jogadores e IAs.
+        // =====================================================
+
+        bool newFastestLap = lapTime < fastestLapThisRace;
+
+        if (newFastestLap)
+        {
+            fastestLapThisRace = lapTime;
+        }
+
+        // IAs participam da disputa temporária,
+        // mas não geram notificações de recorde pessoal/global.
+        if (!racer.isPlayer)
+            return;
+
+        // =====================================================
+        // 2. RECORD GLOBAL DE VOLTA
+        // =====================================================
+
+        if (globalLapLookupSucceeded &&
+            lapTime < bestGlobalLapTime)
+        {
+            bestGlobalLapTime = lapTime;
+
+            EnqueueNotification(
+                $"NOVO RECORDE DO CIRCUITO: {FormatRaceTime(lapTime)}",
+                new Color(0.08f, 0.32f, 0.85f),
+                NotificationPriority.Global
+            );
+        }
+
+        // =====================================================
+        // 3. RECORD PESSOAL DE VOLTA
+        // =====================================================
+
+        bool newLocalLapRecord =
+            LocalRaceRecordStorage.SaveBestLapIfBetter(
+                currentCircuit.circuitID,
+                lapTime
+            );
+
+        if (newLocalLapRecord)
+        {
+            EnqueueNotification(
+                $"NOVO RECORDE PESSOAL NO CIRCUITO: {FormatRaceTime(lapTime)}",
+                new Color(0.95f, 0.42f, 0.08f),
+                NotificationPriority.Local
+            );
+        }
+
+        // =====================================================
+        // 4. VOLTA MAIS RÁPIDA DA CORRIDA ATUAL
+        // =====================================================
+
+        if (newFastestLap)
+        {
+            EnqueueNotification(
+                $"VOLTA MAIS RÁPIDA: {FormatRaceTime(lapTime)}",
+                new Color(0.035f, 0.09f, 0.22f),
+                NotificationPriority.Temporary
+            );
+        }
+    }
 
     void RegisterFinish(RacerStatus racer)
     {
@@ -401,11 +581,49 @@ private string FormatRaceTime(float time)
         );
 
         // Somente jogadores locais geram recordes globais.
-        if (racer.isPlayer)
-        {
-            float totalTime = Time.time - raceStartTime;
 
-            OnPlayerRacerFinished?.Invoke(racer, totalTime);
+            if (racer.isPlayer)
+            {
+                float totalTime = Time.time - raceStartTime;
+
+                // =====================================================
+                // RECORD GLOBAL DE CORRIDA
+                // =====================================================
+
+                if (bestGlobalRecord != null &&
+                    bestGlobalRecord.record != null &&
+                    totalTime < bestGlobalRecord.record.total_time)
+                {
+                    bestGlobalRecord.record.total_time = totalTime;
+
+                    EnqueueNotification(
+                        $"NOVA MELHOR CORRIDA: {FormatRaceTime(totalTime)}",
+                        new Color(0.08f, 0.32f, 0.85f),
+                        NotificationPriority.Global
+                    );
+                }
+
+                // =====================================================
+                // RECORD PESSOAL DE CORRIDA
+                // =====================================================
+
+                float previousLocalBest =
+                    LocalRaceRecordStorage.GetBestRaceTime(
+                        currentCircuit.circuitID
+                    );
+
+                if (totalTime < previousLocalBest)
+                {
+                    EnqueueNotification(
+                        $"NOVA MELHOR CORRIDA PESSOAL NO CIRCUITO: " +
+                        $"{FormatRaceTime(totalTime)}",
+                        new Color(0.95f, 0.42f, 0.08f),
+                        NotificationPriority.Local
+                    );
+                }
+
+                OnPlayerRacerFinished?.Invoke(racer, totalTime);
+            
         }
     }
 
@@ -840,6 +1058,35 @@ private string FormatRaceTime(float time)
             Debug.Log("[GLOBAL GHOST] Nenhum ghost disponível para esta pista.");
         }
 
+
+        // =====================================================
+        // GHOST LOCAL - LARANJA
+        // =====================================================
+
+        GhostRecordingData localGhost =
+            LocalRaceRecordStorage.LoadGhost(currentCircuit.circuitID);
+
+        if (localGhost != null)
+        {
+            if (GhostPrefabDatabase.Instance != null)
+            {
+                GhostPrefabDatabase.Instance.SpawnAndPlayLocal(localGhost);
+
+                Debug.Log("[LOCAL GHOST] Ghost laranja instanciado!");
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "[LOCAL GHOST] GhostPrefabDatabase não encontrado."
+                );
+            }
+        }
+        else
+        {
+            Debug.Log("[LOCAL GHOST] Nenhum Ghost local disponível para esta pista.");
+        }
+
+
         // Inicia a gravação dos jogadores.
         OnRaceEffectiveStart?.Invoke();
 
@@ -947,9 +1194,15 @@ private string FormatRaceTime(float time)
 
     private void OnGUI()
     {
-        if (!countdownVisible)
-            return;
+        if (countdownVisible)
+            DrawCountdownGUI();
 
+        if (notificationVisible)
+            DrawNotificationGUI();
+    }
+
+    private void DrawCountdownGUI()
+    {
         if (countdownStyle == null)
         {
             countdownStyle = new GUIStyle(GUI.skin.label)
@@ -972,7 +1225,6 @@ private string FormatRaceTime(float time)
             Screen.height * 0.5f
         );
 
-        // Aumenta e diminui o texto sem mover seu centro.
         GUI.matrix = Matrix4x4.TRS(
             center,
             Quaternion.identity,
@@ -985,7 +1237,6 @@ private string FormatRaceTime(float time)
             0f, 0f, 0f, countdownAlpha
         );
 
-        // Sombra para destacar o texto.
         GUI.Label(
             new Rect(-298f, -48f, 600f, 100f),
             countdownText,
@@ -1009,6 +1260,73 @@ private string FormatRaceTime(float time)
             new Rect(-300f, -50f, 600f, 100f),
             countdownText,
             countdownStyle
+        );
+
+        GUI.matrix = previousMatrix;
+        GUI.color = previousColor;
+    }
+
+    private void DrawNotificationGUI()
+    {
+        if (notificationStyle == null)
+        {
+            notificationStyle = new GUIStyle(GUI.skin.label)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                fontStyle = FontStyle.Bold,
+                wordWrap = true,
+                richText = false,
+                padding = new RectOffset(15, 15, 8, 8)
+            };
+        }
+
+        notificationStyle.font = notificationFont;
+        notificationStyle.fontSize = notificationFontSize;
+
+        float width = notificationWidth;
+        float height = notificationHeight;
+
+        float centerX = Screen.width * 0.5f;
+        float centerY = notificationTopOffset + height * 0.5f;
+
+        Matrix4x4 previousMatrix = GUI.matrix;
+        Color previousColor = GUI.color;
+
+        GUI.matrix = Matrix4x4.TRS(
+            new Vector2(centerX, centerY),
+            Quaternion.identity,
+            Vector3.one * notificationScale
+        );
+
+        Rect notificationRect = new Rect(
+            -width * 0.5f,
+            -height * 0.5f,
+            width,
+            height
+        );
+
+        // Fundo colorido com 70% de opacidade.
+        GUI.color = new Color(
+            currentNotificationColor.r,
+            currentNotificationColor.g,
+            currentNotificationColor.b,
+            notificationAlpha
+        );
+
+        GUI.DrawTexture(
+            notificationRect,
+            Texture2D.whiteTexture
+        );
+
+        // Texto branco.
+        GUI.color = new Color(
+            1f, 1f, 1f, notificationAlpha
+        );
+
+        GUI.Label(
+            notificationRect,
+            currentNotificationText,
+            notificationStyle
         );
 
         GUI.matrix = previousMatrix;
@@ -1085,6 +1403,144 @@ private string FormatRaceTime(float time)
         );
 
         pendingRankingResults = null;
+    }
+
+    private void EnqueueNotification(
+    string message,
+    Color backgroundColor,
+    NotificationPriority priority)
+    {
+        RaceNotification notification = new RaceNotification(
+            message,
+            backgroundColor,
+            priority
+        );
+
+        // Reorganiza apenas as notificações que ainda não apareceram.
+        // A que já está na tela não é interrompida.
+        List<RaceNotification> pending = notificationQueue.ToList();
+
+        pending.Add(notification);
+
+        pending = pending
+            .OrderBy(n => n.priority)
+            .ToList();
+
+        notificationQueue.Clear();
+
+        foreach (var item in pending)
+            notificationQueue.Enqueue(item);
+
+        if (!isShowingNotification)
+        {
+            notificationCoroutine = StartCoroutine(
+                NotificationQueueRoutine()
+            );
+        }
+    }
+
+    private IEnumerator NotificationQueueRoutine()
+    {
+        isShowingNotification = true;
+
+        while (notificationQueue.Count > 0)
+        {
+            RaceNotification notification =
+                notificationQueue.Dequeue();
+
+            currentNotificationText = notification.message;
+            currentNotificationColor = notification.backgroundColor;
+
+            notificationVisible = true;
+
+            // Entrada.
+            float enterDuration =
+                notificationQueue.Count > 0 ? 0.16f : 0.25f;
+
+            yield return StartCoroutine(
+                AnimateNotificationIn(enterDuration)
+            );
+
+            // Permanência na tela.
+            yield return new WaitForSecondsRealtime(1.5f);
+
+            // Saída.
+            float exitDuration =
+                notificationQueue.Count > 0 ? 0.16f : 0.25f;
+
+            yield return StartCoroutine(
+                AnimateNotificationOut(exitDuration)
+            );
+
+            notificationVisible = false;
+        }
+
+        notificationVisible = false;
+        isShowingNotification = false;
+        notificationCoroutine = null;
+    }
+
+    private IEnumerator AnimateNotificationIn(float duration)
+    {
+        float elapsed = 0f;
+
+        notificationAlpha = 0f;
+        notificationScale = 0.82f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+
+            float t = Mathf.Clamp01(elapsed / duration);
+            float smooth = Mathf.SmoothStep(0f, 1f, t);
+
+            // Opacidade máxima de 70%.
+            notificationAlpha = Mathf.Lerp(0f, 0.7f, smooth);
+
+            // Pump com pequeno overshoot.
+            float pump = Mathf.Sin(t * Mathf.PI) * 0.09f;
+
+            notificationScale =
+                Mathf.Lerp(0.82f, 1f, smooth) + pump;
+
+            yield return null;
+        }
+
+        notificationAlpha = 0.7f;
+        notificationScale = 1f;
+    }
+
+    private IEnumerator AnimateNotificationOut(float duration)
+    {
+        float elapsed = 0f;
+
+        float initialAlpha = notificationAlpha;
+        float initialScale = notificationScale;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+
+            float t = Mathf.Clamp01(elapsed / duration);
+            float smooth = Mathf.SmoothStep(0f, 1f, t);
+
+            notificationAlpha = Mathf.Lerp(
+                initialAlpha,
+                0f,
+                smooth
+            );
+
+            notificationScale = Mathf.Lerp(
+                initialScale,
+                0.88f,
+                smooth
+            );
+
+            yield return null;
+        }
+
+        notificationAlpha = 0f;
+        notificationScale = 0.88f;
     }
 }
 

@@ -357,6 +357,98 @@ public class SupabaseGhostService : MonoBehaviour
         );
     }
 
+    // =====================================================
+    // BUSCAR MELHOR VOLTA GLOBAL
+    // =====================================================
+
+    public void GetBestLapRecord(
+        string circuitID,
+        Action<float, bool> onComplete)
+    {
+        StartCoroutine(
+            FetchBestLapRecordCoroutine(circuitID, onComplete)
+        );
+    }
+
+    private IEnumerator FetchBestLapRecordCoroutine(
+        string circuitID,
+        Action<float, bool> onComplete)
+    {
+        if (string.IsNullOrWhiteSpace(circuitID))
+        {
+            onComplete?.Invoke(float.MaxValue, false);
+            yield break;
+        }
+
+        string encodedCircuitID =
+            UnityWebRequest.EscapeURL(circuitID);
+
+        string url =
+            $"{supabaseUrl}/rest/v1/lap_records" +
+            $"?select=lap_time" +
+            $"&circuit_id=eq.{encodedCircuitID}" +
+            $"&order=lap_time.asc" +
+            $"&limit=1";
+
+        using (UnityWebRequest request = UnityWebRequest.Get(url))
+        {
+            ConfigureRequest(request);
+
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(
+                    $"[SUPABASE] Erro buscando melhor volta: " +
+                    $"{request.error}\n{request.downloadHandler.text}"
+                );
+
+                // false significa que não conseguimos consultar.
+                onComplete?.Invoke(float.MaxValue, false);
+                yield break;
+            }
+
+            try
+            {
+                string json =
+                    "{\"items\":" + request.downloadHandler.text + "}";
+
+                var response = JsonUtility.FromJson<
+                    SupabaseArrayResponse<BestLapRecordRow>
+                >(json);
+
+                if (response == null ||
+                    response.items == null ||
+                    response.items.Count == 0)
+                {
+                    Debug.Log(
+                        $"[SUPABASE] Nenhuma volta registrada para {circuitID}."
+                    );
+
+                    // Consulta funcionou, mas ainda não existe recorde.
+                    onComplete?.Invoke(float.MaxValue, true);
+                    yield break;
+                }
+
+                float bestLap = response.items[0].lap_time;
+
+                Debug.Log(
+                    $"[SUPABASE] Melhor volta global: {bestLap:F3}s"
+                );
+
+                onComplete?.Invoke(bestLap, true);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(
+                    $"[SUPABASE] Erro interpretando melhor volta: {e.Message}"
+                );
+
+                onComplete?.Invoke(float.MaxValue, false);
+            }
+        }
+    }
+
 
     // =====================================================
     // REQUISIÇÃO RPC
@@ -492,4 +584,10 @@ public class LapRecordRpcRequest
     public string p_player_id;
     public string p_player_name;
     public float p_lap_time;
+}
+
+[Serializable]
+public class BestLapRecordRow
+{
+    public float lap_time;
 }

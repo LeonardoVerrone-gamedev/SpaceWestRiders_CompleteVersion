@@ -6,13 +6,19 @@ public class GhostPrefabDatabase : MonoBehaviour
 {
     public static GhostPrefabDatabase Instance { get; private set; }
 
-    [Header("Ghost Car Prefabs")]
+    [Header("Global Ghost Car Prefabs - Blue")]
     [SerializeField] private List<GameObject> ghostPrefabs = new List<GameObject>();
+
+    [Header("Local Ghost Car Prefabs - Orange")]
+    [SerializeField] private List<GameObject> localGhostPrefabs = new List<GameObject>();
 
     [Header("Spawn Settings")]
     [SerializeField] private Transform ghostContainer;
 
     private Dictionary<string, GameObject> prefabDatabase =
+        new Dictionary<string, GameObject>();
+
+    private Dictionary<string, GameObject> localPrefabDatabase =
         new Dictionary<string, GameObject>();
 
     private readonly List<GameObject> spawnedGhosts =
@@ -38,14 +44,37 @@ public class GhostPrefabDatabase : MonoBehaviour
     }
 
     // =====================================================
-    // CONSTRUIR BANCO DE PREFABS
+    // CONSTRUIR OS DOIS BANCOS DE PREFABS
     // =====================================================
 
     public void BuildDatabase()
     {
-        prefabDatabase.Clear();
+        BuildDatabaseFromList(
+            ghostPrefabs,
+            prefabDatabase,
+            "GLOBAL"
+        );
 
-        foreach (GameObject prefab in ghostPrefabs)
+        BuildDatabaseFromList(
+            localGhostPrefabs,
+            localPrefabDatabase,
+            "LOCAL"
+        );
+
+        Debug.Log(
+            $"[GHOST DATABASE] Banco global: {prefabDatabase.Count} | " +
+            $"Banco local: {localPrefabDatabase.Count}"
+        );
+    }
+
+    private void BuildDatabaseFromList(
+        List<GameObject> prefabs,
+        Dictionary<string, GameObject> database,
+        string databaseType)
+    {
+        database.Clear();
+
+        foreach (GameObject prefab in prefabs)
         {
             if (prefab == null)
                 continue;
@@ -56,8 +85,8 @@ public class GhostPrefabDatabase : MonoBehaviour
             if (identity == null || identity.racerData == null)
             {
                 Debug.LogWarning(
-                    $"[GHOST DATABASE] Prefab {prefab.name} " +
-                    "não possui SCR_CarIdentity ou racerData."
+                    $"[GHOST DATABASE - {databaseType}] Prefab " +
+                    $"{prefab.name} não possui SCR_CarIdentity ou racerData."
                 );
 
                 continue;
@@ -68,46 +97,73 @@ public class GhostPrefabDatabase : MonoBehaviour
             if (string.IsNullOrWhiteSpace(characterID))
             {
                 Debug.LogWarning(
-                    $"[GHOST DATABASE] Character ID inválido em {prefab.name}."
+                    $"[GHOST DATABASE - {databaseType}] " +
+                    $"Character ID inválido em {prefab.name}."
                 );
 
                 continue;
             }
 
-            if (prefabDatabase.ContainsKey(characterID))
+            if (database.ContainsKey(characterID))
             {
                 Debug.LogWarning(
-                    $"[GHOST DATABASE] Character ID duplicado: {characterID}"
+                    $"[GHOST DATABASE - {databaseType}] " +
+                    $"Character ID duplicado: {characterID}"
                 );
 
                 continue;
             }
 
-            prefabDatabase.Add(characterID, prefab);
+            database.Add(characterID, prefab);
 
             Debug.Log(
-                $"[GHOST DATABASE] Registrado: " +
+                $"[GHOST DATABASE - {databaseType}] Registrado: " +
                 $"{prefab.name} | ID: {characterID}"
             );
         }
+    }
 
-        Debug.Log(
-            $"[GHOST DATABASE] {prefabDatabase.Count} prefabs registrados."
+    // =====================================================
+    // INSTANCIAR GHOST GLOBAL - AZUL
+    // =====================================================
+
+    public GameObject SpawnAndPlay(GhostRecordingData recording)
+    {
+        return SpawnAndPlayInternal(
+            recording,
+            prefabDatabase,
+            "GLOBAL"
         );
     }
 
     // =====================================================
-    // INSTANCIAR E REPRODUZIR GHOST
+    // INSTANCIAR GHOST LOCAL - LARANJA
     // =====================================================
 
-    public GameObject SpawnAndPlay(GhostRecordingData recording)
+    public GameObject SpawnAndPlayLocal(GhostRecordingData recording)
+    {
+        return SpawnAndPlayInternal(
+            recording,
+            localPrefabDatabase,
+            "LOCAL"
+        );
+    }
+
+    // =====================================================
+    // LÓGICA COMPARTILHADA DE SPAWN E PLAYBACK
+    // =====================================================
+
+    private GameObject SpawnAndPlayInternal(
+        GhostRecordingData recording,
+        Dictionary<string, GameObject> database,
+        string ghostType)
     {
         if (recording == null ||
             recording.frames == null ||
             recording.frames.Count < 2)
         {
             Debug.LogWarning(
-                "[GHOST DATABASE] Gravação inválida."
+                $"[GHOST DATABASE - {ghostType}] Gravação inválida."
             );
 
             return null;
@@ -116,19 +172,20 @@ public class GhostPrefabDatabase : MonoBehaviour
         if (string.IsNullOrWhiteSpace(recording.characterID))
         {
             Debug.LogWarning(
-                "[GHOST DATABASE] Character ID ausente na gravação."
+                $"[GHOST DATABASE - {ghostType}] " +
+                "Character ID ausente na gravação."
             );
 
             return null;
         }
 
-        if (!prefabDatabase.TryGetValue(
+        if (!database.TryGetValue(
             recording.characterID,
             out GameObject prefab))
         {
             Debug.LogWarning(
-                $"[GHOST DATABASE] Nenhum prefab encontrado para " +
-                $"Character ID: {recording.characterID}"
+                $"[GHOST DATABASE - {ghostType}] Nenhum prefab encontrado " +
+                $"para Character ID: {recording.characterID}"
             );
 
             return null;
@@ -149,7 +206,8 @@ public class GhostPrefabDatabase : MonoBehaviour
         if (playback == null)
         {
             Debug.LogError(
-                $"[GHOST DATABASE] {prefab.name} não possui GhostPlayback."
+                $"[GHOST DATABASE - {ghostType}] " +
+                $"{prefab.name} não possui GhostPlayback."
             );
 
             Destroy(ghost);
@@ -161,8 +219,9 @@ public class GhostPrefabDatabase : MonoBehaviour
         playback.Play(recording);
 
         Debug.Log(
-            $"[GHOST DATABASE] Ghost instanciado!\n" +
+            $"[GHOST DATABASE - {ghostType}] Ghost instanciado!\n" +
             $"Carro: {recording.characterID}\n" +
+            $"Prefab: {prefab.name}\n" +
             $"Frames: {recording.frames.Count}\n" +
             $"Tempo: {recording.totalTime:F3}s"
         );

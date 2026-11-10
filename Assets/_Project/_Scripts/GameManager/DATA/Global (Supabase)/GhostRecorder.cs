@@ -147,7 +147,6 @@ public class GhostRecorder : MonoBehaviour
         if (racer != racerStatus || !isRecording)
             return;
 
-        // Captura o último estado do veículo.
         CaptureFrame(totalTime);
 
         recording.totalTime = totalTime;
@@ -162,7 +161,6 @@ public class GhostRecorder : MonoBehaviour
             $"Frames: {recording.frames.Count}"
         );
 
-        // Evita submissões duplicadas.
         if (hasSubmittedRaceRecord)
             return;
 
@@ -170,16 +168,34 @@ public class GhostRecorder : MonoBehaviour
 
         if (RaceManager.Instance == null)
         {
-            Debug.LogError(
-                "[GHOST UPLOAD] RaceManager não encontrado."
-            );
+            Debug.LogError("[GHOST] RaceManager não encontrado.");
             return;
         }
 
+        // ============================================
+        // RECORDES LOCAIS
+        // ============================================
+
+        string circuitID = RaceManager.Instance.GetCurrentCircuitID();
+
+        bool savedLocalRecord = LocalRaceRecordStorage.SaveIfBetter(
+            circuitID,
+            totalTime,
+            recording
+        );
+
+        if (savedLocalRecord)
+            Debug.Log("[GHOST RECORDER] Novo recorde local salvo!");
+
+        // ============================================
+        // RECORDES GLOBAIS
+        // ============================================
+
         if (SupabaseGhostService.Instance == null)
         {
-            Debug.LogError(
-                "[GHOST UPLOAD] SupabaseGhostService não encontrado."
+            Debug.LogWarning(
+                "[GHOST UPLOAD] Supabase indisponível. " +
+                "Recorde local preservado."
             );
             return;
         }
@@ -188,7 +204,7 @@ public class GhostRecorder : MonoBehaviour
 
         SupabaseGhostService.Instance.SubmitRaceRecord(
             recording,
-            RaceManager.Instance.GetCurrentCircuitID(),
+            circuitID,
             RaceManager.Instance.GetCurrentCircuitName(),
             playerName
         );
