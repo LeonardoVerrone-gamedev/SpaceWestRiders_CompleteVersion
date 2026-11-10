@@ -44,7 +44,7 @@ public class RaceManager : MonoBehaviour
     public bool hasActuallyStarted;
 
     [SerializeField] private Font countdownFont;
-    [SerializeField] private int countdownFontSize = 100;
+    [SerializeField] private int countdownFontSize = 200;
 
     private BestRaceRecordResult bestGlobalRecord;
 
@@ -146,27 +146,30 @@ public class RaceManager : MonoBehaviour
 
     private struct RaceNotification
     {
-        public string message;
-        public Color backgroundColor;
+        public string title;
+        public string subtitle;
+        public Color textColor;
         public NotificationPriority priority;
 
         public RaceNotification(
-            string message,
-            Color backgroundColor,
+            string title,
+            string subtitle,
+            Color textColor,
             NotificationPriority priority)
         {
-            this.message = message;
-            this.backgroundColor = backgroundColor;
+            this.title = title;
+            this.subtitle = subtitle;
+            this.textColor = textColor;
             this.priority = priority;
         }
     }
 
     [Header("Race Notifications")]
     [SerializeField] private Font notificationFont;
-    private int notificationFontSize = 16;
-    private float notificationWidth = 370f;
-    private float notificationHeight = 50f;
-    private float notificationTopOffset = 26f;
+    private int notificationFontSize = 30;
+    private float notificationWidth = 650f;
+    private float notificationHeight = 90f;
+    private float notificationTopOffset = 40f;
 
     private Queue<RaceNotification> notificationQueue =
         new Queue<RaceNotification>();
@@ -174,14 +177,26 @@ public class RaceManager : MonoBehaviour
     private bool notificationVisible = false;
     private bool isShowingNotification = false;
 
-    private string currentNotificationText = "";
-    private Color currentNotificationColor = Color.blue;
+    private string currentNotificationTitle = "";
+    private string currentNotificationSubtitle = "";
+
+    private Color currentNotificationColor = Color.cyan;
 
     private float notificationAlpha = 0f;
     private float notificationScale = 0.8f;
 
-    private GUIStyle notificationStyle;
     private Coroutine notificationCoroutine;
+
+    [Header("GUI Scaling")]
+    [SerializeField] private Vector2 referenceResolution = new Vector2(1920f, 1080f);
+
+    private float GetGUIScale()
+    {
+        return Mathf.Min(
+            Screen.width / referenceResolution.x,
+            Screen.height / referenceResolution.y
+        );
+    }
 
     void Awake()
     {
@@ -500,24 +515,19 @@ public class RaceManager : MonoBehaviour
             return;
 
         // =====================================================
-        // 1. RECORD E TEMPORÁRIO DA CORRIDA
-        // Inclui jogadores e IAs.
+        // 1. VOLTA MAIS RÁPIDA DA CORRIDA
         // =====================================================
 
         bool newFastestLap = lapTime < fastestLapThisRace;
 
         if (newFastestLap)
-        {
             fastestLapThisRace = lapTime;
-        }
 
-        // IAs participam da disputa temporária,
-        // mas não geram notificações de recorde pessoal/global.
         if (!racer.isPlayer)
             return;
 
         // =====================================================
-        // 2. RECORD GLOBAL DE VOLTA
+        // 2. RECORD GLOBAL
         // =====================================================
 
         if (globalLapLookupSucceeded &&
@@ -526,14 +536,15 @@ public class RaceManager : MonoBehaviour
             bestGlobalLapTime = lapTime;
 
             EnqueueNotification(
-                $"NOVO RECORDE DO CIRCUITO: {FormatRaceTime(lapTime)}",
-                new Color(0.08f, 0.32f, 0.85f),
+                "NOVO RECORDE GLOBAL",
+                FormatRaceTime(lapTime),
+                new Color(0.20f, 0.75f, 1f),
                 NotificationPriority.Global
             );
         }
 
         // =====================================================
-        // 3. RECORD PESSOAL DE VOLTA
+        // 3. RECORD PESSOAL
         // =====================================================
 
         bool newLocalLapRecord =
@@ -545,21 +556,23 @@ public class RaceManager : MonoBehaviour
         if (newLocalLapRecord)
         {
             EnqueueNotification(
-                $"NOVO RECORDE PESSOAL NO CIRCUITO: {FormatRaceTime(lapTime)}",
-                new Color(0.95f, 0.42f, 0.08f),
+                "NOVO RECORDE PESSOAL",
+                FormatRaceTime(lapTime),
+                new Color(1f, 0.48f, 0.12f),
                 NotificationPriority.Local
             );
         }
 
         // =====================================================
-        // 4. VOLTA MAIS RÁPIDA DA CORRIDA ATUAL
+        // 4. VOLTA MAIS RÁPIDA DA CORRIDA
         // =====================================================
 
         if (newFastestLap)
         {
             EnqueueNotification(
-                $"VOLTA MAIS RÁPIDA: {FormatRaceTime(lapTime)}",
-                new Color(0.035f, 0.09f, 0.22f),
+                "VOLTA MAIS RÁPIDA",
+                FormatRaceTime(lapTime),
+                new Color(0.72f, 0.40f, 1f),
                 NotificationPriority.Temporary
             );
         }
@@ -596,31 +609,32 @@ public class RaceManager : MonoBehaviour
                 {
                     bestGlobalRecord.record.total_time = totalTime;
 
-                    EnqueueNotification(
-                        $"NOVA MELHOR CORRIDA: {FormatRaceTime(totalTime)}",
-                        new Color(0.08f, 0.32f, 0.85f),
-                        NotificationPriority.Global
+                EnqueueNotification(
+                    "NOVA MELHOR CORRIDA",
+                    FormatRaceTime(totalTime),
+                    new Color(0.20f, 0.75f, 1f),
+                    NotificationPriority.Global
                     );
-                }
+            }
+            // "NOVA MELHOR CORRIDA PESSOAL NO CIRCUITO:
+            // =====================================================
+            // RECORD PESSOAL DE CORRIDA
+            // =====================================================
 
-                // =====================================================
-                // RECORD PESSOAL DE CORRIDA
-                // =====================================================
-
-                float previousLocalBest =
+            float previousLocalBest =
                     LocalRaceRecordStorage.GetBestRaceTime(
                         currentCircuit.circuitID
                     );
 
                 if (totalTime < previousLocalBest)
                 {
-                    EnqueueNotification(
-                        $"NOVA MELHOR CORRIDA PESSOAL NO CIRCUITO: " +
-                        $"{FormatRaceTime(totalTime)}",
-                        new Color(0.95f, 0.42f, 0.08f),
-                        NotificationPriority.Local
+                EnqueueNotification(
+                    "NOVA MELHOR CORRIDA PESSOAL NO CIRCUITO",
+                    FormatRaceTime(totalTime),
+                    new Color(1f, 0.48f, 0.12f),
+                    NotificationPriority.Local
                     );
-                }
+            }
 
                 OnPlayerRacerFinished?.Invoke(racer, totalTime);
             
@@ -1209,10 +1223,11 @@ public class RaceManager : MonoBehaviour
             {
                 alignment = TextAnchor.MiddleCenter,
                 fontStyle = FontStyle.Bold,
-                fontSize = 100,
                 richText = false
             };
         }
+
+        float scale = GetGUIScale();
 
         countdownStyle.font = countdownFont;
         countdownStyle.fontSize = countdownFontSize;
@@ -1228,14 +1243,10 @@ public class RaceManager : MonoBehaviour
         GUI.matrix = Matrix4x4.TRS(
             center,
             Quaternion.identity,
-            Vector3.one * countdownScale
+            Vector3.one * (scale * countdownScale)
         );
 
-        countdownStyle.fontSize = 100;
-
-        GUI.color = new Color(
-            0f, 0f, 0f, countdownAlpha
-        );
+        GUI.color = new Color(0f, 0f, 0f, countdownAlpha);
 
         GUI.Label(
             new Rect(-298f, -48f, 600f, 100f),
@@ -1268,34 +1279,21 @@ public class RaceManager : MonoBehaviour
 
     private void DrawNotificationGUI()
     {
-        if (notificationStyle == null)
-        {
-            notificationStyle = new GUIStyle(GUI.skin.label)
-            {
-                alignment = TextAnchor.MiddleCenter,
-                fontStyle = FontStyle.Bold,
-                wordWrap = true,
-                richText = false,
-                padding = new RectOffset(15, 15, 8, 8)
-            };
-        }
+        Color previousColor = GUI.color;
+        Matrix4x4 previousMatrix = GUI.matrix;
 
-        notificationStyle.font = notificationFont;
-        notificationStyle.fontSize = notificationFontSize;
+        float scale = GetGUIScale();
 
         float width = notificationWidth;
         float height = notificationHeight;
 
         float centerX = Screen.width * 0.5f;
-        float centerY = notificationTopOffset + height * 0.5f;
-
-        Matrix4x4 previousMatrix = GUI.matrix;
-        Color previousColor = GUI.color;
+        float centerY = (notificationTopOffset + height * 0.5f) * scale;
 
         GUI.matrix = Matrix4x4.TRS(
             new Vector2(centerX, centerY),
             Quaternion.identity,
-            Vector3.one * notificationScale
+            Vector3.one * (scale * notificationScale)
         );
 
         Rect notificationRect = new Rect(
@@ -1305,11 +1303,11 @@ public class RaceManager : MonoBehaviour
             height
         );
 
-        // Fundo colorido com 70% de opacidade.
+        // FUNDO
         GUI.color = new Color(
-            currentNotificationColor.r,
-            currentNotificationColor.g,
-            currentNotificationColor.b,
+            0f,
+            0f,
+            0f,
             notificationAlpha
         );
 
@@ -1318,15 +1316,57 @@ public class RaceManager : MonoBehaviour
             Texture2D.whiteTexture
         );
 
-        // Texto branco.
+        // TÍTULO
+        GUIStyle titleStyle = new GUIStyle(GUI.skin.label)
+        {
+            font = notificationFont,
+            fontSize = notificationFontSize,
+            fontStyle = FontStyle.Bold,
+            alignment = TextAnchor.MiddleCenter,
+            clipping = TextClipping.Clip
+        };
+
+        titleStyle.normal.textColor = currentNotificationColor;
+
         GUI.color = new Color(
-            1f, 1f, 1f, notificationAlpha
+            currentNotificationColor.r,
+            currentNotificationColor.g,
+            currentNotificationColor.b,
+            notificationAlpha
         );
 
         GUI.Label(
-            notificationRect,
-            currentNotificationText,
-            notificationStyle
+            new Rect(
+                -width * 0.5f + 8f,
+                -height * 0.5f + 4f,
+                width - 16f,
+                height * 0.52f
+            ),
+            currentNotificationTitle,
+            titleStyle
+        );
+
+        // SUBTÍTULO
+        GUIStyle subtitleStyle = new GUIStyle(GUI.skin.label)
+        {
+            font = notificationFont,
+            fontSize = Mathf.Max(10, notificationFontSize - 3),
+            fontStyle = FontStyle.Normal,
+            alignment = TextAnchor.MiddleCenter,
+            clipping = TextClipping.Clip
+        };
+
+        subtitleStyle.normal.textColor = currentNotificationColor;
+
+        GUI.Label(
+            new Rect(
+                -width * 0.5f + 8f,
+                0f,
+                width - 16f,
+                height * 0.42f
+            ),
+            currentNotificationSubtitle,
+            subtitleStyle
         );
 
         GUI.matrix = previousMatrix;
@@ -1406,18 +1446,18 @@ public class RaceManager : MonoBehaviour
     }
 
     private void EnqueueNotification(
-    string message,
-    Color backgroundColor,
+    string title,
+    string subtitle,
+    Color textColor,
     NotificationPriority priority)
     {
         RaceNotification notification = new RaceNotification(
-            message,
-            backgroundColor,
+            title,
+            subtitle,
+            textColor,
             priority
         );
 
-        // Reorganiza apenas as notificações que ainda não apareceram.
-        // A que já está na tela não é interrompida.
         List<RaceNotification> pending = notificationQueue.ToList();
 
         pending.Add(notification);
@@ -1448,28 +1488,20 @@ public class RaceManager : MonoBehaviour
             RaceNotification notification =
                 notificationQueue.Dequeue();
 
-            currentNotificationText = notification.message;
-            currentNotificationColor = notification.backgroundColor;
+            currentNotificationTitle = notification.title;
+            currentNotificationSubtitle = notification.subtitle;
+            currentNotificationColor = notification.textColor;
 
             notificationVisible = true;
 
-            // Entrada.
-            float enterDuration =
-                notificationQueue.Count > 0 ? 0.16f : 0.25f;
-
             yield return StartCoroutine(
-                AnimateNotificationIn(enterDuration)
+                AnimateNotificationIn(0.18f)
             );
 
-            // Permanência na tela.
             yield return new WaitForSecondsRealtime(1.5f);
 
-            // Saída.
-            float exitDuration =
-                notificationQueue.Count > 0 ? 0.16f : 0.25f;
-
             yield return StartCoroutine(
-                AnimateNotificationOut(exitDuration)
+                AnimateNotificationOut(0.18f)
             );
 
             notificationVisible = false;
