@@ -162,7 +162,7 @@ public class RaceManager : MonoBehaviour
     }
 
     [Header("Race Notifications")]
-    private Font notificationFont;
+    [SerializeField] private Font notificationFont;
     private int notificationFontSize = 16;
     private float notificationWidth = 370f;
     private float notificationHeight = 50f;
