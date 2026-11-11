@@ -108,16 +108,29 @@ public class DamageCar : MonoBehaviour
         {
             var emission = ps.emission;
             emission.rateOverTime = currentSmokeRate;
+
+            if (currentSmokeRate > 0f)
+            {
+                if (!ps.isPlaying)
+                    ps.Play();
+            }
         }
 
         // 3. Gerenciamento de Fogo
         float fireIntensity = Mathf.InverseLerp(0.65f, 1f, currentDamage);
         float currentFireRate = fireIntensity * maxFireEmissionRate;
 
+
         foreach (var ps in _activeFireSystems)
         {
             var emission = ps.emission;
             emission.rateOverTime = currentFireRate;
+
+            if (currentFireRate > 0f)
+            {
+                if (!ps.isPlaying)
+                    ps.Play();
+            }
         }
     }
 
