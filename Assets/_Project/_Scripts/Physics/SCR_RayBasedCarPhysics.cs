@@ -13,6 +13,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     [HideInInspector] public bool AIControlled = false;
     RacerStatus racerStatus;
 
+    [SerializeField] int hitCount = 0; 
+
     #region Basic Components
     [Header("Basic Components References")]
     [SerializeField] Rigidbody rb;
@@ -1418,7 +1420,9 @@ private void ApplyClassicSuspension()
     // Aplica dano da colisão
     if (damageCar != null)
     {
-        damageCar.ApplyDamage((0.00003f * impactForce));
+        if(racerStatus.isPlayer) {damageCar.ApplyDamage((0.005f));}
+        else{damageCar.ApplyDamage((0.0032f));}
+        hitCount++;
         //if(racerStatus.isPlayer) damageCar.ApplyDamage((0.00002f * impactForce));
         //else damageCar.ApplyDamage((0.0000002f * impactForce));
     }
