@@ -105,6 +105,11 @@ public class GameManagerInstance : MonoBehaviour
         {
             SetGameMode(GameMode.StoryMode);
         }
+
+        if (scene.name == "QuickRaceSetupScene")
+        {
+            SetGameMode(GameMode.QuickPlay);
+        }
     }
 
     void OnDisable()

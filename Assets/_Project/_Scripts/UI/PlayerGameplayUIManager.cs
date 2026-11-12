@@ -356,16 +356,16 @@ public class PlayerGameplayManager : MonoBehaviour
 
                 float scale =
                     Mathf.Lerp(
-                        2f,
-                        0.25f,
+                        4f,
+                        0.5f,
                         realDist / maxVisualDistance
                     );
 
                 scale =
                     Mathf.Clamp(
                         scale,
-                        0.25f,
-                        2f
+                        0.5f,
+                        4f
                     );
 
                 Vector3 relativePos =

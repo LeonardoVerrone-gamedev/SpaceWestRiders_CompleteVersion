@@ -5,7 +5,17 @@ public class OpponentUIIndicator : MonoBehaviour
 {
     public Image icon;
     public RacerStatus targetRacer;
-    
+    public TeamSO oponentTeam;
+
+    private void Start()
+    {
+        if (oponentTeam == null)
+        {
+            oponentTeam = targetRacer.gameObject.GetComponent<SCR_CarIdentity>().racerData.team;
+            icon.sprite = oponentTeam.teamImage;
+        }
+    }
+
     public void UpdateUI(float screenX, float scale, bool visible)
     {
         icon.enabled = visible;
