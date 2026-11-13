@@ -18,6 +18,13 @@ public class TitleScreenMenu : MonoBehaviour
         foreach(GameObject gameModeOption in gameModeOptions) gameModeOption.SetActive(value);
     }
 
+    public void HideGameOptions()
+    {
+        bool value = false;
+
+        foreach (GameObject gameModeOption in gameModeOptions) gameModeOption.SetActive(value);
+    }
+
     public void StartQuickRaceMode()
     {
         SceneTransitionAnimationManager.Instance.LoadScene(quickRaceSceneName);
