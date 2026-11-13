@@ -30581,6 +30581,7 @@ MonoBehaviour:
   carType: 1
   canSwitchType: 0
   AIControlled: 0
+  hitCount: 0
   rb: {fileID: 4669666620697055679}
   drivable:
     serializedVersion: 2
@@ -30599,8 +30600,8 @@ MonoBehaviour:
   springTravel: 0.5
   springStiffness: 6000
   wheelRadius: 0.33
-  hoverDamper: 8000
-  classicDamper: 4000
+  hoverDamper: 3200
+  classicDamper: 1800
   wheelsGrounded: 00000000000000000000000000000000
   isGrounded: 0
   hoverDownforceAmount: 2500
@@ -30612,11 +30613,11 @@ MonoBehaviour:
   downforceAmount: 1
   forceLevelingDelay: 0.15
   classicCarAcceleration: 45
-  hoverCarAcceleration: 50
-  acceleration: 45
+  hoverCarAcceleration: 55
+  acceleration: 55
   classicCarMaxSpeed: 100
   hoverCarMaxSpeed: 105
-  maxSpeed: 100
+  maxSpeed: 105
   deceleration: 40
   steerStrenght: 15
   classicCarDragCoefficient: 5

@@ -36672,6 +36672,7 @@ MonoBehaviour:
   carType: 0
   canSwitchType: 0
   AIControlled: 0
+  hitCount: 0
   rb: {fileID: 7542009723913951103}
   drivable:
     serializedVersion: 2
@@ -36709,10 +36710,10 @@ MonoBehaviour:
   downforceAmount: 1
   forceLevelingDelay: 0.15
   classicCarAcceleration: 45
-  hoverCarAcceleration: 50
+  hoverCarAcceleration: 55
   acceleration: 45
   classicCarMaxSpeed: 100
-  hoverCarMaxSpeed: 105
+  hoverCarMaxSpeed: 110
   maxSpeed: 100
   deceleration: 40
   steerStrenght: 15
