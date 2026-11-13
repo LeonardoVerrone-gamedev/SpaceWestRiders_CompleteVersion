@@ -17895,6 +17895,7 @@ MonoBehaviour:
   showRaceCountdown: 1
   countdownDuration: 4
   notificationFont: {fileID: 12800000, guid: 0d23ead6a64361a4e9761095196b1a50, type: 3}
+  referenceResolution: {x: 1920, y: 1080}
 --- !u!4 &592188890
 Transform:
   m_ObjectHideFlags: 0
@@ -53355,6 +53356,53 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8012964578059497756, guid: 0b8e2103a5ceaab458c91f19ead572f3, type: 3}
   m_PrefabInstance: {fileID: 2103320149}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1788953069
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1788953071}
+  - component: {fileID: 1788953070}
+  m_Layer: 0
+  m_Name: Song Trigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1788953070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1788953069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6f7e37e5118ebb4c97f4daaba2133a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  songIndex: 1
+  loopSong: 1
+  triggerOnAwake: 1
+--- !u!4 &1788953071
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1788953069}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 231.31447, y: -310.20908, z: -543.0971}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1790910742
 GameObject:
   m_ObjectHideFlags: 0
@@ -65199,3 +65247,4 @@ SceneRoots:
   - {fileID: 1737614658}
   - {fileID: 31901806}
   - {fileID: 2117699881}
+  - {fileID: 1788953071}
