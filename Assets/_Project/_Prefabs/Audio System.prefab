@@ -46,33 +46,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoverClips:
     engineLoop: {fileID: 8300000, guid: 5f1d4c6e7b0f3d747849604be551bd03, type: 3}
-    engineVolume: 0.15
+    engineVolume: 0.8
     minPitch: 0.7
     maxPitch: 1.6
-    driftLoop: {fileID: 8300000, guid: 29678440c986b364db55d26fe42c51cf, type: 3}
-    driftVolume: 0.15
-    gearShift: {fileID: 8300000, guid: 413f889f71fd99a479c1cd84d77d67f8, type: 3}
+    driftLoop: {fileID: 8300000, guid: bcc12b93c85637944a4b7687dd2b5498, type: 3}
+    driftVolume: 0.5
+    gearShift: {fileID: 0}
     turboStart: {fileID: 8300000, guid: 2e5386dd4bcd5f441b7a449392c1e22b, type: 3}
     collision: {fileID: 8300000, guid: 7c0ee0d9d0b9baf4fbb7abd0a82e6885, type: 3}
-    heavyCollision: {fileID: 8300000, guid: c8d0dfbb310f1254388c33a139c72782, type: 3}
+    heavyCollision: {fileID: 8300000, guid: 7c0ee0d9d0b9baf4fbb7abd0a82e6885, type: 3}
     landing: {fileID: 0}
   classicClips:
     engineLoop: {fileID: 8300000, guid: cc4267c70c6435047865f065fd9fabc9, type: 3}
-    engineVolume: 0.15
+    engineVolume: 0.8
     minPitch: 0.7
     maxPitch: 1.6
-    driftLoop: {fileID: 8300000, guid: 3c2a5e32a7db1864f8fe5d44e04ce5d3, type: 3}
-    driftVolume: 0.15
-    gearShift: {fileID: 8300000, guid: 413f889f71fd99a479c1cd84d77d67f8, type: 3}
+    driftLoop: {fileID: 8300000, guid: 231c880c2a1312f4e84b2eb5f920ac9d, type: 3}
+    driftVolume: 0.5
+    gearShift: {fileID: 0}
     turboStart: {fileID: 8300000, guid: e9a2c9bbd3053774d9d292194af7a972, type: 3}
     collision: {fileID: 8300000, guid: 7c0ee0d9d0b9baf4fbb7abd0a82e6885, type: 3}
-    heavyCollision: {fileID: 8300000, guid: c8d0dfbb310f1254388c33a139c72782, type: 3}
-    landing: {fileID: 8300000, guid: 0af686416677c8b49a8d00198d7bcae9, type: 3}
-  secondaryEngineVolume: 0.09
+    heavyCollision: {fileID: 8300000, guid: 7c0ee0d9d0b9baf4fbb7abd0a82e6885, type: 3}
+    landing: {fileID: 0}
+  secondaryEngineVolume: 0.5
   dominantSwitchThreshold: 0.12
   volumeTransitionSpeed: 3
   pitchTransitionSpeed: 5
   effectVoiceCount: 6
-  effectsMasterVolume: 0.03125
+  effectsMasterVolume: 0.8
   collisionHeavyThreshold: 0.325
   collisionSoundCooldown: 1.5

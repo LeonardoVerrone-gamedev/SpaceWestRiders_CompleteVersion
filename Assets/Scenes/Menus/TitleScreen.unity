@@ -422,7 +422,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: 4e77533f862be7f4e9136f4820f9af1a, type: 3}
   m_Resource: {fileID: 8300000, guid: 4e77533f862be7f4e9136f4820f9af1a, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.25
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -523,6 +523,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 4e77533f862be7f4e9136f4820f9af1a, type: 3}
   - {fileID: 8300000, guid: 466bff006177fa041b6fb65d184dc5d6, type: 3}
   - {fileID: 8300000, guid: 47731825f669ea043889eb1433792789, type: 3}
+  - {fileID: 8300000, guid: dd99807a9dd4a6c4b8f4ab521c6eecd7, type: 3}
 --- !u!4 &195529459
 Transform:
   m_ObjectHideFlags: 0
@@ -1431,6 +1432,18 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2097107001}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
         m_CallState: 2
 --- !u!114 &585843288
 MonoBehaviour:
@@ -3947,6 +3960,18 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 2097107001}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1748074034
 MonoBehaviour:
