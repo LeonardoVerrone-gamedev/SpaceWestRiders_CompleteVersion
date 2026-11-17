@@ -372,7 +372,7 @@ public class RaceManager : MonoBehaviour
             Debug.Log(
                 "[GLOBAL RECORD] RECORD ENCONTRADO!\n" +
                 $"Circuito: {result.record.circuit_name}\n" +
-                $"Jogador: {result.record.player_name}\n" +
+                $"Jogador: {( !string.IsNullOrWhiteSpace(result.record.username) ? result.record.username: result.record.player_name)}\n" +
                 $"Tempo: {FormatRaceTime(result.record.total_time)}\n" +
                 $"Ghost: {(result.ghost != null ? "OK" : "INDISPONÍVEL")}"
             );

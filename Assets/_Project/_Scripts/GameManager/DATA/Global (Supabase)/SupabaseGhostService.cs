@@ -17,6 +17,14 @@ public class SupabaseGhostService : MonoBehaviour
     [Header("Request Settings")]
     [SerializeField] private int requestTimeout = 10;
 
+    private const string UsernamePrefsKey = "PlayerUsername";
+    private const string UsernameSyncedPrefsKey = "PlayerUsernameSynced";
+
+    private bool usernameSyncInProgress;
+
+    public static string SavedUsername =>
+        PlayerPrefs.GetString(UsernamePrefsKey, "").Trim();
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -64,7 +72,7 @@ public class SupabaseGhostService : MonoBehaviour
 
         string url =
             $"{supabaseUrl}/rest/v1/race_records" +
-            $"?select=id,circuit_id,circuit_name,player_id,player_name,total_time,created_at,car_character_id" +
+            $"?select=id,circuit_id,circuit_name,player_id,player_name,username,total_time,created_at,car_character_id" +
             $"&circuit_id=eq.{encodedCircuitID}" +
             $"&order=total_time.asc" +
             $"&limit=1";
@@ -231,6 +239,115 @@ public class SupabaseGhostService : MonoBehaviour
     }
 
     // =====================================================
+    // SINCRONIZAR USERNAME COM SUPABASE
+    // =====================================================
+
+    public void SyncSavedUsername(Action<bool> onComplete = null)
+    {
+        if (usernameSyncInProgress)
+            return;
+
+        string username = SavedUsername;
+
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            Debug.LogWarning("[SUPABASE] Nenhum username salvo.");
+            onComplete?.Invoke(false);
+            return;
+        }
+
+        // Já foi sincronizado anteriormente.
+        if (PlayerPrefs.GetInt(UsernameSyncedPrefsKey, 0) == 1)
+        {
+            onComplete?.Invoke(true);
+            return;
+        }
+
+        string playerID = GameManagerInstance.Instance != null
+            ? GameManagerInstance.Instance.PlayerId
+            : "";
+
+        if (!Guid.TryParse(playerID, out _))
+        {
+            Debug.LogWarning(
+                "[SUPABASE] PlayerId inválido. Sincronização adiada."
+            );
+
+            onComplete?.Invoke(false);
+            return;
+        }
+
+        var body = new UsernameSyncRequest
+        {
+            p_player_id = playerID,
+            p_username = username
+        };
+
+        string json = JsonUtility.ToJson(body);
+
+        usernameSyncInProgress = true;
+
+        Debug.Log(
+            $"[SUPABASE] Sincronizando username: {username}"
+        );
+
+        StartCoroutine(
+            PostRpc("update_player_username", json, response =>
+            {
+                usernameSyncInProgress = false;
+
+                if (string.IsNullOrWhiteSpace(response))
+                {
+                    Debug.LogWarning(
+                        "[SUPABASE] Falha na sincronização do username. " +
+                        "Será tentada novamente."
+                    );
+
+                    onComplete?.Invoke(false);
+                    return;
+                }
+
+                try
+                {
+                    UsernameSyncResponse result =
+                        JsonUtility.FromJson<UsernameSyncResponse>(response);
+
+                    if (result == null || !result.success)
+                    {
+                        Debug.LogWarning(
+                            "[SUPABASE] Resposta inválida na sincronização."
+                        );
+
+                        onComplete?.Invoke(false);
+                        return;
+                    }
+
+                    // Só marca como sincronizado após confirmação do Supabase.
+                    PlayerPrefs.SetInt(UsernameSyncedPrefsKey, 1);
+                    PlayerPrefs.Save();
+
+                    Debug.Log(
+                        $"[SUPABASE] Username sincronizado!\n" +
+                        $"Corridas atualizadas: {result.race_records_updated}\n" +
+                        $"Voltas atualizadas: {result.lap_records_updated}"
+                    );
+
+                    onComplete?.Invoke(true);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError(
+                        "[SUPABASE] Erro interpretando sincronização: " +
+                        e.Message
+                    );
+
+                    onComplete?.Invoke(false);
+                }
+            })
+        );
+    }
+
+    // =====================================================
     // ENVIAR RECORD DE CORRIDA + GHOST
     // =====================================================
 
@@ -251,6 +368,23 @@ public class SupabaseGhostService : MonoBehaviour
             ? GameManagerInstance.Instance.PlayerId
             : "";
 
+                string username = SavedUsername;
+
+                if (!Guid.TryParse(playerID, out _))
+                {
+                    Debug.LogError("[SUPABASE] PlayerId inválido.");
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(username))
+                {
+                    Debug.LogError(
+                        "[SUPABASE] Username não cadastrado. " +
+                        "Envio de recorde cancelado."
+                    );
+                    return;
+                }
+
         if (!Guid.TryParse(playerID, out _))
         {
             Debug.LogError(
@@ -265,7 +399,7 @@ public class SupabaseGhostService : MonoBehaviour
             p_circuit_id = circuitID,
             p_circuit_name = circuitName,
             p_player_id = playerID,
-            p_player_name = playerName,
+            p_player_name = username,
             p_car_character_id = ghostData.characterID,
             p_total_time = ghostData.totalTime,
             p_ghost_data = ghostData
@@ -275,7 +409,7 @@ public class SupabaseGhostService : MonoBehaviour
 
         Debug.Log(
             $"[SUPABASE] Enviando recorde e Ghost: " +
-            $"{playerName} - {ghostData.totalTime:F3}s"
+            $"{username} - {ghostData.totalTime:F3}s"
         );
 
         StartCoroutine(
@@ -313,6 +447,20 @@ public class SupabaseGhostService : MonoBehaviour
             ? GameManagerInstance.Instance.PlayerId
             : "";
 
+        string username = SavedUsername;
+
+        if (!Guid.TryParse(playerID, out _))
+        {
+            Debug.LogError("[SUPABASE] PlayerId inválido.");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            Debug.LogError("[SUPABASE] Username não cadastrado.");
+            return;
+        }
+
         if (!Guid.TryParse(playerID, out _))
         {
             Debug.LogError(
@@ -330,7 +478,7 @@ public class SupabaseGhostService : MonoBehaviour
             p_circuit_id = circuitID,
             p_circuit_name = circuitName,
             p_player_id = playerID,
-            p_player_name = playerName,
+            p_player_name = username,
             p_lap_time = lapTime
         };
 
@@ -368,6 +516,162 @@ public class SupabaseGhostService : MonoBehaviour
         StartCoroutine(
             FetchBestLapRecordCoroutine(circuitID, onComplete)
         );
+    }
+
+    // =====================================================
+    // BUSCAR TOP 3 GLOBAL DE CORRIDAS
+    // =====================================================
+
+    public void GetTop3RaceRecords(
+        string circuitID,
+        Action<List<GlobalRaceRecordRow>, bool> onComplete)
+    {
+        StartCoroutine(
+            FetchTop3RaceRecordsCoroutine(circuitID, onComplete)
+        );
+    }
+
+    private IEnumerator FetchTop3RaceRecordsCoroutine(
+        string circuitID,
+        Action<List<GlobalRaceRecordRow>, bool> onComplete)
+    {
+        if (string.IsNullOrWhiteSpace(circuitID))
+        {
+            onComplete?.Invoke(null, false);
+            yield break;
+        }
+
+        string encodedCircuitID =
+            UnityWebRequest.EscapeURL(circuitID);
+
+        string url =
+            $"{supabaseUrl}/rest/v1/race_records" +
+            $"?select=username,player_name,total_time" +
+            $"&circuit_id=eq.{encodedCircuitID}" +
+            $"&order=total_time.asc,created_at.asc" +
+            $"&limit=3";
+
+        using (UnityWebRequest request = UnityWebRequest.Get(url))
+        {
+            ConfigureRequest(request);
+
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(
+                    "[SUPABASE] Erro buscando Top 3:\n" +
+                    request.downloadHandler.text
+                );
+
+                onComplete?.Invoke(null, false);
+                yield break;
+            }
+
+            try
+            {
+                string json =
+                    "{\"items\":" + request.downloadHandler.text + "}";
+
+                var response = JsonUtility.FromJson<
+                    SupabaseArrayResponse<GlobalRaceRecordRow>
+                >(json);
+
+                List<GlobalRaceRecordRow> records =
+                    response?.items ?? new List<GlobalRaceRecordRow>();
+
+                onComplete?.Invoke(records, true);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(
+                    "[SUPABASE] Erro interpretando Top 3: " + e.Message
+                );
+
+                onComplete?.Invoke(null, false);
+            }
+        }
+    }
+
+    // =====================================================
+    // BUSCAR MELHOR VOLTA GLOBAL + USERNAME
+    // =====================================================
+
+    public void GetBestGlobalLapRecord(
+        string circuitID,
+        Action<BestLapRecordRow, bool> onComplete)
+    {
+        StartCoroutine(
+            FetchBestGlobalLapRecordCoroutine(circuitID, onComplete)
+        );
+    }
+
+    private IEnumerator FetchBestGlobalLapRecordCoroutine(
+        string circuitID,
+        Action<BestLapRecordRow, bool> onComplete)
+    {
+        if (string.IsNullOrWhiteSpace(circuitID))
+        {
+            onComplete?.Invoke(null, false);
+            yield break;
+        }
+
+        string encodedCircuitID =
+            UnityWebRequest.EscapeURL(circuitID);
+
+        string url =
+            $"{supabaseUrl}/rest/v1/lap_records" +
+            $"?select=username,player_name,lap_time" +
+            $"&circuit_id=eq.{encodedCircuitID}" +
+            $"&order=lap_time.asc,created_at.asc" +
+            $"&limit=1";
+
+        using (UnityWebRequest request = UnityWebRequest.Get(url))
+        {
+            ConfigureRequest(request);
+
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(
+                    "[SUPABASE] Erro buscando melhor volta global:\n" +
+                    request.downloadHandler.text
+                );
+
+                onComplete?.Invoke(null, false);
+                yield break;
+            }
+
+            try
+            {
+                string json =
+                    "{\"items\":" + request.downloadHandler.text + "}";
+
+                var response = JsonUtility.FromJson<
+                    SupabaseArrayResponse<BestLapRecordRow>
+                >(json);
+
+                if (response == null ||
+                    response.items == null ||
+                    response.items.Count == 0)
+                {
+                    onComplete?.Invoke(null, true);
+                    yield break;
+                }
+
+                onComplete?.Invoke(response.items[0], true);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(
+                    "[SUPABASE] Erro interpretando melhor volta: " +
+                    e.Message
+                );
+
+                onComplete?.Invoke(null, false);
+            }
+        }
     }
 
     private IEnumerator FetchBestLapRecordCoroutine(
@@ -540,9 +844,18 @@ public class BestRaceRecordRow
     public string circuit_name;
     public string player_id;
     public string player_name;
+    public string username;
     public float total_time;
     public string created_at;
     public string car_character_id;
+}
+
+[Serializable]
+public class GlobalRaceRecordRow
+{
+    public string username;
+    public string player_name;
+    public float total_time;
 }
 
 [Serializable]
@@ -577,6 +890,21 @@ public class RaceRecordRpcRequest
 }
 
 [Serializable]
+public class UsernameSyncRequest
+{
+    public string p_player_id;
+    public string p_username;
+}
+
+[Serializable]
+public class UsernameSyncResponse
+{
+    public bool success;
+    public int race_records_updated;
+    public int lap_records_updated;
+}
+
+[Serializable]
 public class LapRecordRpcRequest
 {
     public string p_circuit_id;
@@ -589,5 +917,7 @@ public class LapRecordRpcRequest
 [Serializable]
 public class BestLapRecordRow
 {
+    public string username;
+    public string player_name;
     public float lap_time;
 }

@@ -11,7 +11,7 @@ public class CircuitSelection : MonoBehaviour
     [Header("Configurações de Circuitos")]
     public CircuitSO[] allFreeCircuits;
 
-    [Tooltip("Perfis alternativos para Record Holder")]
+    [Tooltip("Mantido para compatibilidade com referências antigas do Inspector.")]
     public List<RacerProfileSO> backupRacerProfiles;
 
     [Header("Layouts dos Planetas")]
@@ -35,8 +35,18 @@ public class CircuitSelection : MonoBehaviour
 
     [Header("Exibição de Dados Extras")]
     [SerializeField] private Slider dificuldadeSlider;
-    [SerializeField] private TextMeshProUGUI recordTimeText;
-    [SerializeField] private TextMeshProUGUI recordHolderText;
+
+    [Header("Global Records")]
+    [SerializeField] private TextMeshProUGUI globalLapUsernameText;
+    [SerializeField] private TextMeshProUGUI globalLapTimeText;
+
+    [SerializeField] private TextMeshProUGUI top1Text;
+    [SerializeField] private TextMeshProUGUI top2Text;
+    [SerializeField] private TextMeshProUGUI top3Text;
+
+    [Header("Local Records")]
+    [SerializeField] private TextMeshProUGUI localBestRaceText;
+    [SerializeField] private TextMeshProUGUI localBestLapText;
     [SerializeField] private TextMeshProUGUI trackName;
 
     private CircuitButtonData lastButton;
@@ -47,6 +57,10 @@ public class CircuitSelection : MonoBehaviour
 
     private bool isTransitioning;
     private bool playbackEnded;
+
+    // Identifica a consulta mais recente.
+    // Impede que respostas antigas atualizem a tela.
+    private int recordRequestVersion = 0;
 
     private RectTransform videoRect;
     private Transform originalParent;
@@ -99,8 +113,6 @@ public class CircuitSelection : MonoBehaviour
 
         if (videoTransitionOverlay != null)
             videoTransitionOverlay.gameObject.SetActive(true);
-
-        //ColocarVideoEmPrimeiroPlano();
     }
 
     // Chamado pelo sistema de foco dos botões.
@@ -128,7 +140,8 @@ public class CircuitSelection : MonoBehaviour
         if (dificuldadeSlider != null)
             dificuldadeSlider.value = circuit.DifficultyLevel;
 
-        CarregarEExibirRecordes(circuit.circuitName);
+        CarregarEExibirRecordes(circuit);
+
         ExibirVideoEmLoop(circuit);
     }
 
@@ -149,6 +162,258 @@ public class CircuitSelection : MonoBehaviour
 
         return null;
     }
+
+    // =========================================================
+    // RECORDES
+    // =========================================================
+
+    private void CarregarEExibirRecordes(CircuitSO circuit)
+    {
+        if (circuit == null)
+            return;
+
+        // Cada novo circuito invalida as consultas anteriores.
+        recordRequestVersion++;
+        int requestVersion = recordRequestVersion;
+
+        string circuitID = circuit.circuitID;
+
+        if (trackName != null)
+            trackName.text = circuit.circuitName;
+
+        // 1. RECORDES LOCAIS
+        // São carregados imediatamente, sem depender da internet.
+
+        float localRaceTime =
+            LocalRaceRecordStorage.GetBestRaceTime(circuitID);
+
+        float localLapTime =
+            LocalRaceRecordStorage.GetBestLapTime(circuitID);
+
+        if (localBestRaceText != null)
+        {
+            localBestRaceText.text =
+                $"Melhor corrida: {FormatarTempo(localRaceTime)}";
+        }
+
+        if (localBestLapText != null)
+        {
+            localBestLapText.text =
+                $"Melhor volta: {FormatarTempo(localLapTime)}";
+        }
+
+        // 2. LIMPA OS RECORDES GLOBAIS ANTIGOS
+
+        LimparRecordesGlobais("LOADING...");
+
+        // 3. CONSULTAS AO SUPABASE
+
+        if (SupabaseGhostService.Instance == null)
+        {
+            Debug.LogWarning(
+                "[CIRCUIT SELECTION] SupabaseGhostService não encontrado."
+            );
+
+            ExibirFalhaRecordesGlobais();
+            return;
+        }
+
+        // Melhor volta global.
+        SupabaseGhostService.Instance.GetBestGlobalLapRecord(
+            circuitID,
+            (record, success) =>
+            {
+                if (!ConsultaAindaValida(requestVersion, circuitID))
+                    return;
+
+                if (!success)
+                {
+                    if (globalLapUsernameText != null)
+                        globalLapUsernameText.text = "UNAVAILABLE";
+
+                    if (globalLapTimeText != null)
+                        globalLapTimeText.text = "--:--.---";
+
+                    return;
+                }
+
+                if (record == null)
+                {
+                    if (globalLapUsernameText != null)
+                        globalLapUsernameText.text = "NONE";
+
+                    if (globalLapTimeText != null)
+                        globalLapTimeText.text = "--:--.---";
+
+                    return;
+                }
+
+                string username = ObterUsername(
+                    record.username,
+                    record.player_name
+                );
+
+                if (globalLapUsernameText != null)
+                    globalLapUsernameText.text = username.ToUpper();
+
+                if (globalLapTimeText != null)
+                    globalLapTimeText.text =
+                        FormatarTempo((float)record.lap_time);
+            }
+        );
+
+        // Top 3 global de corrida.
+        SupabaseGhostService.Instance.GetTop3RaceRecords(
+            circuitID,
+            (records, success) =>
+            {
+                if (!ConsultaAindaValida(requestVersion, circuitID))
+                    return;
+
+                if (!success)
+                {
+                    ExibirTop3Indisponivel();
+                    return;
+                }
+
+                ExibirTop3(records);
+            }
+        );
+    }
+
+    private bool ConsultaAindaValida(
+        int requestVersion,
+        string circuitID)
+    {
+        return this != null &&
+               isActiveAndEnabled &&
+               requestVersion == recordRequestVersion &&
+               currentCircuit != null &&
+               currentCircuit.circuitID == circuitID;
+    }
+
+    private void LimparRecordesGlobais(string mensagem)
+    {
+        if (globalLapUsernameText != null)
+            globalLapUsernameText.text = mensagem;
+
+        if (globalLapTimeText != null)
+            globalLapTimeText.text = "--:--.---";
+
+        if (top1Text != null)
+            top1Text.text = mensagem;
+
+        if (top2Text != null)
+            top2Text.text = mensagem;
+
+        if (top3Text != null)
+            top3Text.text = mensagem;
+    }
+
+    private void ExibirFalhaRecordesGlobais()
+    {
+        if (globalLapUsernameText != null)
+            globalLapUsernameText.text = "UNAVAILABLE";
+
+        if (globalLapTimeText != null)
+            globalLapTimeText.text = "--:--.---";
+
+        ExibirTop3Indisponivel();
+    }
+
+    private void ExibirTop3Indisponivel()
+    {
+        if (top1Text != null)
+            top1Text.text = "UNAVAILABLE";
+
+        if (top2Text != null)
+            top2Text.text = "UNAVAILABLE";
+
+        if (top3Text != null)
+            top3Text.text = "UNAVAILABLE";
+    }
+
+    private void ExibirTop3(
+        List<GlobalRaceRecordRow> records)
+    {
+        if (top1Text != null)
+            top1Text.text = "1. NONE";
+
+        if (top2Text != null)
+            top2Text.text = "2. NONE";
+
+        if (top3Text != null)
+            top3Text.text = "3. NONE";
+
+        if (records == null || records.Count == 0)
+            return;
+
+        if (records.Count > 0 && top1Text != null)
+            top1Text.text = FormatarEntradaTop3(1, records[0]);
+
+        if (records.Count > 1 && top2Text != null)
+            top2Text.text = FormatarEntradaTop3(2, records[1]);
+
+        if (records.Count > 2 && top3Text != null)
+            top3Text.text = FormatarEntradaTop3(3, records[2]);
+    }
+
+    private string FormatarEntradaTop3(
+        int position,
+        GlobalRaceRecordRow record)
+    {
+        if (record == null)
+            return position + ". NONE";
+
+        string username = ObterUsername(
+            record.username,
+            record.player_name
+        );
+
+        return $"{position}. {username.ToUpper()} - " +
+               $"{FormatarTempo((float)record.total_time)}";
+    }
+
+    private string ObterUsername(
+        string username,
+        string fallbackName)
+    {
+        if (!string.IsNullOrWhiteSpace(username))
+            return username.Trim();
+
+        if (!string.IsNullOrWhiteSpace(fallbackName))
+            return fallbackName.Trim();
+
+        return "UNKNOWN";
+    }
+
+    private string FormatarTempo(float tempo)
+    {
+        if (tempo == float.MaxValue ||
+            float.IsNaN(tempo) ||
+            float.IsInfinity(tempo) ||
+            tempo <= 0f)
+        {
+            return "--:--.---";
+        }
+
+        int minutos = Mathf.FloorToInt(tempo / 60f);
+        int segundos = Mathf.FloorToInt(tempo % 60f);
+        int milissegundos = Mathf.FloorToInt(
+            (tempo * 1000f) % 1000f
+        );
+
+        return string.Format(
+            "{0:00}:{1:00}.{2:000}",
+            minutos,
+            segundos,
+            milissegundos
+        );
+    }
+
+    // =========================================================
+    // VÍDEO DE PREVIEW
+    // =========================================================
 
     private void ExibirVideoEmLoop(CircuitSO circuit)
     {
@@ -201,7 +466,10 @@ public class CircuitSelection : MonoBehaviour
         }
     }
 
-    // RANDOM: sorteia o CircuitSO primeiro para conhecer seu vídeo.
+    // =========================================================
+    // RANDOM / PLAY CIRCUIT
+    // =========================================================
+
     public void RandomPlay()
     {
         if (isTransitioning || allFreeCircuits == null ||
@@ -248,7 +516,6 @@ public class CircuitSelection : MonoBehaviour
         if (QuickPlayManagement.Instance == null)
             return;
 
-        // Sem vídeo: mantém o fluxo de início, sem bloquear a corrida.
         if (circuit.circuitVideo == null ||
             videoPlayer == null ||
             displayCircuitoVideo == null ||
@@ -286,7 +553,6 @@ public class CircuitSelection : MonoBehaviour
 
         videoTransitionOverlay.gameObject.SetActive(true);
 
-        // Guarda a posição original antes de mover a RawImage.
         Vector3 startWorldPosition = videoRect.position;
         Vector2 startSize = videoRect.rect.size;
 
@@ -305,7 +571,6 @@ public class CircuitSelection : MonoBehaviour
 
         ColocarVideoEmPrimeiroPlano();
 
-        // RANDOM: começa no centro, crescendo a partir de zero.
         if (randomSelection)
         {
             videoRect.anchoredPosition = Vector2.zero;
@@ -324,7 +589,6 @@ public class CircuitSelection : MonoBehaviour
 
         float elapsed = 0f;
 
-        // Movimento e expansão acontecem simultaneamente.
         while (elapsed < transitionDuration)
         {
             elapsed += Time.unscaledDeltaTime;
@@ -332,7 +596,6 @@ public class CircuitSelection : MonoBehaviour
             float t = Mathf.Clamp01(
                 elapsed / transitionDuration);
 
-            // Ease-out: rápido no início, suave no fim.
             float eased = 1f - Mathf.Pow(1f - t, 3f);
 
             videoRect.anchoredPosition = Vector2.Lerp(
@@ -347,7 +610,6 @@ public class CircuitSelection : MonoBehaviour
         videoRect.anchoredPosition = Vector2.zero;
         videoRect.sizeDelta = targetSize;
 
-        // A transição acabou. Agora começa uma reprodução completa.
         videoPlayer.Stop();
         videoPlayer.isLooping = false;
         videoPlayer.time = 0;
@@ -360,7 +622,6 @@ public class CircuitSelection : MonoBehaviour
 
         videoPlayer.loopPointReached -= AoFinalizarVideo;
 
-        // Só inicia o circuito depois da última reprodução completa.
         videoPlayer.Stop();
 
         QuickPlayManagement.Instance.CreateCircuit(
@@ -371,6 +632,10 @@ public class CircuitSelection : MonoBehaviour
     {
         playbackEnded = true;
     }
+
+    // =========================================================
+    // LAYOUTS
+    // =========================================================
 
     public void ShowOrHidePlanetLayout(GameObject layout)
     {
@@ -388,79 +653,15 @@ public class CircuitSelection : MonoBehaviour
         layout.SetActive(!estavaAtivo);
     }
 
-    private void CarregarEExibirRecordes(string circuitName)
-    {
-        string timeKey = "CIRCUIT_RECORD_TIME_" + circuitName;
-        string holderKey = "CIRCUIT_RECORD_RACER_" + circuitName;
-
-        if (trackName != null)
-            trackName.text = circuitName;
-
-        float recordTime = PlayerPrefs.GetFloat(
-            timeKey, float.MaxValue);
-
-        string recordHolder = PlayerPrefs.GetString(
-            holderKey, "NONE");
-
-        if (recordTimeText != null)
-        {
-            recordTimeText.text =
-                recordTime == float.MaxValue
-                ? "--:--.__"
-                : FormatarTempo(recordTime);
-        }
-
-        if (recordHolderText == null)
-            return;
-
-        if (recordHolder == "NONE")
-        {
-            if (backupRacerProfiles != null &&
-                backupRacerProfiles.Count > 0)
-            {
-                List<RacerProfileSO> validProfiles =
-                    backupRacerProfiles.FindAll(p => p != null);
-
-                if (validProfiles.Count > 0)
-                {
-                    string sorteado = validProfiles[
-                        Random.Range(0, validProfiles.Count)].racerName;
-
-                    PlayerPrefs.SetString(holderKey, sorteado);
-                    PlayerPrefs.Save();
-
-                    recordHolderText.text = sorteado.ToUpper();
-                }
-                else
-                {
-                    recordHolderText.text = "DESCONHECIDO";
-                }
-            }
-            else
-            {
-                recordHolderText.text = "DESCONHECIDO";
-            }
-        }
-        else
-        {
-            recordHolderText.text = recordHolder.ToUpper();
-        }
-    }
-
-    private string FormatarTempo(float tempo)
-    {
-        int minutos = Mathf.FloorToInt(tempo / 60f);
-        int segundos = Mathf.FloorToInt(tempo % 60f);
-        int milissegundos = Mathf.FloorToInt(
-            (tempo * 1000f) % 1000f);
-
-        return string.Format(
-            "{0}:{1:00}.{2:000}",
-            minutos, segundos, milissegundos);
-    }
+    // =========================================================
+    // CLEANUP
+    // =========================================================
 
     void OnDisable()
     {
+        // Invalida callbacks de consultas ainda pendentes.
+        recordRequestVersion++;
+
         lastButton = null;
         lastButtonName = string.Empty;
 
@@ -473,13 +674,9 @@ public class CircuitSelection : MonoBehaviour
         if (videoTransitionOverlay == null || videoRect == null)
             return;
 
-        // O overlay fica acima dos demais elementos da Canvas.
         videoTransitionOverlay.SetAsLastSibling();
-
-        // O vídeo fica acima dos filhos do próprio overlay.
         videoRect.SetAsLastSibling();
 
-        // Garante que a RawImage possa ser renderizada.
         displayCircuitoVideo.raycastTarget = false;
     }
 }
