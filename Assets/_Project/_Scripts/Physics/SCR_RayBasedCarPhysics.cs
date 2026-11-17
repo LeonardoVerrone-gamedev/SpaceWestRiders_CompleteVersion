@@ -288,6 +288,10 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     public event Action<float> OnJump;
     public event Action<float> OnLand;
     public event Action OnUpGear;
+    public event Action<float, Vector3> OnFinalCollision;
+    public event Action OnPlayerFalls;
+
+    private bool finalCollisionTriggered = false;
     #endregion
 
     #region Gear Variables
@@ -321,6 +325,8 @@ public class SCR_RayBasedCarPhysics : MonoBehaviour
     float[] smoothedDistances;
     float[] previousCompression;
     DamageCar damageCar;
+
+    private bool playerFallTriggered = false;
 
     private Vector3[] wheelOffsets;
     #endregion
@@ -1427,10 +1433,20 @@ private void ApplyClassicSuspension()
         //else damageCar.ApplyDamage((0.0000002f * impactForce));
     }
 
-    // Verifica se essa colisão destruiu o carro
-    bool isDestroyed = IsDestroyed();
+        // Verifica se essa colisão destruiu o carro
+        // Verifica se essa colisão destruiu o carro
+        bool isDestroyed = IsDestroyed();
 
-    Vector3 collisionNormal = collision.contacts[0].normal;
+        // Dispara o evento exclusivo da colisão final.
+        // Só pode acontecer uma vez por carro.
+        if (isDestroyed && !finalCollisionTriggered)
+        {
+            finalCollisionTriggered = true;
+
+            OnFinalCollision?.Invoke(impactForce, dir);
+        }
+
+        Vector3 collisionNormal = collision.contacts[0].normal;
     float speedMagnitude = collision.relativeVelocity.magnitude;
 
     Vector3 forceDirection =
@@ -1724,8 +1740,22 @@ private void ApplyClassicSuspension()
         if (!isGrounded)
         {
             _airTimer += Time.fixedDeltaTime;
-            if (_airTimer >= airTimeThreshold && !_isRespawning && isCameraman) ExecuteRespawn();
-            if (_airTimer >= airTimeThreshold && !_isRespawning && !isCameraman) GameOver();
+
+            if (_airTimer >= airTimeThreshold &&
+                !_isRespawning &&
+                isCameraman)
+            {
+                ExecuteRespawn();
+            }
+
+            if (_airTimer >= airTimeThreshold &&
+                !_isRespawning &&
+                !isCameraman)
+            {
+                if(!playerFallTriggered) OnPlayerFalls?.Invoke();
+                playerFallTriggered = true;
+                GameOver();
+            }
         }
     }
 

@@ -53,9 +53,14 @@ MonoBehaviour:
     driftVolume: 0.5
     gearShift: {fileID: 0}
     turboStart: {fileID: 8300000, guid: 2e5386dd4bcd5f441b7a449392c1e22b, type: 3}
-    collision: {fileID: 8300000, guid: 7c0ee0d9d0b9baf4fbb7abd0a82e6885, type: 3}
-    heavyCollision: {fileID: 8300000, guid: 7c0ee0d9d0b9baf4fbb7abd0a82e6885, type: 3}
+    collisionVariants:
+    - {fileID: 8300000, guid: a0e76c55ea6ad0e479ca465671dac573, type: 3}
+    - {fileID: 8300000, guid: 32b4852b2a5a6644b9951da8ba9bb4ec, type: 3}
+    - {fileID: 8300000, guid: b2ed7e7703441f84a83fdca465115380, type: 3}
+    collisionCooldown: {fileID: 8300000, guid: b2ed7e7703441f84a83fdca465115380, type: 3}
+    heavyCollision: {fileID: 8300000, guid: f2518b78075b97047abc371dcd0e07ab, type: 3}
     landing: {fileID: 0}
+    wilhelmScream: {fileID: 8300000, guid: 001b037ee7777964aa366cad9d759939, type: 3}
   classicClips:
     engineLoop: {fileID: 8300000, guid: cc4267c70c6435047865f065fd9fabc9, type: 3}
     engineVolume: 0.8
@@ -65,14 +70,18 @@ MonoBehaviour:
     driftVolume: 0.5
     gearShift: {fileID: 0}
     turboStart: {fileID: 8300000, guid: e9a2c9bbd3053774d9d292194af7a972, type: 3}
-    collision: {fileID: 8300000, guid: 7c0ee0d9d0b9baf4fbb7abd0a82e6885, type: 3}
-    heavyCollision: {fileID: 8300000, guid: 7c0ee0d9d0b9baf4fbb7abd0a82e6885, type: 3}
+    collisionVariants:
+    - {fileID: 8300000, guid: 32b4852b2a5a6644b9951da8ba9bb4ec, type: 3}
+    - {fileID: 8300000, guid: b2ed7e7703441f84a83fdca465115380, type: 3}
+    - {fileID: 8300000, guid: a0e76c55ea6ad0e479ca465671dac573, type: 3}
+    collisionCooldown: {fileID: 8300000, guid: b2ed7e7703441f84a83fdca465115380, type: 3}
+    heavyCollision: {fileID: 8300000, guid: f2518b78075b97047abc371dcd0e07ab, type: 3}
     landing: {fileID: 0}
+    wilhelmScream: {fileID: 8300000, guid: 001b037ee7777964aa366cad9d759939, type: 3}
   secondaryEngineVolume: 0.5
   dominantSwitchThreshold: 0.12
   volumeTransitionSpeed: 3
   pitchTransitionSpeed: 5
   effectVoiceCount: 6
   effectsMasterVolume: 0.8
-  collisionHeavyThreshold: 0.325
   collisionSoundCooldown: 1.5

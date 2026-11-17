@@ -25,9 +25,17 @@ public class SCR_ArcadeRaceAudioManager : MonoBehaviour
         [Header("Efeitos do carro")]
         public AudioClip gearShift;
         public AudioClip turboStart;
-        public AudioClip collision;
+        [Header("Colisões fracas")]
+        public List<AudioClip> collisionVariants = new List<AudioClip>();
+
+        [Header("Colisão durante cooldown")]
+        public AudioClip collisionCooldown;
+
         public AudioClip heavyCollision;
         public AudioClip landing;
+
+        [Header("Queda do jogador")]
+        public AudioClip wilhelmScream;
     }
 
     [Header("Perfis de áudio por tipo de carro")]
@@ -65,9 +73,6 @@ public class SCR_ArcadeRaceAudioManager : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float effectsMasterVolume = 1f;
 
-    [Range(0f, 1f)]
-    [SerializeField] private float collisionHeavyThreshold = 0.8f;
-
     [Header("Cooldown dos sons de colisão")]
     [Min(0f)]
     [SerializeField] private float collisionSoundCooldown = 2.5f;
@@ -86,6 +91,8 @@ public class SCR_ArcadeRaceAudioManager : MonoBehaviour
     private Action[] turboHandlers;
     private Action<float, Vector3>[] collisionHandlers;
     private Action<float>[] landingHandlers;
+    private Action<float, Vector3>[] finalCollisionHandlers;
+    private Action[] onPlayerFallHandlers;
 
     private int dominantPlayer;
     private bool isInitialized;
@@ -95,7 +102,8 @@ public class SCR_ArcadeRaceAudioManager : MonoBehaviour
     private const int PRIORITY_DRIFT = 3;
     private const int PRIORITY_TURBO = 5;
     private const int PRIORITY_COLLISION = 1;
-    private const int PRIORITY_HEAVY_COLLISION = 3;
+    private const int PRIORITY_FINAL_COLLISION = 6;
+    private const int PRIORITY_WILHELM_SCREAM = 7;
 
     public static SCR_ArcadeRaceAudioManager Instance { get; private set; }
 
@@ -295,7 +303,9 @@ public class SCR_ArcadeRaceAudioManager : MonoBehaviour
         gearHandlers = new Action[count];
         turboHandlers = new Action[count];
         collisionHandlers = new Action<float, Vector3>[count];
+        finalCollisionHandlers = new Action<float, Vector3>[count];
         landingHandlers = new Action<float>[count];
+        onPlayerFallHandlers = new Action[count];
 
         for (int i = 0; i < count; i++)
             SubscribeToCar(i);
@@ -324,13 +334,25 @@ public class SCR_ArcadeRaceAudioManager : MonoBehaviour
         collisionHandlers[index] =
             (force, direction) => HandleCollision(setup, force);
 
+        finalCollisionHandlers[index] =
+            (force, direction) => HandleFinalCollision(setup);
+
         landingHandlers[index] =
             airTime => PlayEffect(clips.landing, PRIORITY_DRIFT);
+
+        onPlayerFallHandlers[index] =
+            () => PlayEffect(
+                clips.wilhelmScream,
+                PRIORITY_WILHELM_SCREAM,
+                1f
+            );
 
         car.OnUpGear += gearHandlers[index];
         car.OnTurboStart += turboHandlers[index];
         car.OnCollision += collisionHandlers[index];
         car.OnLand += landingHandlers[index];
+        car.OnFinalCollision += finalCollisionHandlers[index];
+        car.OnPlayerFalls += onPlayerFallHandlers[index];
     }
 
     private void UnsubscribeFromAllCars()
@@ -357,6 +379,16 @@ public class SCR_ArcadeRaceAudioManager : MonoBehaviour
 
             if (landingHandlers != null && landingHandlers[i] != null)
                 car.OnLand -= landingHandlers[i];
+
+            if (finalCollisionHandlers != null && finalCollisionHandlers[i] != null)
+            {
+                car.OnFinalCollision -= finalCollisionHandlers[i];
+            }
+
+            if (onPlayerFallHandlers != null && onPlayerFallHandlers[i] != null)
+            {
+                car.OnPlayerFalls -= onPlayerFallHandlers[i];
+            }
         }
 
         eventsSubscribed = false;
@@ -366,44 +398,78 @@ public class SCR_ArcadeRaceAudioManager : MonoBehaviour
     // COOLDOWN DE COLISÃO
     // =========================================================
 
+
     private void HandleCollision(CarAudioSetup setup, float force)
     {
         if (setup == null || setup.activeClips == null)
             return;
 
         CarAudioClips clips = setup.activeClips;
-        bool heavy = force >= collisionHeavyThreshold;
 
         // Ignora colisões muito fracas.
         if (force < 0.3f)
             return;
 
-        // Verifica se já houve 5 segundos sem colisões.
+        if (clips.collisionVariants == null ||
+            clips.collisionVariants.Count == 0)
+            return;
+
         float currentTime = Time.time;
 
         bool canPlayCollisionSound =
             currentTime - lastCollisionTime >= collisionSoundCooldown;
 
-        // IMPORTANTE:
-        // Toda colisão válida reinicia o timer,
-        // mesmo quando o som não pode ser reproduzido.
+        // Toda colisão válida reinicia o cooldown.
         lastCollisionTime = currentTime;
 
-        // Ainda estamos dentro do período de silêncio.
+        // COLISÕES DENTRO DO COOLDOWN
         if (!canPlayCollisionSound)
-            return;
+        {
+            if (clips.collisionCooldown != null)
+            {
+                PlayEffect(
+                    clips.collisionCooldown,
+                    PRIORITY_COLLISION,
+                    0.75f
+                );
+            }
 
-        AudioClip clip = heavy
-            ? (clips.heavyCollision != null
-                ? clips.heavyCollision
-                : clips.collision)
-            : clips.collision;
+            return;
+        }
+
+        // COLISÕES FORA DO COOLDOWN
+        AudioClip randomClip = clips.collisionVariants[
+            UnityEngine.Random.Range(
+                0,
+                clips.collisionVariants.Count
+            )
+        ];
 
         PlayEffect(
-            clip,
-            heavy ? PRIORITY_HEAVY_COLLISION : PRIORITY_COLLISION,
-            heavy ? 1f : 0.75f);
+            randomClip,
+            PRIORITY_COLLISION,
+            0.75f
+        );
     }
+
+    private void HandleFinalCollision(CarAudioSetup setup)
+    {
+        if (setup == null || setup.activeClips == null)
+            return;
+
+        CarAudioClips clips = setup.activeClips;
+
+        if (clips.heavyCollision == null)
+            return;
+
+        // A colisão final ignora completamente o cooldown.
+        PlayEffect(
+            clips.heavyCollision,
+            PRIORITY_FINAL_COLLISION,
+            1f
+        );
+    }
+
 
     private void Update()
     {
