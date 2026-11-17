@@ -9,7 +9,7 @@ public class PlayerGameplayManager : MonoBehaviour
     [SerializeField] Image panel;
 
     [SerializeField] TextMeshProUGUI playerPositionText;
-    [SerializeField] TextMeshProUGUI bestLapTimeText;
+    [SerializeField] TextMeshProUGUI lapCount;
     [SerializeField] TextMeshProUGUI currentLapTimeText;
     [SerializeField] TextMeshProUGUI speedKMH;
     [SerializeField] public Canvas hudCanvas;
@@ -153,8 +153,8 @@ public class PlayerGameplayManager : MonoBehaviour
         if (playerPositionText != null)
             playerPositionText.gameObject.SetActive(false);
 
-        if (bestLapTimeText != null)
-            bestLapTimeText.gameObject.SetActive(false);
+        if (lapCount != null)
+            lapCount.gameObject.SetActive(false);
 
         if (currentLapTimeText != null)
             currentLapTimeText.gameObject.SetActive(false);
@@ -278,12 +278,16 @@ public class PlayerGameplayManager : MonoBehaviour
 
     void UpdateLapTimes()
     {
-        currentLapTimeText.text =
-            FormatTime(racerStatus.currentLapTime);
+        if (!racerStatus.HasFinishedRace){
+            currentLapTimeText.text =
+                FormatTime(racerStatus.currentLapTime);
+        }
+        else
+        {
+            currentLapTimeText.text = "Finished!";
+        }
 
-        if (racerStatus.personalRecord < float.MaxValue)
-            bestLapTimeText.text =
-                FormatTime(racerStatus.personalRecord);
+        lapCount.text = $"{RaceManager.Instance?.GetLapProgress(racerStatus)} laps";
     }
 
     void UpdateWrongWay()

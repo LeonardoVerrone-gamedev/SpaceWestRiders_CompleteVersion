@@ -1206,6 +1206,14 @@ public class RaceManager : MonoBehaviour
         AwakeRacers();
     }
 
+    public string GetLapProgress(RacerStatus racer)
+    {
+        if (racer == null)
+            return $"0/{totalLaps}";
+
+        return $"{Mathf.Min(racer.lapsCompleted, totalLaps)}/{totalLaps}";
+    }
+
     private void OnGUI()
     {
         if (countdownVisible)
