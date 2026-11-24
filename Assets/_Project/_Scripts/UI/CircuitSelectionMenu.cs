@@ -1,9 +1,9 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
+using UnityEngine.InputSystem;
 using TMPro;
 
 public class CircuitSelection : MonoBehaviour
@@ -28,6 +28,13 @@ public class CircuitSelection : MonoBehaviour
     [SerializeField] private RectTransform videoTransitionOverlay;
     [SerializeField] private VideoPlayer videoPlayer;
     [SerializeField] private RenderTexture videoRenderTexture;
+
+    [Header("Aviso de Pular Vídeo")]
+    [SerializeField] private Font skipPromptFont;
+    [SerializeField, Min(8)] private int skipPromptFontSize = 14;
+    [SerializeField] private Color skipPromptColor = Color.white;
+    [SerializeField, Min(0f)] private float skipPromptMarginX = 24f;
+    [SerializeField, Min(0f)] private float skipPromptMarginY = 20f;
 
     [Header("Transição")]
     [SerializeField, Min(0.05f)]
@@ -56,7 +63,11 @@ public class CircuitSelection : MonoBehaviour
     private CircuitSO currentCircuit;
 
     private bool isTransitioning;
+    private bool isFullscreenVideoPlaying;
     private bool playbackEnded;
+
+    private const string SkipPromptText = "aperte esc ou start para pular";
+    private GUIStyle skipPromptStyle;
 
     // Identifica a consulta mais recente.
     // Impede que respostas antigas atualizem a tela.
@@ -113,6 +124,49 @@ public class CircuitSelection : MonoBehaviour
 
         if (videoTransitionOverlay != null)
             videoTransitionOverlay.gameObject.SetActive(true);
+    }
+
+    private void EnsureSkipPromptStyle()
+    {
+        if (skipPromptStyle == null)
+        {
+            skipPromptStyle = new GUIStyle(GUI.skin.label);
+        }
+
+        if (skipPromptFont != null)
+        {
+            skipPromptStyle.font = skipPromptFont;
+        }
+
+        skipPromptStyle.fontSize = skipPromptFontSize;
+        skipPromptStyle.alignment = TextAnchor.LowerRight;
+        skipPromptStyle.normal.textColor = skipPromptColor;
+        skipPromptStyle.wordWrap = false;
+    }
+
+    void OnGUI()
+    {
+        if (!isFullscreenVideoPlaying)
+            return;
+
+        EnsureSkipPromptStyle();
+
+        GUIContent content = new GUIContent(SkipPromptText);
+        Vector2 size = skipPromptStyle.CalcSize(content);
+
+        // Canto inferior direito fixo em pixels independente da resolução da tela.
+        float x = Screen.width - size.x - skipPromptMarginX;
+        float y = Screen.height - size.y - skipPromptMarginY;
+
+        // Sombra leve para manter legibilidade sobre vídeos claros
+        Rect shadowRect = new Rect(x + 1f, y + 1f, size.x, size.y);
+        Color prevColor = skipPromptStyle.normal.textColor;
+        skipPromptStyle.normal.textColor = new Color(0f, 0f, 0f, 0.75f);
+        GUI.Label(shadowRect, content, skipPromptStyle);
+
+        skipPromptStyle.normal.textColor = prevColor;
+        Rect labelRect = new Rect(x, y, size.x, size.y);
+        GUI.Label(labelRect, content, skipPromptStyle);
     }
 
     // Chamado pelo sistema de foco dos botões.
@@ -536,10 +590,34 @@ public class CircuitSelection : MonoBehaviour
             TransicionarEIniciarCircuito(circuit, randomSelection));
     }
 
+    private bool ApertouPularVideo()
+    {
+        if (!isFullscreenVideoPlaying)
+            return false;
+
+        if (Keyboard.current != null &&
+            Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            return true;
+        }
+
+        foreach (Gamepad gamepad in Gamepad.all)
+        {
+            if (gamepad != null &&
+                gamepad.startButton.wasPressedThisFrame)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private IEnumerator TransicionarEIniciarCircuito(
         CircuitSO circuit, bool randomSelection)
     {
         isTransitioning = true;
+        isFullscreenVideoPlaying = false;
         displayCircuitoVideo.enabled = true;
 
         videoPlayer.Stop();
@@ -610,6 +688,8 @@ public class CircuitSelection : MonoBehaviour
         videoRect.anchoredPosition = Vector2.zero;
         videoRect.sizeDelta = targetSize;
 
+        isFullscreenVideoPlaying = true;
+
         videoPlayer.Stop();
         videoPlayer.isLooping = false;
         videoPlayer.time = 0;
@@ -618,11 +698,21 @@ public class CircuitSelection : MonoBehaviour
         videoPlayer.loopPointReached += AoFinalizarVideo;
         videoPlayer.Play();
 
-        yield return new WaitUntil(() => playbackEnded);
+        try
+        {
+            while (!playbackEnded && !ApertouPularVideo())
+                yield return null;
+        }
+        finally
+        {
+            isFullscreenVideoPlaying = false;
 
-        videoPlayer.loopPointReached -= AoFinalizarVideo;
-
-        videoPlayer.Stop();
+            if (videoPlayer != null)
+            {
+                videoPlayer.loopPointReached -= AoFinalizarVideo;
+                videoPlayer.Stop();
+            }
+        }
 
         QuickPlayManagement.Instance.CreateCircuit(
             circuit.circuitID);
@@ -661,6 +751,7 @@ public class CircuitSelection : MonoBehaviour
     {
         // Invalida callbacks de consultas ainda pendentes.
         recordRequestVersion++;
+        isFullscreenVideoPlaying = false;
 
         lastButton = null;
         lastButtonName = string.Empty;

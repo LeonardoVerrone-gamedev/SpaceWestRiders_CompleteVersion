@@ -570,6 +570,11 @@ MonoBehaviour:
   videoTransitionOverlay: {fileID: 1603986548}
   videoPlayer: {fileID: 1560574918}
   videoRenderTexture: {fileID: 8400000, guid: 4716e1733cb62854283608161173d23d, type: 2}
+  skipPromptFont: {fileID: 12800000, guid: 0d23ead6a64361a4e9761095196b1a50, type: 3}
+  skipPromptFontSize: 40
+  skipPromptColor: {r: 1, g: 1, b: 1, a: 1}
+  skipPromptMarginX: 24
+  skipPromptMarginY: 20
   transitionDuration: 0.35
   dificuldadeSlider: {fileID: 1111619465}
   globalLapUsernameText: {fileID: 1942836277}

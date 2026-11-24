@@ -16,9 +16,19 @@ public class IntroManager : MonoBehaviour
     [SerializeField] private CanvasGroup introCanvasGroup;
     [SerializeField] private float fadeOutDuration = 1.0f;
 
+    [Header("Aviso de Pular Intro")]
+    [SerializeField] private Font skipPromptFont;
+    [SerializeField, Min(8)] private int skipPromptFontSize = 18;
+    [SerializeField] private Color skipPromptColor = Color.white;
+    [SerializeField, Min(0f)] private float skipPromptMarginX = 24f;
+    [SerializeField, Min(0f)] private float skipPromptMarginY = 20f;
+
     private static bool hasPlayedIntro = false;
     private Coroutine currentIntroRoutine;
     private bool isIntroPlaying = false;
+
+    private const string SkipPromptText = "aperte esc ou start para pular";
+    private GUIStyle skipPromptStyle;
 
     private void Awake()
     {
@@ -44,17 +54,70 @@ public class IntroManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
+    private void EnsureSkipPromptStyle()
+    {
+        if (skipPromptStyle == null)
+        {
+            skipPromptStyle = new GUIStyle(GUI.skin.label);
+        }
+
+        if (skipPromptFont != null)
+        {
+            skipPromptStyle.font = skipPromptFont;
+        }
+
+        skipPromptStyle.fontSize = skipPromptFontSize;
+        skipPromptStyle.alignment = TextAnchor.LowerRight;
+        skipPromptStyle.normal.textColor = skipPromptColor;
+        skipPromptStyle.wordWrap = false;
+    }
+
+    private void OnGUI()
+    {
+        if (!isIntroPlaying) return;
+
+        EnsureSkipPromptStyle();
+
+        GUIContent content = new GUIContent(SkipPromptText);
+        Vector2 size = skipPromptStyle.CalcSize(content);
+
+        // Canto inferior direito fixo em pixels independente da resolução da tela.
+        float x = Screen.width - size.x - skipPromptMarginX;
+        float y = Screen.height - size.y - skipPromptMarginY;
+
+        Rect shadowRect = new Rect(x + 1.5f, y + 1.5f, size.x, size.y);
+        Color prevColor = skipPromptStyle.normal.textColor;
+        skipPromptStyle.normal.textColor = new Color(0f, 0f, 0f, 0.75f);
+        GUI.Label(shadowRect, content, skipPromptStyle);
+
+        skipPromptStyle.normal.textColor = prevColor;
+        Rect labelRect = new Rect(x, y, size.x, size.y);
+        GUI.Label(labelRect, content, skipPromptStyle);
+    }
+
     private void Update()
     {
         if (!isIntroPlaying) return;
 
         bool keyboardEscape = Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame;
-        bool gamepadStart = Gamepad.current != null && Gamepad.current.startButton.wasPressedThisFrame;
+        bool gamepadStart = ApertouStartEmAlgumGamepad();
 
         if (keyboardEscape || gamepadStart)
         {
             StopIntroAndFadeOut();
         }
+    }
+
+    private bool ApertouStartEmAlgumGamepad()
+    {
+        foreach (Gamepad gamepad in Gamepad.all)
+        {
+            if (gamepad != null && gamepad.startButton.wasPressedThisFrame)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)

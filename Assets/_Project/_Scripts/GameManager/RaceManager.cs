@@ -1135,6 +1135,7 @@ public class RaceManager : MonoBehaviour
                 if (countdownCoroutine != null)
                     StopCoroutine(countdownCoroutine);
 
+                CountdownAudioController.Instance?.Play();
                 countdownCoroutine = StartCoroutine(
                     RaceCountdownCoroutine()
                 );
